@@ -1,0 +1,46 @@
+# ---- Node / React ----
+node_modules/
+build/
+dist/
+.cache/
+.next/
+out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+.pnpm-debug.log
+
+# React environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Editor / OS files
+.DS_Store
+Thumbs.db
+
+# ---- Golang ----
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Build artifacts
+*.test
+*.out
+
+# Go workspace
+bin/
+vendor/
+*.log
+
+# Golang environment
+.env
+.env.*
