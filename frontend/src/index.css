@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+@theme {
+/* color */
+  --color-primary: #00a9ff;
+  --color-secondary: #a0e9ff;
+  --color-accent: #89cff3;
+  --color-background: #f3f8ff;
+  --color-logo: #154d71;
+  --color-success: #70E000;
+  --color-error:#E62727 ;
+  --color-warning:#FFC107;
+
+  /* Teks */
+  --font-open: "Open_Sans", sans-serif; 
+}
+

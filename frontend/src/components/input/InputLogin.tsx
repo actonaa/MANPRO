@@ -17,7 +17,7 @@ export default function InputLogin({
   const isFloating = isFocused || value !== "";
 
   return (
-    <div className="flex items-center pt-1.5">
+    <div className="flex items-center pt-1.5 font-open">
       <div className="relative mx-auto w-[400px]">
         {/* Input */}
         <input
