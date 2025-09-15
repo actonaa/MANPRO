@@ -17,8 +17,8 @@ export default function InputLogin({
   const isFloating = isFocused || value !== "";
 
   return (
-    <div className="flex items-center pt-1.5 font-open">
-      <div className="relative mx-auto w-[400px]">
+    <div className="flex items-center pt-1.5 font-open w-full">
+      <div className="relative mx-auto w-full max-w-md">
         {/* Input */}
         <input
           type={type}
@@ -29,16 +29,16 @@ export default function InputLogin({
           onChange={(e) => setValue(e.target.value)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          className="peer w-[400px] h-[47px] rounded-xl border-[1px] border-[#66666666] px-3  text-sm outline-none placeholder-transparent"
+          className="peer w-full h-12 rounded-xl border border-[#66666666] px-3 text-sm outline-none placeholder-transparent focus:border-accent focus:ring-1 focus:ring-accent"
         />
 
-        {/* Label floating di antara border */}
+        {/* Label floating */}
         <label
           htmlFor={name}
-          className={`absolute left-3 px-1 text-gray-500 transition-all duration-200 cursor-text
+          className={`absolute left-3 px-1 transition-all duration-200 cursor-text
             ${
               isFloating
-                ? "-top-2 text-xs text-[#66666666] bg-white" // label naik dan menempel di border
+                ? "-top-2 text-xs text-[#66666666] bg-white"
                 : "top-3 text-sm text-gray-400"
             }`}
         >
