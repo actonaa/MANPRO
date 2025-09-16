@@ -5,9 +5,9 @@ import Logo from "../../img/Logo.png";
 
 export default function Login() {
   return (
-    <div className="flex flex-col items-center justify-center px-4 ">
+    <div className="h-screen px-4 ">
       {/* Header */}
-      <header className="w-[375px] h-[43px] max-w-md py-2 px-5 rounded-t-xl">
+      <header className="w-[375px] h-[43px] max-w-md py-2 px-5">
         <img src={Logo} alt="Logo" className="h-6 w-auto" />
       </header>
       <div className="flex items-center justify-center">
@@ -16,7 +16,7 @@ export default function Login() {
           <img
             src={Logingambar}
             alt="Login Banner"
-            className="w-[335px] h-[270px] max-w-md object-cover rounded-xl mx-auto"
+            className="w-[335px] h-[270px] max-w-md object-cover mx-auto"
           />
 
           {/* Heading */}
@@ -30,7 +30,7 @@ export default function Login() {
           </div>
 
           {/* Form login */}
-          <div className="w-full max-w-md bg-white p-6 space-y-4  rounded-xl mx-auto">
+          <div className="w-full max-w-md bg-white p-6 space-y-4 mx-auto">
             <InputLogin
               placeholder="Enter your email"
               name="email"
@@ -46,7 +46,7 @@ export default function Login() {
         </div>
       </div>
 
-      <footer className="flex flex-col items-center justify-center w-[375px] h-16 px-30 py-10 mt-2">
+      <footer className="flex items-center justify-center h-16 py-10 mt-2">
         @ 2025 PT Cybera
       </footer>
     </div>
