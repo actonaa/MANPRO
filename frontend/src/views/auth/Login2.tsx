@@ -7,7 +7,7 @@ export default function Login() {
       {/* Navbar */}
       <nav>
         <img
-          src="/Logo.png"
+          src="/login/logo.png"
           alt="sirasa"
           className="w-[75px] h-[27px] md:w-[118px] md:h-[40px] mx-5 md:mx-[30px] my-2 mb-5 md:mb-10"
         />
@@ -18,7 +18,7 @@ export default function Login() {
         {/* image login */}
         <div className="w-full mb-6">
           <img
-            src="/icons.png"
+            src="/login/icons.png"
             alt="logo login"
             className=" mx-auto md:w-[774px] md:h-[371px]"
           />
