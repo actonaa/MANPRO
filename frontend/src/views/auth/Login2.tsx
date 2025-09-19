@@ -14,9 +14,9 @@ export default function Login() {
       </nav>
 
       {/* Container */}
-      <div className="flex flex-col">
+      <div className="flex flex-col ">
         {/* image login */}
-        <div className="w-full mb-6">
+        <div className="w-full mb-6 xl:hidden">
           <img
             src="/login/icons.png"
             alt="logo login"
@@ -25,34 +25,43 @@ export default function Login() {
         </div>
 
         {/* form login */}
-        <div className="font-open">
-          <div className="text-center mb-6">
-            <h1 className="font-bold text-2xl md:text-[38px] md:mb-6">
-              Selamat datang di <span className="text-primary">SIRASA👋</span>
-            </h1>
-            <p className="font-medium text-[14px] md:text-[18px] md:mb-6">
-              "Satu Portal Terintegrasi untuk Aset dan Resiko"
-            </p>
-          </div>
+        <div className="xl:flex xl:justify-center xl:mt-10">
+          <div className="font-open xl:px-10">
+            <div className="text-center mb-6 xl:pl-4">
+              <h1 className="font-bold text-2xl md:text-[38px] md:mb-6">
+                Selamat datang di <span className="text-primary">SIRASA👋</span>
+              </h1>
+              <p className="font-medium text-[14px] md:text-[18px] md:mb-6">
+                "Satu Portal Terintegrasi untuk Aset dan Resiko"
+              </p>
+            </div>
 
-          <form action="" className="mb-6 px-5">
-            <InputLogin
-              placeholder="Masukkan email"
-              name="email"
-              type="email"
+            <form action="" className="mb-6 px-5">
+              <InputLogin
+                placeholder="Masukkan email"
+                name="email"
+                type="email"
+              />
+              <InputLogin
+                placeholder="Masukkan Password"
+                name="password"
+                type="password"
+              />
+              <BtnLogin />
+            </form>
+          </div>
+          <div className="xl:p-5 xl:pl-8">
+            <img
+              src="/login/icons.png"
+              alt="logo login"
+              className=" hidden xl:block xl:w-[600px] h-[350px] object-cover"
             />
-            <InputLogin
-              placeholder="Masukkan Password"
-              name="password"
-              type="password"
-            />
-            <BtnLogin />
-          </form>
+          </div>
         </div>
       </div>
 
       {/* footer */}
-      <footer className="flex items-center justify-center md:fixed md:bottom-[30px] md:left-1/2 md:text-[16px] md:-translate-x-1/2">
+      <footer className="flex items-center mt-14 justify-center md:fixed md:bottom-[30px] md:left-1/2 md:text-[16px] md:-translate-x-1/2">
         @2025 PT Cybera
       </footer>
     </>
