@@ -17,8 +17,8 @@ export default function InputLogin({
   const isFloating = isFocused || value !== "";
 
   return (
-    <div className="flex items-center pt-1.5 font-open w-full mb-2 md:mb-6">
-      <div className="relative mx-auto">
+    <div className="flex items-center pt-1.5 font-open w-full mb-2 md:mb-6 ">
+      <div className="relative mx-auto lg:mx-0">
         {/* Input */}
         <input
           type={type}
@@ -29,7 +29,7 @@ export default function InputLogin({
           onChange={(e) => setValue(e.target.value)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          className="peer w-[335px] md:w-[395px] h-12 rounded-xl border border-[#66666666] px-3 text-sm outline-none placeholder-transparent"
+          className="peer w-[335px] md:w-[578px] lg:w-[395px] h-12 rounded-xl border border-[#66666666] px-3 text-sm outline-none placeholder-transparent"
         />
 
         {/* Label floating */}
