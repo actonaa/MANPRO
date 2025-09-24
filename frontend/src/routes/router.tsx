@@ -1,12 +1,14 @@
 // src/routes/AppRoutes.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "../views/auth/Login2";
+import LandingPage from "../views/auth/LandingPage";
+import Beranda from "../views/auth/Beranda";
 
 export default function AppRoutes() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/landingPage" element={<LandingPage />} />
+        <Route path="/Beranda" element={<Beranda />} />
       </Routes>
     </Router>
   );
