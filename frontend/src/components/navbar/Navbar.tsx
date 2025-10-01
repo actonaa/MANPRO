@@ -5,11 +5,6 @@ export default function Navbar() {
       <header className="flex items-center justify-between p-2 px-10 py-2">
         {/* Logo and Partners */}
         <div className="flex items-center px-6 py-2">
-          <img
-            src="/login/logogroup.png"
-            alt="Gabungan Logo"
-            className="h-16 object-contain"
-          />
         </div>
 
         {/* Navigation */}
