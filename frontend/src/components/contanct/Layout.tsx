@@ -25,7 +25,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           onSearchChange={(value) => console.log(value)} // opsional
         />
 
-        <main className="flex-1 overflow-y-auto p-4 mt-14 sm:mt-16">
+        <main className="flex-1 overflow-y-auto p-4 mt-12 sm:mt-14">
           {children}
         </main>
       </div>

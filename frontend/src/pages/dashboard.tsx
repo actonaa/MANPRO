@@ -18,7 +18,7 @@ export default function Dashboard() {
         onSearchChange={setSearchQuery} // ⬅️ sambungkan ke Header
       />
 
-      <div className="p-4 lg:p-6 bg-gray-50 min-h-screen mt-16">
+      <div className="p-4 lg:p-6 bg-gray-50 min-h-screen mt-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Konten utama */}
           <div className="lg:col-span-3 space-y-6">
