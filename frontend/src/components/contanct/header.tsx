@@ -1,11 +1,13 @@
 interface HeaderProps {
   isSidebarOpen?: boolean;
   toggleSidebar: () => void;
+  onSearchChange: (value: string) => void; // ⬅️ tambahan
 }
 
 export default function Header({
   isSidebarOpen = true,
   toggleSidebar,
+  onSearchChange,
 }: HeaderProps) {
   return (
     <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 w-full z-40 transition-all duration-300">
@@ -40,6 +42,7 @@ export default function Header({
             <input
               type="text"
               placeholder="Cari"
+              onChange={(e) => onSearchChange(e.target.value)} // ⬅️ kirim ke parent
               className="w-full pl-8 sm:pl-10 pr-2 sm:pr-4 py-1 sm:py-2 text-xs sm:text-sm rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <svg

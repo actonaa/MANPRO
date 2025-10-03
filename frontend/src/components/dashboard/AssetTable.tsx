@@ -1,4 +1,8 @@
-export default function AssetTable() {
+interface AssetTableProps {
+  searchQuery?: string;
+}
+
+export default function AssetTable({ searchQuery = "" }: AssetTableProps) {
   const assets = [
     {
       id: "001",
@@ -23,6 +27,15 @@ export default function AssetTable() {
     },
   ];
 
+  const filteredAssets = assets.filter(
+    (a) =>
+      a.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      a.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      a.kategori.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      a.lokasi.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      a.status.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="bg-white p-4 rounded-xl shadow">
       <h3 className="text-sm font-semibold mb-3">Data Aset Dinas</h3>
@@ -45,7 +58,7 @@ export default function AssetTable() {
             </tr>
           </thead>
           <tbody>
-            {assets.map((item) => (
+            {filteredAssets.map((item) => (
               <tr key={item.id} className="border-t text-center">
                 <td className="p-2">{item.id}</td>
                 <td className="p-2">{item.nama}</td>
@@ -73,6 +86,12 @@ export default function AssetTable() {
             ))}
           </tbody>
         </table>
+
+        {filteredAssets.length === 0 && (
+          <p className="text-center text-gray-500 text-sm mt-3">
+            Tidak ada data yang cocok
+          </p>
+        )}
       </div>
     </div>
   );
