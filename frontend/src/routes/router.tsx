@@ -9,11 +9,8 @@ export default function AppRoutes() {
   return (
     <Router>
       <Routes>
-        {/* route dari dev--fahmi */}
         <Route path="/landingPage" element={<LandingPage />} />
         <Route path="/beranda" element={<Beranda />} />
-
-        {/* route dari dev--lenida */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/kelola-aset" element={<Aset />} />
       </Routes>
