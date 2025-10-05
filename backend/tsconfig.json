@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    // Struktur file
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    // ESM support untuk Node.js
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ESNext",
+    "moduleDetection": "force",
+
+    // Environment untuk Node
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node"],
+
+    // Output tambahan
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    // Type checking ketat
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "skipLibCheck": true,
+
+    // Biarkan TypeScript handle import/export dengan sintaks modern
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}
