@@ -15,9 +15,10 @@ export default function Dashboard() {
       <Header
         isSidebarOpen={true}
         toggleSidebar={() => {}}
-        onSearchChange={setSearchQuery} // ⬅️ sambungkan ke Header
+        onSearchChange={setSearchQuery}
       />
 
+      {/* ✅ hanya satu div wrapper */}
       <div className="p-4 lg:p-6 bg-gray-50 min-h-screen mt-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Konten utama */}
@@ -31,7 +32,7 @@ export default function Dashboard() {
                 <RiskHeatmap />
               </div>
             </div>
-            <AssetTable searchQuery={searchQuery} /> {/* ⬅️ filter table */}
+            <AssetTable searchQuery={searchQuery} />
           </div>
 
           {/* Notifikasi di kanan */}
