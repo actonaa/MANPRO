@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Header from "./header";
 import Sidebar from "./sidebar";
-import SidebarMobile from "./sidebarMobile";
+import SidebarMobile from "./SidebarMobile";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
