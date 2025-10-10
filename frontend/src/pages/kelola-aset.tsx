@@ -3,6 +3,7 @@ import Layout from "../components/contanct/Layout";
 import TambahAssetButton from "../components/kelola-asset/TambahAsset";
 import ExportButton from "../components/kelola-asset/Export";
 import Filterbar from "../components/kelola-asset/Filterbar";
+import AssetCards from "../components/kelola-asset/assetcard";
 
 export default function Aset() {
   const [dataAset, setDataAset] = useState<any[]>([]);
@@ -58,20 +59,40 @@ export default function Aset() {
 
   return (
     <Layout>
-      <div className="p-6">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
+      <div className="p-4 sm:p-6">
+        {/* ✅ Header Responsive */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <h1 className="text-xl font-bold text-gray-800">Kelola Aset</h1>
           <TambahAssetButton />
         </div>
 
-        {/* Filter dan Export */}
-        <div className="flex flex-wrap justify-between items-center mb-6 gap-3">
+        {/* ✅ Asset Cards di bawah header, full width */}
+        <div className="mb-6 w-full">
+          <AssetCards
+            total={dataAset.length}
+            perluPerbaikan={
+              dataAset.filter((a) => a.status === "Perbaikan").length
+            }
+            akanDihapus={
+              dataAset.filter((a) => a.status === "Tidak aktif").length
+            }
+            totalNilai={
+              "Rp " +
+              (
+                dataAset.reduce((acc, a) => acc + (a.nilai || 0), 0) / 1_000_000
+              ).toFixed(1) +
+              "M"
+            }
+          />
+        </div>
+
+        {/* ✅ Filter & Export Responsif */}
+        <div className="flex flex-col sm:flex-row flex-wrap justify-between items-start sm:items-center mb-6 gap-3">
           <Filterbar />
           <ExportButton />
         </div>
 
-        {/* Table */}
+        {/* ✅ Table */}
         <div className="bg-white shadow-md rounded-lg overflow-x-auto">
           {loading ? (
             <p className="p-4 text-gray-500">Memuat data aset...</p>
@@ -128,28 +149,25 @@ export default function Aset() {
                 </tbody>
               </table>
 
-              {/* Footer Pagination */}
+              {/* ✅ Pagination Responsif */}
               <div className="flex flex-col sm:flex-row justify-between items-center text-sm text-gray-600 p-4 gap-4">
-                {/* Kiri: Info data */}
                 <span className="text-center sm:text-left w-full sm:w-auto">
                   Menampilkan {startIndex + 1}–
                   {Math.min(startIndex + itemsPerPage, dataAset.length)} dari{" "}
                   {dataAset.length} data aset
                 </span>
 
-                {/* Tengah: Nomor Halaman */}
                 <div className="flex justify-center w-full sm:w-auto">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     {Array.from({ length: totalPages }, (_, i) => (
                       <button
                         key={i}
                         onClick={() => setCurrentPage(i + 1)}
-                        className={`w-8 h-8 flex items-center justify-center rounded-full border font-semibold transition
-            ${
-              currentPage === i + 1
-                ? "bg-blue-500 text-white border-blue-500"
-                : "border-gray-300 text-gray-700 hover:bg-blue-100"
-            }`}
+                        className={`w-8 h-8 flex items-center justify-center rounded-full border font-semibold transition ${
+                          currentPage === i + 1
+                            ? "bg-blue-500 text-white border-blue-500"
+                            : "border-gray-300 text-gray-700 hover:bg-blue-100"
+                        }`}
                       >
                         {i + 1}
                       </button>
@@ -157,7 +175,6 @@ export default function Aset() {
                   </div>
                 </div>
 
-                {/* Kanan: Navigasi */}
                 <div className="flex justify-end w-full sm:w-auto gap-2">
                   <button
                     onClick={handlePrev}
