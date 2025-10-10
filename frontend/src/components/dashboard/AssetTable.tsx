@@ -1,98 +1,86 @@
-interface AssetTableProps {
+interface AktivitasAssetProps {
   searchQuery?: string;
 }
 
-export default function AssetTable({ searchQuery = "" }: AssetTableProps) {
-  const assets = [
+export default function AktivitasAsset({
+  searchQuery = "",
+}: AktivitasAssetProps) {
+  const aktivitas = [
     {
-      id: "001",
-      nama: "Laptop",
-      kategori: "Elektronik",
-      lokasi: "R. TU",
-      status: "Aktif",
+      waktu: "10 Oktober 2025",
+      jenis: "Aset",
+      deskripsi: "Aset Baru: Laptop Asus Vivobook",
+      status: "Terdaftar",
+      warna: "bg-green-100 text-green-700",
     },
     {
-      id: "002",
-      nama: "Server Dinas",
-      kategori: "Jaringan",
-      lokasi: "Data Center",
-      status: "Perbaikan",
+      waktu: "10 Oktober 2025",
+      jenis: "Risiko",
+      deskripsi: "Ditemukan risiko kebocoran data",
+      status: "Tinggi",
+      warna: "bg-red-100 text-red-700",
     },
     {
-      id: "003",
-      nama: "Kursi Kerja",
-      kategori: "Furnitur",
-      lokasi: "R. Kabid",
-      status: "Tidak Aktif",
+      waktu: "10 Oktober 2025",
+      jenis: "Aset",
+      deskripsi: "Server #SRV12 sedang dalam perbaikan",
+      status: "Dalam proses",
+      warna: "bg-blue-100 text-blue-700",
     },
   ];
 
-  const filteredAssets = assets.filter(
-    (a) =>
-      a.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.kategori.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.lokasi.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.status.toLowerCase().includes(searchQuery.toLowerCase())
+  // 🔍 Filter pencarian (opsional)
+  const filteredAktivitas = aktivitas.filter(
+    (item) =>
+      item.waktu.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.jenis.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.deskripsi.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.status.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow">
-      <h3 className="text-sm font-semibold mb-3">Data Aset Dinas</h3>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm border border-gray-200 rounded-lg">
-          <thead className="bg-blue-500 text-white">
-            <tr>
-              {[
-                "ID Aset",
-                "Nama Aset",
-                "Kategori",
-                "Lokasi",
-                "Status",
-                "Aksi",
-              ].map((head) => (
-                <th key={head} className="p-2 text-center">
-                  {head}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filteredAssets.map((item) => (
-              <tr key={item.id} className="border-t text-center">
-                <td className="p-2">{item.id}</td>
-                <td className="p-2">{item.nama}</td>
-                <td className="p-2">{item.kategori}</td>
-                <td className="p-2">{item.lokasi}</td>
-                <td className="p-2">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      item.status === "Aktif"
-                        ? "bg-green-100 text-green-600"
-                        : item.status === "Perbaikan"
-                        ? "bg-yellow-100 text-yellow-600"
-                        : "bg-red-100 text-red-600"
-                    }`}
-                  >
-                    {item.status}
-                  </span>
-                </td>
-                <td className="p-2">
-                  <button className="text-blue-500 hover:underline">
-                    Detail
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="bg-white p-5 rounded-xl shadow-sm w-full overflow-x-auto">
+      <h2 className="text-lg font-semibold text-gray-800 mb-4">
+        Aktivitas Terbaru
+      </h2>
 
-        {filteredAssets.length === 0 && (
-          <p className="text-center text-gray-500 text-sm mt-3">
-            Tidak ada data yang cocok
-          </p>
-        )}
-      </div>
+      <table className="w-full text-sm text-left text-gray-700 border-separate border-spacing-y-2">
+        <thead className="text-gray-500 text-xs uppercase">
+          <tr>
+            <th className="px-4 py-2">WAKTU</th>
+            <th className="px-4 py-2">JENIS AKTIVITAS</th>
+            <th className="px-4 py-2">DESKRIPSI</th>
+            <th className="px-4 py-2">STATUS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredAktivitas.map((item, idx) => (
+            <tr
+              key={idx}
+              className="bg-white hover:bg-gray-50 transition rounded-lg shadow-sm border border-gray-100"
+            >
+              <td className="px-4 py-3 whitespace-nowrap">{item.waktu}</td>
+              <td className="px-4 py-3 whitespace-nowrap">{item.jenis}</td>
+              <td className="px-4 py-3">{item.deskripsi}</td>
+              <td className="px-4 py-3">
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${item.warna}`}
+                >
+                  {item.status}
+                </span>
+              </td>
+            </tr>
+          ))}
+
+          {filteredAktivitas.length === 0 && (
+            <tr>
+              <td colSpan={4} className="text-center text-gray-500 py-4 italic">
+                Tidak ada aktivitas yang cocok
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }
