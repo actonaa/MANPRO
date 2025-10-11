@@ -1,17 +1,16 @@
 import Card from "../../components/card/CardDshbrd";
 import TrendChart from "../../components/dashboard/TrendChart";
 import Notifications from "../../components/dashboard/Notifications";
-import RiskHeatmap from "../../components/dashboard/RiskHeatMap";
+import TopRisk from "../../components/dashboard/TopRisk";
 import Layout from "../../components/contanct/Layout";
 
-export default function Beranda() {
+export default function Dashboard() {
   return (
     <Layout>
-      <div className="min-h-screen  px-6 py-6">
+      <div className="min-h-screen px-6">
         {/* Judul halaman */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Halaman Beranda</h1>
-          <p className="text-gray-600">Selamat datang di dashboard!</p>
+          <h1 className="text-2xl font-normal text-gray-800">Dashboard</h1>
         </div>
 
         {/* Wrapper utama */}
@@ -46,7 +45,7 @@ export default function Beranda() {
                 <TrendChart />
               </div>
               <div className="lg:flex-1">
-                <RiskHeatmap />
+                <TopRisk />
               </div>
             </div>
           </div>

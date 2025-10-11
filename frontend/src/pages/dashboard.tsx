@@ -3,7 +3,7 @@ import Layout from "../components/contanct/Layout";
 import Header from "../components/contanct/header";
 import SummaryCards from "../components/dashboard/SummaryCards";
 import TrendChart from "../components/dashboard/TrendChart";
-import RiskHeatmap from "../components/dashboard/RiskHeatMap";
+import RiskHeatmap from "../components/dashboard/TopRisk";
 import AssetTable from "../components/dashboard/AssetTable";
 import Notifications from "../components/dashboard/Notifications";
 

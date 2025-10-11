@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import LogoFull from "../../img/logosirasa.png";
 import LogoSmall from "../../img/logo.png";
 import IconDashboard from "../../img/sidebar-icon/dashboard.png";
@@ -16,7 +15,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
-  const [activeMenu, setActiveMenu] = useState("Dashboard");
+  const location = useLocation();
 
   const menus = [
     { name: "Dashboard", icon: IconDashboard, path: "/dashboard" },
@@ -33,11 +32,9 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
     path: "/pengaturan",
   };
 
-  const activeColor = "#00A9FF";
-
   return (
     <>
-      {/* ✅ Overlay background ketika sidebar terbuka di mobile */}
+      {/* Overlay ketika sidebar terbuka di mobile */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-40 z-40 lg:hidden"
@@ -45,12 +42,12 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
         ></div>
       )}
 
-      {/* ✅ Sidebar */}
+      {/* Sidebar */}
       <div
         className={`fixed top-0 left-0 h-full bg-white shadow-md z-50 flex flex-col transition-all duration-300
-        ${isOpen ? "w-64" : "w-20"} 
-        ${isOpen ? "translate-x-0" : "-translate-x-full"} 
-        lg:translate-x-0`}
+          ${isOpen ? "w-64" : "w-20"} 
+          ${isOpen ? "translate-x-0" : "-translate-x-full"} 
+          lg:translate-x-0`}
       >
         {/* Logo */}
         <div className="flex justify-center mb-6 mt-3">
@@ -66,24 +63,27 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
         {/* Menu Utama */}
         <ul className="flex flex-col gap-2">
           {menus.map((item) => {
-            const isActive = activeMenu === item.name;
+            const isActive = location.pathname === item.path;
             return (
               <li key={item.name}>
                 <Link
                   to={item.path}
                   onClick={() => {
-                    setActiveMenu(item.name);
-                    if (window.innerWidth < 1024) toggleSidebar(); // tutup sidebar setelah klik di mobile
+                    if (window.innerWidth < 1024) toggleSidebar();
                   }}
-                  className={`flex items-center h-12 rounded-xl cursor-pointer transition-all duration-200 px-3 gap-3
+                  className={`relative flex items-center h-12 rounded-xl cursor-pointer transition-all duration-200 px-3 gap-3
                     ${
                       isActive
-                        ? "text-white"
+                        ? "text-white bg-[#00A9FF]"
                         : "text-gray-600 hover:bg-gray-100"
                     }
                     ${!isOpen && "justify-center"}`}
-                  style={isActive ? { backgroundColor: activeColor } : {}}
                 >
+                  {/* Garis aktif di sisi kiri */}
+                  {isActive && (
+                    <span className="absolute left-0 top-0 h-full w-1 bg-blue-500 rounded-r-md"></span>
+                  )}
+
                   <div className="w-10 h-10 flex items-center justify-center flex-shrink-0">
                     <img
                       src={item.icon}
@@ -109,28 +109,27 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
           <Link
             to={settingMenu.path}
             onClick={() => {
-              setActiveMenu(settingMenu.name);
               if (window.innerWidth < 1024) toggleSidebar();
             }}
-            className={`flex items-center h-12 rounded-xl cursor-pointer transition-all duration-200 px-3 gap-3
+            className={`relative flex items-center h-12 rounded-xl cursor-pointer transition-all duration-200 px-3 gap-3
               ${
-                activeMenu === settingMenu.name
-                  ? "text-white"
+                location.pathname === settingMenu.path
+                  ? "text-white bg-[#00A9FF]"
                   : "text-gray-600 hover:bg-gray-100"
               }
               ${!isOpen && "justify-center"}`}
-            style={
-              activeMenu === settingMenu.name
-                ? { backgroundColor: activeColor }
-                : {}
-            }
           >
+            {location.pathname === settingMenu.path && (
+              <span className="absolute left-0 top-0 h-full w-1 bg-blue-500 rounded-r-md"></span>
+            )}
             <div className="w-10 h-10 flex items-center justify-center flex-shrink-0">
               <img
                 src={settingMenu.icon}
                 alt={settingMenu.name}
                 className={`w-5 h-5 ${
-                  activeMenu === settingMenu.name ? "brightness-0 invert" : ""
+                  location.pathname === settingMenu.path
+                    ? "brightness-0 invert"
+                    : ""
                 }`}
               />
             </div>
