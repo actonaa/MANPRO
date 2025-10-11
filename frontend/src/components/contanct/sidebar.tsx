@@ -10,7 +10,6 @@ import IconNotif from "../../img/sidebar-icon/Notif.png";
 import IconRisk from "../../img/sidebar-icon/Risk.png";
 import IconSetting from "../../img/sidebar-icon/Setting.png";
 
-// 🧩 Sidebar menerima props dari Layout
 interface SidebarProps {
   isOpen: boolean;
   toggleSidebar: () => void;
@@ -35,23 +34,16 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
   };
 
   return (
-
-    <div
-      className={`fixed top-0 left-0 bg-white h-screen shadow-md flex flex-col z-50 transition-all duration-300 ${
-        isOpen ? "w-64" : "w-20"
-      }`}
-    >
-      {/* 🔘 Tombol Toggle */}
+    <>
+      {/* ☰ Tombol menu (hanya muncul di mobile) */}
       <button
         onClick={toggleSidebar}
-        className="absolute -right-3 top-9 text-white p-1 rounded-full transition-colors duration-200"
-        style={{ backgroundColor: "#00A9FF" }}
+        className="fixed top-4 left-4 z-50 bg-[#00A9FF] text-white p-2 rounded-lg shadow-md lg:hidden"
       >
         {isOpen ? (
-          // ❌ Ikon “close”
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="w-4 h-4"
+            className="w-5 h-5"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -64,10 +56,9 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
             />
           </svg>
         ) : (
-          // ☰ Ikon “menu”
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="w-4 h-4"
+            className="w-5 h-5"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -82,82 +73,123 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
         )}
       </button>
 
-      {/* 🏷 Logo */}
-      <div className="flex justify-center mb-4 mt-1">
-        <img
-          src={isOpen ? LogoFull : LogoSmall}
-          alt="Logo"
-          className={`transition-all duration-300 ${isOpen ? "w-28" : "w-10"}`}
-        />
-      </div>
-
-      {/* 📋 Menu Utama */}
-      <ul className="flex flex-col gap-3 px-3">
-        {menus.map((item) => {
-          const isActive = activeMenu === item.name;
-          return (
-            <li key={item.name}>
-              <Link
-                to={item.path}
-                onClick={() => setActiveMenu(item.name)}
-                className={`flex items-center gap-3 px-3 py-3 rounded-2xl cursor-pointer transition-all duration-200 ${
-                  isActive ? "text-white" : "text-gray-600 hover:bg-gray-100"
-                }`}
-                style={{
-                  backgroundColor: isActive ? "#00A9FF" : "transparent",
-                }}
-              >
-                <img
-                  src={item.icon}
-                  alt={item.name}
-                  className={`min-w-[22px] min-h-[22px] w-6 h-6 transition-all duration-200 ${
-                    isActive ? "brightness-0 invert" : ""
-                  }`}
-                />
-                <span
-                  className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${
-                    isOpen ? "ml-2 opacity-100" : "ml-0 opacity-0 w-0"
-                  }`}
-                >
-                  {item.name}
-                </span>
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-
-      {/* ⚙️ Menu Pengaturan */}
-      <div className="mt-auto pt-3 border-t border-gray-200 px-3 mb-3">
-        <Link
-          to={settingMenu.path}
-          onClick={() => setActiveMenu(settingMenu.name)}
-          className={`flex items-center gap-3 px-3 py-3 rounded-2xl cursor-pointer transition-all duration-200 ${
-            activeMenu === settingMenu.name
-              ? "text-white"
-              : "text-gray-600 hover:bg-gray-100"
-          }`}
-          style={{
-            backgroundColor:
-              activeMenu === settingMenu.name ? "#00A9FF" : "transparent",
-          }}
-        >
+      {/* 🧭 Sidebar */}
+      <div
+        className={`
+          fixed top-0 left-0 h-screen bg-white shadow-md flex flex-col z-40
+          transition-all duration-300
+          ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+          ${isOpen ? "w-64" : "lg:w-20"}
+        `}
+      >
+        {/* 🏷 Logo */}
+        <div className="flex justify-center mb-6 mt-4">
           <img
-            src={settingMenu.icon}
-            alt={settingMenu.name}
-            className={`min-w-[22px] min-h-[22px] w-6 h-6 transition-all duration-200 ${
-              activeMenu === settingMenu.name ? "brightness-0 invert" : ""
+            src={isOpen ? LogoFull : LogoSmall}
+            alt="Logo"
+            className={`transition-all duration-300 ${
+              isOpen ? "w-28" : "w-10"
             }`}
           />
-          <span
-            className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${
-              isOpen ? "ml-2 opacity-100" : "ml-0 opacity-0 w-0"
+        </div>
+
+        {/* 📋 Menu utama */}
+        <ul className="flex flex-col gap-2 px-2 relative">
+          {menus.map((item) => {
+            const isActive = activeMenu === item.name;
+            return (
+              <li key={item.name} className="relative group">
+                <Link
+                  to={item.path}
+                  onClick={() => {
+                    setActiveMenu(item.name);
+                    if (window.innerWidth < 1024) toggleSidebar();
+                  }}
+                  className={`flex items-center gap-3 px-3 py-3 rounded-2xl cursor-pointer transition-all duration-200 ${
+                    isActive ? "text-white" : "text-gray-600 hover:bg-gray-100"
+                  }`}
+                  style={{
+                    backgroundColor: isActive ? "#00A9FF" : "transparent",
+                  }}
+                >
+                  <img
+                    src={item.icon}
+                    alt={item.name}
+                    className={`min-w-[22px] min-h-[22px] w-6 h-6 transition-all duration-200 ${
+                      isActive ? "brightness-0 invert" : ""
+                    }`}
+                  />
+                  {/* teks hanya muncul jika sidebar dibuka */}
+                  <span
+                    className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${
+                      isOpen ? "ml-2 opacity-100" : "ml-0 opacity-0 w-0"
+                    }`}
+                  >
+                    {item.name}
+                  </span>
+                </Link>
+
+                {/* 🧩 Tooltip muncul ketika sidebar collapse */}
+                {!isOpen && (
+                  <span className="absolute left-16 top-1/2 -translate-y-1/2 bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 whitespace-nowrap transition-all duration-200">
+                    {item.name}
+                  </span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+
+        {/* ⚙️ Menu Pengaturan */}
+        <div className="mt-auto pt-3 border-t border-gray-200 px-2 mb-3 relative group">
+          <Link
+            to={settingMenu.path}
+            onClick={() => {
+              setActiveMenu(settingMenu.name);
+              if (window.innerWidth < 1024) toggleSidebar();
+            }}
+            className={`flex items-center gap-3 px-3 py-3 rounded-2xl cursor-pointer transition-all duration-200 ${
+              activeMenu === settingMenu.name
+                ? "text-white"
+                : "text-gray-600 hover:bg-gray-100"
             }`}
+            style={{
+              backgroundColor:
+                activeMenu === settingMenu.name ? "#00A9FF" : "transparent",
+            }}
           >
-            {settingMenu.name}
-          </span>
-        </Link>
+            <img
+              src={settingMenu.icon}
+              alt={settingMenu.name}
+              className={`min-w-[22px] min-h-[22px] w-6 h-6 transition-all duration-200 ${
+                activeMenu === settingMenu.name ? "brightness-0 invert" : ""
+              }`}
+            />
+            <span
+              className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${
+                isOpen ? "ml-2 opacity-100" : "ml-0 opacity-0 w-0"
+              }`}
+            >
+              {settingMenu.name}
+            </span>
+          </Link>
+
+          {/* 🧩 Tooltip Pengaturan */}
+          {!isOpen && (
+            <span className="absolute left-16 top-1/2 -translate-y-1/2 bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 whitespace-nowrap transition-all duration-200">
+              {settingMenu.name}
+            </span>
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* 🌫️ Overlay (mobile) */}
+      {isOpen && (
+        <div
+          onClick={toggleSidebar}
+          className="fixed inset-0 bg-black bg-opacity-30 z-30 lg:hidden"
+        ></div>
+      )}
+    </>
   );
 }

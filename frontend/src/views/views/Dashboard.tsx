@@ -1,60 +1,54 @@
-import Card from "../../components/card/CardDshbrd";
-import TrendChart from "../../components/dashboard/TrendChart";
-import Notifications from "../../components/dashboard/Notifications";
-import TopRisk from "../../components/dashboard/TopRisk";
+import { useState } from "react";
 import Layout from "../../components/contanct/Layout";
+import Header from "../../components/contanct/header";
+import SummaryCards from "../../components/dashboard/SummaryCards";
+import DistribusiKategori from "../../components/dashboard/DistribusiKategori";
+import RiskHeatmap from "../../components/dashboard/RiskHeatMap";
+import AssetTable from "../../components/dashboard/AssetTable";
+import RisikoResidual from "../../components/dashboard/RisikoResidual";
+import PemeliharaanMendatang from "../../components/dashboard/PemeliharaanMendatang";
+
 
 export default function Dashboard() {
+  const [searchQuery, setSearchQuery] = useState("");
+
   return (
     <Layout>
-      <div className="min-h-screen px-6">
-        {/* Judul halaman */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-normal text-gray-800">Dashboard</h1>
-        </div>
+      {/* 🔍 Header tetap responsif */}
+      <Header
+        isSidebarOpen={true}
+        toggleSidebar={() => {}}
+        onSearchChange={setSearchQuery}
+      />
 
-        {/* Wrapper utama */}
-        <div className="flex flex-col lg:flex-row gap-6 mb-6">
-          {/* Kolom kiri (Card + Grafik + Heatmap) */}
-          <div className="flex-1 flex flex-col gap-6">
-            {/* Baris Card */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card
-                title="Aset Aktif"
-                value={200}
-                icon="/img/Assets.png"
-                color="bg-accent"
-              />
-              <Card
-                title="Aset Rusak"
-                value={24}
-                icon="/img/Risiko.png"
-                color="bg-[#FFA0A0]"
-              />
-              <Card
-                title="Nilai Aset"
-                value="13M"
-                icon="/img/Nilai.png"
-                color="bg-[#8FED8E]"
-              />
+      {/* ✅ Wrapper utama */}
+      <div className="p-4 lg:p-6 bg-gray-50 min-h-screen mt-6">
+        <div className="space-y-6 max-w-full mx-auto ">
+          {/* 📊 Ringkasan Aset */}
+          <SummaryCards />
+
+          {/* 📈 Distribusi & Risiko */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Distribusi Kategori */}
+            <div className="lg:col-span-2 w-full">
+              <DistribusiKategori />
             </div>
 
-            {/* Grafik & Heatmap */}
-            <div className="grid grid-cols-1 gap-6 flex-1 lg:flex lg:gap-6">
-              <div className="lg:flex-1">
-                <TrendChart />
-              </div>
-              <div className="lg:flex-1">
-                <TopRisk />
-              </div>
+            {/* Top 10 Risiko */}
+            <div className="lg:col-span-1 w-full">
+              <RiskHeatmap />
             </div>
           </div>
 
-          {/* Kolom kanan (Notifikasi tinggi penuh) */}
-          <div className="lg:w-1/3 flex">
-            <div className="bg-white rounded-xl shadow flex-1 flex flex-col">
-              <Notifications />
-            </div>
+          {/* 📋 Aktivitas Aset */}
+          <div className="w-full">
+            <AssetTable searchQuery={searchQuery} />
+          </div>
+
+          {/* 📊 Risiko Residual & Pemeliharaan */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <RisikoResidual />
+            <PemeliharaanMendatang />
           </div>
         </div>
       </div>

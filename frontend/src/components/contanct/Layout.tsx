@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Header from "./header";
 import Sidebar from "./sidebar";
-import SidebarMobile from "./SidebarMobile";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -30,11 +29,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <main className="flex-1 overflow-y-auto p-4 mt-14 sm:mt-16">
           {children}
         </main>
-      </div>
-
-      {/* Sidebar Mobile di bawah */}
-      <div className="sm:hidden">
-        <SidebarMobile />
       </div>
     </div>
   );

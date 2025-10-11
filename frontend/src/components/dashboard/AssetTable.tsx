@@ -39,48 +39,84 @@ export default function AktivitasAsset({
   );
 
   return (
-    <div className="bg-white p-5 rounded-xl shadow-sm w-full overflow-x-auto">
+    <div className="bg-white p-5 w-full">
       <h2 className="text-lg font-semibold text-gray-800 mb-4">
         Aktivitas Terbaru
       </h2>
 
-      <table className="w-full text-sm text-left text-gray-700 border-separate border-spacing-y-2">
-        <thead className="text-gray-500 text-xs uppercase">
-          <tr>
-            <th className="px-4 py-2">WAKTU</th>
-            <th className="px-4 py-2">JENIS AKTIVITAS</th>
-            <th className="px-4 py-2">DESKRIPSI</th>
-            <th className="px-4 py-2">STATUS</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredAktivitas.map((item, idx) => (
-            <tr
-              key={idx}
-              className="bg-white hover:bg-gray-50 transition rounded-lg shadow-sm border border-gray-100"
+      {/* 📱 Tampilan Mobile (Card Style) */}
+      <div className="block lg:hidden space-y-4">
+        {filteredAktivitas.map((item, idx) => (
+          <div
+            key={idx}
+            className="flex justify-between items-start bg-white p-3"
+          >
+            <div>
+              <p className="text-sm font-medium text-gray-800 leading-snug">
+                {item.deskripsi}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                {item.waktu} - {item.jenis}
+              </p>
+            </div>
+            <div
+              className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${item.warna}`}
             >
-              <td className="px-4 py-3 whitespace-nowrap">{item.waktu}</td>
-              <td className="px-4 py-3 whitespace-nowrap">{item.jenis}</td>
-              <td className="px-4 py-3">{item.deskripsi}</td>
-              <td className="px-4 py-3">
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${item.warna}`}
-                >
-                  {item.status}
-                </span>
-              </td>
-            </tr>
-          ))}
+              {item.status}
+            </div>
+          </div>
+        ))}
 
-          {filteredAktivitas.length === 0 && (
+        {filteredAktivitas.length === 0 && (
+          <p className="text-center text-gray-500 py-4 italic">
+            Tidak ada aktivitas yang cocok
+          </p>
+        )}
+      </div>
+
+      {/* 💻 Tampilan Desktop (Table Style) */}
+      <div className="hidden lg:block overflow-x-auto">
+        <table className="w-full text-sm text-left text-gray-700 border-separate border-spacing-y-2">
+          <thead className="text-gray-500 text-xs uppercase">
             <tr>
-              <td colSpan={4} className="text-center text-gray-500 py-4 italic">
-                Tidak ada aktivitas yang cocok
-              </td>
+              <th className="px-4 py-2">WAKTU</th>
+              <th className="px-4 py-2">JENIS AKTIVITAS</th>
+              <th className="px-4 py-2">DESKRIPSI</th>
+              <th className="px-4 py-2">STATUS</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredAktivitas.map((item, idx) => (
+              <tr
+                key={idx}
+                className="bg-white hover:bg-gray-50 transition rounded-lg shadow-sm border border-gray-100"
+              >
+                <td className="px-4 py-3 whitespace-nowrap">{item.waktu}</td>
+                <td className="px-4 py-3 whitespace-nowrap">{item.jenis}</td>
+                <td className="px-4 py-3">{item.deskripsi}</td>
+                <td className="px-4 py-3">
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${item.warna}`}
+                  >
+                    {item.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+
+            {filteredAktivitas.length === 0 && (
+              <tr>
+                <td
+                  colSpan={4}
+                  className="text-center text-gray-500 py-4 italic"
+                >
+                  Tidak ada aktivitas yang cocok
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

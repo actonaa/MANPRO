@@ -35,13 +35,6 @@ export default function RiskHeatmap() {
           </div>
         ))}
       </div>
-
-      {/* Optional: tombol expand */}
-      <div className="flex justify-center mt-3">
-        <button className="text-gray-400 hover:text-gray-600 transition text-sm">
-          ⌄
-        </button>
-      </div>
     </div>
   );
 }
