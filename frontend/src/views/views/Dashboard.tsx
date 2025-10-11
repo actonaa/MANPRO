@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Layout from "../../components/contanct/Layout";
-import Header from "../../components/contanct/header";
+// import Header from "../../components/contanct/header";
 import SummaryCards from "../../components/dashboard/SummaryCards";
 import DistribusiKategori from "../../components/dashboard/DistribusiKategori";
 import RiskHeatmap from "../../components/dashboard/RiskHeatMap";
@@ -10,19 +10,12 @@ import PemeliharaanMendatang from "../../components/dashboard/PemeliharaanMendat
 
 
 export default function Dashboard() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, ] = useState("");
 
   return (
     <Layout>
-      {/* 🔍 Header tetap responsif */}
-      <Header
-        isSidebarOpen={true}
-        toggleSidebar={() => {}}
-        onSearchChange={setSearchQuery}
-      />
-
       {/* ✅ Wrapper utama */}
-      <div className="p-4 lg:p-6 bg-gray-50 min-h-screen mt-6">
+      <div className="lg:p-6 bg-gray-50 mt-6">
         <div className="space-y-6 max-w-full mx-auto ">
           {/* 📊 Ringkasan Aset */}
           <SummaryCards />

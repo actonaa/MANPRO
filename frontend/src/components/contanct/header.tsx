@@ -19,7 +19,7 @@ export default function Header({
       >
         {/* 🔹 Tombol toggle sidebar (mobile only) */}
         <button
-          className="lg:hidden mr-2 p-2 rounded-md bg-gray-100"
+          className="lg:hidden p-2 rounded-md ml-2"
           onClick={toggleSidebar}
         >
           <svg

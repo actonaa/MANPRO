@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import LogoFull from "../../img/logosirasa.png";
 import LogoSmall from "../../img/logo.png";
 import IconDashboard from "../../img/sidebar-icon/dashboard.png";
@@ -16,7 +15,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
-  const [activeMenu, setActiveMenu] = useState("Dashboard");
+  const location = useLocation();
 
   const menus = [
     { name: "Dashboard", icon: IconDashboard, path: "/dashboard" },
@@ -35,161 +34,118 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
 
   return (
     <>
-      {/* ☰ Tombol menu (hanya muncul di mobile) */}
-      <button
-        onClick={toggleSidebar}
-        className="fixed top-4 left-4 z-50 bg-[#00A9FF] text-white p-2 rounded-lg shadow-md lg:hidden"
-      >
-        {isOpen ? (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-5 h-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        ) : (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-5 h-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        )}
-      </button>
+      {/* Overlay ketika sidebar terbuka di mobile */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-40 z-40 lg:hidden"
+          onClick={toggleSidebar}
+        ></div>
+      )}
 
-      {/* 🧭 Sidebar */}
+      {/* Sidebar */}
       <div
-        className={`
-          fixed top-0 left-0 h-screen bg-white shadow-md flex flex-col z-40
-          transition-all duration-300
-          ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
-          ${isOpen ? "w-64" : "lg:w-20"}
+        className={`fixed top-0 left-0 h-full bg-white shadow-md z-50 flex flex-col
+          ${isOpen ? "w-64" : "w-20"} 
+          ${
+            // 🧠 Hanya tambahkan animasi di mobile
+            isOpen
+              ? "translate-x-0"
+              : "-translate-x-full lg:translate-x-0"
+          }
+          ${window.innerWidth < 1024 ? "transition-all duration-300" : ""}
+          lg:translate-x-0
         `}
       >
-        {/* 🏷 Logo */}
-        <div className="flex justify-center mb-6 mt-4">
+        {/* Logo */}
+        <div className="flex justify-center mb-6 mt-3">
           <img
             src={isOpen ? LogoFull : LogoSmall}
             alt="Logo"
-            className={`transition-all duration-300 ${
+            className={` ${
               isOpen ? "w-28" : "w-10"
             }`}
           />
         </div>
 
-        {/* 📋 Menu utama */}
-        <ul className="flex flex-col gap-2 px-2 relative">
+        {/* Menu Utama */}
+        <ul className="flex flex-col gap-2">
           {menus.map((item) => {
-            const isActive = activeMenu === item.name;
+            const isActive = location.pathname === item.path;
             return (
-              <li key={item.name} className="relative group">
+              <li key={item.name}>
                 <Link
                   to={item.path}
                   onClick={() => {
-                    setActiveMenu(item.name);
                     if (window.innerWidth < 1024) toggleSidebar();
                   }}
-                  className={`flex items-center gap-3 px-3 py-3 rounded-2xl cursor-pointer transition-all duration-200 ${
-                    isActive ? "text-white" : "text-gray-600 hover:bg-gray-100"
-                  }`}
-                  style={{
-                    backgroundColor: isActive ? "#00A9FF" : "transparent",
-                  }}
+                  className={`relative flex items-center h-12 rounded-xl cursor-pointer px-3 gap-3
+                    ${
+                      isActive
+                        ? "text-white bg-[#00A9FF]"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }
+                    ${!isOpen && "justify-center"}`}
                 >
-                  <img
-                    src={item.icon}
-                    alt={item.name}
-                    className={`min-w-[22px] min-h-[22px] w-6 h-6 transition-all duration-200 ${
-                      isActive ? "brightness-0 invert" : ""
-                    }`}
-                  />
-                  {/* teks hanya muncul jika sidebar dibuka */}
-                  <span
-                    className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${
-                      isOpen ? "ml-2 opacity-100" : "ml-0 opacity-0 w-0"
-                    }`}
-                  >
-                    {item.name}
-                  </span>
+                  {isActive && (
+                    <span className="absolute left-0 top-0 h-full w-1 bg-blue-500 rounded-r-md"></span>
+                  )}
+                  <div className="w-10 h-10 flex items-center justify-center flex-shrink-0">
+                    <img
+                      src={item.icon}
+                      alt={item.name}
+                      className={`w-5 h-5 ${
+                        isActive ? "brightness-0 invert" : ""
+                      }`}
+                    />
+                  </div>
+                  {isOpen && (
+                    <span className="whitespace-nowrap">
+                      {item.name}
+                    </span>
+                  )}
                 </Link>
-
-                {/* 🧩 Tooltip muncul ketika sidebar collapse */}
-                {!isOpen && (
-                  <span className="absolute left-16 top-1/2 -translate-y-1/2 bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 whitespace-nowrap transition-all duration-200">
-                    {item.name}
-                  </span>
-                )}
               </li>
             );
           })}
         </ul>
 
-        {/* ⚙️ Menu Pengaturan */}
-        <div className="mt-auto pt-3 border-t border-gray-200 px-2 mb-3 relative group">
+        {/* Menu Pengaturan */}
+        <div className="mt-auto pt-3 border-t border-gray-200">
           <Link
             to={settingMenu.path}
             onClick={() => {
-              setActiveMenu(settingMenu.name);
               if (window.innerWidth < 1024) toggleSidebar();
             }}
-            className={`flex items-center gap-3 px-3 py-3 rounded-2xl cursor-pointer transition-all duration-200 ${
-              activeMenu === settingMenu.name
-                ? "text-white"
-                : "text-gray-600 hover:bg-gray-100"
-            }`}
-            style={{
-              backgroundColor:
-                activeMenu === settingMenu.name ? "#00A9FF" : "transparent",
-            }}
+            className={`relative flex items-center h-12 rounded-xl cursor-pointer transition-all duration-200 px-3 gap-3
+              ${
+                location.pathname === settingMenu.path
+                  ? "text-white bg-[#00A9FF]"
+                  : "text-gray-600 hover:bg-gray-100"
+              }
+              ${!isOpen && "justify-center"}`}
           >
-            <img
-              src={settingMenu.icon}
-              alt={settingMenu.name}
-              className={`min-w-[22px] min-h-[22px] w-6 h-6 transition-all duration-200 ${
-                activeMenu === settingMenu.name ? "brightness-0 invert" : ""
-              }`}
-            />
-            <span
-              className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${
-                isOpen ? "ml-2 opacity-100" : "ml-0 opacity-0 w-0"
-              }`}
-            >
-              {settingMenu.name}
-            </span>
+            {location.pathname === settingMenu.path && (
+              <span className="absolute left-0 top-0 h-full w-1 bg-blue-500 rounded-r-md"></span>
+            )}
+            <div className="w-10 h-10 flex items-center justify-center flex-shrink-0">
+              <img
+                src={settingMenu.icon}
+                alt={settingMenu.name}
+                className={`w-5 h-5 ${
+                  location.pathname === settingMenu.path
+                    ? "brightness-0 invert"
+                    : ""
+                }`}
+              />
+            </div>
+            {isOpen && (
+              <span className="whitespace-nowrap">
+                {settingMenu.name}
+              </span>
+            )}
           </Link>
-
-          {/* 🧩 Tooltip Pengaturan */}
-          {!isOpen && (
-            <span className="absolute left-16 top-1/2 -translate-y-1/2 bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 whitespace-nowrap transition-all duration-200">
-              {settingMenu.name}
-            </span>
-          )}
         </div>
       </div>
-
-      {/* 🌫️ Overlay (mobile) */}
-      {isOpen && (
-        <div
-          onClick={toggleSidebar}
-          className="fixed inset-0 bg-black bg-opacity-30 z-30 lg:hidden"
-        ></div>
-      )}
     </>
   );
 }
