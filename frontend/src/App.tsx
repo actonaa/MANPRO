@@ -1,8 +1,6 @@
-function App() {
-  return (
-    <div>
-      <p className="text-5xl text-red-500">fahmi</p>
-    </div>
-  );
+// src/App.jsx
+import AppRoutes from "./routes/router";
+
+export default function App() {
+  return <AppRoutes />;
 }
-export default App;
