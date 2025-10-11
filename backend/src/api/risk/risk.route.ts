@@ -6,5 +6,8 @@ const router = Router();
 
 // Terapkan middleware keamanan pada rute ini
 router.get('/', authMiddleware, RiskController.getAllRisks);
+router.get('/:id', authMiddleware, RiskController.getRiskById);
+router.post("/", authMiddleware, RiskController.createRisk);
+router.put("/:id", authMiddleware, RiskController.updateRisk);
 
 export default router;

@@ -1,23 +1,17 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt, { type JwtPayload as OriginalJwtPayload } from "jsonwebtoken";
 
-// Payload JWT kustom sesuai kebutuhan aplikasi Anda
+// Struktur dasar payload JWT sesuai aplikasi Anda
 export interface CustomJwtPayload extends OriginalJwtPayload {
   sub: string;
   email: string;
+  name?: string;
   role: { role_id: string; role_name: string };
-  dinas: string;
-  bidang?: string;
-  seksi?: string;
-}
-
-// Tambahkan properti 'user' ke Request Express
-declare global {
-  namespace Express {
-    interface Request {
-      user?: CustomJwtPayload;
-    }
-  }
+  department?: { department_id: string; department_name: string };
+  division?: string;
+  section?: string | null;
+  phone_number?: string;
+  skills?: string[];
 }
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
@@ -45,9 +39,18 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     // 4. Verifikasi token
     const decoded = jwt.verify(token, secret);
 
-    // 5. Gunakan type guard agar aman
+    // 5. Pastikan decoded object
     if (typeof decoded === "object" && decoded !== null) {
-      req.user = decoded as CustomJwtPayload;
+      const payload = decoded as CustomJwtPayload;
+
+      // 🔑 Normalisasi supaya lebih gampang dipakai di service
+      req.user = {
+        ...payload,
+        department_id: payload.department?.department_id || null, // UUID department
+        department_name: payload.department?.department_name || null,
+        role_name: payload.role?.role_name?.toLowerCase().replace(/ /g, "_") || null
+      };
+
       return next();
     } else {
       return res.status(401).json({ message: "Payload token tidak valid." });

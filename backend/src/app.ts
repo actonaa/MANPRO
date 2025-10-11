@@ -9,15 +9,15 @@ const port = process.env.PORT || 8080;
 app.use(express.json());
 
 // Rute utama
-app.get('/api/v1', (req, res) => {
+app.get('/api', (req, res) => {
   res.send('API Manajemen Aset & Risiko Aktif!');
 });
 
 // Daftarkan rute aset
-app.use('/api/v1/assets', assetRoutes);
+app.use('/api/assets', assetRoutes);
 
 // Daftarkan rute risiko
-app.use('/api/v1/risks', riskRoutes);
+app.use('/api/risks', riskRoutes);
 
 app.listen(port, () => {
   console.log(`API Aset & Risiko berjalan di http://localhost:${port}`);
