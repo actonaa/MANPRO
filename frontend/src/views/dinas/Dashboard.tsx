@@ -1,16 +1,16 @@
 import { useState } from "react";
 import CardList from "../../components/card/CardList";
-import Layout from "../../components/contanct/Layout";
-import DistribusiKategori from "../../components/dashboard/DistribusiKategori";
-import RiskHeatmap from "../../components/dashboard/RiskHeatMap";
-import RisikoResidual from "../../components/dashboard/RisikoResidual";
-import PemeliharaanMendatang from "../../components/dashboard/PemeliharaanMendatang";
+import LayoutDinas from "../layout/LayoutDinas";
+import RiskHeatmap from "../../components/dashboard/dinas/RiskHeatMap";
+import RisikoResidual from "../../components/dashboard/dinas/RisikoResidual";
+import PemeliharaanMendatang from "../../components/dashboard/dinas/PemeliharaanMendatang";
 import TableAktivitas from "../../components/table/TableAktivitas";
+import DistribusiKategori from "../../components/dashboard/dinas/DistribusiKategori";
 
 export default function Dashboard() {
   const [searchQuery] = useState("");
   return (
-    <Layout>
+    <LayoutDinas>
       <h1 className="font-medium text-sm mb-4 md:text-2xl lg:text-[28px]">
         Dashboard
       </h1>
@@ -45,6 +45,6 @@ export default function Dashboard() {
         <RisikoResidual />
         <PemeliharaanMendatang />
       </div>
-    </Layout>
+    </LayoutDinas>
   );
 }

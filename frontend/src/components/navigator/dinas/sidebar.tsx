@@ -1,13 +1,4 @@
 import { Link, useLocation } from "react-router-dom";
-import LogoFull from "../../img/logosirasa.png";
-import LogoSmall from "../../img/logo.png";
-import IconDashboard from "../../img/sidebar-icon/dashboard.png";
-import IconAset from "../../img/sidebar-icon/Aset.png";
-import IconMaintenance from "../../img/sidebar-icon/Maintenance.png";
-import IconLaporan from "../../img/sidebar-icon/Laporan.png";
-import IconNotif from "../../img/sidebar-icon/Notif.png";
-import IconRisk from "../../img/sidebar-icon/Risk.png";
-import IconSetting from "../../img/sidebar-icon/Setting.png";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -18,17 +9,33 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
   const location = useLocation();
 
   const menus = [
-    { name: "Dashboard", icon: IconDashboard, path: "/dashboard" },
-    { name: "Kelola Aset", icon: IconAset, path: "/aset" },
-    { name: "Pemeliharaan", icon: IconMaintenance, path: "/pemeliharaan" },
-    { name: "Laporan", icon: IconLaporan, path: "/laporan" },
-    { name: "Notifikasi", icon: IconNotif, path: "/notifikasi" },
-    { name: "Manajemen Risiko", icon: IconRisk, path: "/manajemen-risiko" },
+    {
+      name: "Dashboard",
+      icon: "/sidebar-icon/dashboard.png",
+      path: "/dashboard",
+    },
+    { name: "Kelola Aset", icon: "/sidebar-icon/Aset.png", path: "/aset" },
+    {
+      name: "Pemeliharaan",
+      icon: "/sidebar-icon/Maintenance.png",
+      path: "/pemeliharaan",
+    },
+    { name: "Laporan", icon: "/sidebar-icon/Laporan.png", path: "/laporan" },
+    {
+      name: "Notifikasi",
+      icon: "/sidebar-icon/Notif.png",
+      path: "/notifikasi",
+    },
+    {
+      name: "Manajemen Risiko",
+      icon: "/sidebar-icon/Risk.png",
+      path: "/manajemen-risiko",
+    },
   ];
 
   const settingMenu = {
     name: "Pengaturan",
-    icon: IconSetting,
+    icon: "/sidebar-icon/Setting.png",
     path: "/pengaturan",
   };
 
@@ -57,7 +64,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
         {/* Logo */}
         <div className="flex justify-center mb-6 mt-3">
           <img
-            src={isOpen ? LogoFull : LogoSmall}
+            src={isOpen ? "/logo/logosirasa.png" : "/logo/logo.png"}
             alt="Logo"
             className={` ${isOpen ? "w-28" : "w-10"}`}
           />

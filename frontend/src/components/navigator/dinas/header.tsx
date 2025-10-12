@@ -1,4 +1,4 @@
-import Notifications from "../dashboard/Notifications";
+import Notifications from "../../dashboard/dinas/Notifications";
 
 interface HeaderProps {
   isSidebarOpen?: boolean;

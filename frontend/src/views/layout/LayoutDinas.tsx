@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import Header from "./header";
-import Sidebar from "./sidebar";
+import Header from "../../components/navigator/dinas/header";
+import Sidebar from "../../components/navigator/dinas/sidebar";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function LayoutDinas({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const location = useLocation(); // 🔁 deteksi perubahan route
