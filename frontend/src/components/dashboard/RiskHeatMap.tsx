@@ -14,7 +14,7 @@ export default function RiskHeatmap() {
   ];
 
   return (
-    <div className="bg-white p-5 rounded-xl shadow-sm w-full h-full">
+    <div className="bg-white p-5 rounded-xl shadow-lg w-full h-full">
       <h3 className="text-lg font-semibold text-gray-800 mb-3">
         Top 10 Risiko
       </h3>

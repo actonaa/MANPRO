@@ -22,14 +22,26 @@ export default function Dashboard() {
           <CardList title="Risiko Aktif" value="499" />
         </div>
       </div>
-      <div className="flex flex-col md:flex-row gap-6 mb-6 items-stretch">
-        <DistribusiKategori />
-        <RiskHeatmap />
+      {/* 📈 Distribusi & Risiko */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Distribusi Kategori */}
+        <div className="lg:col-span-1 w-full">
+          <DistribusiKategori />
+        </div>
+
+        {/* Top 10 Risiko */}
+        <div className="lg:col-span-1 w-full">
+          <RiskHeatmap />
+        </div>
       </div>
-      <div className="mb-6">
+
+      {/* 📋 Aktivitas Aset */}
+      <div className="w-full mb-6">
         <TableAktivitas searchQuery={searchQuery} />
       </div>
-      <div className="flex flex-col md:flex-row gap-6 mb-6 items-stretch">
+
+      {/* 📊 Risiko Residual & Pemeliharaan */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <RisikoResidual />
         <PemeliharaanMendatang />
       </div>
