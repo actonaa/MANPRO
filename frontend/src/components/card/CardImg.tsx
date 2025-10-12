@@ -10,7 +10,7 @@ type CardImageProps = {
   px?: string;
   justify?: string;
   fontWeight?: string;
-  onClick?: MouseEventHandler<HTMLButtonElement>; // ⬅️ props event klik
+  onClick?: MouseEventHandler<HTMLButtonElement>;
 };
 
 export default function ActionButton({
@@ -26,15 +26,31 @@ export default function ActionButton({
   onClick,
 }: CardImageProps) {
   const [bg, setBg] = useState(color);
+  const [border, setBorder] = useState(borderColor);
+
+  const handleMouseEnter = () => {
+    if (color === "white") {
+      setBg("#f9fafb");
+      setBorder("#d1d5dc");
+    } else {
+      setBg(hoverColor);
+      setBorder(hoverColor || borderColor);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setBg(color);
+    setBorder(borderColor);
+  };
 
   return (
     <button
       onClick={onClick}
-      onMouseEnter={() => setBg(hoverColor)}
-      onMouseLeave={() => setBg(color)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       style={{
-        borderColor: borderColor,
         backgroundColor: bg,
+        borderColor: border,
       }}
       className={`
         flex items-center ${justify} gap-2 border rounded-[14px]

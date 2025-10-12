@@ -2,17 +2,26 @@ import Layout from "../../components/contanct/Layout";
 import CardImg from "../../components/card/CardImg";
 import AssetSummary from "../../components/kelola-asset/AssetSummary";
 import { useNavigate } from "react-router-dom";
+import FilterDate from "../../components/filter/FilterDate";
+import Filter from "../../components/filter/Filter";
 
 export default function Aset() {
   const navigate = useNavigate();
 
   const handleExport = () => {
     console.log("Export data aset...");
-    // logika export file bisa kamu taruh di sini
   };
 
   const handleNavigate = () => {
     navigate("/tambah-aset");
+  };
+
+  const handleStatusChange = (val: string) => {
+    console.log("Status dipilih:", val);
+  };
+
+  const handleKategoriChange = (val: string) => {
+    console.log("Kategori dipilih:", val);
   };
 
   return (
@@ -49,8 +58,22 @@ export default function Aset() {
         </div>
       </div>
 
-      <div>
+      <div className="mb-5">
         <AssetSummary />
+      </div>
+
+      <div className="flex gap-3">
+        <FilterDate />
+        <Filter
+          label="Kategori"
+          options={["Aset TI", "Aset Non TI"]}
+          onSelect={handleKategoriChange}
+        />
+        <Filter
+          label="Status"
+          options={["Aktif", "Perbaikan", "Tidak Aktif"]}
+          onSelect={handleStatusChange}
+        />
       </div>
     </Layout>
   );
