@@ -1,210 +1,80 @@
-// /* eslint-disable @typescript-eslint/no-explicit-any */
-// import { useEffect, useState } from "react";
-// import Layout from "../../components/contanct/Layout";
-// import TambahAssetButton from "../../components/kelola-asset/TambahAsset";
-// import ExportButton from "../../components/kelola-asset/Export";
-// import Filterbar from "../../components/kelola-asset/Filterbar";
-// import AssetCards from "../../components/kelola-asset/AssetCard";
+import Layout from "../../components/contanct/Layout";
+import CardImg from "../../components/card/CardImg";
+import AssetSummary from "../../components/kelola-asset/AssetSummary";
+import { useNavigate } from "react-router-dom";
+import FilterDate from "../../components/filter/FilterDate";
+import Filter from "../../components/filter/Filter";
 
-// export default function Aset() {
-//   const [dataAset, setDataAset] = useState<any[]>([]);
-//   const [loading, setLoading] = useState(true);
+export default function Aset() {
+  const navigate = useNavigate();
 
-//   // pagination
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const itemsPerPage = 10;
+  const handleExport = () => {
+    console.log("Export data aset...");
+  };
 
-//   // fungsi ambil data dari API
-//   const fetchDataAset = async () => {
-//     try {
-//       const response = await fetch("http://localhost:5000/api/aset");
-//       const result = await response.json();
-//       setDataAset(result);
-//     } catch (error) {
-//       console.error("Gagal mengambil data aset:", error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
+  const handleNavigate = () => {
+    navigate("/tambah-aset");
+  };
 
-//   useEffect(() => {
-//     fetchDataAset();
-//   }, []);
+  const handleStatusChange = (val: string) => {
+    console.log("Status dipilih:", val);
+  };
 
-//   // Fungsi untuk memberi warna status
-//   const getStatusColor = (status: string) => {
-//     switch (status) {
-//       case "Aktif":
-//         return "bg-green-100 text-green-700";
-//       case "Perbaikan":
-//         return "bg-yellow-100 text-yellow-700";
-//       case "Tidak aktif":
-//         return "bg-red-100 text-red-700";
-//       default:
-//         return "bg-gray-100 text-gray-700";
-//     }
-//   };
+  const handleKategoriChange = (val: string) => {
+    console.log("Kategori dipilih:", val);
+  };
 
-//   // Hitung data untuk halaman saat ini
-//   const totalPages = Math.ceil(dataAset.length / itemsPerPage);
-//   const startIndex = (currentPage - 1) * itemsPerPage;
-//   const currentData = dataAset.slice(startIndex, startIndex + itemsPerPage);
+  return (
+    <Layout>
+      <h1 className="font-medium text-sm mb-4">Kelola Aset</h1>
+      <div className="flex gap-2 mb-5">
+        <div className="w-[27%]">
+          <CardImg
+            title="Export"
+            img="/img/kelola-asset/export.png"
+            justify="justify-center"
+            onClick={handleExport}
+          />
+        </div>
+        <div className="w-[27%]">
+          <CardImg
+            title="Import"
+            img="/img/kelola-asset/import.png"
+            justify="justify-center"
+          />
+        </div>
+        <div className="w-[46%]">
+          <CardImg
+            title="Tambah Aset"
+            img="/img/kelola-asset/tambah-asset.png"
+            color="#00a9ff"
+            hoverColor="#a0e9ff"
+            borderColor="#00a9ff"
+            textColor="white"
+            px="2"
+            fontWeight="font-medium"
+            onClick={handleNavigate}
+          />
+        </div>
+      </div>
 
-//   const handleNext = () => {
-//     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-//   };
+      <div className="mb-5">
+        <AssetSummary />
+      </div>
 
-//   const handlePrev = () => {
-//     if (currentPage > 1) setCurrentPage(currentPage - 1);
-//   };
-
-//   return (
-//     <Layout>
-//       <div className="p-4 sm:p-6">
-//         {/* ✅ Header Responsive */}
-//         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-//           <h1 className="text-xl font-bold text-gray-800">Kelola Aset</h1>
-//           <TambahAssetButton />
-//         </div>
-
-//         {/* ✅ Asset Cards di bawah header, full width */}
-//         <div className="mb-6 w-full">
-//           <AssetCards
-//             total={dataAset.length}
-//             perluPerbaikan={
-//               dataAset.filter((a) => a.status === "Perbaikan").length
-//             }
-//             akanDihapus={
-//               dataAset.filter((a) => a.status === "Tidak aktif").length
-//             }
-//             totalNilai={
-//               "Rp " +
-//               (
-//                 dataAset.reduce((acc, a) => acc + (a.nilai || 0), 0) / 1_000_000
-//               ).toFixed(1) +
-//               "M"
-//             }
-//           />
-//         </div>
-
-//         {/* ✅ Filter & Export Responsif */}
-//         <div className="flex flex-col sm:flex-row flex-wrap justify-between items-start sm:items-center mb-6 gap-3">
-//           <Filterbar />
-//           <ExportButton />
-//         </div>
-
-//         {/* ✅ Table */}
-//         <div className="bg-white shadow-md rounded-lg overflow-x-auto">
-//           {loading ? (
-//             <p className="p-4 text-gray-500">Memuat data aset...</p>
-//           ) : (
-//             <>
-//               <table className="min-w-full text-sm text-left text-gray-700">
-//                 <thead className="bg-blue-500 text-white">
-//                   <tr>
-//                     <th className="px-4 py-3 font-semibold">ID Aset</th>
-//                     <th className="px-4 py-3 font-semibold">Nama Aset</th>
-//                     <th className="px-4 py-3 font-semibold">Kategori</th>
-//                     <th className="px-4 py-3 font-semibold">Lokasi</th>
-//                     <th className="px-4 py-3 font-semibold">Status</th>
-//                     <th className="px-4 py-3 font-semibold">
-//                       Tanggal Perolehan
-//                     </th>
-//                     <th className="px-4 py-3 font-semibold">Akses</th>
-//                   </tr>
-//                 </thead>
-
-//                 <tbody className="divide-y">
-//                   {currentData.length > 0 ? (
-//                     currentData.map((item) => (
-//                       <tr key={item.id} className="hover:bg-gray-50">
-//                         <td className="px-4 py-3">{item.id}</td>
-//                         <td className="px-4 py-3">{item.nama}</td>
-//                         <td className="px-4 py-3">{item.kategori}</td>
-//                         <td className="px-4 py-3">{item.lokasi}</td>
-//                         <td className="px-4 py-3">
-//                           <span
-//                             className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-//                               item.status
-//                             )}`}
-//                           >
-//                             {item.status}
-//                           </span>
-//                         </td>
-//                         <td className="px-4 py-3">{item.tanggalPerolehan}</td>
-//                         <td className="px-4 py-3 text-blue-600 font-medium cursor-pointer hover:underline">
-//                           Lihat
-//                         </td>
-//                       </tr>
-//                     ))
-//                   ) : (
-//                     <tr>
-//                       <td
-//                         colSpan={7}
-//                         className="text-center py-6 text-gray-500 italic"
-//                       >
-//                         Tidak ada data aset yang tersedia
-//                       </td>
-//                     </tr>
-//                   )}
-//                 </tbody>
-//               </table>
-
-//               {/* ✅ Pagination Responsif */}
-//               <div className="flex flex-col sm:flex-row justify-between items-center text-sm text-gray-600 p-4 gap-4">
-//                 <span className="text-center sm:text-left w-full sm:w-auto">
-//                   Menampilkan {startIndex + 1}–
-//                   {Math.min(startIndex + itemsPerPage, dataAset.length)} dari{" "}
-//                   {dataAset.length} data aset
-//                 </span>
-
-//                 <div className="flex justify-center w-full sm:w-auto">
-//                   <div className="flex items-center gap-2 flex-wrap">
-//                     {Array.from({ length: totalPages }, (_, i) => (
-//                       <button
-//                         key={i}
-//                         onClick={() => setCurrentPage(i + 1)}
-//                         className={`w-8 h-8 flex items-center justify-center rounded-full border font-semibold transition ${
-//                           currentPage === i + 1
-//                             ? "bg-blue-500 text-white border-blue-500"
-//                             : "border-gray-300 text-gray-700 hover:bg-blue-100"
-//                         }`}
-//                       >
-//                         {i + 1}
-//                       </button>
-//                     ))}
-//                   </div>
-//                 </div>
-
-//                 <div className="flex justify-end w-full sm:w-auto gap-2">
-//                   <button
-//                     onClick={handlePrev}
-//                     disabled={currentPage === 1}
-//                     className={`border border-gray-300 rounded-lg px-3 py-1 transition ${
-//                       currentPage === 1
-//                         ? "text-gray-400 cursor-not-allowed"
-//                         : "text-gray-600 hover:bg-gray-100"
-//                     }`}
-//                   >
-//                     Sebelumnya
-//                   </button>
-//                   <button
-//                     onClick={handleNext}
-//                     disabled={currentPage === totalPages}
-//                     className={`border border-gray-300 rounded-lg px-3 py-1 transition ${
-//                       currentPage === totalPages
-//                         ? "text-gray-400 cursor-not-allowed"
-//                         : "text-gray-600 hover:bg-gray-100"
-//                     }`}
-//                   >
-//                     Selanjutnya
-//                   </button>
-//                 </div>
-//               </div>
-//             </>
-//           )}
-//         </div>
-//       </div>
-//     </Layout>
-//   );
-// }
+      <div className="flex gap-3">
+        <FilterDate />
+        <Filter
+          label="Kategori"
+          options={["Aset TI", "Aset Non TI"]}
+          onSelect={handleKategoriChange}
+        />
+        <Filter
+          label="Status"
+          options={["Aktif", "Perbaikan", "Tidak Aktif"]}
+          onSelect={handleStatusChange}
+        />
+      </div>
+    </Layout>
+  );
+}

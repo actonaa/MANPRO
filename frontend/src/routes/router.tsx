@@ -1,16 +1,14 @@
 // src/routes/AppRoutes.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "../views/dinas/Dashboard";
-// import KelolaAset from "../views/dinas/KelolaAset";
-import KelolaAsetDua from "../views/dinas/KelolaAsetDua";
+import KelolaAset from "../views/dinas/KelolaAset";
 
 export default function AppRoutes() {
   return (
     <Router>
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />
-        {/* <Route path="/aset" element={<KelolaAset />} /> */}
-        <Route path="/asetdua" element={<KelolaAsetDua />} />
+        <Route path="/aset" element={<KelolaAset />} />
       </Routes>
     </Router>
   );
