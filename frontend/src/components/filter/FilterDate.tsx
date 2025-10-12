@@ -37,14 +37,14 @@ export default function FilterDate() {
       ref={calendarRef}
     >
       {/* FILTER BUTTON */}
-      <div className="relative w-full sm:w-64 md:w-72 lg:w-80">
+      <div className="relative w-full lg:w-28">
         <button
           onClick={() => setShowCalendar(!showCalendar)}
           className="flex justify-between items-center w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-gray-700 shadow-sm hover:shadow focus:ring-2 focus:ring-blue-400 transition"
         >
           <div className="flex items-center gap-2 truncate">
-            <CalendarDays className="w-5 h-5 text-gray-500 flex-shrink-0" />
-            <span className="truncate">
+            <CalendarDays className="w-5 h-5 text-[#6B7280] flex-shrink-0" />
+            <span className="truncate text-sm font-semibold text-[#6B7280]">
               {startDate && endDate ? `${startDate} — ${endDate}` : "Filter"}
             </span>
           </div>
@@ -59,10 +59,10 @@ export default function FilterDate() {
         {showCalendar && (
           <div
             className="
-              absolute left-0 sm:left-auto sm:right-0 mt-2 
+              absolute left-0 mt-2 
               p-4 bg-white border border-gray-200 rounded-lg shadow-lg 
               flex flex-col gap-3 
-              w-full min-w-[250px]
+              w-full min-w-[250px] lg:min-w-[375px]
               max-w-[90vw]
             "
           >

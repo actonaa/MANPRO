@@ -22,7 +22,7 @@ export default function ActionButton({
   textColor = "gray-600",
   px = "6",
   justify,
-  fontWeight,
+  fontWeight = "font-medium",
   onClick,
 }: CardImageProps) {
   const [bg, setBg] = useState(color);
@@ -52,11 +52,7 @@ export default function ActionButton({
         backgroundColor: bg,
         borderColor: border,
       }}
-      className={`
-        flex items-center ${justify} gap-2 border rounded-[14px]
-        px-${px} py-3 active:scale-[0.98] transition-all duration-200
-        shadow-sm w-full
-      `}
+      className={`flex items-center ${justify} gap-2 border rounded-[14px] px-${px} py-3 lg:py-0 active:scale-[0.98] transition-all duration-200 shadow-sm w-full lg:w-auto`}
     >
       <img src={img} alt={title} className="w-5 h-5" />
       <span className={`text-${textColor} text-sm ${fontWeight}`}>{title}</span>

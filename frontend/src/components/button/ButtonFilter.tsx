@@ -39,16 +39,15 @@ export default function Filter({ label, options, onSelect }: FilterProps) {
   }, [isOpen]);
 
   return (
-    <div
-      className="flex flex-wrap items-center gap-3 w-full md:w-auto"
-      ref={dropdownRef}
-    >
-      <div className="relative w-full sm:w-40">
+    <div className="flex flex-wrap items-center gap-3 w-full" ref={dropdownRef}>
+      <div className="relative w-full lg:w-28">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex justify-between items-center w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-gray-700 shadow-sm hover:shadow focus:ring-2 focus:ring-blue-400 transition"
+          className="flex justify-between items-center w-full bg-white border border-gray-300 rounded-lg lg:rounded-[12px] px-4 py-2 text-gray-700 shadow-sm hover:shadow focus:ring-2 focus:ring-blue-400 transition"
         >
-          <span>{selected || label}</span>
+          <span className="text-sm font-semibold text-[#6B7280]">
+            {selected || label}
+          </span>
           <ChevronDown
             className={`w-4 h-4 transition-transform ${
               isOpen ? "rotate-180" : ""
