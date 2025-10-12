@@ -1,56 +1,50 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { CalendarDays, ChevronDown } from "lucide-react";
 
-export default function Filterbar() {
-  const [status, setStatus] = useState("");
-  const [isStatusOpen, setIsStatusOpen] = useState(false);
+export default function FilterDate() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [showCalendar, setShowCalendar] = useState(false);
 
+  // 🪄 Buat referensi ke elemen dropdown
+  const calendarRef = useRef<HTMLDivElement | null>(null);
+
+  // 🧠 useEffect untuk deteksi klik di luar elemen
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        calendarRef.current &&
+        !calendarRef.current.contains(e.target as Node)
+      ) {
+        setShowCalendar(false);
+      }
+    };
+
+    if (showCalendar) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showCalendar]);
+
   return (
-    <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-      {/* STATUS BUTTON */}
-      <div className="relative w-full sm:w-40">
-        <button
-          onClick={() => setIsStatusOpen(!isStatusOpen)}
-          className="flex justify-between items-center w-full bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 shadow-sm hover:shadow focus:ring-2 focus:ring-blue-400 transition"
-        >
-          <span>{status || "Status"}</span>
-          <ChevronDown
-            className={`w-4 h-4 transition-transform ${
-              isStatusOpen ? "rotate-180" : ""
-            }`}
-          />
-        </button>
-
-        {isStatusOpen && (
-          <div className="absolute mt-1 bg-white border border-gray-200 rounded-lg shadow-md w-full z-10">
-            {["Aktif", "Perbaikan", "Tidak Aktif"].map((s) => (
-              <button
-                key={s}
-                onClick={() => {
-                  setStatus(s);
-                  setIsStatusOpen(false);
-                }}
-                className="block w-full text-left px-4 py-2 hover:bg-blue-50 text-gray-700"
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
+    <div
+      className="flex flex-wrap items-center gap-3 w-full md:w-auto"
+      ref={calendarRef}
+    >
       {/* FILTER BUTTON */}
-      <div className="relative w-full sm:w-64 md:w-72 lg:w-80">
+      <div className="relative w-full lg:w-28">
         <button
           onClick={() => setShowCalendar(!showCalendar)}
-          className="flex justify-between items-center w-full bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 shadow-sm hover:shadow focus:ring-2 focus:ring-blue-400 transition"
+          className="flex justify-between items-center w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-gray-700 shadow-sm hover:shadow focus:ring-2 focus:ring-blue-400 transition"
         >
           <div className="flex items-center gap-2 truncate">
-            <CalendarDays className="w-5 h-5 text-gray-500 flex-shrink-0" />
-            <span className="truncate">
+            <CalendarDays className="w-5 h-5 text-[#6B7280] flex-shrink-0" />
+            <span className="truncate text-sm font-semibold text-[#6B7280]">
               {startDate && endDate ? `${startDate} — ${endDate}` : "Filter"}
             </span>
           </div>
@@ -65,11 +59,11 @@ export default function Filterbar() {
         {showCalendar && (
           <div
             className="
-              absolute left-0 sm:left-auto sm:right-0 mt-2 
+              absolute left-0 mt-2 
               p-4 bg-white border border-gray-200 rounded-lg shadow-lg 
               flex flex-col gap-3 
-              w-full sm:w-auto min-w-[250px] sm:min-w-[350px]
-              max-w-[90vw] sm:max-w-none z-20
+              w-full min-w-[250px] lg:min-w-[375px]
+              max-w-[90vw]
             "
           >
             {/* DARI & SAMPAI */}
@@ -97,7 +91,7 @@ export default function Filterbar() {
               </div>
             </div>
 
-            {/* 🔵 BUTTON FILTER DI BAWAH KANAN */}
+            {/* 🔵 BUTTON FILTER */}
             <div className="flex justify-end w-full mt-2">
               <button
                 onClick={() => setShowCalendar(false)}

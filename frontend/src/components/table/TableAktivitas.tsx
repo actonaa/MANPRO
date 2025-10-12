@@ -1,10 +1,10 @@
-interface AktivitasAssetProps {
+interface TableAktivitasProps {
   searchQuery?: string;
 }
 
-export default function AktivitasAsset({
+export default function TableAktivitas({
   searchQuery = "",
-}: AktivitasAssetProps) {
+}: TableAktivitasProps) {
   const aktivitas = [
     {
       waktu: "10 Oktober 2025",
@@ -39,8 +39,8 @@ export default function AktivitasAsset({
   );
 
   return (
-    <div className="bg-white p-5 w-full">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">
+    <div className="bg-white p-5 w-full rounded-xl shadow-lg">
+      <h2 className="text-[22px] font-semibold text-black mb-4">
         Aktivitas Terbaru
       </h2>
 
@@ -75,26 +75,30 @@ export default function AktivitasAsset({
       </div>
 
       {/* 💻 Tampilan Desktop (Table Style) */}
-      <div className="hidden lg:block overflow-x-auto">
-        <table className="w-full text-sm text-left text-gray-700 border-separate border-spacing-y-2">
-          <thead className="text-gray-500 text-xs uppercase">
-            <tr>
-              <th className="px-4 py-2">WAKTU</th>
-              <th className="px-4 py-2">JENIS AKTIVITAS</th>
-              <th className="px-4 py-2">DESKRIPSI</th>
-              <th className="px-4 py-2">STATUS</th>
+      <div className="hidden lg:block overflow-x-auto rounded-lg border border-gray-200">
+        <table className="min-w-full border-collapse rounded-lg">
+          <thead>
+            <tr className="text-left text-xs text-[#6B7280]">
+              <th className="px-4 py-[20px] font-semibold text-center">
+                WAKTU
+              </th>
+              <th className="px-4 py-[20px] font-semibold">JENIS AKTIVITAS</th>
+              <th className="px-4 py-[20px] font-semibold">DESKRIPSI</th>
+              <th className="px-4 py-[20px] font-semibold text-center">
+                STATUS
+              </th>
             </tr>
           </thead>
           <tbody>
             {filteredAktivitas.map((item, idx) => (
               <tr
                 key={idx}
-                className="bg-white hover:bg-gray-50 transition rounded-lg shadow-sm border border-gray-100"
+                className="border-t border-gray-200 text-xs font-semibold"
               >
-                <td className="px-4 py-3 whitespace-nowrap">{item.waktu}</td>
-                <td className="px-4 py-3 whitespace-nowrap">{item.jenis}</td>
-                <td className="px-4 py-3">{item.deskripsi}</td>
-                <td className="px-4 py-3">
+                <td className="px-4 py-[20px] text-center">{item.waktu}</td>
+                <td className="px-4 py-[20px]">{item.jenis}</td>
+                <td className="px-4 py-[20px]">{item.deskripsi}</td>
+                <td className="px-4 py-[20px] text-center">
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-medium ${item.warna}`}
                   >
@@ -103,17 +107,6 @@ export default function AktivitasAsset({
                 </td>
               </tr>
             ))}
-
-            {filteredAktivitas.length === 0 && (
-              <tr>
-                <td
-                  colSpan={4}
-                  className="text-center text-gray-500 py-4 italic"
-                >
-                  Tidak ada aktivitas yang cocok
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
       </div>
