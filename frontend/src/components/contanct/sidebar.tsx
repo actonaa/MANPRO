@@ -19,7 +19,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
 
   const menus = [
     { name: "Dashboard", icon: IconDashboard, path: "/dashboard" },
-    { name: "Kelola Aset", icon: IconAset, path: "/kelola-aset" },
+    { name: "Kelola Aset", icon: IconAset, path: "/aset" },
     { name: "Pemeliharaan", icon: IconMaintenance, path: "/pemeliharaan" },
     { name: "Laporan", icon: IconLaporan, path: "/laporan" },
     { name: "Notifikasi", icon: IconNotif, path: "/notifikasi" },
@@ -48,9 +48,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
           ${isOpen ? "w-64" : "w-20"} 
           ${
             // 🧠 Hanya tambahkan animasi di mobile
-            isOpen
-              ? "translate-x-0"
-              : "-translate-x-full lg:translate-x-0"
+            isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
           }
           ${window.innerWidth < 1024 ? "transition-all duration-300" : ""}
           lg:translate-x-0
@@ -61,9 +59,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
           <img
             src={isOpen ? LogoFull : LogoSmall}
             alt="Logo"
-            className={` ${
-              isOpen ? "w-28" : "w-10"
-            }`}
+            className={` ${isOpen ? "w-28" : "w-10"}`}
           />
         </div>
 
@@ -99,9 +95,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
                     />
                   </div>
                   {isOpen && (
-                    <span className="whitespace-nowrap">
-                      {item.name}
-                    </span>
+                    <span className="whitespace-nowrap">{item.name}</span>
                   )}
                 </Link>
               </li>
@@ -139,9 +133,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
               />
             </div>
             {isOpen && (
-              <span className="whitespace-nowrap">
-                {settingMenu.name}
-              </span>
+              <span className="whitespace-nowrap">{settingMenu.name}</span>
             )}
           </Link>
         </div>

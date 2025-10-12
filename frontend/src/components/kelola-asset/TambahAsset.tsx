@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import tambahAssetIcon from "../../img/kelola-asset/tambah-asset.png";
 
 export default function TambahAssetButton() {
   const navigate = useNavigate();
@@ -11,14 +10,14 @@ export default function TambahAssetButton() {
   return (
     <button
       onClick={handleClick}
-      className="flex items-center gap-2 bg-[#007DFA] text-white font-semibold py-2 px-4 rounded-lg hover:bg-secondary transition-all duration-300"
+      className="flex items-center gap-2 bg-[#007DFA] text-white font-medium px-2 py-3 rounded-lg hover:bg-secondary transition-all duration-300"
     >
       <img
-        src={tambahAssetIcon}
+        src="/img/kelola-asset/tambah-aset.png"
         alt="Tambah Aset"
-        className="w-5 h-5 object-contain"
+        className="w-5 h-5 font-bold"
       />
-      <span>Tambah Aset</span>
+      <span className="text-sm">Tambah Aset</span>
     </button>
   );
 }
