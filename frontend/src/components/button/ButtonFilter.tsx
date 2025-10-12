@@ -7,7 +7,11 @@ type FilterProps = {
   onSelect?: (value: string) => void;
 };
 
-export default function Filter({ label, options, onSelect }: FilterProps) {
+export default function ButtonFilter({
+  label,
+  options,
+  onSelect,
+}: FilterProps) {
   const [selected, setSelected] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);

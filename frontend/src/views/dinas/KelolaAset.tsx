@@ -27,7 +27,9 @@ export default function Aset() {
 
   return (
     <Layout>
-      <h1 className="font-medium text-sm mb-4 lg:text-[28px]">Kelola Aset</h1>
+      <h1 className="font-medium text-sm mb-4 md:text-2xl lg:text-[28px]">
+        Kelola Aset
+      </h1>
       <div className="flex gap-2 mb-5 md:hidden">
         <div className="w-[27%]">
           <ButtonImg
@@ -60,7 +62,7 @@ export default function Aset() {
       </div>
 
       <div className="mb-5 overflow-x-auto pb-6 md:pb-0 md:overflow-x-visible">
-        <div className="flex gap-4 min-w-[1000px]">
+        <div className="flex gap-4 min-w-[1000px] md:grid md:grid-cols-2 md:min-w-0 lg:flex lg:min-w-[1000px]">
           <CardList title="Total Aset" value="1,250" />
           <CardList title="Aset Perlu Perbaikan" value="560" />
           <CardList title="Aset Akan Dihapus" value="200" />
@@ -83,7 +85,7 @@ export default function Aset() {
       </div>
 
       {/* Responsive Laptop */}
-      <h1 className="hidden md:block font-medium text-sm mb-4 text-[28px]">
+      <h1 className="hidden md:block font-medium text-sm mb-4 md:text-2xl lg:text-[28px]">
         Data Aset
       </h1>
 

@@ -33,7 +33,7 @@ export default function TableAset() {
       case "Perbaikan":
         return "bg-yellow-200 text-yellow-800";
       case "Tidak Aktif":
-        return "bg-red-200 text-red-800";
+        return "bg-red-200 text-red-800 md:px-5";
       default:
         return "bg-gray-200 text-gray-800";
     }
@@ -59,19 +59,19 @@ export default function TableAset() {
               key={item.id}
               className="border-b border-b-[#ddd] hover:bg-gray-50"
             >
-              <td className="py-5 px-4 text-[#333] font-semibold text-[17px]">
+              <td className="py-5 px-4 text-[#333] font-semibold lg:text-[17px]">
                 {item.id}
               </td>
-              <td className="py-5 px-4 text-[#666] font-semibold text-[17px]">
+              <td className="py-5 px-4 text-[#666] font-semibold lg:text-[17px]">
                 {item.name}
               </td>
-              <td className="py-5 px-4 text-[#666] font-semibold text-[17px]">
+              <td className="py-5 px-4 text-[#666] font-semibold lg:text-[17px]">
                 {item.category}
               </td>
-              <td className="py-5 px-4 text-[#666] font-semibold text-[17px]">
+              <td className="py-5 px-4 text-[#666] font-semibold lg:text-[17px]">
                 {item.location}
               </td>
-              <td className="py-5 px-4 text-[#666] font-semibold text-[17px]">
+              <td className="py-5 px-4 text-[#666] font-semibold lg:text-[17px]">
                 <span
                   className={`px-7 py-2 rounded-[16px] text-base font-normal ${getStatusColor(
                     item.status
@@ -80,7 +80,7 @@ export default function TableAset() {
                   {item.status}
                 </span>
               </td>
-              <td className="py-5 px-4 text-[#666] font-semibold text-[17px]">
+              <td className="py-5 px-4 text-[#666] font-semibold lg:text-[17px]">
                 {item.date}
               </td>
               <td className="py-5 px-10 text-[#0095E8] font-medium cursor-pointer hover:underline">
