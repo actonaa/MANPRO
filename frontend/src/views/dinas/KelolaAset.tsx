@@ -89,9 +89,9 @@ export default function Aset() {
         Data Aset
       </h1>
 
-      <div className="hidden md:block shadow-xl bg-white rounded-t-[12px]">
+      <div className="hidden md:block shadow-xl bg-white rounded-[12px]">
         <div className="border-b border-[#ddd]">
-          <div className="flex justify-between p-8">
+          <div className="flex justify-between px-4 py-8">
             <div className="flex gap-3">
               <ButtonFilter
                 label="Kategori"
