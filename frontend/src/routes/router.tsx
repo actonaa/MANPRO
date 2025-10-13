@@ -2,6 +2,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "../views/dinas/Dashboard";
 import KelolaAset from "../views/dinas/KelolaAset";
+import Test from "../views/dinas/test";
 
 export default function AppRoutes() {
   return (
@@ -9,6 +10,7 @@ export default function AppRoutes() {
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/aset" element={<KelolaAset />} />
+        <Route path="/test" element={<Test />} />
       </Routes>
     </Router>
   );
