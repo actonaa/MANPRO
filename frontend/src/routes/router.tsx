@@ -10,7 +10,7 @@ export default function AppRoutes() {
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/aset" element={<KelolaAset />} />
-        <Route path="/test" element={<Test />} />
+        <Route path="/aset/tambah" element={<Test />} />
       </Routes>
     </Router>
   );
