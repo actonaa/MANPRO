@@ -1,5 +1,5 @@
 import React from "react";
-import StatusBadge from "../../../status/StatusBadge";
+import StatusBadge from "../../status/StatusBadge";
 
 interface InformasiUtamaProps {
   merk: string;

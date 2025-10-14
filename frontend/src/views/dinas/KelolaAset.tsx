@@ -1,142 +1,84 @@
 import LayoutDinas from "../layout/LayoutDinas";
-import ButtonImg from "../../components/button/ButtonImg";
-import { useNavigate } from "react-router-dom";
-import FilterDate from "../../components/filter/FilterDate";
-import ButtonFilter from "../../components/button/ButtonFilter";
-import CardList from "../../components/card/CardList";
-import TableAset from "../../components/table/TableAset";
+import InformasiUtama from "../../components/kelola-asset/dinas/InformasiUtama";
+import JadwalPemeliharaan from "../../components/kelola-asset/dinas/JadwalPemeliharaan";
+import KeterkaitanRisiko from "../../components/kelola-asset/dinas/KeterkaitanRisiko";
+import Lampiran from "../../components/kelola-asset/dinas/Lampiran";
+import RiwayatAktivitas from "../../components/kelola-asset/dinas/RiwayatAktivitas";
+import ScanBarcode from "../../components/kelola-asset/dinas/ScanBarcode";
+import SiklusHidup from "../../components/kelola-asset/dinas/SiklusHidup";
 
-export default function Aset() {
-  const navigate = useNavigate();
-
-  const handleExport = () => {
-    console.log("Export data aset...");
-  };
-
-  const handleNavigate = () => {
-    navigate("/tambah-aset");
-  };
-
-  const handleStatusChange = (val: string) => {
-    console.log("Status dipilih:", val);
-  };
-
-  const handleKategoriChange = (val: string) => {
-    console.log("Kategori dipilih:", val);
-  };
-
+export default function KelolaAset() {
   return (
     <LayoutDinas>
-      <h1 className="font-medium text-sm mb-4 md:text-2xl lg:text-[28px]">
-        Kelola Aset
-      </h1>
-      <div className="flex gap-2 mb-5 md:hidden">
-        <div className="w-[27%]">
-          <ButtonImg
-            title="Export"
-            img="/kelola-asset/export.png"
-            justify="justify-center"
-            onClick={handleExport}
-          />
-        </div>
-        <div className="w-[27%]">
-          <ButtonImg
-            title="Import"
-            img="/kelola-asset/import.png"
-            justify="justify-center"
-          />
-        </div>
-        <div className="w-[46%]">
-          <ButtonImg
-            title="Tambah Aset"
-            img="/kelola-asset/tambah-asset.png"
-            color="#00a9ff"
-            hoverColor="#a0e9ff"
-            borderColor="#00a9ff"
-            textColor="white"
-            px="2"
-            fontWeight="font-medium"
-            onClick={handleNavigate}
-          />
-        </div>
-      </div>
-
-      <div className="mb-5 overflow-x-auto pb-6 md:pb-0 md:overflow-x-visible">
-        <div className="flex gap-4 min-w-[1000px] md:grid md:grid-cols-2 md:min-w-0 lg:flex lg:min-w-[1000px]">
-          <CardList title="Total Aset" value="1,250" />
-          <CardList title="Aset Perlu Perbaikan" value="560" />
-          <CardList title="Aset Akan Dihapus" value="200" />
-          <CardList title="Total Nilai Aset" value="Rp. 2,5M" />
-        </div>
-      </div>
-
-      <div className="flex gap-3 md:hidden">
-        <FilterDate />
-        <ButtonFilter
-          label="Kategori"
-          options={["Aset TI", "Aset Non TI"]}
-          onSelect={handleKategoriChange}
+      <div className="space-y-8">
+        <InformasiUtama
+          merk="Asus Zenbook 247"
+          penanggungJawab="Dinas TI"
+          status="Aktif"
+          nomorSerial="09102920"
+          kategori="TI"
+          subKategori="Hardware"
+          nilaiAset="Rp. 1.000.000"
+          kodeBMD="TI-001-2025"
+          lokasi="Gedung A - Lantai 2"
+          tanggalPerolehan="2023-01-15"
+          kondisi="Baik"
         />
-        <ButtonFilter
-          label="Status"
-          options={["Aktif", "Perbaikan", "Tidak Aktif"]}
-          onSelect={handleStatusChange}
+
+        <JadwalPemeliharaan
+          jadwal={[
+            { tanggal: "2025-01-10", kegiatan: "Pengecekan hardware tahunan" },
+            { tanggal: "2025-05-15", kegiatan: "Perawatan berkala perangkat" },
+          ]}
         />
-      </div>
 
-      {/* Responsive Laptop */}
-      <h1 className="hidden md:block font-medium text-sm mb-4 md:text-2xl lg:text-[28px]">
-        Data Aset
-      </h1>
+        <KeterkaitanRisiko
+          risiko={[
+            {
+              kode: "R-001",
+              deskripsi: "Potensi overheating akibat penggunaan berlebih",
+              dampak: "Sedang",
+            },
+            {
+              kode: "R-002",
+              deskripsi: "Kemungkinan kehilangan aset karena pencurian",
+              dampak: "Tinggi",
+            },
+          ]}
+        />
 
-      <div className="hidden md:block shadow-xl bg-white rounded-[12px]">
-        <div className="border-b border-[#ddd]">
-          <div className="flex justify-between px-4 py-8">
-            <div className="flex gap-3">
-              <ButtonFilter
-                label="Kategori"
-                options={["Aset TI", "Aset Non TI"]}
-                onSelect={handleKategoriChange}
-              />
-              <ButtonFilter
-                label="Status"
-                options={["Aktif", "Perbaikan", "Tidak Aktif"]}
-                onSelect={handleStatusChange}
-              />
-              <FilterDate />
-            </div>
-            <div className="flex gap-3">
-              <ButtonImg
-                title="Export"
-                img="/kelola-asset/export.png"
-                justify="justify-center"
-                onClick={handleExport}
-                px="4"
-              />
-              <ButtonImg
-                title="Import"
-                img="/kelola-asset/import.png"
-                justify="justify-center"
-                px="4"
-              />
-              <ButtonImg
-                title="Tambah Aset"
-                img="/kelola-asset/tambah-asset.png"
-                color="#00a9ff"
-                hoverColor="#a0e9ff"
-                borderColor="#00a9ff"
-                textColor="white"
-                px="6"
-                fontWeight="font-medium"
-                onClick={handleNavigate}
-              />
-            </div>
-          </div>
-        </div>
+        <Lampiran
+          lampiran={[
+            { nama: "Invoice.pdf", url: "/files/invoice.pdf" },
+            { nama: "FotoAset.jpg", url: "/files/fotoaset.jpg" },
+            { nama: "Garansi.pdf", url: "/files/garansi.pdf" },
+          ]}
+        />
 
-        <div>
-          <TableAset />
-        </div>
+        <RiwayatAktivitas
+          aktivitas={[
+            {
+              tanggal: "2024-12-20",
+              deskripsi: "Perawatan software rutin",
+              status: "Selesai",
+            },
+            {
+              tanggal: "2025-02-11",
+              deskripsi: "Penggantian baterai laptop",
+              status: "Dalam Proses",
+            },
+          ]}
+        />
+
+        <ScanBarcode barcodeUrl="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=09102920" />
+
+        <SiklusHidup
+          siklus={[
+            { tahap: "Pengadaan", tanggal: "2023-01-15" },
+            { tahap: "Penggunaan", tanggal: "2023-02-01" },
+            { tahap: "Pemeliharaan Berkala", tanggal: "2025-01-10" },
+          ]}
+        />
       </div>
     </LayoutDinas>
   );
