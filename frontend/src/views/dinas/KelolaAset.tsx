@@ -14,7 +14,7 @@ export default function Aset() {
   };
 
   const handleNavigate = () => {
-    navigate("/tambah-aset");
+    navigate("/aset/tambah");
   };
 
   const handleStatusChange = (val: string) => {
@@ -89,7 +89,8 @@ export default function Aset() {
         Data Aset
       </h1>
 
-      <div className="hidden md:block shadow-xl bg-white rounded-[12px]">
+      {/* Hanya bagian filter dan tombol yang disembunyikan di mobile */}
+      <div className="hidden md:block shadow-xl bg-white rounded-[12px] mb-4">
         <div className="border-b border-[#ddd]">
           <div className="flex justify-between px-4 py-8">
             <div className="flex gap-3">
@@ -133,10 +134,11 @@ export default function Aset() {
             </div>
           </div>
         </div>
+      </div>
 
-        <div>
-          <TableAset />
-        </div>
+      {/* Table tampil di semua ukuran layar */}
+      <div className="shadow-md bg-white rounded-[12px]">
+        <TableAset />
       </div>
     </LayoutDinas>
   );
