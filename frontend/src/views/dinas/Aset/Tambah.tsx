@@ -1,6 +1,15 @@
-import { useState, type ChangeEvent } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import { CheckCircle, X } from "lucide-react";
 import LayoutDinas from "../../layout/LayoutDinas";
+
+// Import gambar wizard untuk desktop dan mobile
+import Step1Desktop from "/wizard/step1.png";
+import Step2Desktop from "/wizard/step2.png";
+import Step3Desktop from "/wizard/step3.png";
+
+import Step1Mobile from "/wizard/Container1.png";
+import Step2Mobile from "/wizard/Container2.png";
+import Step3Mobile from "/wizard/Container3.png";
 
 interface FormData {
   // Step 1
@@ -21,7 +30,7 @@ interface FormData {
   dokumen: File | null;
 }
 
-// Komponen Success Popup dengan Animasi
+// Komponen Success Popup dengan Animasi (tidak diubah)
 function SuccessPopup({ onClose, assetInfo }: { onClose: () => void; assetInfo: { code: string; name: string } }) {
   const [isClosing, setIsClosing] = useState(false);
 
@@ -127,6 +136,7 @@ function SuccessPopup({ onClose, assetInfo }: { onClose: () => void; assetInfo: 
 export default function AssetWizard() {
   const [step, setStep] = useState<number>(1);
   const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState(false);  // State untuk deteksi mobile
   const [formData, setFormData] = useState<FormData>({
     namaAset: "",
     merkTipe: "",
@@ -143,12 +153,26 @@ export default function AssetWizard() {
     dokumen: null,
   });
 
-  // Gambar indikator wizard
-  const stepImages = [
-    "/wizard/step1.png",
-    "/wizard/step2.png",
-    "/wizard/step3.png",
-  ];
+  // Gunakan useEffect untuk mendeteksi mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);  // Breakpoint 768px untuk mobile
+    };
+    checkMobile();  // Cek awal
+    window.addEventListener('resize', checkMobile);  // Cek saat resize
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Array gambar untuk desktop dan mobile
+  const stepImages = {
+    desktop: [Step1Desktop, Step2Desktop, Step3Desktop],
+    mobile: [Step1Mobile, Step2Mobile, Step3Mobile],
+  };
+
+  // Tambahkan useEffect untuk scroll ke atas saat step berubah
+  useEffect(() => {
+    window.scrollTo(0, 0);  // Gulir ke atas halaman
+  }, [step]);  // Jalankan setiap kali step berubah
 
   // Handle perubahan input teks
   const handleChange = (
@@ -199,19 +223,20 @@ export default function AssetWizard() {
 
   return (
     <LayoutDinas>
-    <div className="min-h-screen bg-gray-50 flex flex-col p-6">
-      {/* Header Wizard */}
-      <div className="flex flex-col w-full max-w-4xl mx-auto">
-        <h1 className="text-2xl font-semibold mb-8">Tambah Aset</h1>
-        <div className="flex items-center justify-center">
-          <img
-            src={stepImages[step - 1]}
-            alt={`Step ${step}`}
-            className="w-full max-w-2xl mb-6 object-contain"
-          />
-        </div>
+      <div className="min-h-screen bg-gray-50 flex flex-col p-6">
+        {/* Header Wizard */}
+        <div className="flex flex-col w-full max-w-4xl mx-auto">
+          <h1 className="text-2xl font-semibold mb-8">Tambah Aset</h1>
+          <div className="flex items-center justify-center">
+            <img
+              src={isMobile ? stepImages.mobile[step - 1] : stepImages.desktop[step - 1]}
+              alt={`Step ${step}`}
+              className="w-full max-w-2xl mb-6 object-contain"
+            />
+          </div>
 
-        {/* Form Container */}
+          {/* Form Container */}
+          {/* Form Container */}
         <div className="bg-white shadow-md rounded-2xl p-6 w-full">
           {step === 1 && (
             <>
@@ -616,20 +641,19 @@ export default function AssetWizard() {
             )}
           </div>
         </div>
-      </div>
-      
+        </div>
 
-      {/* Success Popup dengan Animasi */}
-      {showPopup && (
-        <SuccessPopup
-          onClose={handleClosePopup}
-          assetInfo={{
-            code: generateAssetCode(),
-            name: formData.merkTipe || "Nama Aset"
-          }}
-        />
-      )}
-    </div>
+        {/* Success Popup dengan Animasi */}
+        {showPopup && (
+          <SuccessPopup
+            onClose={handleClosePopup}
+            assetInfo={{
+              code: generateAssetCode(),
+              name: formData.merkTipe || "Nama Aset"
+            }}
+          />
+        )}
+      </div>
     </LayoutDinas>
   );
 }
