@@ -1,42 +1,44 @@
 import { useState, useRef, useEffect } from "react";
 import { CalendarDays, ChevronDown } from "lucide-react";
 
-export default function FilterDate() {
+type FilterDateProps = {
+  onSelect?: (dateRange: { start: string; end: string }) => void;
+};
+
+export default function FilterDate({ onSelect }: FilterDateProps) {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [showCalendar, setShowCalendar] = useState(false);
-
-  // 🪄 Buat referensi ke elemen dropdown
   const calendarRef = useRef<HTMLDivElement | null>(null);
 
-  // 🧠 useEffect untuk deteksi klik di luar elemen
+  // 🔹 Deteksi klik di luar dropdown
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (
-        calendarRef.current &&
-        !calendarRef.current.contains(e.target as Node)
-      ) {
+      if (calendarRef.current && !calendarRef.current.contains(e.target as Node)) {
         setShowCalendar(false);
       }
     };
 
     if (showCalendar) {
       document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
     }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showCalendar]);
+
+  // 🔹 Saat tombol Filter ditekan
+  const handleApplyFilter = () => {
+    if (onSelect) {
+      onSelect({ start: startDate, end: endDate });
+    }
+    setShowCalendar(false);
+  };
 
   return (
     <div
       className="flex flex-wrap items-center gap-3 w-full md:w-auto"
       ref={calendarRef}
     >
-      {/* FILTER BUTTON */}
+      {/* Tombol utama */}
       <div className="relative w-full lg:w-28">
         <button
           onClick={() => setShowCalendar(!showCalendar)}
@@ -49,26 +51,20 @@ export default function FilterDate() {
             </span>
           </div>
           <ChevronDown
-            className={`w-4 h-4 transition-transform ${
-              showCalendar ? "rotate-180" : ""
-            }`}
+            className={`w-4 h-4 transition-transform ${showCalendar ? "rotate-180" : ""}`}
           />
         </button>
 
-        {/* 📅 RESPONSIVE CALENDAR POPUP */}
+        {/* Popup Kalender */}
         {showCalendar && (
           <div
             className="
-              absolute left-0 mt-2 
-              p-4 bg-white border border-gray-200 rounded-lg shadow-lg 
-              flex flex-col gap-3 
-              w-full min-w-[250px] lg:min-w-[375px]
-              max-w-[90vw]
+              absolute left-0 mt-2 p-4 bg-white border border-gray-200 rounded-lg shadow-lg 
+              flex flex-col gap-3 w-full min-w-[250px] lg:min-w-[375px] max-w-[90vw]
             "
           >
-            {/* DARI & SAMPAI */}
+            {/* Input tanggal */}
             <div className="flex flex-col sm:flex-row gap-3 w-full">
-              {/* DARI */}
               <div className="flex flex-col w-full">
                 <label className="text-xs text-gray-500 mb-1">Dari:</label>
                 <input
@@ -79,7 +75,6 @@ export default function FilterDate() {
                 />
               </div>
 
-              {/* SAMPAI */}
               <div className="flex flex-col w-full">
                 <label className="text-xs text-gray-500 mb-1">Sampai:</label>
                 <input
@@ -91,10 +86,10 @@ export default function FilterDate() {
               </div>
             </div>
 
-            {/* 🔵 BUTTON FILTER */}
+            {/* Tombol Filter */}
             <div className="flex justify-end w-full mt-2">
               <button
-                onClick={() => setShowCalendar(false)}
+                onClick={handleApplyFilter}
                 className="flex items-center gap-2 bg-blue-500 text-white text-sm font-medium rounded-lg px-4 py-2 hover:bg-blue-600 transition"
               >
                 <span>Filter</span>

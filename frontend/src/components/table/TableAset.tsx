@@ -29,11 +29,11 @@ export default function TableAset() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Aktif":
-        return "bg-[#BBF7D0] text-[#166534] px-11";
+        return "bg-[#BBF7D0] text-[#166534] md:px-10 px-11";
       case "Perbaikan":
         return "bg-yellow-200 text-yellow-800";
       case "Tidak Aktif":
-        return "bg-red-200 text-red-800 md:px-5";
+        return "bg-red-200 text-red-800 md:px-5 ";
       default:
         return "bg-gray-200 text-gray-800";
     }
@@ -73,7 +73,7 @@ export default function TableAset() {
               </td>
               <td className="py-5 px-4 text-[#666] font-semibold lg:text-[17px]">
                 <span
-                  className={`px-7 py-2 rounded-[16px] text-base font-normal ${getStatusColor(
+                  className={`px-5 md:px-7 py-2 rounded-[16px] text-base font-normal ${getStatusColor(
                     item.status
                   )}`}
                 >
@@ -83,8 +83,13 @@ export default function TableAset() {
               <td className="py-5 px-4 text-[#666] font-semibold lg:text-[17px]">
                 {item.date}
               </td>
-              <td className="py-5 px-4 text-[#0095E8] font-medium cursor-pointer hover:underline">
-                Lihat
+              <td className="py-5 px-4">
+                <a
+                  href="/aset/id" // ganti dengan rute tujuanmu
+                  className="text-[#0095E8] font-medium cursor-pointer hover:underline"
+                >
+                  Lihat
+                </a>
               </td>
             </tr>
           ))}

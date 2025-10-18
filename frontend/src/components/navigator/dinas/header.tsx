@@ -39,7 +39,7 @@ export default function Header({
         </button>
 
         {/* 🔍 Search Bar (tengah navbar) */}
-        <div className="absolute left-1/2 transform -translate-x-1/2 w-[160px] sm:w-[220px] md:w-[280px] lg:w-[350px] px-2 sm:px-4">
+        <div className="absolute ml-20 w-[160px] sm:w-[220px] md:w-[280px] lg:w-[350px] sm:px-4">
           <div className="relative">
             <input
               type="text"

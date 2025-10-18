@@ -1,8 +1,7 @@
 import { useState, type MouseEventHandler } from "react";
 
-type CardImageProps = {
+type ButtonCardProps = {
   title: string;
-  img: string;
   color?: string;
   hoverColor?: string;
   borderColor?: string;
@@ -10,36 +9,26 @@ type CardImageProps = {
   px?: string;
   justify?: string;
   fontWeight?: string;
-  wFull?: string;
-  paddingY?: string;
   onClick?: MouseEventHandler<HTMLButtonElement>;
 };
 
-export default function ButtonImg({
+export default function ButtonCard({
   title,
-  img,
   color = "white",
   hoverColor = "#f9fafb",
   borderColor = "#d1d5dc",
-  textColor = "gray-600",
+  textColor = "#4b5563", // default: gray-600
   px = "6",
-  justify,
+  justify = "justify-center",
   fontWeight = "font-medium",
-  wFull,
-  paddingY,
   onClick,
-}: CardImageProps) {
+}: ButtonCardProps) {
   const [bg, setBg] = useState(color);
   const [border, setBorder] = useState(borderColor);
 
   const handleMouseEnter = () => {
-    if (color === "white") {
-      setBg("#f9fafb");
-      setBorder("#d1d5dc");
-    } else {
-      setBg(hoverColor);
-      setBorder(hoverColor || borderColor);
-    }
+    setBg(hoverColor);
+    setBorder(hoverColor || borderColor);
   };
 
   const handleMouseLeave = () => {
@@ -55,11 +44,11 @@ export default function ButtonImg({
       style={{
         backgroundColor: bg,
         borderColor: border,
+        color: textColor,
       }}
-      className={`flex items-center h-10 justify-center ${justify} gap-2 border rounded-[14px] px-${px} md:${paddingY} active:scale-[0.98] transition-all md:justify-center duration-200 shadow-sm w-full md:${wFull}`}
+      className={`flex items-center ${justify} border rounded-[14px] px-${px} py-3 md:py-3 active:scale-[0.98] transition-all duration-200 shadow-sm w-full md:w-full`}
     >
-      <img src={img} alt={title} className="w-5 h-5" />
-      <span className={`text-${textColor} text-sm ${fontWeight}`}>{title}</span>
+      <span className={`text-sm ${fontWeight}`}>{title}</span>
     </button>
   );
 }
