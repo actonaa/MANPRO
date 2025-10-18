@@ -17,7 +17,7 @@ export default function AgendaPemeliharaanCard() {
           <label className="block mb-2 text-gray-500 ">Tanggal Realisasi</label>
           <input
             type="date"
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder:text-gray-400"
+            className="w-full border border-gray-300 rounded-lg px-1 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder:text-gray-400"
             placeholder="mm/dd/yyyy"
           />
         </div>

@@ -3,7 +3,7 @@ export default function LampiranCard() {
     <div className="bg-white p-5 rounded-xl shadow-sm">
       <h2 className="text-lg  mb-4">Lampiran</h2>
 
-      <div className="flex justify-between gap-6 w-full">
+      <div className="flex flex-col gap-6 w-full md:flex md:flex-row">
         {/* 📄 Invoice */}
         <div className="flex flex-col items-center justify-center border border-gray-300 rounded-2xl flex-1 h-56 cursor-pointer hover:bg-gray-50 transition">
           <span className="text-4xl mb-2">📄</span>

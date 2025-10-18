@@ -37,7 +37,7 @@ export default function InformasiUtamaCard({
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm">
+    <div className="bg-white p-2 rounded-xl shadow-sm">
       <h2 className="text-lg font-bold mb-4">Informasi Utama</h2>
 
       {/* 📊 Grid dua kolom */}

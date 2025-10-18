@@ -46,7 +46,7 @@ export default function ButtonCard({
         borderColor: border,
         color: textColor,
       }}
-      className={`flex items-center ${justify} border rounded-[14px] px-${px} py-3 md:py-2 active:scale-[0.98] transition-all duration-200 shadow-sm w-full md:w-auto`}
+      className={`flex items-center ${justify} border rounded-[14px] px-${px} py-3 md:py-3 active:scale-[0.98] transition-all duration-200 shadow-sm w-full md:w-full`}
     >
       <span className={`text-sm ${fontWeight}`}>{title}</span>
     </button>

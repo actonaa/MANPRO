@@ -36,7 +36,7 @@ const InformasiUtama: React.FC<InformasiUtamaProps> = ({
       </div>
 
       {/* 🔹 Grid Informasi */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 lg:grid-rows-5 gap-y-4 gap-x-8 text-sm">
+      <div className="grid grid-cols-3 lg:grid-cols-3 lg:grid-rows-5 gap-y-4 gap-x-8 text-sm">
         <div>
           <p className="font-semibold text-gray-900">Merk / Tipe</p>
           <p className="font-semibold text-gray-500">{merk}</p>
@@ -46,7 +46,7 @@ const InformasiUtama: React.FC<InformasiUtamaProps> = ({
           <p className="font-semibold text-gray-900">Penanggung Jawab</p>
           <p className="font-semibold text-gray-500">{penanggungJawab}</p>
         </div>
-        <div className="lg:row-span-5">
+        <div className="lg:row-span-5 row-span-7">
           <p className="font-semibold text-gray-900 mb-1">Status</p>
           <div className="flex items-center">
             <StatusBadge status={status} />

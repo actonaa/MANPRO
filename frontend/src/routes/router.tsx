@@ -10,6 +10,9 @@ import Notifications from "../views/dinas/Notifications";
 import DaftarRisiko from "../views/dinas/DaftarRisiko";
 import Pemeliharaan from "../views/dinas/LaporanPemeliharaan";
 import JadwalPemeliharaan from "../views/dinas/JadwalPemeliharaan";
+import LaporanAset from "../views/dinas/LaporanAset";
+import DetailLaporanPemeliharaan from "../views/dinas/DetailLaporanPemeliharaan";
+import DetailRisiko from "../views/dinas/DetailRisiko";
 
 
 export default function AppRoutes() {
@@ -26,6 +29,9 @@ export default function AppRoutes() {
         <Route path="/daftar/risiko" element={<DaftarRisiko/>}/>
         <Route path="/laporan/pemeliharaan" element={<Pemeliharaan/>}/>
         <Route path="/jadwal/pemeliharaan" element={<JadwalPemeliharaan/>}/>
+        <Route path="/laporan/aset" element={<LaporanAset/>}/>
+        <Route path="/detail/laporan" element={<DetailLaporanPemeliharaan/>}/>
+        <Route path="/detail/risiko" element={<DetailRisiko/>}/>
         
       </Routes>
     </Router>

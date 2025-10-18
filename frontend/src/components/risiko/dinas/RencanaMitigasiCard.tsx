@@ -5,7 +5,7 @@ export default function RencanaMitigasiCard() {
   const navigate = useNavigate(); // ✅ inisialisasi navigasi
 
   return (
-    <div className="bg-white  rounded-lg p-6 border border-white mb-6">
+    <div className="bg-white  rounded-lg border border-white mb-6">
       <h2 className="text-lg font-bold text-gray-800 mb-4">Rencana Mitigasi</h2>
 
       <table className="w-full text-sm text-left border-collapse mb-6">
@@ -22,7 +22,7 @@ export default function RencanaMitigasiCard() {
               Meningkatkan keamanan sistem.
             </td>
             <td className="font-bold">
-              <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-bold">
+              <span className="bg-blue-100 text-blue-700  px-3 py-1 rounded-full text-sm font-bold">
                 Dalam proses
               </span>
             </td>
@@ -43,14 +43,16 @@ export default function RencanaMitigasiCard() {
       </table>
 
       {/* ✅ Tombol sekarang redirect ke /edit-risiko */}
-      <ButtonCard
-        title="+ Tambah Aksi"
-        color="#007DFA"
-        hoverColor="#0066cc"
-        textColor="#ffffff"
-        borderColor="#007DFA"
-        onClick={() => navigate("/edit-risiko")} // ✅ klik redirect
-      />
+      <div className="md:flex md:justify-center md:items-center">
+        <ButtonCard
+          title="+ Tambah Aksi"
+          color="#007DFA"
+          hoverColor="#0066cc"
+          textColor="#ffffff"
+          borderColor="#007DFA"
+          onClick={() => navigate("/edit-risiko")} // ✅ klik redirect
+        />
+      </div>
     </div>
   );
 }

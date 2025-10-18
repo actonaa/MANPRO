@@ -9,26 +9,25 @@ import ValueRisiko from "../../components/risiko/dinas/ValueRisiko";
 export default function RisikoPage() {
   return (
     <LayoutDinas>
+      {/* 🔥 Header + Tombol Edit sejajar */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
+        <RisikoHeader />
+        <div className="w-full md:w-auto">
+          <ButtonCard
+            title="Edit Detail Risiko"
+            color="#007DFA"
+            hoverColor="#0066cc"
+            textColor="#ffffff"
+            borderColor="#007DFA"
+            justify="justify-center"
+            fontWeight="font-semibold"
+            onClick={() => console.log("Tombol Edit diklik!")}
+          />
+        </div>
+      </div>
       {/* 🧩 Card utama */}
-      <div className="p-6">
-        <div className="bg-white rounded-2xl shadow-md p-6 space-y-6">
-          {/* 🔥 Header + Tombol Edit sejajar */}
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-            <RisikoHeader />
-            <div className="w-full md:w-auto">
-              <ButtonCard
-                title="Edit Detail Risiko"
-                color="#007DFA"
-                hoverColor="#0066cc"
-                textColor="#ffffff"
-                borderColor="#007DFA"
-                justify="justify-center"
-                fontWeight="font-semibold"
-                onClick={() => console.log("Tombol Edit diklik!")}
-              />
-            </div>
-          </div>
-
+      <div className="mt-5">
+        <div className="bg-white rounded-2xl space-y-6">
           {/* 📊 Detail Risiko */}
           <RisikoDetailCard />
 
