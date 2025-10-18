@@ -10,6 +10,8 @@ type CardImageProps = {
   px?: string;
   justify?: string;
   fontWeight?: string;
+  wFull?: string;
+  paddingY?: string;
   onClick?: MouseEventHandler<HTMLButtonElement>;
 };
 
@@ -23,6 +25,8 @@ export default function ButtonImg({
   px = "6",
   justify,
   fontWeight = "font-medium",
+  wFull,
+  paddingY,
   onClick,
 }: CardImageProps) {
   const [bg, setBg] = useState(color);
@@ -52,7 +56,7 @@ export default function ButtonImg({
         backgroundColor: bg,
         borderColor: border,
       }}
-      className={`flex items-center ${justify} gap-2 border rounded-[14px] px-${px} py-3 md:py-0 active:scale-[0.98] transition-all duration-200 shadow-sm w-full md:w-auto`}
+      className={`flex items-center justify-center ${justify} gap-2 border rounded-[14px] px-${px} py-3 md:${paddingY} active:scale-[0.98] transition-all md:justify-center duration-200 shadow-sm w-full md:${wFull}`}
     >
       <img src={img} alt={title} className="w-5 h-5" />
       <span className={`text-${textColor} text-sm ${fontWeight}`}>{title}</span>

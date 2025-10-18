@@ -34,7 +34,7 @@ const getCellColor = (value: number) => {
 
 const HeatmapRisiko: React.FC<HeatmapProps> = ({ data }) => {
   return (
-    <div className="bg-white rounded-2xl shadow-md p-4 sm:p-8 w-full max-w-6xl mx-auto overflow-x-auto">
+    <div className="bg-white rounded-2xl shadow-md p-4 sm:p-8 w-full h-full max-w-6xl mx-auto overflow-x-auto">
       <h2 className="text-xl font-semibold text-center mb-8 text-gray-800">
         Heatmap Risiko (Probabilitas × Dampak)
       </h2>

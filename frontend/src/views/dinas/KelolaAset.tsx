@@ -9,10 +9,6 @@ import TableAset from "../../components/table/TableAset";
 export default function Aset() {
   const navigate = useNavigate();
 
-  const handleExport = () => {
-    console.log("Export data aset...");
-  };
-
   const handleNavigate = () => {
     navigate("/aset/tambah");
   };
@@ -30,15 +26,7 @@ export default function Aset() {
       <h1 className="font-medium text-sm mb-4 md:text-2xl lg:text-[28px]">
         Kelola Aset
       </h1>
-      <div className="flex gap-2 mb-5 md:hidden">
-        <div className="w-[27%]">
-          <ButtonImg
-            title="Export"
-            img="/kelola-asset/export.png"
-            justify="justify-center"
-            onClick={handleExport}
-          />
-        </div>
+      <div className="flex gap-2 mb-5 md:hidden items-end justify-end">
         <div className="w-[27%]">
           <ButtonImg
             title="Import"
@@ -56,6 +44,8 @@ export default function Aset() {
             textColor="white"
             px="2"
             fontWeight="font-medium"
+            wFull="w-auto"
+            paddingY="py-0"
             onClick={handleNavigate}
           />
         </div>
@@ -90,7 +80,7 @@ export default function Aset() {
       </h1>
 
       {/* Hanya bagian filter dan tombol yang disembunyikan di mobile */}
-      <div className="hidden md:block shadow-xl bg-white rounded-[12px] mb-4">
+      <div className="hidden md:block bg-white ">
         <div className="border-b border-[#ddd]">
           <div className="flex justify-between px-4 py-8">
             <div className="flex gap-3">
@@ -107,13 +97,6 @@ export default function Aset() {
               <FilterDate />
             </div>
             <div className="flex gap-3">
-              <ButtonImg
-                title="Export"
-                img="/kelola-asset/export.png"
-                justify="justify-center"
-                onClick={handleExport}
-                px="4"
-              />
               <ButtonImg
                 title="Import"
                 img="/kelola-asset/import.png"
@@ -137,7 +120,7 @@ export default function Aset() {
       </div>
 
       {/* Table tampil di semua ukuran layar */}
-      <div className="shadow-md bg-white rounded-[12px]">
+      <div className="shadow-md bg-white ">
         <TableAset />
       </div>
     </LayoutDinas>

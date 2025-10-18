@@ -26,7 +26,7 @@ const getColorClass = (tahap: string) => {
 
 const SiklusHidup: React.FC<SiklusHidupProps> = ({ siklus }) => {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div className="bg-white p-6 rounded-lg shadow-md h-full">
       <h2 className="font-semibold text-lg mb-4">Siklus Hidup</h2>
 
       <ul className="divide-y divide-gray-200">

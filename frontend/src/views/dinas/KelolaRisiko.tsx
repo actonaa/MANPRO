@@ -1,8 +1,8 @@
 import LayoutDinas from "../layout/LayoutDinas";
 import RisikoResidual from "../../components/kelola-risiko/dinas/RisikoResidual";
-import HeatmapRisiko from "../../components/kelola-risiko/dinas/HeatmapRisiko";
 import Top10Risiko from "../../components/kelola-risiko/dinas/Top10Resiko";
 import ButtonText from "../../components/button/ButtonText";
+import CardList from "../../components/card/CardList";
 
 export default function KelolaAset() {
   // ✅ Data sementara dari backend (dummy)
@@ -11,15 +11,6 @@ export default function KelolaAset() {
     sedang: 30,
     tinggi: 10,
   };
-
-  // ✅ Data matriks sementara (Probabilitas × Dampak)
-  const matrixData = [
-    [5, 10, 15, 20, 25],
-    [4, 8, 12, 16, 20],
-    [3, 6, 9, 12, 15],
-    [2, 4, 6, 8, 10],
-    [1, 2, 3, 4, 5],
-  ];
 
   // ✅ Data risiko dummy
   const risikoList = [
@@ -42,31 +33,49 @@ export default function KelolaAset() {
 
   return (
     <LayoutDinas>
-      <div className="space-y-10">
-        {/* 📊 Risiko Residual */}
-        <RisikoResidual
-          rendah={totalRisiko.rendah}
-          sedang={totalRisiko.sedang}
-          tinggi={totalRisiko.tinggi}
+      {/* 🔵 Tombol navigasi */}
+      <div className="flex justify-end pt-4 pb-2">
+        <ButtonText
+          title="Lihat Daftar Risiko"
+          onClick={handleLihatRisiko}
+          color="bg-[#007DFA]" // 🔵 warna biru
+          hoverColor="hover:bg-[#0069D5]" // 🔵 warna hover
+          textColor="text-white"
+          fontWeight="font-semibold"
         />
+      </div>
+      <div className="mb-5 overflow-x-auto pb-6 md:pb-0 md:overflow-x-visible">
+        <div className="flex gap-4 min-w-[1000px] md:grid md:grid-cols-2 md:min-w-0 lg:flex lg:min-w-[1000px]">
+          <CardList title="Total Risiko" value="56" />
+          <CardList title="Risiko Tinggi" value="10" />
+          <CardList title="Risiko Sedang" value="17" />
+          <CardList title="Risiko Rendah" value="20" />
+          <CardList title="Tindakan Mitigasi" value="11" />
+        </div>
+      </div>
+      <div className="space-y-10">
+        <div className="flex flex-col lg:flex-row mt-6">
+          {/* 📊 Risiko Residual */}
+          <div className="flex-1 rounded-2xl p-2 ">
+            <RisikoResidual
+              rendah={totalRisiko.rendah}
+              sedang={totalRisiko.sedang}
+              tinggi={totalRisiko.tinggi}
+            />
+          </div>
 
-        {/* 🔥 Heatmap Risiko */}
-        <HeatmapRisiko data={matrixData} />
+          {/* 🔥 Heatmap Risiko */}
+          <div className="flex-2 rounded-2xl shadow-lg p-5">
+            <img
+              src="/kelola-risiko/Heatmap.png"
+              alt="Heatmap Risiko"
+              className="w-full h-full rounded-xl"
+            />
+          </div>
+        </div>
 
         {/* 📉 Risiko Progress Bar */}
         <Top10Risiko data={risikoList} />
-
-        {/* 🔵 Tombol navigasi */}
-        <div className="flex justify-center pt-4">
-          <ButtonText
-            title="Lihat Daftar Risiko"
-            onClick={handleLihatRisiko}
-            color="bg-[#007DFA]" // 🔵 warna biru
-            hoverColor="hover:bg-[#0069D5]" // 🔵 warna hover
-            textColor="text-white"
-            fontWeight="font-semibold"
-          />
-        </div>
       </div>
     </LayoutDinas>
   );

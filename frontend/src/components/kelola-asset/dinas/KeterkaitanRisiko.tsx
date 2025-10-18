@@ -1,4 +1,5 @@
 import React from "react";
+import ButtonImg from "../../button/ButtonImg";
 
 interface RisikoItem {
   kode: string;
@@ -29,22 +30,48 @@ const getRiskColor = (dampak: RisikoItem["dampak"]) => {
 
 const KeterkaitanRisiko: React.FC<KeterkaitanRisikoProps> = ({ risiko }) => {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div className="bg-white p-6 rounded-lg shadow-md h-full">
       <h2 className="font-semibold text-lg mb-4">Keterkaitan Risiko</h2>
 
       <ul className="space-y-3">
         {risiko.map((r, index) => (
           <li
             key={index}
-            className={`px-4 py-3 rounded-xl ${getRiskColor(
+            className={`px-5 py-3 rounded-lg ${getRiskColor(
               r.dampak
-            )} transition`}
+            )} flex items-center justify-between transition`}
           >
-            <p className="font-medium">
-              {r.kode} — {r.deskripsi} (Dampak: {r.dampak})
-            </p>
+            {/* Kiri: Deskripsi Risiko */}
+            <div>
+              <p className="font-medium text-sm">
+                {r.kode} — {r.deskripsi}
+              </p>
+              <p className="text-sm">Dampak: {r.dampak}</p>
+            </div>
+
+            {/* Kanan: Tombol Detail */}
+            <a
+              href={`/detail-risiko/${r.kode}`}
+              className="text-[#007BFF] font-medium text-sm hover:underline"
+            >
+              Detail Risiko
+            </a>
           </li>
         ))}
+
+        {/* Tombol Tambah Aset */}
+        <ButtonImg
+          title="Tambah Risiko"
+          img="/kelola-asset/tambah-asset.png"
+          color="#00a9ff"
+          hoverColor="#a0e9ff"
+          borderColor="#00a9ff"
+          textColor="white"
+          px="2"
+          fontWeight="font-medium"
+          wFull="w-full"
+          paddingY="py-3"
+        />
       </ul>
     </div>
   );

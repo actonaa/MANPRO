@@ -83,8 +83,13 @@ export default function TableAset() {
               <td className="py-5 px-4 text-[#666] font-semibold lg:text-[17px]">
                 {item.date}
               </td>
-              <td className="py-5 px-4 text-[#0095E8] font-medium cursor-pointer hover:underline">
-                Lihat
+              <td className="py-5 px-4">
+                <a
+                  href="/aset/id" // ganti dengan rute tujuanmu
+                  className="text-[#0095E8] font-medium cursor-pointer hover:underline"
+                >
+                  Lihat
+                </a>
               </td>
             </tr>
           ))}

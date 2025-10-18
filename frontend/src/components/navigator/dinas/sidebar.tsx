@@ -24,7 +24,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
       icon: "/sidebar-icon/Aset.png",
       path: "/aset",
       submenu: [
-        { name: "Data Aset", path: "/aset/tambah" },
+        { name: "Data Aset", path: "/aset" },
         { name: "Laporan Aset", path: "/aset/laporan" },
       ],
     },
@@ -33,7 +33,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
       icon: "/sidebar-icon/Risk.png",
       path: "/manajemen-risiko",
       submenu: [
-        { name: "Data Risiko", path: "/manajemen-risiko/data" },
+        { name: "Data Risiko", path: "/dashboard/risiko" },
         { name: "Laporan Risiko", path: "/manajemen-risiko/laporan" },
       ],
     },
@@ -45,7 +45,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
     {
       name: "Notifikasi",
       icon: "/sidebar-icon/Notif.png",
-      path: "/notifikasi",
+      path: "/notifications",
     },
   ];
 

@@ -11,7 +11,7 @@ interface JadwalPemeliharaanProps {
 
 const JadwalPemeliharaan: React.FC<JadwalPemeliharaanProps> = ({ jadwal }) => {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div className="bg-white p-6 rounded-lg shadow-md h-full">
       <h2 className="font-semibold text-lg mb-4">Jadwal Pemeliharaan</h2>
 
       <ul className="space-y-3">

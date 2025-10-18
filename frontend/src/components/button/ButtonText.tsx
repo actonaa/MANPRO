@@ -20,7 +20,7 @@ export default function ButtonText({
   return (
     <button
       onClick={onClick}
-      className={`w-36 sm:w-40 md:w-44 ${color} ${hoverColor} ${textColor} ${fontWeight} py-3 rounded-xl shadow-sm transition duration-200`}
+      className={`w-full md:w-40 ${color} ${hoverColor} ${textColor} ${fontWeight} py-3 rounded-xl shadow-sm transition duration-200`}
     >
       {title}
     </button>

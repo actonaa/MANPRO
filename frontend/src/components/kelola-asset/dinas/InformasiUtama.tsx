@@ -29,21 +29,14 @@ const InformasiUtama: React.FC<InformasiUtamaProps> = ({
   kondisi,
 }) => {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div className="bg-white p-6 rounded-lg shadow-md h-full">
       {/* 🔹 Header Judul + Status */}
       <div className="flex items-start justify-between mb-6">
         <h2 className="font-semibold text-lg">Informasi Utama</h2>
-
-        <div>
-          <p className="font-semibold text-gray-900 mb-1">Status</p>
-          <div className="flex items-center">
-            <StatusBadge status={status} />
-          </div>
-        </div>
       </div>
 
       {/* 🔹 Grid Informasi */}
-      <div className="grid grid-cols-2 gap-y-4 gap-x-8 text-sm">
+      <div className="grid grid-cols-2 lg:grid-cols-3 lg:grid-rows-5 gap-y-4 gap-x-8 text-sm">
         <div>
           <p className="font-semibold text-gray-900">Merk / Tipe</p>
           <p className="font-semibold text-gray-500">{merk}</p>
@@ -52,6 +45,12 @@ const InformasiUtama: React.FC<InformasiUtamaProps> = ({
         <div>
           <p className="font-semibold text-gray-900">Penanggung Jawab</p>
           <p className="font-semibold text-gray-500">{penanggungJawab}</p>
+        </div>
+        <div className="lg:row-span-5">
+          <p className="font-semibold text-gray-900 mb-1">Status</p>
+          <div className="flex items-center">
+            <StatusBadge status={status} />
+          </div>
         </div>
 
         <div>
