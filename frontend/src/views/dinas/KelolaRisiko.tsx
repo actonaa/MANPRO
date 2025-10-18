@@ -28,22 +28,33 @@ export default function KelolaAset() {
 
   // 📍 Fungsi klik tombol
   const handleLihatRisiko = () => {
-    window.location.href = "/daftar-risiko";
+    window.location.href = "/daftar/risiko";
   };
 
   return (
     <LayoutDinas>
-      {/* 🔵 Tombol navigasi */}
-      <div className="flex justify-end pt-4 pb-2">
-        <ButtonText
-          title="Lihat Daftar Risiko"
-          onClick={handleLihatRisiko}
-          color="bg-[#007DFA]" // 🔵 warna biru
-          hoverColor="hover:bg-[#0069D5]" // 🔵 warna hover
-          textColor="text-white"
-          fontWeight="font-semibold"
-        />
+      <div className="mb-5 px-4 md:px-0 flex flex-col md:flex-row md:items-center md:justify-between">
+        {/* Kiri: Judul dan deskripsi */}
+        <div>
+          <h1 className="text-lg md:text-2xl font-semibold">Daftar Risiko</h1>
+          <p className="text-sm text-gray-600 mt-1">
+            Kelola dan pantau seluruh risiko aset yang teridentifikasi.
+          </p>
+        </div>
+
+        {/* Kanan: Tombol */}
+        <div className="mt-4 md:mt-0">
+          <ButtonText
+            title="Lihat Daftar Risiko"
+            onClick={handleLihatRisiko}
+            color="bg-[#007DFA]" // 🔵 warna biru
+            hoverColor="hover:bg-[#0069D5]" // 🔵 warna hover
+            textColor="text-white"
+            fontWeight="font-semibold"
+          />
+        </div>
       </div>
+
       <div className="mb-5 overflow-x-auto pb-6 md:pb-0 md:overflow-x-visible">
         <div className="flex gap-4 min-w-[1000px] md:grid md:grid-cols-2 md:min-w-0 lg:flex lg:min-w-[1000px]">
           <CardList title="Total Risiko" value="56" />

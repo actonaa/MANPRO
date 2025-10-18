@@ -7,6 +7,9 @@ import RisikoTambah from "../views/dinas/Risiko/From";
 import DashboardRisiko from "../views/dinas/KelolaRisiko";
 import DetailAset from "../views/dinas/Detail";
 import Notifications from "../views/dinas/Notifications";
+import DaftarRisiko from "../views/dinas/DaftarRisiko";
+import Pemeliharaan from "../views/dinas/LaporanPemeliharaan";
+import JadwalPemeliharaan from "../views/dinas/JadwalPemeliharaan";
 
 
 export default function AppRoutes() {
@@ -20,6 +23,9 @@ export default function AppRoutes() {
         <Route path="/dashboard/risiko" element={<DashboardRisiko />} />
         <Route path="/aset/id" element={<DetailAset />} />
         <Route path="/notifications" element={<Notifications/>}/>
+        <Route path="/daftar/risiko" element={<DaftarRisiko/>}/>
+        <Route path="/laporan/pemeliharaan" element={<Pemeliharaan/>}/>
+        <Route path="/jadwal/pemeliharaan" element={<JadwalPemeliharaan/>}/>
         
       </Routes>
     </Router>
