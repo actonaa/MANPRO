@@ -26,7 +26,7 @@ export default function Aset() {
       <h1 className="font-medium text-sm mb-4 md:text-2xl lg:text-[28px]">
         Kelola Aset
       </h1>
-      <div className="flex gap-2 mb-5 md:hidden items-end justify-end">
+      <div className="flex gap-2 mb-5 md:hidden items-start justify-start">
         <div className="w-[27%]">
           <ButtonImg
             title="Import"
@@ -80,7 +80,7 @@ export default function Aset() {
       </h1>
 
       {/* Hanya bagian filter dan tombol yang disembunyikan di mobile */}
-      <div className="hidden md:block bg-white ">
+      <div className="hidden md:block bg-white rounded-t-xl">
         <div className="border-b border-[#ddd]">
           <div className="flex justify-between px-4 py-8">
             <div className="flex gap-3">
@@ -120,7 +120,7 @@ export default function Aset() {
       </div>
 
       {/* Table tampil di semua ukuran layar */}
-      <div className="shadow-md bg-white ">
+      <div className="shadow-md bg-white rounded-xl md:rounded-none md:rounded-b-xl">
         <TableAset />
       </div>
     </LayoutDinas>

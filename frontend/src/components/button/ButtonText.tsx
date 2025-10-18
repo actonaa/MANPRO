@@ -20,9 +20,9 @@ export default function ButtonText({
   return (
     <button
       onClick={onClick}
-      className={`w-full md:w-40 ${color} ${hoverColor} ${textColor} ${fontWeight} py-3 px-5 rounded-xl shadow-sm transition duration-200`}
+      className={`w-full md:flex md:items-center md:justify-center md:w-40 ${color} ${hoverColor} ${textColor} ${fontWeight} py-3 px-5 md:text-nowrap rounded-xl shadow-sm transition duration-200`}
     >
-      {title}
+      <span>{title}</span>
     </button>
   );
 }

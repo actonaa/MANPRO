@@ -56,7 +56,7 @@ export default function ButtonImg({
         backgroundColor: bg,
         borderColor: border,
       }}
-      className={`flex items-center h-10 justify-center ${justify} gap-2 border rounded-[14px] px-${px} md:${paddingY} active:scale-[0.98] transition-all md:justify-center duration-200 shadow-sm w-full md:${wFull}`}
+      className={`flex items-center h-10 justify-center ${justify} gap-2 border rounded-[14px] px-${px} md:${paddingY} active:scale-[0.98] transition-all md:justify-center duration-200 shadow-sm w-full md:${wFull} md:text-nowrap`}
     >
       <img src={img} alt={title} className="w-5 h-5" />
       <span className={`text-${textColor} text-sm ${fontWeight}`}>{title}</span>

@@ -40,7 +40,7 @@ export default function TableAset() {
   };
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto mt-5 md:mt-0">
       <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
         <thead className="text-[#666666]">
           <tr>

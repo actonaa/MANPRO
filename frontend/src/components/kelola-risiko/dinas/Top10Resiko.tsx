@@ -1,6 +1,7 @@
 import React from "react";
 
 interface Props {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any[]; // ✅ pakai any supaya fleksibel
 }
 
@@ -23,7 +24,7 @@ const getColor = (kategori: string) => {
 
 const Top10Risiko: React.FC<Props> = ({ data }) => {
   return (
-    <div className="w-full max-w-4xl mx-auto bg-white p-6 rounded-xl shadow">
+    <div className="w-full max-w-4xl mx-auto lg:max-w-none lg:mt-6 bg-white p-6 rounded-xl shadow">
       <h2 className="text-xl font-semibold mb-6 text-gray-800">
         📊 Tingkat Risiko
       </h2>
