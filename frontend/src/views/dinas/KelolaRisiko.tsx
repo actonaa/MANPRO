@@ -64,30 +64,28 @@ export default function KelolaAset() {
           <CardList title="Tindakan Mitigasi" value="11" />
         </div>
       </div>
-      <div className="space-y-10">
-        <div className="flex flex-col lg:flex-row mt-6">
-          {/* 📊 Risiko Residual */}
-          <div className="flex-1 rounded-2xl p-2 ">
-            <RisikoResidual
-              rendah={totalRisiko.rendah}
-              sedang={totalRisiko.sedang}
-              tinggi={totalRisiko.tinggi}
-            />
-          </div>
-
-          {/* 🔥 Heatmap Risiko */}
-          <div className="flex-2 rounded-2xl shadow-lg p-5">
-            <img
-              src="/kelola-risiko/Heatmap.png"
-              alt="Heatmap Risiko"
-              className="w-full h-full rounded-xl"
-            />
-          </div>
+      <div className="flex flex-col md:flex-row mt-6 md:gap-6">
+        {/* 📊 Risiko Residual */}
+        <div className="flex-1 rounded-2xl mb-6 md:mb-0">
+          <RisikoResidual
+            rendah={totalRisiko.rendah}
+            sedang={totalRisiko.sedang}
+            tinggi={totalRisiko.tinggi}
+          />
         </div>
 
-        {/* 📉 Risiko Progress Bar */}
-        <Top10Risiko data={risikoList} />
+        {/* 🔥 Heatmap Risiko */}
+        <div className="flex-2 rounded-2xl shadow-lg p-12 bg-white mb-6 md:mb-0">
+          <img
+            src="/kelola-risiko/heatmap-risiko.png"
+            alt="Heatmap Risiko"
+            className="w-full h-full rounded-xl"
+          />
+        </div>
       </div>
+
+      {/* 📉 Risiko Progress Bar */}
+      <Top10Risiko data={risikoList} />
     </LayoutDinas>
   );
 }
