@@ -225,7 +225,7 @@ export default function AssetWizard() {
     <LayoutDinas>
       <div className="min-h-screen bg-gray-50 flex flex-col p-6">
         {/* Header Wizard */}
-        <div className="flex flex-col w-full max-w-4xl mx-auto">
+        <div className="flex flex-col w-full mx-auto">
           <h1 className="text-2xl font-semibold mb-8">Tambah Aset</h1>
           <div className="flex items-center justify-center">
             <img

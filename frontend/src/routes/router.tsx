@@ -29,20 +29,20 @@ export default function AppRoutes() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/aset" element={<KelolaAset />} />
-          <Route path="/aset/tambah" element={<AsetTambah />} />
-          <Route path="/risiko/tambah" element={<RisikoTambah />} />
-          <Route path="/dashboard/risiko" element={<DashboardRisiko />} />
           <Route path="/aset/:id" element={<DetailAset />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/daftar/risiko" element={<DaftarRisiko />} />
-          <Route path="/laporan/pemeliharaan" element={<Pemeliharaan />} />
-          <Route path="/jadwal/pemeliharaan" element={<JadwalPemeliharaan />} />
-          <Route path="/laporan/aset" element={<LaporanAset />} />
+          <Route path="/aset/tambah" element={<AsetTambah />} />
+          <Route path="/aset/laporan" element={<LaporanAset />} />
+          <Route path="/dashboard/risiko" element={<DashboardRisiko />} />
+          <Route path="/risiko" element={<DaftarRisiko />} />
+          <Route path="/risiko/:id" element={<DetailRisiko />} />
+          <Route path="/risiko/tambah" element={<RisikoTambah />} />
+          <Route path="/pemeliharaan" element={<JadwalPemeliharaan />} />
+          <Route path="/pemeliharaan/laporan" element={<Pemeliharaan />} />
           <Route
             path="/detail/laporan"
             element={<DetailLaporanPemeliharaan />}
           />
-          <Route path="/detail/risiko" element={<DetailRisiko />} />
+          <Route path="/notifications" element={<Notifications />} />
         </Route>
       </Routes>
     </Router>

@@ -1,19 +1,49 @@
-export default function RiwayatAktivitasCard() {
+type Aktivitas = {
+  id: string;
+  tanggal: string; // Format: YYYY-MM-DD
+  deskripsi: string;
+  status: string;
+};
+
+type RiwayatAktivitasCardProps = {
+  aktivitasList?: Aktivitas[];
+};
+
+export default function RiwayatAktivitasCard({
+  aktivitasList = [],
+}: RiwayatAktivitasCardProps) {
+  // 🗓️ Format tanggal jadi gaya lokal
+  const formatTanggal = (tgl: string) => {
+    if (!tgl) return "-";
+    const date = new Date(tgl);
+    return date.toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
   return (
     <div className="bg-white shadow-md rounded-lg p-6 border border-gray-200">
-      <h2 className="text-lg  text-black mb-4">Riwayat Aktivitas</h2>
+      <h2 className="text-lg font-bold text-gray-800 mb-4">Riwayat Aktivitas</h2>
 
-      <ul className="space-y-3">
-        <li className="border border-gray-200 rounded-md px-4 py-2 bg-white  text-black">
-          09 Okt 2025 — Perbaikan kipas chassis — Selesai
-        </li>
-        <li className="border border-gray-200 rounded-md px-4 py-2 bg-white  text-black">
-          02 Sep 2025 — Penggantian PSU — Selesai
-        </li>
-        <li className="border border-gray-200 rounded-md px-4 py-2 bg-white text-black">
-          15 Jul 2025 — Pembersihan debu — Selesai
-        </li>
-      </ul>
+      {aktivitasList.length > 0 ? (
+        <ul className="space-y-3">
+          {aktivitasList.map((item) => (
+            <li
+              key={item.id}
+              className="border border-gray-200 rounded-md px-4 py-2 bg-white text-gray-800"
+            >
+              {formatTanggal(item.tanggal)} — {item.deskripsi} —{" "}
+              <span className="font-semibold text-green-600">
+                {item.status}
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-gray-500 italic">Belum ada aktivitas tercatat.</p>
+      )}
     </div>
   );
 }

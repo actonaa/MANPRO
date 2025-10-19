@@ -241,9 +241,9 @@ export default function RisikoWizard() {
 
   return (
     <LayoutDinas>
-      <div className="min-h-screen bg-gray-50 flex flex-col p-6">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
         {/* Header Wizard */}
-        <div className="flex flex-col w-full max-w-4xl mx-auto">
+        <div className="flex flex-col w-full  mx-auto">
           <h1 className="text-2xl font-semibold mb-8">Tambah Risiko</h1>
           <div className="flex items-center justify-center">
             <img
@@ -414,7 +414,7 @@ export default function RisikoWizard() {
                 <div>
                   <div className="border border-gray-200 rounded-2xl p-4 flex flex-col items-center justify-center">
                     <img
-                      src="/kelola-risiko/Heatmap.png"
+                      src="/kelola-risiko/heatmap-risiko.png"
                       alt="Heatmap Risiko"
                       className="w-full rounded-lg object-contain"
                     />

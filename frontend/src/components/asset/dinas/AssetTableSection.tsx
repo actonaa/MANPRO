@@ -83,7 +83,7 @@ export default function AssetTableSection({
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm text-[#666666]">
           <thead>
-            <tr className="border-b text-left">
+            <tr className="text-left">
               <th className="py-3 px-4 font-semibold">ID ASET</th>
               <th className="py-3 px-4 font-semibold">NAMA ASET</th>
               <th className="py-3 px-4 font-semibold">KATEGORI</th>
@@ -96,7 +96,7 @@ export default function AssetTableSection({
           </thead>
           <tbody>
             {filteredData.map((item, i) => (
-              <tr key={i} className="border-b hover:bg-gray-50 transition">
+              <tr key={i} className=" hover:bg-gray-50 transition">
                 <td className="py-3 px-4 font-semibold">{item.id}</td>
                 <td className="py-3 px-4">{item.name}</td>
                 <td className="py-3 px-4">{item.category}</td>

@@ -42,8 +42,8 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
       icon: "/sidebar-icon/Maintenance.png",
       path: "/pemeliharaan",
       submenu: [
-        { name: "Jadwal Pemeliharaan", path: "/jadwal/pemeliharaan" },
-        { name: "Laporan Pemeliharaan", path: "/laporan/pemeliharaan" },
+        { name: "Jadwal Pemeliharaan", path: "/pemeliharaan" },
+        { name: "Laporan Pemeliharaan", path: "/pemeliharaan/laporan" },
       ],
     },
     {

@@ -60,18 +60,20 @@ const KeterkaitanRisiko: React.FC<KeterkaitanRisikoProps> = ({ risiko }) => {
         ))}
 
         {/* Tombol Tambah Aset */}
-        <ButtonImg
-          title="Tambah Risiko"
-          img="/kelola-asset/tambah-asset.png"
-          color="#00a9ff"
-          hoverColor="#a0e9ff"
-          borderColor="#00a9ff"
-          textColor="white"
-          px="2"
-          fontWeight="font-medium"
-          wFull="w-full"
-          paddingY="py-3"
-        />
+        <a href="/risiko/tambah">
+          <ButtonImg
+            title="Tambah Risiko"
+            img="/kelola-asset/tambah-asset.png"
+            color="#00a9ff"
+            hoverColor="#a0e9ff"
+            borderColor="#00a9ff"
+            textColor="white"
+            px="2"
+            fontWeight="font-medium"
+            wFull="w-full"
+            paddingY="py-3"
+          />
+        </a>
       </ul>
     </div>
   );

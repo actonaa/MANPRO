@@ -1,7 +1,21 @@
+import { useState, useEffect } from "react";
+
 type TableRisikoProps = {
   searchTerm?: string;
   selectedStatus?: string;
   selectedKategori?: string;
+};
+
+type RisikoItem = {
+  id: string;
+  title: string;
+  type: string;
+  criteria: string;
+  priority: string;
+  status: string;
+  entry_level: number;
+  asset: { name: string; lokasi: string };
+  department: { name: string };
 };
 
 export default function TableRisiko({
@@ -9,45 +23,44 @@ export default function TableRisiko({
   selectedStatus = "",
   selectedKategori = "",
 }: TableRisikoProps) {
-  const data = [
-    {
-      id: "RSK001",
-      aset: "Server Utama",
-      risiko: "Gangguan Sistem",
-      tipe: "Operasional",
-      level: "Tinggi",
-      status: "Dalam Proses",
-      kategori: "TI",
-      skor: 85,
-    },
-    {
-      id: "RSK002",
-      aset: "Gedung A",
-      risiko: "Kebakaran",
-      tipe: "Fisik",
-      level: "Sedang",
-      status: "Diterima",
-      kategori: "NON-TI",
-      skor: 70,
-    },
-    {
-      id: "RSK003",
-      aset: "Database",
-      risiko: "Kehilangan Data",
-      tipe: "Teknologi",
-      level: "Tinggi",
-      status: "Ditolak",
-      kategori: "TI",
-      skor: 90,
-    },
-  ];
+  const [data, setData] = useState<RisikoItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRisiko = async () => {
+      try {
+        const token = localStorage.getItem("token"); // ambil token dari localStorage
+
+        const res = await fetch("/api/risks", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // sertakan token
+          },
+        });
+
+        if (!res.ok) throw new Error("Gagal memuat data risiko");
+
+        const json = await res.json();
+        setData(json);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRisiko();
+  }, []);
 
   const getLevelColor = (level: string) => {
     switch (level) {
+      case "High":
       case "Tinggi":
         return "bg-red-100 text-red-600";
+      case "Medium":
       case "Sedang":
         return "bg-yellow-100 text-yellow-600";
+      case "Low":
       case "Rendah":
         return "bg-green-100 text-green-600";
       default:
@@ -57,10 +70,13 @@ export default function TableRisiko({
 
   const getStatusColor = (status: string) => {
     switch (status) {
+      case "new":
       case "Dalam Proses":
         return "bg-blue-100 text-blue-600";
+      case "approved":
       case "Diterima":
         return "bg-green-100 text-green-600";
+      case "rejected":
       case "Ditolak":
         return "bg-gray-300 text-gray-900";
       default:
@@ -68,23 +84,27 @@ export default function TableRisiko({
     }
   };
 
-  // ✅ Filter berdasarkan pencarian, status, kategori
+  // ✅ Filter data berdasarkan pencarian, status, dan kategori
   const filteredData = data.filter((item) => {
     const matchesSearch =
-      item.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.aset.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.risiko.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.kategori.toLowerCase().includes(searchTerm.toLowerCase());
+      item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.asset?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.department?.name.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus = selectedStatus
-      ? item.status === selectedStatus
+      ? item.status.toLowerCase() === selectedStatus.toLowerCase()
       : true;
+
     const matchesKategori = selectedKategori
-      ? item.kategori === selectedKategori
+      ? item.type.toLowerCase() === selectedKategori.toLowerCase()
       : true;
 
     return matchesSearch && matchesStatus && matchesKategori;
   });
+
+  if (loading) {
+    return <p className="text-center text-gray-500 py-6">Memuat data...</p>;
+  }
 
   return (
     <div className="overflow-x-auto md:pb-10">
@@ -109,19 +129,21 @@ export default function TableRisiko({
               key={item.id}
               className="border-b border-b-[#ddd] hover:bg-gray-50 transition"
             >
-              <td className="py-5 px-4 text-[#333] font-semibold">{item.id}</td>
-              <td className="py-5 px-4 text-[#666] font-medium">{item.aset}</td>
-              <td className="py-5 px-4 text-[#666] font-medium">
-                {item.risiko}
+              <td className="py-5 px-4 text-[#333] font-semibold">
+                {item.id.slice(0, 8).toUpperCase()}
               </td>
-              <td className="py-5 px-4 text-[#666] font-medium">{item.tipe}</td>
+              <td className="py-5 px-4 text-[#666] font-medium">
+                {item.asset?.name}
+              </td>
+              <td className="py-5 px-4 text-[#666] font-medium">{item.title}</td>
+              <td className="py-5 px-4 text-[#666] font-medium">{item.type}</td>
               <td className="py-5 px-4">
                 <span
                   className={`px-5 py-2 rounded-[16px] text-sm font-medium ${getLevelColor(
-                    item.level
+                    item.criteria
                   )}`}
                 >
-                  {item.level}
+                  {item.criteria}
                 </span>
               </td>
               <td className="py-5 px-4">
@@ -134,12 +156,14 @@ export default function TableRisiko({
                 </span>
               </td>
               <td className="py-5 px-4 text-[#666] font-medium">
-                {item.kategori}
+                {item.priority}
               </td>
-              <td className="py-5 px-4 text-[#666] font-medium">{item.skor}</td>
+              <td className="py-5 px-4 text-[#666] font-medium">
+                {item.entry_level}
+              </td>
               <td className="py-5 px-4">
                 <a
-                  href="/risiko/detail"
+                  href={`/risiko/${item.id}`}
                   className="text-[#0095E8] font-medium cursor-pointer hover:underline"
                 >
                   Detail
