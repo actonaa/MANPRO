@@ -54,9 +54,9 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
   ];
 
   const settingMenu = {
-    name: "Keluar",
-    icon: "/sidebar-icon/Logout.png",
-    path: "/logout",
+    name: "Back to SSO",
+    icon: "/sidebar-icon/back.png",
+    path: `${import.meta.env.VITE_LINK_BACK}`,
   };
 
   // ✅ Buka dropdown otomatis ketika path cocok sebagian (pakai startsWith)
@@ -119,7 +119,9 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
           <img
             src={isOpen ? "/logo/logosirasa.png" : "/logo/logo.png"}
             alt="Logo"
-            className={`${isOpen ? "w-28" : "w-10"} transition-all duration-300`}
+            className={`${
+              isOpen ? "w-28" : "w-10"
+            } transition-all duration-300`}
           />
         </div>
 
@@ -157,7 +159,9 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
                     <img
                       src={item.icon}
                       alt={item.name}
-                      className={`w-5 h-5 ${isActive ? "brightness-0 invert" : ""}`}
+                      className={`w-5 h-5 ${
+                        isActive ? "brightness-0 invert" : ""
+                      }`}
                     />
                   </div>
 
@@ -224,14 +228,19 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
 
         {/* Menu keluar */}
         <div className="mt-auto pt-3 border-t border-gray-200 px-2">
-          <Link
-            to={settingMenu.path}
+          <div
             onClick={() => {
               if (window.innerWidth < 1024) toggleSidebar();
+              const linkBack = import.meta.env.VITE_LINK_BACK;
+              if (linkBack.startsWith("http")) {
+                window.location.href = linkBack; // ✅ pindah ke URL dari env
+              } else {
+                navigate(linkBack); // ✅ jika internal route
+              }
             }}
             className={`relative flex items-center h-12 rounded-xl cursor-pointer px-3 gap-3
-              text-gray-600 hover:bg-gray-100
-              ${!isOpen && "justify-center"}`}
+      text-gray-600 hover:bg-gray-100
+      ${!isOpen && "justify-center"}`}
           >
             <div className="w-10 h-10 flex items-center justify-center flex-shrink-0">
               <img
@@ -243,7 +252,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
             {isOpen && (
               <span className="whitespace-nowrap">{settingMenu.name}</span>
             )}
-          </Link>
+          </div>
         </div>
       </div>
     </>
