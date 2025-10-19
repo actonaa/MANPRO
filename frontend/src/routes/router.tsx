@@ -4,7 +4,7 @@ import KelolaAset from "../views/dinas/KelolaAset";
 import AsetTambah from "../views/dinas/Aset/Tambah";
 import RisikoTambah from "../views/dinas/Risiko/From";
 import DashboardRisiko from "../views/dinas/KelolaRisiko";
-import DetailAset from "../views/dinas/Detail";
+import DetailAset from "../views/dinas/DetailAset";
 import Notifications from "../views/dinas/Notifications";
 import DaftarRisiko from "../views/dinas/DaftarRisiko";
 import Pemeliharaan from "../views/dinas/LaporanPemeliharaan";
@@ -32,7 +32,7 @@ export default function AppRoutes() {
           <Route path="/aset/tambah" element={<AsetTambah />} />
           <Route path="/risiko/tambah" element={<RisikoTambah />} />
           <Route path="/dashboard/risiko" element={<DashboardRisiko />} />
-          <Route path="/aset/id" element={<DetailAset />} />
+          <Route path="/aset/:id" element={<DetailAset />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/daftar/risiko" element={<DaftarRisiko />} />
           <Route path="/laporan/pemeliharaan" element={<Pemeliharaan />} />
