@@ -56,7 +56,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
   const settingMenu = {
     name: "Back to SSO",
     icon: "/sidebar-icon/back.png",
-    path: `${import.meta.env.VITE_LINK_BACK}`,
+    path: `${import.meta.env.VITE_LINK_BACK}/dashboard`,
   };
 
   // ✅ Buka dropdown otomatis ketika path cocok sebagian (pakai startsWith)
