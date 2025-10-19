@@ -24,15 +24,13 @@ export default function Callback() {
         }, 200);
       } catch (err) {
         console.error("Gagal parsing user data:", err);
-        window.location.href = "http://localhost:5173/login";
+        window.location.href = `${import.meta.env.VITE_LINK_BACK}`;
       }
     } else {
       // jika token tidak ada, redirect ke login SSO
-      window.location.href = "http://localhost:5173/login";
+      window.location.href = `${import.meta.env.VITE_LINK_BACK}`;
     }
   }, [navigate]);
 
   return <p>Mengautentikasi...</p>;
 }
-
-
