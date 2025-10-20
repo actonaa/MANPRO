@@ -12,6 +12,8 @@ import JadwalPemeliharaan from "../views/dinas/JadwalPemeliharaan";
 import LaporanAset from "../views/dinas/LaporanAset";
 import DetailLaporanPemeliharaan from "../views/dinas/DetailLaporanPemeliharaan";
 import DetailRisiko from "../views/dinas/DetailRisiko";
+import LaporanRisiko from "../views/dinas/LaporanRisiko";
+import TambahMitigasi from "../views/dinas/TambahMitigasi";
 import Callback from "../sso/callback";
 import LogoutSSO from "../sso/logout";
 import { ProtectedRoute } from "./ProtectedRoute";
@@ -36,6 +38,8 @@ export default function AppRoutes() {
           <Route path="/risiko" element={<DaftarRisiko />} />
           <Route path="/risiko/:id" element={<DetailRisiko />} />
           <Route path="/risiko/tambah" element={<RisikoTambah />} />
+          <Route path="/risiko/laporan" element={<LaporanRisiko />} />
+          <Route path="/risiko/tambah/mitigasi" element={<TambahMitigasi />} />
           <Route path="/pemeliharaan" element={<JadwalPemeliharaan />} />
           <Route path="/pemeliharaan/laporan" element={<Pemeliharaan />} />
           <Route

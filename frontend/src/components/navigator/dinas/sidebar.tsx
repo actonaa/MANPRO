@@ -31,10 +31,10 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
     {
       name: "Kelola Risiko",
       icon: "/sidebar-icon/Risk.png",
-      path: "/manajemen-risiko",
+      path: "/risiko",
       submenu: [
         { name: "Data Risiko", path: "/dashboard/risiko" },
-        { name: "Laporan Risiko", path: "/manajemen-risiko/laporan" },
+        { name: "Laporan Risiko", path: "/risiko/laporan" },
       ],
     },
     {

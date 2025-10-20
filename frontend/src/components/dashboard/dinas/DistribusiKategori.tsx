@@ -13,7 +13,7 @@ export default function DistribusiKategori() {
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-5 w-full h-full">
-      <h2 className="text-lg lg:text-[22px] font-semibold text-gray-800 mb-4">
+      <h2 className="text-lg lg:text-lg font-semibold text-gray-800 mb-4">
         Distribusi Aset Per-Kategori
       </h2>
       <div className="md:border md:border-[#ddd] md:p-4 md:rounded-xl">

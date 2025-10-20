@@ -71,7 +71,7 @@ export default function TableJadwalPemeliharaan({
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse">
           <thead>
-            <tr className="text-sm text-gray-600 border-b">
+            <tr className="text-sm text-gray-600 border-b border-gray-200">
               <th className="px-6 py-3 text-left font-medium">ID ASET</th>
               <th className="px-6 py-3 text-left font-medium">NAMA ASET</th>
               <th className="px-6 py-3 text-left font-medium">KATEGORI</th>
@@ -85,7 +85,7 @@ export default function TableJadwalPemeliharaan({
           </thead>
           <tbody>
             {filteredData.map((item, index) => (
-              <tr key={index} className="border-b hover:bg-gray-50 text-sm">
+              <tr key={index} className="border-b border-gray-200 hover:bg-gray-50 text-sm">
                 <td className="px-6 py-3">{item.id}</td>
                 <td className="px-6 py-3">{item.nama}</td>
                 <td className="px-6 py-3">{item.kategori}</td>

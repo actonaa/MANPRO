@@ -7,40 +7,35 @@ import CardList from "../../components/card/CardList";
 import TablePemeliharaan from "../../components/table/TablePemeliharaan";
 
 export default function Pemeliharaan() {
-  // State untuk filter aktif
   const [selectedKategori, setSelectedKategori] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
 
-  const handleStatusChange = (val: string) => {
-    setSelectedStatus(val);
-    console.log("Status dipilih:", val);
-  };
-
-  const handleKategoriChange = (val: string) => {
-    setSelectedKategori(val);
-    console.log("Kategori dipilih:", val);
-  };
+  const handleStatusChange = (val: string) => setSelectedStatus(val);
+  const handleKategoriChange = (val: string) => setSelectedKategori(val);
 
   return (
     <LayoutDinas>
-      {/* Judul */}
-      <h1 className="font-medium text-sm mb-4 md:text-2xl lg:text-[28px]">
-        Pemeliharaan Aset
-      </h1>
-       {/* Tombol Import */}
-        <div className="flex md:hidden w-30 ">
-          <ButtonImg
-            title="Import"
-            img="/kelola-asset/import.png"
-            justify="justify-center"
-            px="4"
-          />
-        </div>
+      {/* 🏷️ Judul Halaman */}
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="font-medium text-sm md:text-2xl lg:text-[28px] text-gray-800">
+          Pemeliharaan Aset
+        </h1>
+      </div>
 
-      {/* Kartu Statistik */}
-      <div className="mb-5 overflow-x-auto pb-6 md:pb-0 md:overflow-x-visible">
-        <div className="flex gap-4 min-w-[1000px] md:grid md:grid-cols-2 md:min-w-0 lg:flex lg:min-w-[1000px]">
+      {/* 📱 Tombol Import di atas (mobile only) */}
+      <div className="block lg:hidden w-full mb-4">
+        <ButtonImg
+          title="Import"
+          img="/kelola-asset/import.png"
+          justify="justify-center"
+          px="4"
+        />
+      </div>
+
+      {/* 📊 Kartu Statistik */}
+      <div className="mb-5 overflow-x-auto pb-6 lg:pb-0 md:overflow-x-visible">
+        <div className="flex gap-4 min-w-[1000px] md:grid lg:grid-cols-2 md:min-w-0 lg:flex lg:min-w-[1000px]">
           <CardList title="Total Pemeliharaan" value="1,250" />
           <CardList title="Pemeliharaan Berhasil" value="560" />
           <CardList title="Insiden" value="200" />
@@ -48,13 +43,11 @@ export default function Pemeliharaan() {
         </div>
       </div>
 
-      {/* Filter */}
-      <div className="border-b border-[#ddd] px-4 py-4 flex flex-col gap-3 md:flex-row md:justify-between">
-        {/* Filter bagian kiri */}
-        <div className="flex flex-row gap-3 md:flex-row md:items-center">
+      {/* 🎯 Filter Bar */}
+      <div className="border-b border-[#ddd] px-4 py-4 flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
+        <div className="flex flex-row gap-3 items-center">
           <FilterDate
             onSelect={(val) => {
-              console.log("Rentang tanggal dipilih:", val);
               setSelectedDate(`${val.start} - ${val.end}`);
             }}
           />
@@ -70,8 +63,8 @@ export default function Pemeliharaan() {
           />
         </div>
 
-        {/* Tombol Import */}
-        <div className="hidden md:justify-end">
+        {/* 📦 Tombol Import di kanan (desktop only) */}
+        <div className="hidden lg:flex">
           <ButtonImg
             title="Import"
             img="/kelola-asset/import.png"
@@ -81,7 +74,7 @@ export default function Pemeliharaan() {
         </div>
       </div>
 
-      {/* Tabel Data Pemeliharaan */}
+      {/* 📋 Tabel Data */}
       <div className="shadow-md bg-white">
         <TablePemeliharaan
           kategori={selectedKategori}

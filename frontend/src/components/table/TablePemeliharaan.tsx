@@ -51,8 +51,8 @@ export default function TablePemeliharaan({
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-sm text-left border-separate border-spacing-y-3">
-        <thead className="text-gray-600 border-b">
+      <table className="w-full text-sm text-left border-spacing-y-3">
+        <thead className="text-gray-600 border-b border-gray-200">
           <tr>
             <th className="px-6 py-3">ID ASET</th>
             <th className="px-6 py-3">ID LAPORAN</th>
@@ -67,7 +67,7 @@ export default function TablePemeliharaan({
         <tbody>
           {filteredData.length > 0 ? (
             filteredData.map((row, idx) => (
-              <tr key={idx} className="bg-white border-b hover:bg-gray-50">
+              <tr key={idx} className="bg-white border-b border-gray-200 hover:bg-gray-50">
                 <td className="px-6 py-3">{row.idAset}</td>
                 <td className="px-6 py-3">{row.idLaporan}</td>
                 <td className="px-6 py-3">{row.jenis}</td>
