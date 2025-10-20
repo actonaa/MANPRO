@@ -15,6 +15,7 @@ import DetailRisiko from "../views/dinas/DetailRisiko";
 import Callback from "../sso/callback";
 import LogoutSSO from "../sso/logout";
 import { ProtectedRoute } from "./ProtectedRoute";
+import DashboardVerifikator from "../views/verifikator/Dashboard";
 
 export default function AppRoutes() {
   return (
@@ -43,6 +44,10 @@ export default function AppRoutes() {
             element={<DetailLaporanPemeliharaan />}
           />
           <Route path="/notifications" element={<Notifications />} />
+          <Route
+            path="dashboard-verifikator"
+            element={<DashboardVerifikator />}
+          />
         </Route>
       </Routes>
     </Router>
