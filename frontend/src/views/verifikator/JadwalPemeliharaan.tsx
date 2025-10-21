@@ -28,14 +28,41 @@ export default function JadwalPemeliharaanVerifikator() {
 
       {/* 📦 Filter Section */}
       <div className="shadow-md bg-white rounded-lg p-4 mb-6">
-        {/* 🔹 Baris Filter */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full">
-          {/* Bagian kiri: Filter Tanggal */}
+        {/* 📱 MOBILE LAYOUT */}
+        <div className="flex flex-col gap-4 w-full md:hidden">
+          {/* Periode */}
+          <div className="w-full">
+            <FilterDate onSelect={handleDateChange} />
+          </div>
+
+          {/* Prioritas & Status sejajar */}
+          <div className="flex gap-4 w-full">
+            <div className="w-1/2">
+              <ButtonFilter
+                label="Prioritas"
+                options={["Rendah", "Sedang", "Tinggi"]}
+                onSelect={(val) => setSelectedLevel(val)}
+              />
+            </div>
+
+            <div className="w-1/2">
+              <ButtonFilter
+                label="Status"
+                options={["Dijadwalkan", "Selesai", "Tertunda"]}
+                onSelect={(val) => setSelectedStatus(val)}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* 💻 DESKTOP LAYOUT */}
+        <div className="hidden md:flex md:flex-row md:items-center md:justify-between gap-4 w-full">
+          {/* Periode */}
           <div className="w-full md:w-1/3">
             <FilterDate onSelect={handleDateChange} />
           </div>
 
-          {/* Bagian tengah: Filter Prioritas */}
+          {/* Prioritas */}
           <div className="w-full md:w-1/3">
             <ButtonFilter
               label="Prioritas"
@@ -44,7 +71,7 @@ export default function JadwalPemeliharaanVerifikator() {
             />
           </div>
 
-          {/* Bagian kanan: Filter Status */}
+          {/* Status */}
           <div className="w-full md:w-1/3">
             <ButtonFilter
               label="Status"

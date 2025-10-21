@@ -6,6 +6,12 @@ import ButtonFilter from "../../components/button/ButtonFilter";
 export default function DaftarRisiko() {
   const [selectedLevel, setSelectedLevel] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
+
+  // ✅ Tambahkan fungsi ini agar error hilang
+  const handleDateChange = (range: { start: string; end: string }) => {
+    setSelectedDate(range.start);
+  };
 
   return (
     <LayoutDinas>
@@ -19,46 +25,55 @@ export default function DaftarRisiko() {
 
       {/* 📦 Card Filter */}
       <div className="bg-white p-6 rounded-xl shadow-sm mb-8 w-full">
-        <div className="flex flex-col gap-6 w-full md:grid md:grid-cols-3 md:gap-6">
-          {/* 📅 Periode */}
-          <div className="flex flex-col w-full">
-            <label className="text-sm font-medium text-gray-700 mb-2">
-              Periode
-            </label>
-            <div className="w-full [&>div]:w-full [&>button]:w-full [&>input]:w-full relative z-50">
-              <StableFilterDate />
-            </div>
+        {/* 📱 MOBILE VIEW */}
+        <div className="block md:hidden">
+          {/* Periode */}
+          <div className="w-full mb-4">
+            <FilterDate onSelect={handleDateChange} />
           </div>
 
-          {/* 🧪 Level & 🟢 Status → horizontal di mobile */}
+          {/* Prioritas & Status sejajar */}
           <div className="flex gap-4 w-full">
-            {/* Level */}
-            <div className="flex flex-col w-1/2">
-              <label className="text-sm font-medium text-gray-700 mb-2">
-                Level
-              </label>
-              <div className="w-full [&>div]:w-full [&>button]:w-full">
-                <ButtonFilter
-                  label="Pilih Level"
-                  options={["Rendah", "Sedang", "Tinggi"]}
-                  onSelect={(val) => setSelectedLevel(val)}
-                />
-              </div>
+            <div className="w-1/2">
+              <ButtonFilter
+                label="Prioritas"
+                options={["Rendah", "Sedang", "Tinggi"]}
+                onSelect={(val) => setSelectedLevel(val)}
+              />
             </div>
+            <div className="w-1/2">
+              <ButtonFilter
+                label="Status"
+                options={["Dijadwalkan", "Selesai", "Tertunda"]}
+                onSelect={(val) => setSelectedStatus(val)}
+              />
+            </div>
+          </div>
+        </div>
 
-            {/* Status */}
-            <div className="flex flex-col w-1/2">
-              <label className="text-sm font-medium text-gray-700 mb-2">
-                Status
-              </label>
-              <div className="w-full [&>div]:w-full [&>button]:w-full">
-                <ButtonFilter
-                  label="Pilih Status"
-                  options={["Diterima", "Tertunda", "Ditolak"]}
-                  onSelect={(val) => setSelectedStatus(val)}
-                />
-              </div>
-            </div>
+        {/* 💻 DESKTOP VIEW */}
+        <div className="hidden md:flex md:flex-row md:items-center md:justify-between gap-4 w-full">
+          {/* Periode */}
+          <div className="w-full md:w-1/3">
+            <FilterDate onSelect={handleDateChange} />
+          </div>
+
+          {/* Prioritas */}
+          <div className="w-full md:w-1/3">
+            <ButtonFilter
+              label="Prioritas"
+              options={["Rendah", "Sedang", "Tinggi"]}
+              onSelect={(val) => setSelectedLevel(val)}
+            />
+          </div>
+
+          {/* Status */}
+          <div className="w-full md:w-1/3">
+            <ButtonFilter
+              label="Status"
+              options={["Dijadwalkan", "Selesai", "Tertunda"]}
+              onSelect={(val) => setSelectedStatus(val)}
+            />
           </div>
         </div>
       </div>
