@@ -10,10 +10,12 @@ type Mitigasi = {
 
 type RencanaMitigasiCardProps = {
   mitigasiList?: Mitigasi[];
+  showAddButton?: boolean; // ✅ Tambahkan prop opsional ini
 };
 
 export default function RencanaMitigasiCard({
   mitigasiList = [],
+  showAddButton = true, // ✅ Default: tombol tetap muncul
 }: RencanaMitigasiCardProps) {
   const navigate = useNavigate();
 
@@ -67,17 +69,19 @@ export default function RencanaMitigasiCard({
         </p>
       )}
 
-      {/* 🔘 Tombol Tambah */}
-      <div className="md:flex md:justify-center md:items-center">
-        <ButtonCard
-          title="+ Tambah Aksi"
-          color="#007DFA"
-          hoverColor="#0066cc"
-          textColor="#ffffff"
-          borderColor="#007DFA"
-          onClick={() => navigate("/edit-risiko")}
-        />
-      </div>
+      {/* 🔘 Tombol Tambah (hanya tampil jika showAddButton = true) */}
+      {showAddButton && (
+        <div className="md:flex md:justify-center md:items-center">
+          <ButtonCard
+            title="+ Tambah Aksi"
+            color="#007DFA"
+            hoverColor="#0066cc"
+            textColor="#ffffff"
+            borderColor="#007DFA"
+            onClick={() => navigate("/edit-risiko")}
+          />
+        </div>
+      )}
     </div>
   );
 }
