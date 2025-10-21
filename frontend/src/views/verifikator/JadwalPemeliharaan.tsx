@@ -2,7 +2,6 @@ import { useState } from "react";
 import LayoutDinas from "../layout/LayoutDinas";
 import FilterDate from "../../components/filter/FilterDate";
 import ButtonFilter from "../../components/button/ButtonFilter";
-import TableJadwalPemeliharaan from "../../components/table/TablePemeliharaan-verifikator";
 
 export default function JadwalPemeliharaanVerifikator() {
   const [selectedLevel, setSelectedLevel] = useState("");
@@ -54,15 +53,6 @@ export default function JadwalPemeliharaanVerifikator() {
             />
           </div>
         </div>
-      </div>
-
-      {/* 📊 Tabel Jadwal Pemeliharaan */}
-      <div className="shadow-md bg-white rounded-lg p-4">
-        <TableJadwalPemeliharaan
-          selectedKategori={selectedLevel}
-          selectedStatus={selectedStatus}
-          selectedDate={selectedDate}
-        />
       </div>
     </LayoutDinas>
   );

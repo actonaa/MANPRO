@@ -2,7 +2,6 @@ import { useState, memo } from "react";
 import LayoutDinas from "../layout/LayoutDinas";
 import FilterDate from "../../components/filter/FilterDate";
 import ButtonFilter from "../../components/button/ButtonFilter";
-import TableRisiko from "../../components/table/tablerisiko-verifikator";
 
 export default function DaftarRisiko() {
   const [selectedLevel, setSelectedLevel] = useState("");
@@ -63,15 +62,6 @@ export default function DaftarRisiko() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* 📊 Tabel Risiko */}
-      <div className="bg-white rounded-xl shadow-sm overflow-x-auto border border-gray-200">
-        <TableRisiko
-          searchTerm=""
-          selectedStatus={selectedStatus}
-          selectedKategori={selectedLevel}
-        />
       </div>
     </LayoutDinas>
   );
