@@ -9,7 +9,6 @@ interface RisikoItem {
 
 interface KeterkaitanRisikoProps {
   risiko: RisikoItem[];
-  showAddButton?: boolean; // ✅ Tambahkan props opsional untuk kontrol tombol
 }
 
 const getRiskColor = (dampak: RisikoItem["dampak"]) => {
@@ -29,10 +28,7 @@ const getRiskColor = (dampak: RisikoItem["dampak"]) => {
   }
 };
 
-const KeterkaitanRisiko: React.FC<KeterkaitanRisikoProps> = ({
-  risiko,
-  showAddButton = true, // ✅ Default: tombol tetap muncul
-}) => {
+const KeterkaitanRisiko: React.FC<KeterkaitanRisikoProps> = ({ risiko }) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md h-full">
       <h2 className="font-semibold text-lg mb-4">Keterkaitan Risiko</h2>
@@ -63,23 +59,21 @@ const KeterkaitanRisiko: React.FC<KeterkaitanRisikoProps> = ({
           </li>
         ))}
 
-        {/* ✅ Tombol Tambah Risiko tampil HANYA jika showAddButton = true */}
-        {showAddButton && (
-          <a href="/risiko/tambah">
-            <ButtonImg
-              title="Tambah Risiko"
-              img="/kelola-asset/tambah-asset.png"
-              color="#00a9ff"
-              hoverColor="#a0e9ff"
-              borderColor="#00a9ff"
-              textColor="white"
-              px="2"
-              fontWeight="font-medium"
-              wFull="w-full"
-              paddingY="py-3"
-            />
-          </a>
-        )}
+        {/* Tombol Tambah Aset */}
+        <a href="/risiko/tambah">
+          <ButtonImg
+            title="Tambah Risiko"
+            img="/kelola-asset/tambah-asset.png"
+            color="#00a9ff"
+            hoverColor="#a0e9ff"
+            borderColor="#00a9ff"
+            textColor="white"
+            px="2"
+            fontWeight="font-medium"
+            wFull="w-full"
+            paddingY="py-3"
+          />
+        </a>
       </ul>
     </div>
   );
