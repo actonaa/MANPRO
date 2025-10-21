@@ -25,7 +25,7 @@ export default function JadwalPemeliharaanPage() {
       {/* Header */}
       <div className="mb-5 px-4 md:px-0">
         <h1 className="text-lg md:text-2xl font-semibold">
-          Jadwal Pemeliharaan Aset
+          Jadwal Pemeliharaan
         </h1>
         <p className="text-sm text-gray-600 mt-1 mb-4">
           Pantau dan kelola jadwal pemeliharaan aset berdasarkan prioritas.

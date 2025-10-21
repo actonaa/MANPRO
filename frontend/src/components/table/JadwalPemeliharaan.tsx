@@ -27,26 +27,16 @@ export default function TableJadwalPemeliharaan({
       status: "Perbaikan",
     },
     {
-      id: "AST - 002",
-      nama: "CCTV Lobby",
-      kategori: "Aset TI",
-      lokasi: "Kantor Pusat",
+      id: "AST - 003",
+      nama: "AC Ruangan",
+      kategori: "Aset Fasilitas",
+      lokasi: "Kantor Cabang",
       prioritas: "Sedang",
-      tanggal: "12 - 01 - 2025",
-      status: "Perbaikan",
-    },
-    {
-      id: "AST - 002",
-      nama: "CCTV Lobby",
-      kategori: "Aset TI",
-      lokasi: "Kantor Pusat",
-      prioritas: "Rendah",
-      tanggal: "12 - 01 - 2025",
-      status: "Perbaikan",
+      tanggal: "14 - 02 - 2025",
+      status: "Non-Aktif",
     },
   ];
 
-  // Filter data berdasarkan kategori dan status
   const filteredData = data.filter(
     (item) =>
       (!selectedKategori || item.kategori === selectedKategori) &&
@@ -60,53 +50,145 @@ export default function TableJadwalPemeliharaan({
       case "Sedang":
         return "bg-yellow-100 text-yellow-700";
       case "Rendah":
-        return "bg-blue-100 text-blue-600";
+        return "bg-green-100 text-green-600";
       default:
         return "bg-gray-100 text-gray-600";
     }
   };
 
   return (
-    <div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full border-collapse">
-          <thead>
-            <tr className="text-sm text-gray-600 border-b border-gray-200">
-              <th className="px-6 py-3 text-left font-medium">ID ASET</th>
-              <th className="px-6 py-3 text-left font-medium">NAMA ASET</th>
-              <th className="px-6 py-3 text-left font-medium">KATEGORI</th>
-              <th className="px-6 py-3 text-left font-medium">LOKASI</th>
-              <th className="px-6 py-3 text-left font-medium">PRIORITAS</th>
-              <th className="px-6 py-3 text-left font-medium">
-                JADWAL PEMELIHARAAN
-              </th>
-              <th className="px-6 py-3 text-left font-medium"></th>
+    <div className="mt-5 md:mt-0">
+      {/* 💻 TABLE VIEW (Desktop) */}
+      <div className="overflow-x-auto hidden md:block">
+        <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
+          <thead className="text-[#666666]">
+            <tr>
+              <th className="py-5 px-4 font-semibold">ID ASET</th>
+              <th className="py-5 px-4 font-semibold">NAMA ASET</th>
+              <th className="py-5 px-4 font-semibold">KATEGORI</th>
+              <th className="py-5 px-4 font-semibold">LOKASI</th>
+              <th className="py-5 px-4 font-semibold">PRIORITAS</th>
+              <th className="py-5 px-4 font-semibold">JADWAL PEMELIHARAAN</th>
+              <th className="py-5 px-4 font-semibold"></th>
             </tr>
           </thead>
           <tbody>
-            {filteredData.map((item, index) => (
-              <tr key={index} className="border-b border-gray-200 hover:bg-gray-50 text-sm">
-                <td className="px-6 py-3">{item.id}</td>
-                <td className="px-6 py-3">{item.nama}</td>
-                <td className="px-6 py-3">{item.kategori}</td>
-                <td className="px-6 py-3">{item.lokasi}</td>
-                <td className="px-6 py-3">
+            {filteredData.length > 0 ? (
+              filteredData.map((item, index) => (
+                <tr
+                  key={index}
+                  className="border-b border-b-[#ddd] hover:bg-gray-50"
+                >
+                  <td className="py-5 px-4 text-[#333] lg:text-[17px]">
+                    {item.id}
+                  </td>
+                  <td className="py-5 px-4 text-[#666] lg:text-[17px]">
+                    {item.nama}
+                  </td>
+                  <td className="py-5 px-4 text-[#666] lg:text-[17px]">
+                    {item.kategori}
+                  </td>
+                  <td className="py-5 px-4 text-[#666] lg:text-[17px]">
+                    {item.lokasi}
+                  </td>
+                  <td className="py-5 px-4">
+                    <span
+                      className={`px-5 md:px-7 py-2 rounded-[16px] text-base font-normal ${getBadgeColor(
+                        item.prioritas
+                      )}`}
+                    >
+                      {item.prioritas}
+                    </span>
+                  </td>
+                  <td className="py-5 px-4 text-[#666] lg:text-[17px]">
+                    {item.tanggal}
+                  </td>
+                  <td className="py-5 px-4">
+                    <a
+                      href={`/pemeliharaan/${item.id}`}
+                      className="text-[#0095E8] font-medium lg:text-[17px] cursor-pointer hover:underline"
+                    >
+                      Detail
+                    </a>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={7}
+                  className="py-5 text-center text-gray-500 italic"
+                >
+                  Tidak ada jadwal pemeliharaan tersedia.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+
+        <div className="mt-6 flex justify-between p-4">
+          <p className="text-[13px] text-[#6B7280]">
+            Menampilkan {filteredData.length} hasil
+          </p>
+        </div>
+      </div>
+
+      {/* 📱 CARD VIEW (Mobile) */}
+      <div className="md:hidden space-y-4">
+        {filteredData.length > 0 ? (
+          filteredData.map((item, index) => (
+            <div
+              key={index}
+              className="bg-white border border-gray-200 rounded-xl shadow-sm p-4"
+            >
+              {/* Header */}
+              <div className="flex justify-between items-center mb-1">
+                <p className="text-sm text-gray-500">{item.id}</p>
+                <a
+                  href={`/pemeliharaan/${item.id}`}
+                  className="text-[#0095E8] text-sm font-medium hover:underline"
+                >
+                  Detail
+                </a>
+              </div>
+
+              {/* Nama aset */}
+              <h3 className="font-semibold border-b pb-2 border-gray-300 text-gray-800 text-[15px] mb-3">
+                {item.nama}
+              </h3>
+
+              {/* Informasi detail 2 kolom */}
+              <div className="text-sm text-gray-600 space-y-1">
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Kategori</span>
+                  <span className="text-gray-700">{item.kategori}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Lokasi</span>
+                  <span className="text-gray-700">{item.lokasi}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-500">Prioritas</span>
                   <span
-                    className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeColor(
+                    className={`px-3 py-[2px] text-xs rounded-full font-medium ${getBadgeColor(
                       item.prioritas
                     )}`}
                   >
                     {item.prioritas}
                   </span>
-                </td>
-                <td className="px-6 py-3">{item.tanggal}</td>
-                <td className="px-6 py-3 text-blue-500 font-medium cursor-pointer">
-                  Detail
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Jadwal</span>
+                  <span className="text-gray-700">{item.tanggal}</span>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-500 italic">
+            Tidak ada jadwal pemeliharaan tersedia.
+          </p>
+        )}
       </div>
     </div>
   );

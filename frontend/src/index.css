@@ -15,4 +15,30 @@
   --font-open: "Open_Sans", sans-serif;
    
 }
+/* 1. Import font custom */
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('/src/assets/fonts/SF-Pro-Display-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
 
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('/src/assets/fonts/SF-Pro-Display-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* 2. Import Tailwind */
+@import "tailwindcss";
+
+/* 3. (Opsional) Theme overrides */
+@theme {
+  --font-sf: 'SF Pro Display', sans-serif;
+}
+
+/* 4. (Opsional) jadikan body pakai font */
+body {
+  font-family: var(--font-sf);
+}

@@ -35,9 +35,7 @@ export default function TableAset() {
 
         if (!res.ok) {
           if (res.status === 401) {
-            throw new Error(
-              "Unauthorized — Token tidak valid atau kadaluarsa."
-            );
+            throw new Error("Unauthorized — Token tidak valid atau kadaluarsa.");
           }
           throw new Error(`Gagal mengambil data (${res.status})`);
         }
@@ -58,7 +56,7 @@ export default function TableAset() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Aktif":
-        return "bg-[#BBF7D0] text-[#166534] md:px-10 px-11";
+        return "bg-[#BBF7D0] text-[#166534] md:px-10 px-7";
       case "Perbaikan":
         return "bg-yellow-200 text-yellow-800";
       case "Non-Aktif":
@@ -110,74 +108,139 @@ export default function TableAset() {
   if (error) return <p className="text-center py-5 text-red-500">{error}</p>;
 
   return (
-    <div className="overflow-x-auto mt-5 md:mt-0">
-      <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
-        <thead className="text-[#666666]">
-          <tr>
-            <th className="py-5 px-4 font-semibold">ID ASET</th>
-            <th className="py-5 px-4 font-semibold">NAMA ASET</th>
-            <th className="py-5 px-4 font-semibold">KATEGORI</th>
-            <th className="py-5 px-4 font-semibold">LOKASI</th>
-            <th className="py-5 px-4 font-semibold">STATUS</th>
-            <th className="py-5 px-4 font-semibold">TANGGAL PEROLEHAN</th>
-            <th className="py-5 px-4 font-semibold"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.length > 0 ? (
-            data.map((item) => (
-              <tr
-                key={item.id}
-                className="border-b border-b-[#ddd] hover:bg-gray-50"
-              >
-                <td className="py-5 px-4 text-[#333] font-semibold lg:text-[17px]">
+    <div className="mt-5">
+      {/* 🔹 MOBILE VIEW - Card Layout */}
+      <div className="block lg:hidden space-y-4">
+        {data.length > 0 ? (
+          data.map((item) => (
+            <div
+              key={item.id}
+              className="bg-white rounded-xl border border-gray-200 shadow-sm p-4"
+            >
+              <div className="flex justify-between items-center">
+                <p className="text-sm text-gray-500 font-medium">
                   {item.serial_number || "-"}
-                </td>
-                <td className="py-5 px-4 text-[#666] font-semibold lg:text-[17px]">
-                  {item.name}
-                </td>
-                <td className="py-5 px-4 text-[#666] font-semibold lg:text-[17px]">
+                </p>
+                <a
+                  href={`/aset/${item.id}`}
+                  className="text-[#0095E8] font-medium text-sm hover:underline"
+                >
+                  Detail
+                </a>
+              </div>
+
+              <h2 className="text-base font-semibold text-gray-900 mt-1">
+                {item.name}
+              </h2>
+
+              <hr className="my-3 border-gray-200" />
+
+              <div className="space-y-1 text-sm text-gray-700">
+                <p>
+                  <span className="font-medium">Kategori: </span>
                   {item.category?.name || "-"}
-                </td>
-                <td className="py-5 px-4 text-[#666] font-semibold lg:text-[17px]">
+                </p>
+                <p>
+                  <span className="font-medium">Lokasi: </span>
                   {item.lokasi || "-"}
-                </td>
-                <td className="py-5 px-4 text-[#666] font-semibold lg:text-[17px]">
+                </p>
+                <p>
+                  <span className="font-medium">Status: </span>
                   <span
-                    className={`px-5 md:px-7 py-2 rounded-[16px] text-base font-normal ${getStatusColor(
+                    className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
                       item.status?.name || ""
                     )}`}
                   >
                     {item.status?.name || "-"}
                   </span>
-                </td>
-                <td className="py-5 px-4 text-[#666] font-semibold lg:text-[17px]">
+                </p>
+                <p>
+                  <span className="font-medium">Tanggal: </span>
                   {item.acquisition_date || "-"}
-                </td>
-                <td className="py-5 px-4">
-                  <a
-                    href={`/aset/${item.id}`}
-                    className="text-[#0095E8] font-medium cursor-pointer hover:underline"
-                  >
-                    Lihat
-                  </a>
+                </p>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-500 italic">
+            Tidak ada data aset tersedia.
+          </p>
+        )}
+      </div>
+
+      {/* 🔹 DESKTOP VIEW - Table Layout (Tidak Diubah) */}
+      <div className="hidden lg:block overflow-x-auto mt-5 md:mt-0">
+        <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
+          <thead className="text-[#666666]">
+            <tr>
+              <th className="py-5 px-4 font-semibold">ID ASET</th>
+              <th className="py-5 px-4 font-semibold">NAMA ASET</th>
+              <th className="py-5 px-4 font-semibold">KATEGORI</th>
+              <th className="py-5 px-4 font-semibold">LOKASI</th>
+              <th className="py-5 px-4 font-semibold">STATUS</th>
+              <th className="py-5 px-4 font-semibold">TANGGAL PEROLEHAN</th>
+              <th className="py-5 px-4 font-semibold"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.length > 0 ? (
+              data.map((item) => (
+                <tr
+                  key={item.id}
+                  className="border-b border-b-[#ddd] hover:bg-gray-50"
+                >
+                  <td className="py-5 px-4 text-[#333]  lg:text-[17px]">
+                    {item.serial_number || "-"}
+                  </td>
+                  <td className="py-5 px-4 text-[#666]  lg:text-[17px]">
+                    {item.name}
+                  </td>
+                  <td className="py-5 px-4 text-[#666]  lg:text-[17px]">
+                    {item.category?.name || "-"}
+                  </td>
+                  <td className="py-5 px-4 text-[#666]  lg:text-[17px]">
+                    {item.lokasi || "-"}
+                  </td>
+                  <td className="py-5 px-4 text-[#666]  lg:text-[17px]">
+                    <span
+                      className={`px-5 md:px-7 py-2 rounded-[16px] text-base font-normal ${getStatusColor(
+                        item.status?.name || ""
+                      )}`}
+                    >
+                      {item.status?.name || "-"}
+                    </span>
+                  </td>
+                  <td className="py-5 px-4 text-[#666]  lg:text-[17px]">
+                    {item.acquisition_date || "-"}
+                  </td>
+                  <td className="py-5 px-4">
+                    <a
+                      href={`/aset/${item.id}`}
+                      className="text-[#0095E8] font-medium  lg:text-[17px] cursor-pointer hover:underline"
+                    >
+                      detail
+                    </a>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={7}
+                  className="py-5 text-center text-gray-500 italic"
+                >
+                  Tidak ada data aset tersedia.
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={7} className="py-5 text-center text-gray-500 italic">
-                Tidak ada data aset tersedia.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+            )}
+          </tbody>
+        </table>
 
-      <div className="mt-6 flex justify-between p-4">
-        <p className="text-[13px] text-[#6B7280]">
-          Menampilkan {data.length} hasil
-        </p>
+        <div className="mt-6 flex justify-between p-4">
+          <p className="text-[13px] text-[#6B7280]">
+            Menampilkan {data.length} hasil
+          </p>
+        </div>
       </div>
     </div>
   );

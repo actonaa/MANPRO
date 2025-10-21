@@ -1,5 +1,3 @@
-import { Eye } from "lucide-react";
-
 type Risiko = {
   id: string;
   namaAset: string;
@@ -70,7 +68,6 @@ export default function RisikoTableSection({
   level: string;
   status: string;
 }) {
-  // ✅ Filter berdasarkan dropdown
   const filteredData = data.filter((item) => {
     const matchPeriod = period ? item.date === period : true;
     const matchLevel = level ? item.level === level : true;
@@ -79,8 +76,9 @@ export default function RisikoTableSection({
   });
 
   return (
-    <div className="bg-white shadow-lg rounded-2xl p-6 border border-gray-100">
-      <div className="overflow-x-auto">
+    <div className="bg-white rounded-2xl border border-gray-100">
+      {/* 💻 TABLE VIEW */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="min-w-full text-sm text-[#666666]">
           <thead>
             <tr className="text-left">
@@ -111,20 +109,82 @@ export default function RisikoTableSection({
                       {item.status}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-center">
-                    <Eye size={18} className="text-[#666666] cursor-pointer" />
+                  <td className="py-3 px-4 text-right">
+                    <span className="text-blue-500 font-medium cursor-pointer hover:underline">
+                      Detail
+                    </span>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={8} className="text-center py-4 text-gray-400">
+                <td
+                  colSpan={8}
+                  className="text-center py-4 text-gray-400 italic"
+                >
                   Tidak ada data yang sesuai dengan filter.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* 📱 CARD VIEW */}
+      <div className="md:hidden space-y-4">
+        {filteredData.length > 0 ? (
+          filteredData.map((item, i) => (
+            <div
+              key={i}
+              className="bg-white border border-gray-200 rounded-xl shadow-sm p-4"
+            >
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-xs text-gray-500">{item.id}</p>
+                <span className="text-[#0095E8] text-sm font-medium hover:underline cursor-pointer">
+                  Detail
+                </span>
+              </div>
+
+              <h3 className="font-semibold border-b pb-2 text-gray-800 text-[15px] mb-3">
+                {item.namaAset}
+              </h3>
+
+              <div className="grid grid-cols-2 gap-y-1 text-sm text-gray-600">
+                <p>
+                  <span className="font-medium text-gray-700">Risiko:</span>{" "}
+                  {item.namaRisiko}
+                </p>
+                <p className="text-right">
+                  <span className="font-medium text-gray-700">Level:</span>{" "}
+                  <span className={getLevelColor(item.level)}>
+                    {item.level}
+                  </span>
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">Skor:</span>{" "}
+                  {item.skor}
+                </p>
+                <p className="text-right">
+                  <span className="font-medium text-gray-700">Kategori:</span>{" "}
+                  {item.kategori}
+                </p>
+              </div>
+
+              <div className="mt-3 flex justify-between items-center">
+                <span className={getStatusStyle(item.status)}>
+                  {item.status}
+                </span>
+                <span className="text-xs text-gray-500">
+                  {item.date.split("-").reverse().join(" - ")}
+                </span>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-500 italic">
+            Tidak ada data yang sesuai dengan filter.
+          </p>
+        )}
       </div>
     </div>
   );

@@ -223,7 +223,7 @@ export default function AssetWizard() {
 
   return (
     <LayoutDinas>
-      <div className="min-h-screen bg-gray-50 flex flex-col p-6">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
         {/* Header Wizard */}
         <div className="flex flex-col w-full mx-auto">
           <h1 className="text-2xl font-semibold mb-8">Tambah Aset</h1>
@@ -235,7 +235,6 @@ export default function AssetWizard() {
             />
           </div>
 
-          {/* Form Container */}
           {/* Form Container */}
         <div className="bg-white shadow-md rounded-2xl p-6 w-full">
           {step === 1 && (

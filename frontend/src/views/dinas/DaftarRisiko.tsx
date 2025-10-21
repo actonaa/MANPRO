@@ -25,7 +25,7 @@ export default function Risiko() {
       <div className="shadow-md bg-white rounded-lg">
         {/* === Desktop Filter + Search === */}
         <div className="hidden md:block bg-white border-b border-[#ddd]">
-          <div className="flex items-start justify-start px-6 py-6">
+          <div className="flex justify-between px-6 py-6">
             {/* Search Bar */}
             <div className="w-[240px] md:w-[300px] lg:w-[360px] md:mr-20">
               <div className="relative">

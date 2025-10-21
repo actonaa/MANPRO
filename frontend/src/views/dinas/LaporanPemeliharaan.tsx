@@ -19,7 +19,7 @@ export default function Pemeliharaan() {
       {/* 🏷️ Judul Halaman */}
       <div className="flex items-center justify-between mb-4">
         <h1 className="font-medium text-sm md:text-2xl lg:text-[28px] text-gray-800">
-          Pemeliharaan Aset
+          Pemeliharaan
         </h1>
       </div>
 

@@ -23,18 +23,18 @@ export default function Aset() {
 
   return (
     <LayoutDinas>
-      <h1 className="font-medium text-sm mb-4 md:text-2xl lg:text-[28px]">
+      <h1 className="font-semibold text-[22px] mb-4 md:text-2xl lg:text-[28px]">
         Kelola Aset
       </h1>
       <div className="flex gap-2 mb-5 md:hidden items-start justify-start">
-        <div className="w-[27%]">
+        <div className="w-full">
           <ButtonImg
             title="Import"
             img="/kelola-asset/import.png"
             justify="justify-center"
           />
         </div>
-        <div className="w-[46%]">
+        <div className="w-full">
           <ButtonImg
             title="Tambah Aset"
             img="/kelola-asset/tambah-asset.png"

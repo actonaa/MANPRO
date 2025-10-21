@@ -13,7 +13,7 @@ export default function LaporanRisiko() {
 
   return (
     <LayoutDinas>
-      <div className="p-4 space-y-6">
+      <div className=" space-y-6">
         {/* 🏷️ Judul dan deskripsi halaman */}
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Laporan Risiko</h1>
