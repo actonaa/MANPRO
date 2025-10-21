@@ -14,7 +14,10 @@ export default function FilterDate({ onSelect }: FilterDateProps) {
   // 🔹 Deteksi klik di luar dropdown
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (calendarRef.current && !calendarRef.current.contains(e.target as Node)) {
+      if (
+        calendarRef.current &&
+        !calendarRef.current.contains(e.target as Node)
+      ) {
         setShowCalendar(false);
       }
     };
@@ -39,7 +42,7 @@ export default function FilterDate({ onSelect }: FilterDateProps) {
       ref={calendarRef}
     >
       {/* Tombol utama */}
-      <div className="relative w-full lg:w-28">
+      <div className="relative w-full ">
         <button
           onClick={() => setShowCalendar(!showCalendar)}
           className="flex justify-between items-center w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-gray-700 shadow-sm hover:shadow focus:ring-2 focus:ring-blue-400 transition"
@@ -51,7 +54,9 @@ export default function FilterDate({ onSelect }: FilterDateProps) {
             </span>
           </div>
           <ChevronDown
-            className={`w-4 h-4 transition-transform ${showCalendar ? "rotate-180" : ""}`}
+            className={`w-4 h-4 transition-transform ${
+              showCalendar ? "rotate-180" : ""
+            }`}
           />
         </button>
 

@@ -44,7 +44,7 @@ export default function ButtonFilter({
 
   return (
     <div className="flex flex-wrap items-center gap-3 w-full" ref={dropdownRef}>
-      <div className="relative w-full lg:w-28">
+      <div className="relative w-full ">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="flex justify-between items-center w-full bg-white border border-gray-300 rounded-lg lg:rounded-[12px] px-4 py-2 text-gray-700 shadow-sm hover:shadow focus:ring-2 focus:ring-blue-400 transition"
