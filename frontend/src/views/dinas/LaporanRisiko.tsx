@@ -24,7 +24,7 @@ export default function LaporanRisiko() {
         </div>
 
         {/* 📊 Card filter */}
-        <div className="bg-white shadow-md rounded-lg p-4 border border-gray-200">
+        <div className="bg-white rounded-lg p-4 border border-gray-200">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* 📅 Periode */}
             <div>

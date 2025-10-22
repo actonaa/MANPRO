@@ -29,12 +29,12 @@ export default function TableRisiko({
   useEffect(() => {
     const fetchRisiko = async () => {
       try {
-        const token = localStorage.getItem("token"); // ambil token dari localStorage
+        const token = localStorage.getItem("token");
 
         const res = await fetch("/api/risks", {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // sertakan token
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -84,7 +84,6 @@ export default function TableRisiko({
     }
   };
 
-  // ✅ Filter data berdasarkan pencarian, status, dan kategori
   const filteredData = data.filter((item) => {
     const matchesSearch =
       item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -107,78 +106,151 @@ export default function TableRisiko({
   }
 
   return (
-    <div className="overflow-x-auto md:pb-10">
-      <table className="w-full min-w-[900px] text-[13px] text-center border-collapse">
-        <thead className="text-[#666666] border-b border-[#ddd]">
-          <tr>
-            <th className="py-5 px-4 font-semibold">ID RISIKO</th>
-            <th className="py-5 px-4 font-semibold">NAMA ASET</th>
-            <th className="py-5 px-4 font-semibold">NAMA RISIKO</th>
-            <th className="py-5 px-4 font-semibold">TIPE</th>
-            <th className="py-5 px-4 font-semibold">LEVEL</th>
-            <th className="py-5 px-4 font-semibold">STATUS</th>
-            <th className="py-5 px-4 font-semibold">KATEGORI</th>
-            <th className="py-5 px-4 font-semibold">SKOR</th>
-            <th className="py-5 px-4 font-semibold"></th>
-          </tr>
-        </thead>
+    <div className="mt-5">
+      {/* 💻 TABLE VIEW (Desktop) */}
+      <div className="overflow-x-auto hidden md:block">
+        <table className="w-full min-w-[900px] text-[13px] text-center border-collapse">
+          <thead className="text-[#666666] border-b border-[#ddd]">
+            <tr>
+              <th className="py-5 px-4 font-semibold">ID RISIKO</th>
+              <th className="py-5 px-4 font-semibold">NAMA ASET</th>
+              <th className="py-5 px-4 font-semibold">NAMA RISIKO</th>
+              <th className="py-5 px-4 font-semibold">TIPE</th>
+              <th className="py-5 px-4 font-semibold">LEVEL</th>
+              <th className="py-5 px-4 font-semibold">STATUS</th>
+              <th className="py-5 px-4 font-semibold">KATEGORI</th>
+              <th className="py-5 px-4 font-semibold">SKOR</th>
+              <th className="py-5 px-4 font-semibold"></th>
+            </tr>
+          </thead>
 
-        <tbody>
-          {filteredData.map((item) => (
-            <tr
+          <tbody>
+            {filteredData.length > 0 ? (
+              filteredData.map((item) => (
+                <tr
+                  key={item.id}
+                  className="border-b border-b-[#ddd] hover:bg-gray-50 transition"
+                >
+                  <td className="py-5 px-4 text-[#333] font-semibold">
+                    {item.id.slice(0, 8).toUpperCase()}
+                  </td>
+                  <td className="py-5 px-4 text-[#666]">{item.asset?.name}</td>
+                  <td className="py-5 px-4 text-[#666]">{item.title}</td>
+                  <td className="py-5 px-4 text-[#666]">{item.type}</td>
+                  <td className="py-5 px-4">
+                    <span
+                      className={`px-5 py-2 rounded-[16px] text-sm font-medium ${getLevelColor(
+                        item.criteria
+                      )}`}
+                    >
+                      {item.criteria}
+                    </span>
+                  </td>
+                  <td className="py-5 px-4">
+                    <span
+                      className={`px-5 py-2 rounded-[16px] text-sm font-medium ${getStatusColor(
+                        item.status
+                      )}`}
+                    >
+                      {item.status}
+                    </span>
+                  </td>
+                  <td className="py-5 px-4 text-[#666]">{item.priority}</td>
+                  <td className="py-5 px-4 text-[#666]">{item.entry_level}</td>
+                  <td className="py-5 px-4">
+                    <a
+                      href={`/risiko/${item.id}`}
+                      className="text-[#0095E8] font-medium hover:underline"
+                    >
+                      Detail
+                    </a>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={9}
+                  className="text-center py-6 text-gray-500 italic"
+                >
+                  Tidak ada data yang cocok.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* 📱 CARD VIEW (Mobile) */}
+      <div className="md:hidden space-y-4">
+        {filteredData.length > 0 ? (
+          filteredData.map((item) => (
+            <div
               key={item.id}
-              className="border-b border-b-[#ddd] hover:bg-gray-50 transition"
+              className="border border-gray-200 rounded-xl shadow-sm p-4"
             >
-              <td className="py-5 px-4 text-[#333] font-semibold">
-                {item.id.slice(0, 8).toUpperCase()}
-              </td>
-              <td className="py-5 px-4 text-[#666] font-medium">
-                {item.asset?.name}
-              </td>
-              <td className="py-5 px-4 text-[#666] font-medium">{item.title}</td>
-              <td className="py-5 px-4 text-[#666] font-medium">{item.type}</td>
-              <td className="py-5 px-4">
-                <span
-                  className={`px-5 py-2 rounded-[16px] text-sm font-medium ${getLevelColor(
-                    item.criteria
-                  )}`}
-                >
-                  {item.criteria}
-                </span>
-              </td>
-              <td className="py-5 px-4">
-                <span
-                  className={`px-5 py-2 rounded-[16px] text-sm font-medium ${getStatusColor(
-                    item.status
-                  )}`}
-                >
-                  {item.status}
-                </span>
-              </td>
-              <td className="py-5 px-4 text-[#666] font-medium">
-                {item.priority}
-              </td>
-              <td className="py-5 px-4 text-[#666] font-medium">
-                {item.entry_level}
-              </td>
-              <td className="py-5 px-4">
+              <div className="flex justify-between items-center mb-1">
+                <p className="text-sm text-gray-500">
+                  {item.id.slice(0, 8).toUpperCase()}
+                </p>
                 <a
                   href={`/risiko/${item.id}`}
-                  className="text-[#0095E8] font-medium cursor-pointer hover:underline"
+                  className="text-[#0095E8] text-sm font-medium hover:underline"
                 >
                   Detail
                 </a>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              </div>
 
-      {filteredData.length === 0 && (
-        <p className="text-center text-gray-500 py-6">
-          Tidak ada data yang cocok.
-        </p>
-      )}
+              <h3 className="font-semibold border-b pb-2 border-gray-300 text-gray-800 text-[15px] mb-3">
+                {item.title}
+              </h3>
+
+              <div className="text-sm text-gray-600 space-y-1">
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Aset</span>
+                  <span className="text-gray-700">{item.asset?.name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Tipe</span>
+                  <span className="text-gray-700">{item.type}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-500">Level</span>
+                  <span
+                    className={`px-3 py-[2px] text-xs rounded-full font-medium ${getLevelColor(
+                      item.criteria
+                    )}`}
+                  >
+                    {item.criteria}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-500">Status</span>
+                  <span
+                    className={`px-3 py-[2px] text-xs rounded-full font-medium ${getStatusColor(
+                      item.status
+                    )}`}
+                  >
+                    {item.status}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Kategori</span>
+                  <span className="text-gray-700">{item.priority}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Skor</span>
+                  <span className="text-gray-700">{item.entry_level}</span>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-500 italic">
+            Tidak ada data yang cocok.
+          </p>
+        )}
+      </div>
     </div>
   );
 }

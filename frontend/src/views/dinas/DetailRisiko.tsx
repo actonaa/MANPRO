@@ -6,7 +6,6 @@ import RisikoDetailCard from "../../components/risiko/dinas/RisikoDetailCard";
 import RencanaMitigasiCard from "../../components/risiko/dinas/RencanaMitigasiCard";
 import RiwayatAktivitasCard from "../../components/risiko/dinas/RiwayatAktivitasCard";
 import ButtonCard from "../../components/button/Button";
-import ValueRisiko from "../../components/risiko/dinas/ValueRisiko";
 
 export default function RisikoPage() {
   const { id } = useParams(); // ambil id dari URL misalnya /risiko/detail/:id
@@ -100,26 +99,12 @@ export default function RisikoPage() {
           />
 
           {/* 🔧 Layout 2 kolom untuk Mitigasi & Value */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          <div className="grid grid-cols-1 gap-6 items-start">
             {/* 📁 Kiri: Rencana Mitigasi */}
-            <RencanaMitigasiCard mitigasiList={data.mitigasi} />
+            <RiwayatAktivitasCard aktivitasList={data.aktivitas} />
 
-            {/* 📁 Kanan: Value Risiko + Riwayat Aktivitas */}
-            <div className="space-y-6">
-              <ValueRisiko
-                strategy={data.strategy}
-                targetDate={data.target_date}
-                costEstimation={data.cost_estimation}
-                effectiveness={data.effectiveness}
-                probability={data.probability}
-                impact={data.impact}
-                residualValue={data.residual_value}
-                residualLevel={data.residual_level}
-              />
-
-              <RiwayatAktivitasCard aktivitasList={data.aktivitas} />
-            </div>
           </div>
+            <RencanaMitigasiCard mitigasiList={data.mitigasi} />
         </div>
       </div>
     </LayoutDinas>

@@ -136,7 +136,7 @@ export default function RisikoTableSection({
           filteredData.map((item, i) => (
             <div
               key={i}
-              className="bg-white border border-gray-200 rounded-xl shadow-sm p-4"
+              className="border border-gray-200 rounded-xl shadow-sm p-4"
             >
               <div className="flex justify-between items-center mb-2">
                 <p className="text-xs text-gray-500">{item.id}</p>

@@ -120,7 +120,7 @@ export default function Aset() {
       </div>
 
       {/* Table tampil di semua ukuran layar */}
-      <div className="shadow-md bg-white rounded-xl md:rounded-none md:rounded-b-xl">
+      <div className=" rounded-xl md:rounded-none md:rounded-b-xl">
         <TableAset />
       </div>
     </LayoutDinas>

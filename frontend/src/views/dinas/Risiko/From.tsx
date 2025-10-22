@@ -1,6 +1,7 @@
 import { useState, useEffect, type ChangeEvent } from "react";
 import { CheckCircle, X } from "lucide-react";
 import LayoutDinas from "../../layout/LayoutDinas";
+import { Plus } from "lucide-react";
 
 // Import gambar wizard untuk desktop dan mobile
 import Step1Desktop from "/wizard/risiko1.png";
@@ -17,9 +18,8 @@ interface FormData {
   // Step 1
   namaRisiko: string;
   deskripsiRisiko: string;
-  penyebabRisiko: string;
-  dampakRisiko: string;
-  statusRisiko: string; // Ditambahkan di step 1
+  penyebabRisiko: string[]; // Diubah ke array
+  dampakRisiko: string[]; // Diubah ke array
 
   // Step 2
   probabilitas: string;
@@ -30,18 +30,14 @@ interface FormData {
 
   // Step 3
   strategi: string;
-  aksi1: string;
-  aksi2: string;
-  aksi3: string;
-  pemilikRisiko: string;
+  aksiMitigasi: string;
+  pemilik: string;
   targetWaktu: string;
   perkiraanBiaya: string;
   efektivitas: string;
   levelResidual: string;
-  probabilitasResidual: string; // Ditambahkan
-  dampakResidual: string; // Ditambahkan
-
-
+  probabilitasResidual: string;
+  dampakResidual: string;
 }
 
 // Komponen Success Popup dengan Animasi (tidak diubah)
@@ -162,23 +158,20 @@ function SuccessPopup({
 export default function RisikoWizard() {
   const [step, setStep] = useState<number>(1);
   const [showPopup, setShowPopup] = useState<boolean>(false);
-  const [isMobile, setIsMobile] = useState(false); // State untuk deteksi mobile
+  const [isMobile, setIsMobile] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     namaRisiko: "",
     deskripsiRisiko: "",
-    penyebabRisiko: "",
-    dampakRisiko: "",
-    statusRisiko: "",
+    penyebabRisiko: [""], // Diubah ke array
+    dampakRisiko: [""], // Diubah ke array
     probabilitas: "",
     dampak: "",
     kriteriaDampak: "",
     prioritasRisiko: "",
     levelAwal: "",
     strategi: "",
-    aksi1: "",
-    aksi2: "",
-    aksi3: "",
-    pemilikRisiko: "",
+    aksiMitigasi: "",
+    pemilik: "",
     targetWaktu: "",
     perkiraanBiaya: "",
     efektivitas: "",
@@ -216,6 +209,34 @@ export default function RisikoWizard() {
     setFormData({ ...formData, [name]: value });
   };
 
+  // Handle perubahan untuk array (penyebab dan dampak)
+  const handleArrayChange = (
+    type: "penyebab" | "dampak",
+    index: number,
+    value: string
+  ) => {
+    const updated = [
+      ...formData[type === "penyebab" ? "penyebabRisiko" : "dampakRisiko"],
+    ];
+    updated[index] = value;
+    setFormData({
+      ...formData,
+      [type === "penyebab" ? "penyebabRisiko" : "dampakRisiko"]: updated,
+    });
+  };
+
+  // Handle tambah field untuk array
+  const handleAddField = (type: "penyebab" | "dampak") => {
+    const updated = [
+      ...formData[type === "penyebab" ? "penyebabRisiko" : "dampakRisiko"],
+      "",
+    ];
+    setFormData({
+      ...formData,
+      [type === "penyebab" ? "penyebabRisiko" : "dampakRisiko"]: updated,
+    });
+  };
+
   // Navigasi step
   const nextStep = () => setStep((prev) => Math.min(prev + 1, 4));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
@@ -243,7 +264,7 @@ export default function RisikoWizard() {
     <LayoutDinas>
       <div className="min-h-screen bg-gray-50 flex flex-col">
         {/* Header Wizard */}
-        <div className="flex flex-col w-full  mx-auto">
+        <div className="flex flex-col w-full mx-auto">
           <h1 className="text-2xl font-semibold mb-8">Tambah Risiko</h1>
           <div className="flex items-center justify-center">
             <img
@@ -257,10 +278,10 @@ export default function RisikoWizard() {
             />
           </div>
 
-          {/* Form Container */}
           <div className="bg-white shadow-md rounded-2xl p-6 w-full">
             {step === 1 && (
               <>
+                {/* Nama Risiko */}
                 <div className="mb-4">
                   <label className="font-medium">Nama Risiko</label>
                   <input
@@ -273,6 +294,7 @@ export default function RisikoWizard() {
                   />
                 </div>
 
+                {/* Deskripsi Risiko */}
                 <div className="mb-4">
                   <label className="font-medium">Deskripsi Risiko</label>
                   <textarea
@@ -285,63 +307,93 @@ export default function RisikoWizard() {
                   />
                 </div>
 
+                {/* Penyebab Risiko (Dinamis) */}
                 <div className="mb-4">
                   <label className="font-medium">Penyebab Risiko</label>
-                  <textarea
-                    name="penyebabRisiko"
-                    placeholder="Masukkan Penyebab Risiko"
-                    value={formData.penyebabRisiko}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
-                    rows={3}
-                  />
+                  {formData.penyebabRisiko.map((penyebab, index) => (
+                    <div key={index} className="flex items-center mt-2">
+                      <input
+                        type="text"
+                        placeholder="Masukkan Penyebab Risiko"
+                        value={penyebab}
+                        onChange={(e) =>
+                          handleArrayChange("penyebab", index, e.target.value)
+                        }
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      />
+                      {index === formData.penyebabRisiko.length - 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleAddField("penyebab")}
+                          className="ml-2 p-2 rounded-md border border-gray-300 hover:bg-gray-100"
+                        >
+                          <Plus className="w-4 h-4 text-gray-500" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
                 </div>
 
+                {/* Dampak Risiko (Dinamis) */}
                 <div className="mb-4">
                   <label className="font-medium">Dampak Risiko</label>
-                  <textarea
-                    name="dampakRisiko"
-                    placeholder="Masukkan Dampak Risiko"
-                    value={formData.dampakRisiko}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
-                    rows={3}
-                  />
-                </div>
-
-                <div className="mb-6">
-                  <label className="font-medium">Status Risiko</label>
-                  <select
-                    name="statusRisiko"
-                    value={formData.statusRisiko}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
-                  >
-                    <option value="">Pilih Status Risiko</option>
-                    <option value="Aktif">Aktif</option>
-                    <option value="Tidak Aktif">Tidak Aktif</option>
-                  </select>
+                  {formData.dampakRisiko.map((dampak, index) => (
+                    <div key={index} className="flex items-center mt-2">
+                      <input
+                        type="text"
+                        placeholder="Masukkan Dampak Risiko"
+                        value={dampak}
+                        onChange={(e) =>
+                          handleArrayChange("dampak", index, e.target.value)
+                        }
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      />
+                      {index === formData.dampakRisiko.length - 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleAddField("dampak")}
+                          className="ml-2 p-2 rounded-md border border-gray-300 hover:bg-gray-100"
+                        >
+                          <Plus className="w-4 h-4 text-gray-500" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </>
             )}
 
             {step === 2 && (
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* ======= Kolom Kanan (Heatmap) — di atas ketika mobile ======= */}
+                <div className="order-1 lg:order-2">
+                  <div className="border border-gray-200 rounded-2xl p-4 flex flex-col items-center justify-center">
+                    <img
+                      src="/kelola-risiko/heatmap-risiko.png"
+                      alt="Heatmap Risiko"
+                      className="w-full rounded-lg object-contain"
+                    />
+                  </div>
+                </div>
+
                 {/* ======= Kolom Kiri: Form ======= */}
-                <div>
+                <div className="order-2 lg:order-1">
                   <h2 className="text-base font-semibold mb-6">
                     Langkah 2 — Analisis Risiko
                   </h2>
 
+                  {/* Probabilitas */}
                   <div className="mb-4">
                     <label className="font-medium">Probabilitas</label>
                     <select
                       name="probabilitas"
                       value={formData.probabilitas}
                       onChange={handleChange}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 text-gray-700"
                     >
-                      <option value="">Tentukan Level Probabilitas</option>
+                      <option value="" disabled hidden>
+                        Tentukan Level Probabilitas
+                      </option>
                       <option value="Hampir Pasti">Hampir Pasti</option>
                       <option value="Kemungkinan Besar">
                         Kemungkinan Besar
@@ -356,15 +408,18 @@ export default function RisikoWizard() {
                     </select>
                   </div>
 
+                  {/* Dampak */}
                   <div className="mb-4">
                     <label className="font-medium">Dampak</label>
                     <select
                       name="dampak"
                       value={formData.dampak}
                       onChange={handleChange}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 text-gray-700"
                     >
-                      <option value="">Tentukan Level Dampak</option>
+                      <option value="" disabled hidden>
+                        Tentukan Level Dampak
+                      </option>
                       <option value="Sangat Rendah">Sangat Rendah</option>
                       <option value="Rendah">Rendah</option>
                       <option value="Sedang">Sedang</option>
@@ -373,30 +428,37 @@ export default function RisikoWizard() {
                     </select>
                   </div>
 
+                  {/* Kriteria Dampak */}
                   <div className="mb-4">
                     <label className="font-medium">Kriteria Dampak</label>
-                    <textarea
+                    <input
                       name="kriteriaDampak"
-                      placeholder="Cth: downtime > 2 jam, layanan publik terganggu, biaya > Rp 10 jt..."
+                      placeholder="Masukkan Kriteria Dampak"
                       value={formData.kriteriaDampak}
                       onChange={handleChange}
-                      rows={3}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
-                    ></textarea>
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="font-medium">Prioritas Risiko</label>
-                    <input
-                      type="text"
-                      name="prioritasRisiko"
-                      placeholder="Rendah/Sedang/Tinggi"
-                      value={formData.prioritasRisiko}
-                      onChange={handleChange}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 placeholder-gray-400"
                     />
                   </div>
 
+                  {/* Prioritas Risiko */}
+                  <div className="mb-4">
+                    <label className="font-medium">Prioritas Risiko</label>
+                    <select
+                      name="prioritasRisiko"
+                      value={formData.prioritasRisiko}
+                      onChange={handleChange}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 text-gray-700"
+                    >
+                      <option value="" disabled hidden>
+                        Pilih Prioritas
+                      </option>
+                      <option value="Tinggi">Tinggi</option>
+                      <option value="Sedang">Sedang</option>
+                      <option value="Rendah">Rendah</option>
+                    </select>
+                  </div>
+
+                  {/* Level Awal */}
                   <div className="mb-6">
                     <label className="font-medium">Level Awal</label>
                     <input
@@ -409,177 +471,158 @@ export default function RisikoWizard() {
                     />
                   </div>
                 </div>
-
-                {/* ======= Kolom Kanan: Heatmap ======= */}
-                <div>
-                  <div className="border border-gray-200 rounded-2xl p-4 flex flex-col items-center justify-center">
-                    <img
-                      src="/kelola-risiko/heatmap-risiko.png"
-                      alt="Heatmap Risiko"
-                      className="w-full rounded-lg object-contain"
-                    />
-                  </div>
-                </div>
               </div>
             )}
 
             {step === 3 && (
-              <>
-                <h2 className="text-base font-semibold mb-6">
-                  Langkah 3 — Mitigasi / Perlakuan Risiko
-                </h2>
+  <>
+    <h2 className="text-base font-semibold mb-6">
+      Langkah 3 — Mitigasi / Perlakuan Risiko
+    </h2>
 
-                {/* ======= Grid 2 Kolom ======= */}
-                <div className="grid grid-cols-2 gap-6">
-                  {/* === Kolom Kiri === */}
-                  <div>
-                    <div className="mb-4">
-                      <label className="font-medium">Strategi</label>
-                      <select
-                        name="strategi"
-                        value={formData.strategi}
-                        onChange={handleChange}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
-                      >
-                        <option value="">Kurangi (Reduce)</option>
-                        <option value="Hindari (Avoid)">Hindari (Avoid)</option>
-                        <option value="Alihkan (Transfer)">
-                          Alihkan (Transfer)
-                        </option>
-                        <option value="Terima (Accept)">Terima (Accept)</option>
-                      </select>
-                    </div>
+    {/* ======= Grid Responsif ======= */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* === Kolom Kiri === */}
+      <div>
+        {/* Strategi */}
+        <div className="mb-4">
+          <label className="font-medium">Strategi</label>
+          <select
+            name="strategi"
+            value={formData.strategi}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 text-gray-700"
+          >
+            <option value="" disabled hidden>
+              Pilih Strategi
+            </option>
+            <option value="Avoid">Avoid</option>
+            <option value="Reduce">Reduce</option>
+            <option value="Transfer">Transfer</option>
+            <option value="Accept">Accept</option>
+          </select>
+        </div>
 
-                    <div className="mb-4">
-                      <label className="font-medium">Aksi Mitigasi</label>
-                      <div className="space-y-2 mt-1">
-                        <input
-                          type="text"
-                          name="aksi1"
-                          placeholder="Contoh: tambah PSU redundan, pasang alarm suhu, backup harian..."
-                          value={formData.aksi1}
-                          onChange={handleChange}
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                        />
-                        <input
-                          type="text"
-                          name="aksi2"
-                          placeholder="Opsional"
-                          value={formData.aksi2}
-                          onChange={handleChange}
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-400 italic"
-                        />
-                        <input
-                          type="text"
-                          name="aksi3"
-                          placeholder="Opsional"
-                          value={formData.aksi3}
-                          onChange={handleChange}
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-400 italic"
-                        />
-                      </div>
-                    </div>
+        {/* Aksi Mitigasi */}
+        <div className="mb-4">
+          <label className="font-medium">Aksi Mitigasi</label>
+          <input
+            type="text"
+            name="aksiMitigasi"
+            placeholder="Masukkan tindakan mitigasi yang akan dilakukan"
+            value={formData.aksiMitigasi}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+          />
+        </div>
 
-                    <div className="mb-4">
-                      <label className="font-medium">Pemilik Risiko</label>
-                      <select
-                        name="pemilikRisiko"
-                        value={formData.pemilikRisiko}
-                        onChange={handleChange}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
-                      >
-                        <option value="">Nama PIC</option>
-                        <option value="IT">IT</option>
-                        <option value="Keuangan">Keuangan</option>
-                        <option value="Operasional">Operasional</option>
-                      </select>
-                    </div>
+        {/* Pemilik */}
+        <div className="mb-4">
+          <label className="font-medium">Pemilik</label>
+          <input
+            type="text"
+            name="pemilik"
+            placeholder="Masukkan nama pemilik risiko"
+            value={formData.pemilik}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+          />
+        </div>
 
-                    <div className="mb-4">
-                      <label className="font-medium">Target Waktu</label>
-                      <input
-                        type="date"
-                        name="targetWaktu"
-                        value={formData.targetWaktu}
-                        onChange={handleChange}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
-                      />
-                    </div>
-                  </div>
+        {/* Target Waktu */}
+        <div className="mb-4">
+          <label className="font-medium">Target Waktu</label>
+          <input
+            type="date"
+            name="targetWaktu"
+            value={formData.targetWaktu}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+          />
+        </div>
+      </div>
 
-                  {/* === Kolom Kanan === */}
-                  <div>
-                    <div className="mb-4">
-                      <label className="font-medium">Perkiraan Biaya</label>
-                      <input
-                        type="text"
-                        name="perkiraanBiaya"
-                        placeholder="Rp 5.000.000"
-                        value={formData.perkiraanBiaya}
-                        onChange={handleChange}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
-                      />
-                    </div>
+      {/* === Kolom Kanan === */}
+      <div>
+        {/* Perkiraan Biaya */}
+        <div className="mb-4">
+          <label className="font-medium">Perkiraan Biaya</label>
+          <input
+            type="text"
+            name="perkiraanBiaya"
+            placeholder="Rp 5.000.000"
+            value={formData.perkiraanBiaya}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+          />
+        </div>
 
-                    <div className="mb-4">
-                      <label className="font-medium">
-                        Probabilitas (Residual)
-                      </label>
-                      <select
-                        name="probabilitasResidual"
-                        value={formData.probabilitasResidual}
-                        onChange={handleChange}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
-                      >
-                        <option value="">Tentukan Level Probabilitas</option>
-                        <option value="Hampir Pasti">Hampir Pasti</option>
-                        <option value="Sedang">Sedang</option>
-                        <option value="Rendah">Rendah</option>
-                      </select>
-                    </div>
+        {/* Probabilitas Residual */}
+        <div className="mb-4">
+          <label className="font-medium">Probabilitas (Residual)</label>
+          <select
+            name="probabilitasResidual"
+            value={formData.probabilitasResidual}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 text-gray-700"
+          >
+            <option value="" disabled hidden>
+              Tentukan Level Probabilitas
+            </option>
+            <option value="Hampir Pasti">Hampir Pasti</option>
+            <option value="Sedang">Sedang</option>
+            <option value="Rendah">Rendah</option>
+          </select>
+        </div>
 
-                    <div className="mb-4">
-                      <label className="font-medium">Dampak (Residual)</label>
-                      <select
-                        name="dampakResidual"
-                        value={formData.dampakResidual}
-                        onChange={handleChange}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
-                      >
-                        <option value="">Tentukan Level Dampak</option>
-                        <option value="Sangat Rendah">Sangat Rendah</option>
-                        <option value="Sedang">Sedang</option>
-                        <option value="Tinggi">Tinggi</option>
-                      </select>
-                    </div>
+        {/* Dampak Residual */}
+        <div className="mb-4">
+          <label className="font-medium">Dampak (Residual)</label>
+          <select
+            name="dampakResidual"
+            value={formData.dampakResidual}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 text-gray-700"
+          >
+            <option value="" disabled hidden>
+              Tentukan Level Dampak
+            </option>
+            <option value="Sangat Rendah">Sangat Rendah</option>
+            <option value="Sedang">Sedang</option>
+            <option value="Tinggi">Tinggi</option>
+          </select>
+        </div>
 
-                    <div className="mb-4">
-                      <label className="font-medium">Efektivitas</label>
-                      <input
-                        type="text"
-                        name="efektivitas"
-                        placeholder="Rendah/Sedang/Medium"
-                        value={formData.efektivitas}
-                        onChange={handleChange}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
-                      />
-                    </div>
+        {/* Efektivitas */}
+        <div className="mb-4">
+          <label className="font-medium">Efektivitas</label>
+          <input
+            type="text"
+            name="efektivitas"
+            placeholder="Rendah / Sedang / Tinggi"
+            value={formData.efektivitas}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+          />
+        </div>
 
-                    <div className="mb-4">
-                      <label className="font-medium">Level Residual</label>
-                      <input
-                        type="text"
-                        name="levelResidual"
-                        placeholder="Hasil P×D"
-                        value={formData.levelResidual}
-                        onChange={handleChange}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
+        {/* Level Residual */}
+        <div className="mb-4">
+          <label className="font-medium">Level Residual</label>
+          <input
+            type="text"
+            name="levelResidual"
+            placeholder="Hasil P×D"
+            value={formData.levelResidual}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+          />
+        </div>
+      </div>
+    </div>
+  </>
+)}
+
 
             {step === 4 && (
               <>
@@ -613,10 +656,11 @@ export default function RisikoWizard() {
                   {/* Penyebab Risiko */}
                   <div>
                     <label className="font-medium">Penyebab Risiko</label>
-                    <textarea
-                      value={formData.penyebabRisiko}
+                    <input
+                      value={formData.penyebabRisiko
+                        .filter((p) => p.trim() !== "")
+                        .join(", ")}
                       disabled
-                      rows={3}
                       className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
                     />
                   </div>
@@ -624,20 +668,10 @@ export default function RisikoWizard() {
                   {/* Dampak Risiko */}
                   <div>
                     <label className="font-medium">Dampak Risiko</label>
-                    <textarea
-                      value={formData.dampakRisiko}
-                      disabled
-                      rows={3}
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Status Risiko */}
-                  <div>
-                    <label className="font-medium">Status Risiko</label>
                     <input
-                      type="text"
-                      value={formData.statusRisiko}
+                      value={formData.dampakRisiko
+                        .filter((d) => d.trim() !== "")
+                        .join(", ")}
                       disabled
                       className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
                     />
@@ -668,10 +702,10 @@ export default function RisikoWizard() {
                   {/* Kriteria Dampak */}
                   <div>
                     <label className="font-medium">Kriteria Dampak</label>
-                    <textarea
+                    <input
+                      type="text"
                       value={formData.kriteriaDampak}
                       disabled
-                      rows={2}
                       className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
                     />
                   </div>
@@ -709,6 +743,28 @@ export default function RisikoWizard() {
                     />
                   </div>
 
+                  {/* Aksi Mitigasi */}
+                  <div>
+                    <label className="font-medium">Aksi Mitigasi</label>
+                    <input
+                      type="text"
+                      value={formData.aksiMitigasi}
+                      disabled
+                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
+                    />
+                  </div>
+
+                  {/* Pemilik */}
+                  <div>
+                    <label className="font-medium">Pemilik</label>
+                    <input
+                      type="text"
+                      value={formData.pemilik}
+                      disabled
+                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
+                    />
+                  </div>
+
                   {/* Target Waktu */}
                   <div>
                     <label className="font-medium">Target Waktu</label>
@@ -720,48 +776,12 @@ export default function RisikoWizard() {
                     />
                   </div>
 
-                  {/* Aksi Mitigasi */}
-                  <div>
-                    <label className="font-medium">Aksi Mitigasi</label>
-                    <div className="space-y-2 mt-1">
-                      <input
-                        type="text"
-                        value={formData.aksi1}
-                        disabled
-                        className="w-full border rounded-lg px-3 py-2 bg-gray-100 text-gray-700 cursor-not-allowed"
-                      />
-                      <input
-                        type="text"
-                        value={formData.aksi2}
-                        disabled
-                        className="w-full border rounded-lg px-3 py-2 bg-gray-100 text-gray-700 cursor-not-allowed"
-                      />
-                      <input
-                        type="text"
-                        value={formData.aksi3}
-                        disabled
-                        className="w-full border rounded-lg px-3 py-2 bg-gray-100 text-gray-700 cursor-not-allowed"
-                      />
-                    </div>
-                  </div>
-
                   {/* Perkiraan Biaya */}
                   <div>
                     <label className="font-medium">Perkiraan Biaya</label>
                     <input
                       type="text"
                       value={formData.perkiraanBiaya}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Pemilik Risiko */}
-                  <div>
-                    <label className="font-medium">Pemilik Risiko</label>
-                    <input
-                      type="text"
-                      value={formData.pemilikRisiko}
                       disabled
                       className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
                     />
@@ -778,11 +798,9 @@ export default function RisikoWizard() {
                     />
                   </div>
 
-                  {/* Probabilitas (residual) */}
+                  {/* Probabilitas (Residual) */}
                   <div>
-                    <label className="font-medium">
-                      Probabilitas (Residual)
-                    </label>
+                    <label className="font-medium">Probabilitas</label>
                     <input
                       type="text"
                       value={formData.probabilitasResidual}
@@ -791,9 +809,9 @@ export default function RisikoWizard() {
                     />
                   </div>
 
-                  {/* Dampak (residual) */}
+                  {/* Dampak (Residual) */}
                   <div>
-                    <label className="font-medium">Dampak (Residual)</label>
+                    <label className="font-medium">Dampak</label>
                     <input
                       type="text"
                       value={formData.dampakResidual}
@@ -812,7 +830,6 @@ export default function RisikoWizard() {
                       className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
                     />
                   </div>
-
                 </div>
               </>
             )}

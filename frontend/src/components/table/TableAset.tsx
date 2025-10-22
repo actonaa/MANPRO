@@ -35,7 +35,9 @@ export default function TableAset() {
 
         if (!res.ok) {
           if (res.status === 401) {
-            throw new Error("Unauthorized — Token tidak valid atau kadaluarsa.");
+            throw new Error(
+              "Unauthorized — Token tidak valid atau kadaluarsa."
+            );
           }
           throw new Error(`Gagal mengambil data (${res.status})`);
         }
@@ -115,7 +117,7 @@ export default function TableAset() {
           data.map((item) => (
             <div
               key={item.id}
-              className="bg-white rounded-xl border border-gray-200 shadow-sm p-4"
+              className="rounded-xl border border-gray-200 shadow-sm p-4"
             >
               <div className="flex justify-between items-center">
                 <p className="text-sm text-gray-500 font-medium">

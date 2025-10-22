@@ -139,7 +139,7 @@ export default function TableJadwalPemeliharaan({
           filteredData.map((item, index) => (
             <div
               key={index}
-              className="bg-white border border-gray-200 rounded-xl shadow-sm p-4"
+              className="border border-gray-200 rounded-xl shadow-sm p-4"
             >
               {/* Header */}
               <div className="flex justify-between items-center mb-1">
