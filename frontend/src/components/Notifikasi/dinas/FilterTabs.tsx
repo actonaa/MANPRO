@@ -26,7 +26,7 @@ export default function FilterTabs({ onTabChange }: FilterTabsProps) {
   };
 
   return (
-    <div className="flex gap-8 items-center border-b border-gray-200 pb-2">
+    <div className="flex gap-4 lg:gap-8 items-center border-b border-gray-200 pb-2">
       {tabs.map((tab) => (
         <button
           key={tab.id}

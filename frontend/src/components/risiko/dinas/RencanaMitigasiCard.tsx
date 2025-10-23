@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import ButtonImg from "../../button/ButtonImg";
 
 type Mitigasi = {
-  id: string;
   aksi: string;
   status: string;
   targetTanggal: string;
@@ -81,7 +80,7 @@ export default function RencanaMitigasiCard({
           </thead>
           <tbody>
             {mitigasiList.map((item) => (
-              <tr key={item.id} className="border-b">
+              <tr className="border-b">
                 <td className="py-2 text-gray-800 font-medium">{item.aksi}</td>
                 <td className="py-2">
                   <span

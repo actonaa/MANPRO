@@ -44,7 +44,7 @@ export default function JadwalPemeliharaanPage() {
       {/* Kontainer tabel */}
       <div className=" rounded-lg">
         {/* 🔹 Filter section */}
-        <div className="flex flex-wrap justify-center items-center mb-4">
+        <div className="flex flex-wrap justify-between mb-4">
           {/* Kiri: Filter Buttons */}
           <div className="flex flex-row items-center gap-2">
             <FilterDate />

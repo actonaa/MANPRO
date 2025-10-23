@@ -36,7 +36,7 @@ export default function NotifikasiPage() {
 
   return (
     <LayoutDinas>
-      <div className="bg-white rounded-xl space-y-6">
+      <div className="bg-white p-6 rounded-xl space-y-6">
         {/* 🔔 Judul + SearchBar di satu baris */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <h1 className="text-2xl font-semibold text-gray-800">

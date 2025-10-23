@@ -11,6 +11,7 @@ import Pemeliharaan from "../views/dinas/LaporanPemeliharaan";
 import JadwalPemeliharaan from "../views/dinas/JadwalPemeliharaan";
 import LaporanAset from "../views/dinas/LaporanAset";
 import DetailLaporanPemeliharaan from "../views/dinas/DetailLaporanPemeliharaan";
+import DetailJadwalPemeliharaan from "../views/dinas/DetailJadwalPemeliharaan";
 import DetailRisiko from "../views/dinas/DetailRisiko";
 import LaporanRisiko from "../views/dinas/LaporanRisiko";
 import TambahMitigasi from "../views/dinas/TambahMitigasi";
@@ -41,6 +42,7 @@ export default function AppRoutes() {
           <Route path="/risiko/laporan" element={<LaporanRisiko />} />
           <Route path="/risiko/tambah/mitigasi" element={<TambahMitigasi />} />
           <Route path="/pemeliharaan" element={<JadwalPemeliharaan />} />
+          <Route path="/pemeliharaan/detail/jadwal" element={<DetailJadwalPemeliharaan />} />
           <Route path="/pemeliharaan/laporan" element={<Pemeliharaan />} />
           <Route
             path="/detail/laporan"

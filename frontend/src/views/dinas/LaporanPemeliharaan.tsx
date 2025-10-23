@@ -75,7 +75,7 @@ export default function Pemeliharaan() {
       </div>
 
       {/* 📋 Tabel Data */}
-      <div className="shadow-md bg-white">
+      <div>
         <TablePemeliharaan
           kategori={selectedKategori}
           status={selectedStatus}
