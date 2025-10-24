@@ -4,7 +4,6 @@ import InformasiUtama from "../../components/kelola-asset/dinas/InformasiUtama";
 import SiklusHidupCard from "../../components/pemeliharaan/dinas/SiklusHidupCard";
 import LampiranCard from "../../components/pemeliharaan/dinas/LampiranCard";
 import RiwayatAktivitasCard from "../../components/pemeliharaan/dinas/RiwayatAktivitasCard";
-import AgendaPemeliharaanCard from "../../components/pemeliharaan/dinas/AgendaPemeliharaanCard";
 
 export default function DetailPemeliharaanPage() {
   return (
@@ -29,6 +28,10 @@ export default function DetailPemeliharaanPage() {
               lokasi="Ruang TU"
               tanggalPerolehan="12-01-2025"
               kondisi="Rusak - Ringan"
+              version=""
+              os=""
+              hostname=""
+              ipAddress=""
             />
             <div className="flex-1 h-full">
               <LampiranCard />
@@ -39,9 +42,6 @@ export default function DetailPemeliharaanPage() {
           <div className="flex flex-col gap-6">
             <SiklusHidupCard />
             <RiwayatAktivitasCard />
-            <div className="flex-1">
-              <AgendaPemeliharaanCard />
-            </div>
           </div>
         </div>
       </div>

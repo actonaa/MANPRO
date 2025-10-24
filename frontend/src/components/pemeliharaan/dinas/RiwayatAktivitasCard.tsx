@@ -1,6 +1,6 @@
 export default function RiwayatAktivitasCard() {
   return (
-    <div className="bg-white p-5 rounded-xl shadow-sm">
+    <div className="bg-white p-5 h-full rounded-xl shadow-sm">
       <h2 className="text-lg  mb-4">Riwayat Aktivitas</h2>
 
       <ul className="space-y-3 text-sm text-gray-700">

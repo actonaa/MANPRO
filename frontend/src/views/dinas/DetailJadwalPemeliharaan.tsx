@@ -16,7 +16,7 @@ export default function LaptopKerjaDetail() {
           <h1 className="text-3xl font-bold text-gray-900 mb-8">
             Laptop Kerja
           </h1>
-          <div>
+          <div className="mb-5">
             <InfoPemeliharaan
               idJadwal="SCH-001"
               idAset="AST-001"
@@ -29,7 +29,7 @@ export default function LaptopKerjaDetail() {
             />
           </div>
 
-          <div className="bg-white p-6 rounded-xl mb-8 border border-gray-100">
+          <div className="bg-white p-6 rounded-xl mb-5 border border-gray-100">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Tipe Pemeliharaan */}
               <div>

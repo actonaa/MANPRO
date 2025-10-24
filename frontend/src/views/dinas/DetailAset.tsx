@@ -166,6 +166,10 @@ export default function DetailAset() {
                   : "-"
               }
               kondisi={asset.condition?.name || "-"}
+              hostname={asset.hostname}
+              ipAddress={asset.ip_address}
+              os={asset.os}
+              version={asset.version}
             />
             <SiklusHidup
               siklus={[

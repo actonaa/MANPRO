@@ -7,9 +7,9 @@ import Step1Desktop from "/wizard/step1.png";
 import Step2Desktop from "/wizard/step2.png";
 import Step3Desktop from "/wizard/step3.png";
 
-import Step1Mobile from "/wizard/Container1.png";
-import Step2Mobile from "/wizard/Container2.png";
-import Step3Mobile from "/wizard/Container3.png";
+import Step1Mobile from "/wizard/tambahaset1.png";
+import Step2Mobile from "/wizard/tambahaset2.png";
+import Step3Mobile from "/wizard/tambahaset3.png";
 
 interface FormData {
   // Step 1
