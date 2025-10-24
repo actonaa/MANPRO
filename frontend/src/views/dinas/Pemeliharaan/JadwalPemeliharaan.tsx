@@ -1,9 +1,9 @@
 import { useState } from "react";
-import LayoutDinas from "../layout/LayoutDinas";
-import ButtonFilter from "../../components/button/ButtonFilter";
-import TableJadwalPemeliharaan from "../../components/table/JadwalPemeliharaan";
-import FilterDate from "../../components/filter/FilterDate";
-import ButtonImg from "../../components/button/ButtonImg"; // pastikan path benar
+import LayoutDinas from "../../layout/LayoutDinas";
+import ButtonFilter from "../../../components/button/ButtonFilter";
+import TableJadwalPemeliharaan from "../../../components/table/JadwalPemeliharaan";
+import FilterDate from "../../../components/filter/FilterDate";
+import ButtonImg from "../../../components/button/ButtonImg"; // pastikan path benar
 
 export default function JadwalPemeliharaanPage() {
   const [selectedKategori, setSelectedKategori] = useState("");
