@@ -1,36 +1,42 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import Dashboard from "../views/dinas/Dashboard";
 import KelolaAset from "../views/dinas/Aset/KelolaAset";
 import AsetTambah from "../views/dinas/Aset/Tambah";
 import DetailAset from "../views/dinas/Aset/DetailAset";
 import LaporanAset from "../views/dinas/Aset/LaporanAset";
-import RisikoTambah from "../views/dinas/Risiko/From";
+
 import DashboardRisiko from "../views/dinas/Risiko/KelolaRisiko";
-import DetailRisiko from "../views/dinas/Risiko/DetailRisiko";
 import DaftarRisiko from "../views/dinas/Risiko/DaftarRisiko";
-import LaporanRisiko from "../views/dinas/Risiko/LaporanRisiko";
+import DetailRisiko from "../views/dinas/Risiko/DetailRisiko";
+import RisikoTambah from "../views/dinas/Risiko/From";
 import TambahMitigasi from "../views/dinas/Risiko/TambahMitigasi";
+import LaporanRisiko from "../views/dinas/Risiko/LaporanRisiko";
+
 import Pemeliharaan from "../views/dinas/Pemeliharaan/LaporanPemeliharaan";
 import JadwalPemeliharaan from "../views/dinas/Pemeliharaan/JadwalPemeliharaan";
 import DetailLaporanPemeliharaan from "../views/dinas/Pemeliharaan/DetailLaporanPemeliharaan";
 import DetailJadwalPemeliharaan from "../views/dinas/Pemeliharaan/DetailJadwalPemeliharaan";
-import Notifications from "../views/dinas/Notifications";
 
+import Notifications from "../views/dinas/Notifications";
+import DashboardVerifikator from "../views/verifikator/Dashboard";
 import Callback from "../sso/callback";
 import LogoutSSO from "../sso/logout";
-import { ProtectedRoute } from "./ProtectedRoute";
-import DashboardVerifikator from "../views/verifikator/Dashboard";
+
+import { ProtectedRouteDinas } from "./ProtectedRouteDinas";
+import { ProtectedRouteVerifikator } from "./ProtectedRouteVerifikator";
 
 export default function AppRoutes() {
   return (
     <Router>
       <Routes>
-        {/* route publik */}
+        {/* Route publik */}
         <Route path="/sso/callback" element={<Callback />} />
         <Route path="/sso/logout" element={<LogoutSSO />} />
+        <Route path="/unauthorized" element={<h1>Akses Ditolak</h1>} />
 
-        {/* semua route berikut diproteksi */}
-        <Route element={<ProtectedRoute />}>
+        {/* Route dinas */}
+        <Route element={<ProtectedRouteDinas />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/aset" element={<KelolaAset />} />
@@ -41,8 +47,8 @@ export default function AppRoutes() {
           <Route path="/risiko" element={<DaftarRisiko />} />
           <Route path="/risiko/:id" element={<DetailRisiko />} />
           <Route path="/risiko/tambah" element={<RisikoTambah />} />
-          <Route path="/risiko/laporan" element={<LaporanRisiko />} />
           <Route path="/risiko/tambah/mitigasi" element={<TambahMitigasi />} />
+          <Route path="/risiko/laporan" element={<LaporanRisiko />} />
           <Route path="/pemeliharaan" element={<JadwalPemeliharaan />} />
           <Route
             path="/pemeliharaan/detail/jadwal"
@@ -54,8 +60,12 @@ export default function AppRoutes() {
             element={<DetailLaporanPemeliharaan />}
           />
           <Route path="/notifications" element={<Notifications />} />
+        </Route>
+
+        {/* Route verifikator */}
+        <Route element={<ProtectedRouteVerifikator />}>
           <Route
-            path="dashboard-verifikator"
+            path="/dashboard-verifikator"
             element={<DashboardVerifikator />}
           />
         </Route>
