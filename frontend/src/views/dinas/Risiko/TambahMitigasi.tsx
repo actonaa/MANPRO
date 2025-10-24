@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import LayoutDinas from "../layout/LayoutDinas";
+import LayoutDinas from "../../layout/LayoutDinas";
 
 export default function TambahMitigasi() {
   const [probabilitas, setProbabilitas] = useState("");
@@ -35,9 +35,7 @@ export default function TambahMitigasi() {
 
             {/* 🔹 Kolom kiri (form) */}
             <div className="order-2 md:order-1 space-y-4 p-2">
-                <h2 className="font-bold text-gray-700 mb-5">
-                    Langkah Mitigasi
-                </h2>
+              <h2 className="font-bold text-gray-700 mb-5">Langkah Mitigasi</h2>
               {/* Langkah Mitigasi */}
               <div>
                 <h2 className="font-medium text-gray-700 mb-2">

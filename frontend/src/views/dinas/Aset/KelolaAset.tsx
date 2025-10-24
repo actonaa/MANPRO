@@ -1,10 +1,10 @@
-import LayoutDinas from "../layout/LayoutDinas";
-import ButtonImg from "../../components/button/ButtonImg";
+import LayoutDinas from "../../layout/LayoutDinas";
+import ButtonImg from "../../../components/button/ButtonImg";
 import { useNavigate } from "react-router-dom";
-import FilterDate from "../../components/filter/FilterDate";
-import ButtonFilter from "../../components/button/ButtonFilter";
-import CardList from "../../components/card/CardList";
-import TableAset from "../../components/table/TableAset";
+import FilterDate from "../../../components/filter/FilterDate";
+import ButtonFilter from "../../../components/button/ButtonFilter";
+import CardList from "../../../components/card/CardList";
+import TableAset from "../../../components/table/TableAset";
 
 export default function Aset() {
   const navigate = useNavigate();

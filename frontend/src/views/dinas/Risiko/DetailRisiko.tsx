@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"; // ✅ pastikan kamu pakai react-router
-import LayoutDinas from "../layout/LayoutDinas";
-import RisikoHeader from "../../components/risiko/dinas/RisikoHeader";
-import RisikoDetailCard from "../../components/risiko/dinas/RisikoDetailCard";
-import RencanaMitigasiCard from "../../components/risiko/dinas/RencanaMitigasiCard";
-import RiwayatAktivitasCard from "../../components/risiko/dinas/RiwayatAktivitasCard";
-import ButtonCard from "../../components/button/Button";
+import LayoutDinas from "../../layout/LayoutDinas";
+import RisikoHeader from "../../../components/risiko/dinas/RisikoHeader";
+import RisikoDetailCard from "../../../components/risiko/dinas/RisikoDetailCard";
+import RencanaMitigasiCard from "../../../components/risiko/dinas/RencanaMitigasiCard";
+import RiwayatAktivitasCard from "../../../components/risiko/dinas/RiwayatAktivitasCard";
+import ButtonCard from "../../../components/button/Button";
 
 export default function RisikoPage() {
   const { id } = useParams(); // ambil id dari URL misalnya /risiko/detail/:id
@@ -17,15 +18,12 @@ export default function RisikoPage() {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch(
-          `/api/risks/${id}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await fetch(`/api/risks/${id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!res.ok) throw new Error("Gagal memuat detail risiko");
 
@@ -102,9 +100,8 @@ export default function RisikoPage() {
           <div className="grid grid-cols-1 gap-6 items-start">
             {/* 📁 Kiri: Rencana Mitigasi */}
             <RiwayatAktivitasCard aktivitasList={data.aktivitas} />
-
           </div>
-            <RencanaMitigasiCard mitigasiList={data.mitigasi} />
+          <RencanaMitigasiCard mitigasiList={data.mitigasi} />
         </div>
       </div>
     </LayoutDinas>

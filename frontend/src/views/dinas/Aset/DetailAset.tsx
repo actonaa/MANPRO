@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import ButtonText from "../../components/button/ButtonText";
-import InformasiUtama from "../../components/kelola-asset/dinas/InformasiUtama";
-import JadwalPemeliharaan from "../../components/kelola-asset/dinas/JadwalPemeliharaan";
-import KeterkaitanRisiko from "../../components/kelola-asset/dinas/KeterkaitanRisiko";
-import Lampiran from "../../components/kelola-asset/dinas/Lampiran";
-import RiwayatAktivitas from "../../components/kelola-asset/dinas/RiwayatAktivitas";
-import ScanBarcode from "../../components/kelola-asset/dinas/ScanBarcode";
-import SiklusHidup from "../../components/kelola-asset/dinas/SiklusHidup";
-import LayoutDinas from "../layout/LayoutDinas";
+import ButtonText from "../../../components/button/ButtonText";
+import InformasiUtama from "../../../components/kelola-asset/dinas/InformasiUtama";
+import JadwalPemeliharaan from "../../../components/kelola-asset/dinas/JadwalPemeliharaan";
+import KeterkaitanRisiko from "../../../components/kelola-asset/dinas/KeterkaitanRisiko";
+import Lampiran from "../../../components/kelola-asset/dinas/Lampiran";
+import RiwayatAktivitas from "../../../components/kelola-asset/dinas/RiwayatAktivitas";
+import ScanBarcode from "../../../components/kelola-asset/dinas/ScanBarcode";
+import SiklusHidup from "../../../components/kelola-asset/dinas/SiklusHidup";
+import LayoutDinas from "../../layout/LayoutDinas";
 
 export default function DetailAset() {
   const { id } = useParams<{ id: string }>();

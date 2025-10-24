@@ -1,6 +1,6 @@
-import AgendaPemeliharaanCard from "../../components/pemeliharaan/dinas/AgendaPemeliharaanCard";
-import InfoPemeliharaan from "../../components/pemeliharaan/dinas/InfoPemeliharaan";
-import LayoutDinas from "../layout/LayoutDinas";
+import AgendaPemeliharaanCard from "../../../components/pemeliharaan/dinas/AgendaPemeliharaanCard";
+import InfoPemeliharaan from "../../../components/pemeliharaan/dinas/InfoPemeliharaan";
+import LayoutDinas from "../../layout/LayoutDinas";
 
 export default function LaptopKerjaDetail() {
   return (

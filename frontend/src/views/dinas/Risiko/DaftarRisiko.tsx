@@ -1,6 +1,6 @@
-import LayoutDinas from "../layout/LayoutDinas";
-import ButtonFilter from "../../components/button/ButtonFilter";
-import TableRisiko from "../../components/table/TableRisiko";
+import LayoutDinas from "../../layout/LayoutDinas";
+import ButtonFilter from "../../../components/button/ButtonFilter";
+import TableRisiko from "../../../components/table/TableRisiko";
 import { useState } from "react";
 
 export default function Risiko() {

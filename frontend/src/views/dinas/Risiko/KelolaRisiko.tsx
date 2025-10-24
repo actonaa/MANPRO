@@ -1,8 +1,8 @@
-import LayoutDinas from "../layout/LayoutDinas";
-import RisikoResidual from "../../components/kelola-risiko/dinas/RisikoResidual";
-import Top10Risiko from "../../components/kelola-risiko/dinas/Top10Resiko";
-import ButtonText from "../../components/button/ButtonText";
-import CardList from "../../components/card/CardList";
+import LayoutDinas from "../../layout/LayoutDinas";
+import RisikoResidual from "..//../../components/kelola-risiko/dinas/RisikoResidual";
+import Top10Risiko from "../../../components/kelola-risiko/dinas/Top10Resiko";
+import ButtonText from "../../../components/button/ButtonText";
+import CardList from "../../../components/card/CardList";
 
 export default function KelolaAset() {
   // ✅ Data sementara dari backend (dummy)

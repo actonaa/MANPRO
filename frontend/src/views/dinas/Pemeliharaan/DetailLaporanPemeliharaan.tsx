@@ -1,9 +1,9 @@
-import LayoutDinas from "../layout/LayoutDinas";
-import HeaderPemeliharaan from "../../components/pemeliharaan/dinas/HeaderPemeliharaan";
-import InformasiUtama from "../../components/kelola-asset/dinas/InformasiUtama";
-import SiklusHidupCard from "../../components/pemeliharaan/dinas/SiklusHidupCard";
-import LampiranCard from "../../components/pemeliharaan/dinas/LampiranCard";
-import RiwayatAktivitasCard from "../../components/pemeliharaan/dinas/RiwayatAktivitasCard";
+import LayoutDinas from "../../layout/LayoutDinas";
+import HeaderPemeliharaan from "../../../components/pemeliharaan/dinas/HeaderPemeliharaan";
+import InformasiUtama from "../../../components/kelola-asset/dinas/InformasiUtama";
+import SiklusHidupCard from "../../../components/pemeliharaan/dinas/SiklusHidupCard";
+import LampiranCard from "../../../components/pemeliharaan/dinas/LampiranCard";
+import RiwayatAktivitasCard from "../../../components/pemeliharaan/dinas/RiwayatAktivitasCard";
 
 export default function DetailPemeliharaanPage() {
   return (

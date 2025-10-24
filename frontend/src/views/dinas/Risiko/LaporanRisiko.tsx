@@ -1,9 +1,9 @@
 import { useState } from "react";
-import PeriodDropdown from "../../components/asset/dinas/PeriodDropdown";
-import LevelDropdown from "../../components/risiko/dinas/LevelDropdown"; // ⬅️ ganti dari ConditionDropdown
-import StatusDropdown from "../../components/asset/dinas/StatusDropdown";
-import RisikoTableSection from "../../components/table/LaporanRisk";
-import LayoutDinas from "../layout/LayoutDinas";
+import PeriodDropdown from "../../../components/asset/dinas/PeriodDropdown";
+import LevelDropdown from "../../../components/risiko/dinas/LevelDropdown"; // ⬅️ ganti dari ConditionDropdown
+import StatusDropdown from "../../../components/asset/dinas/StatusDropdown";
+import RisikoTableSection from "../../../components/table/LaporanRisk";
+import LayoutDinas from "../../layout/LayoutDinas";
 
 export default function LaporanRisiko() {
   // ✅ State filter dari dropdown
