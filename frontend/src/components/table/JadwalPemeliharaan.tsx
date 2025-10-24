@@ -57,9 +57,9 @@ export default function TableJadwalPemeliharaan({
   };
 
   return (
-    <div className="mt-5 md:mt-0">
+    <div className="mt-5 bg-white md:mt-0">
       {/* 💻 TABLE VIEW (Desktop) */}
-      <div className="overflow-x-auto hidden md:block">
+      <div className="overflow-x-auto hidden lg:block">
         <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
           <thead className="text-[#666666]">
             <tr>
@@ -105,7 +105,7 @@ export default function TableJadwalPemeliharaan({
                   </td>
                   <td className="py-5 px-4">
                     <a
-                      href={`/pemeliharaan/${item.id}`}
+                      href={`/pemeliharaan/detail/jadwal`}
                       className="text-[#0095E8] font-medium lg:text-[17px] cursor-pointer hover:underline"
                     >
                       Detail
@@ -133,19 +133,19 @@ export default function TableJadwalPemeliharaan({
         </div>
       </div>
 
-      {/* 📱 CARD VIEW (Mobile) */}
-      <div className="md:hidden space-y-4">
+      {/* 📱 CARD VIEW (Mobile & Tablet) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden">
         {filteredData.length > 0 ? (
           filteredData.map((item, index) => (
             <div
               key={index}
-              className="border border-gray-200 rounded-xl shadow-sm p-4"
+              className="border border-gray-200 rounded-xl shadow-sm p-4 bg-white"
             >
               {/* Header */}
               <div className="flex justify-between items-center mb-1">
                 <p className="text-sm text-gray-500">{item.id}</p>
                 <a
-                  href={`/pemeliharaan/${item.id}`}
+                  href={`/pemeliharaan/detail/jadwal`}
                   className="text-[#0095E8] text-sm font-medium hover:underline"
                 >
                   Detail

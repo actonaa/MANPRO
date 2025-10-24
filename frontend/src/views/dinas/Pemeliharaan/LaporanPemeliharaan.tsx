@@ -23,7 +23,7 @@ export default function Pemeliharaan() {
         </h1>
       </div>
 
-      {/* 📱 Tombol Import di atas (mobile only) */}
+      {/* 📱 Tombol Import (mobile only) */}
       <div className="block lg:hidden w-full mb-4">
         <ButtonImg
           title="Import"
@@ -34,8 +34,8 @@ export default function Pemeliharaan() {
       </div>
 
       {/* 📊 Kartu Statistik */}
-      <div className="mb-5 overflow-x-auto pb-6 lg:pb-0 md:overflow-x-visible">
-        <div className="flex gap-4 min-w-[1000px] md:grid lg:grid-cols-2 md:min-w-0 lg:flex lg:min-w-[1000px]">
+      <div className="mb-5 pb-6 lg:pb-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <CardList title="Total Pemeliharaan" value="1,250" />
           <CardList title="Pemeliharaan Berhasil" value="560" />
           <CardList title="Insiden" value="200" />
@@ -45,7 +45,7 @@ export default function Pemeliharaan() {
 
       {/* 🎯 Filter Bar */}
       <div className="border-b border-[#ddd] px-4 py-4 flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
-        <div className="flex flex-row gap-3 items-center">
+        <div className="flex gap-3 items-center">
           <FilterDate
             onSelect={(val) => {
               setSelectedDate(`${val.start} - ${val.end}`);
@@ -74,8 +74,8 @@ export default function Pemeliharaan() {
         </div>
       </div>
 
-      {/* 📋 Tabel Data */}
-      <div>
+      {/* 📋 Tabel / Card Data (Responsif) */}
+      <div className="mt-6">
         <TablePemeliharaan
           kategori={selectedKategori}
           status={selectedStatus}

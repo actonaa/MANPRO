@@ -29,8 +29,8 @@ export default function LaptopKerjaDetail() {
             />
           </div>
 
-          <div className="bg-white p-6 rounded-xl mb-5 border border-gray-100">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white rounded-xl mb-5 border border-gray-100">
+            <div className="grid grid-cols-1 pt-5 md:grid-cols-3 gap-6">
               {/* Tipe Pemeliharaan */}
               <div>
                 <div className="text-sm text-gray-600 mb-1">

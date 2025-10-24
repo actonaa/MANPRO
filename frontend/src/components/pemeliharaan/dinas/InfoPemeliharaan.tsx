@@ -48,7 +48,7 @@ export default function InfoPemeliharaan({
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 border border-gray-100">
+    <div className="bg-white rounded-xl border border-gray-100">
       <h2 className="text-base font-semibold text-gray-900 mb-4">
         Informasi Pemeliharaan
       </h2>
