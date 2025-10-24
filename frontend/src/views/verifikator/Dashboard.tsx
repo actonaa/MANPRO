@@ -1,8 +1,8 @@
 import CardList from "../../components/card/CardList";
 import LayoutDinas from "../layout/LayoutDinas";
-import DistribusiKategori from "../../../components/dashboard/verifikator/DistribusiKategori";
-import StatusJadwalPemeliharaan from "../../../components/dashboard/verifikator/StatusJadwalPemeliharaan";
-import VerifikasiTertunda from "../../../components/dashboard/verifikator/VerifikasiTertunda";
+import DistribusiKategori from "../../components/dashboard/verifikator/DistribusiKategori";
+import StatusJadwalPemeliharaan from "../../components/dashboard/verifikator/StatusJadwalPemeliharaan";
+import VerifikasiTertunda from "../../components/dashboard/verifikator/VerifikasiTertunda";
 
 export default function Dashboard() {
   return (

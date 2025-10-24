@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import ButtonImg from "../../button/ButtonImg";
+import ButtonCard from "../../button/Button";
 
 type Mitigasi = {
   aksi: string;
@@ -16,10 +17,12 @@ type Mitigasi = {
 
 type RencanaMitigasiCardProps = {
   mitigasiList?: Mitigasi[];
+  showAddButton?: boolean; // ✅ Tambahkan prop opsional ini
 };
 
 export default function RencanaMitigasiCard({
   mitigasiList = [],
+  showAddButton = true, // ✅ Default: tombol tetap muncul
 }: RencanaMitigasiCardProps) {
   const navigate = useNavigate();
 
@@ -97,9 +100,7 @@ export default function RencanaMitigasiCard({
                 <td className="py-2 font-medium text-gray-800">
                   {item.strategi}
                 </td>
-                <td className="py-2 font-medium text-gray-800">
-                  {item.biaya}
-                </td>
+                <td className="py-2 font-medium text-gray-800">{item.biaya}</td>
                 <td className="py-2 font-medium text-gray-800">
                   {item.pemilik}
                 </td>
@@ -120,7 +121,22 @@ export default function RencanaMitigasiCard({
           </tbody>
         </table>
       ) : (
-        <p className="text-gray-500 italic">Belum ada rencana mitigasi ditambahkan.</p>
+        <p className="text-gray-500 italic">
+          Belum ada rencana mitigasi ditambahkan.
+        </p>
+      )}
+      {/* 🔘 Tombol Tambah (hanya tampil jika showAddButton = true) */}
+      {showAddButton && (
+        <div className="md:flex md:justify-center md:items-center">
+          <ButtonCard
+            title="+ Tambah Aksi"
+            color="#007DFA"
+            hoverColor="#0066cc"
+            textColor="#ffffff"
+            borderColor="#007DFA"
+            onClick={() => navigate("/edit-risiko")}
+          />
+        </div>
       )}
     </div>
   );
