@@ -26,6 +26,8 @@ import LogoutSSO from "../sso/logout";
 import { ProtectedRouteDinas } from "./ProtectedRouteDinas";
 import { ProtectedRouteVerifikator } from "./ProtectedRouteVerifikator";
 
+import NotFound404 from "../views/Error/NotFound";
+
 export default function AppRoutes() {
   return (
     <Router>
@@ -69,6 +71,8 @@ export default function AppRoutes() {
             element={<DashboardVerifikator />}
           />
         </Route>
+
+        <Route path="*" element={<NotFound404 />} />
       </Routes>
     </Router>
   );
