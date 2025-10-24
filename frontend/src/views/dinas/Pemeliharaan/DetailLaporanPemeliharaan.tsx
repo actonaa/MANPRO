@@ -8,7 +8,7 @@ import RiwayatAktivitasCard from "../../../components/pemeliharaan/dinas/Riwayat
 export default function DetailPemeliharaanPage() {
   return (
     <LayoutDinas>
-      <div className="p-6 space-y-6">
+      <div className=" space-y-6">
         {/* ✅ Header */}
         <HeaderPemeliharaan id="AST - 003" lastUpdate="10-12-2025" />
 

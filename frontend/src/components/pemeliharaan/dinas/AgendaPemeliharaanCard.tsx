@@ -2,8 +2,8 @@ import { Upload } from "lucide-react";
 
 export default function AgendaPemeliharaanCard() {
   return (
-    <div className="bg-white p-6 rounded-xl border border-gray-100">
-      <h2 className="text-lg font-semibold mb-5 text-gray-800">
+    <div className="bg-white rounded-xl border border-gray-100">
+      <h2 className="text-lg font-semibold pt-5 mb-5 text-gray-800">
         Agenda Pemeliharaan
       </h2>
 

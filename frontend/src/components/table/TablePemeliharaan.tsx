@@ -39,7 +39,7 @@ export default function TablePemeliharaan({
     },
   ];
 
-  // Filter data
+  // 🔍 Filter data
   const filteredData = data.filter((row) => {
     const matchKategori = kategori ? row.jenis === kategori : true;
     const matchStatus = status ? row.status === status : true;
@@ -49,8 +49,8 @@ export default function TablePemeliharaan({
 
   return (
     <>
-      {/* 💻 TABLE VIEW */}
-      <div className="hidden md:block overflow-x-auto">
+      {/* 💻 TABLE VIEW — hanya tampil di layar besar (lg ke atas) */}
+      <div className="hidden lg:block bg-white overflow-x-auto">
         <table className="w-full text-sm text-left border-spacing-y-3">
           <thead className="text-gray-600 border-b border-gray-200">
             <tr>
@@ -71,21 +71,29 @@ export default function TablePemeliharaan({
                   key={idx}
                   className="bg-white border-b border-gray-200 hover:bg-gray-50"
                 >
-                  <td className="px-6 py-3">{row.idAset}</td>
-                  <td className="px-6 py-3">{row.idLaporan}</td>
-                  <td className="px-6 py-3">{row.jenis}</td>
-                  <td className="px-6 py-3">{row.biaya}</td>
-                  <td className="px-6 py-3">{row.vendor}</td>
-                  <td className="px-6 py-3">{row.realisasi}</td>
-                  <td className="px-6 py-3">{row.status}</td>
-                  <td className="px-6 py-3 text-right text-blue-600 cursor-pointer">
-                    Detail
+                  <td className="px-6 py-5">{row.idAset}</td>
+                  <td className="px-6 py-5">{row.idLaporan}</td>
+                  <td className="px-6 py-5">{row.jenis}</td>
+                  <td className="px-6 py-5">{row.biaya}</td>
+                  <td className="px-6 py-5">{row.vendor}</td>
+                  <td className="px-6 py-5">{row.realisasi}</td>
+                  <td className="px-6 py-5">{row.status}</td>
+                  <td className="px-6 py-5 text-right">
+                    <a
+                      href={`/detail/laporan`}
+                      className="text-[#0095E8] font-medium hover:underline"
+                    >
+                      Detail
+                    </a>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={8} className="text-center py-6 text-gray-400 italic">
+                <td
+                  colSpan={8}
+                  className="text-center py-6 text-gray-400 italic"
+                >
                   Tidak ada data yang cocok
                 </td>
               </tr>
@@ -94,48 +102,50 @@ export default function TablePemeliharaan({
         </table>
       </div>
 
-      {/* 📱 CARD VIEW */}
-      <div className="md:hidden space-y-4">
+      {/* 📱 CARD VIEW — tampil di mobile dan tablet (sm & md) */}
+      <div className="block lg:hidden">
         {filteredData.length > 0 ? (
-          filteredData.map((row, idx) => (
-            <div
-              key={idx}
-              className="bg-white border border-gray-200 rounded-xl shadow-sm p-4"
-            >
-              <div className="flex justify-between items-center mb-2">
-                <p className="text-xs text-gray-500">{row.idAset}</p>
-                <a
-                  href="#"
-                  className="text-[#0095E8] text-sm font-medium hover:underline"
-                >
-                  Detail
-                </a>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredData.map((row, idx) => (
+              <div
+                key={idx}
+                className="bg-white border border-gray-200 rounded-xl shadow-sm p-4"
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <p className="text-xs text-gray-500">{row.idAset}</p>
+                  <a
+                    href={`/detail/laporan`}
+                    className="text-[#0095E8] text-sm font-medium hover:underline"
+                  >
+                    Detail
+                  </a>
+                </div>
 
-              <h3 className="font-semibold border-b pb-2 text-gray-800 text-[15px] mb-3">
-                {row.vendor}
-              </h3>
+                <h3 className="font-semibold border-b pb-2 text-gray-800 text-[15px] mb-3">
+                  {row.vendor}
+                </h3>
 
-              <div className="grid grid-cols-2 gap-y-1 text-sm text-gray-600">
-                <p>
-                  <span className="font-medium text-gray-700">Kategori:</span>{" "}
-                  {row.jenis}
-                </p>
-                <p className="text-right">
-                  <span className="font-medium text-gray-700">Status:</span>{" "}
-                  {row.status}
-                </p>
-                <p>
-                  <span className="font-medium text-gray-700">Biaya:</span>{" "}
-                  {row.biaya}
-                </p>
-                <p className="text-right">
-                  <span className="font-medium text-gray-700">Jadwal:</span>{" "}
-                  {row.realisasi}
-                </p>
+                <div className="grid grid-cols-2 gap-y-1 text-sm text-gray-600">
+                  <p>
+                    <span className="font-medium text-gray-700">Kategori:</span>{" "}
+                    {row.jenis}
+                  </p>
+                  <p className="text-right">
+                    <span className="font-medium text-gray-700">Status:</span>{" "}
+                    {row.status}
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-700">Biaya:</span>{" "}
+                    {row.biaya}
+                  </p>
+                  <p className="text-right">
+                    <span className="font-medium text-gray-700">Jadwal:</span>{" "}
+                    {row.realisasi}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         ) : (
           <p className="text-center text-gray-500 italic">
             Tidak ada data yang cocok.

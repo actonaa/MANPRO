@@ -36,10 +36,16 @@ export default function NotifikasiPage() {
 
   return (
     <LayoutDinas>
-      <div className="bg-white p-6 rounded-xl space-y-6">
+      <h1 className="text-2xl md:text-2xl font-semibold">
+          Notifikasi
+        </h1>
+        <p className="text-sm text-gray-600 mt-1 mb-5">
+          Ketahui pesan terbaru untuk akun anda.
+        </p>
+      <div className="bg-white rounded-xl space-y-6">
         {/* 🔔 Judul + SearchBar di satu baris */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <h1 className="text-2xl font-semibold text-gray-800">
+          <h1 className="text-lg font-semibold text-gray-800">
             188 Notifikasi
           </h1>
 
