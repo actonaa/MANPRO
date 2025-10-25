@@ -3,7 +3,6 @@ import PeriodDropdown from "../../../components/asset/dinas/PeriodDropdown";
 import LevelDropdown from "../../../components/risiko/dinas/LevelDropdown"; // ⬅️ ganti dari ConditionDropdown
 import StatusDropdown from "../../../components/asset/dinas/StatusDropdown";
 import RisikoTableSection from "../../../components/table/LaporanRisk";
-import LayoutDinas from "../../layout/LayoutDinas";
 
 export default function LaporanRisiko() {
   // ✅ State filter dari dropdown
@@ -12,7 +11,7 @@ export default function LaporanRisiko() {
   const [status, setStatus] = useState("");
 
   return (
-    <LayoutDinas>
+    <>
       <div className=" space-y-6">
         {/* 🏷️ Judul dan deskripsi halaman */}
         <div>
@@ -55,6 +54,6 @@ export default function LaporanRisiko() {
         {/* 📋 Tabel risiko */}
         <RisikoTableSection period={period} level={level} status={status} />
       </div>
-    </LayoutDinas>
+    </>
   );
 }

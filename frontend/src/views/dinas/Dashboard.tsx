@@ -1,6 +1,5 @@
 import { useState } from "react";
 import CardList from "../../components/card/CardList";
-import LayoutDinas from "../layout/LayoutDinas";
 import RiskHeatmap from "../../components/dashboard/dinas/RiskHeatMap";
 import RisikoResidual from "../../components/dashboard/dinas/RisikoResidual";
 import PemeliharaanMendatang from "../../components/dashboard/dinas/PemeliharaanMendatang";
@@ -10,7 +9,7 @@ import DistribusiKategori from "../../components/dashboard/dinas/DistribusiKateg
 export default function Dashboard() {
   const [searchQuery] = useState("");
   return (
-    <LayoutDinas>
+    <>
       <h1 className="font-medium text-sm mb-4 md:text-2xl lg:text-[28px]">
         Dashboard
       </h1>
@@ -45,6 +44,6 @@ export default function Dashboard() {
         <RisikoResidual />
         <PemeliharaanMendatang />
       </div>
-    </LayoutDinas>
+    </>
   );
 }

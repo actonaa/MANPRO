@@ -1,4 +1,3 @@
-import LayoutDinas from "../../layout/LayoutDinas";
 import ButtonImg from "../../../components/button/ButtonImg";
 import { useNavigate } from "react-router-dom";
 import FilterDate from "../../../components/filter/FilterDate";
@@ -22,7 +21,7 @@ export default function Aset() {
   };
 
   return (
-    <LayoutDinas>
+    <>
       <h1 className="font-semibold text-[22px] mb-4 md:text-2xl lg:text-[28px]">
         Kelola Aset
       </h1>
@@ -123,6 +122,6 @@ export default function Aset() {
       <div className=" rounded-xl md:rounded-none md:rounded-b-xl">
         <TableAset />
       </div>
-    </LayoutDinas>
+    </>
   );
 }

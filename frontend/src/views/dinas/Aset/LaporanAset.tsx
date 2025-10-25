@@ -3,7 +3,6 @@ import PeriodDropdown from "../../../components/asset/dinas/PeriodDropdown";
 import ConditionDropdown from "../../../components/asset/dinas/ConditionDropdown";
 import StatusDropdown from "../../../components/asset/dinas/StatusDropdown";
 import AssetTableSection from "../../../components/asset/dinas/AssetTableSection";
-import LayoutDinas from "../../layout/LayoutDinas";
 
 export default function LaporanAset() {
   // ✅ State filter dari dropdown
@@ -12,7 +11,7 @@ export default function LaporanAset() {
   const [status, setStatus] = useState("");
 
   return (
-    <LayoutDinas>
+    <>
       <div className="p-4 space-y-6">
         {/* 🏷️ Judul dan deskripsi halaman */}
         <div>
@@ -58,6 +57,6 @@ export default function LaporanAset() {
           status={status}
         />
       </div>
-    </LayoutDinas>
+    </>
   );
 }

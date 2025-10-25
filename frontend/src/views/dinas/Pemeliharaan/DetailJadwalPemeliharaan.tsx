@@ -1,10 +1,9 @@
 import AgendaPemeliharaanCard from "../../../components/pemeliharaan/dinas/AgendaPemeliharaanCard";
 import InfoPemeliharaan from "../../../components/pemeliharaan/dinas/InfoPemeliharaan";
-import LayoutDinas from "../../layout/LayoutDinas";
 
 export default function LaptopKerjaDetail() {
   return (
-    <LayoutDinas>
+    <>
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-6xl mx-auto">
           {/* Breadcrumb */}
@@ -65,6 +64,6 @@ export default function LaptopKerjaDetail() {
           </div>
         </div>
       </div>
-    </LayoutDinas>
+    </>
   );
 }

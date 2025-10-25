@@ -9,7 +9,6 @@ import Lampiran from "../../../components/kelola-asset/dinas/Lampiran";
 import RiwayatAktivitas from "../../../components/kelola-asset/dinas/RiwayatAktivitas";
 import ScanBarcode from "../../../components/kelola-asset/dinas/ScanBarcode";
 import SiklusHidup from "../../../components/kelola-asset/dinas/SiklusHidup";
-import LayoutDinas from "../../layout/LayoutDinas";
 
 export default function DetailAset() {
   const { id } = useParams<{ id: string }>();
@@ -45,7 +44,7 @@ export default function DetailAset() {
   // 🦴 Skeleton untuk tampilan loading
   if (loading) {
     return (
-      <LayoutDinas>
+      <>
         <div className="p-6 animate-pulse">
           {/* Header Skeleton */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
@@ -81,22 +80,22 @@ export default function DetailAset() {
             <div className="h-40 bg-gray-200 rounded-lg w-full" />
           </div>
         </div>
-      </LayoutDinas>
+      </>
     );
   }
 
   if (!asset) {
     return (
-      <LayoutDinas>
+      <>
         <p className="text-red-500 p-6">
           Gagal memuat data aset atau tidak ditemukan.
         </p>
-      </LayoutDinas>
+      </>
     );
   }
 
   return (
-    <LayoutDinas>
+    <>
       <div className="pb-10">
         {/* 🔹 Header Atas */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
@@ -192,6 +191,6 @@ export default function DetailAset() {
           <ScanBarcode barcodeUrl={asset.barcode || ""} />
         </div>
       </div>
-    </LayoutDinas>
+    </>
   );
 }

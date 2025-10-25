@@ -1,4 +1,3 @@
-import LayoutDinas from "../../layout/LayoutDinas";
 import HeaderPemeliharaan from "../../../components/pemeliharaan/dinas/HeaderPemeliharaan";
 import InformasiUtama from "../../../components/kelola-asset/dinas/InformasiUtama";
 import SiklusHidupCard from "../../../components/pemeliharaan/dinas/SiklusHidupCard";
@@ -7,7 +6,7 @@ import RiwayatAktivitasCard from "../../../components/pemeliharaan/dinas/Riwayat
 
 export default function DetailPemeliharaanPage() {
   return (
-    <LayoutDinas>
+    <>
       <div className=" space-y-6">
         {/* ✅ Header */}
         <HeaderPemeliharaan id="AST - 003" lastUpdate="10-12-2025" />
@@ -45,6 +44,6 @@ export default function DetailPemeliharaanPage() {
           </div>
         </div>
       </div>
-    </LayoutDinas>
+    </>
   );
 }

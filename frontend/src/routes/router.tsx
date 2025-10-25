@@ -61,7 +61,7 @@ export default function AppRoutes() {
             path="/detail/laporan"
             element={<DetailLaporanPemeliharaan />}
           />
-          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/notifikasi" element={<Notifications />} />
         </Route>
 
         {/* Route verifikator */}
