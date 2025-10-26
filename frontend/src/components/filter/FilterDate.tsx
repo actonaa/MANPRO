@@ -40,12 +40,14 @@ export default function FilterDate({ onSelect }: FilterDateProps) {
       {/* 🔘 Tombol utama filter */}
       <button
         onClick={() => setShowCalendar(!showCalendar)}
-        className="flex justify-between items-center w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-700 shadow-sm hover:shadow focus:ring-2 focus:ring-blue-400 transition"
+        className="flex justify-between items-center w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-gray-700 shadow-sm hover:shadow focus:ring-2 focus:ring-blue-400 transition"
       >
         <div className="flex items-center gap-2 truncate">
           <CalendarDays className="w-5 h-5 text-[#6B7280]" />
           <span className="truncate text-sm font-semibold text-[#6B7280]">
-            {startDate && endDate ? `${startDate} — ${endDate}` : "Filter "}
+            {startDate && endDate
+              ? `${startDate} — ${endDate}`
+              : "Pilih tanggal"}
           </span>
         </div>
         <ChevronDown

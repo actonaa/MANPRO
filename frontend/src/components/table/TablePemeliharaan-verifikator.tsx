@@ -1,76 +1,86 @@
+import { useState, useEffect } from "react";
 import { Eye, CalendarDays } from "lucide-react";
 
-interface Props {
-  selectedKategori?: string;
+type TablePemeliharaanProps = {
+  selectedLevel?: string;
   selectedStatus?: string;
-  selectedDate?: string; // ✅ Tambahan baru
-}
+  selectedDate?: { start: string; end: string } | null;
+};
 
-export default function TableJadwalPemeliharaan({
-  selectedKategori,
-  selectedStatus,
-  selectedDate,
-}: Props) {
-  const data = [
-    {
-      id: "AST - 001",
-      nama: "Laptop Kerja",
-      kategori: "Aset TI",
-      lokasi: "Kantor Pusat",
-      prioritas: "Rendah",
-      tanggal: "12 - 01 - 2025",
-      status: "Aktif",
-    },
-    {
-      id: "AST - 002",
-      nama: "CCTV Lobby",
-      kategori: "Aset TI",
-      lokasi: "Kantor Pusat",
-      prioritas: "Tinggi",
-      tanggal: "13 - 01 - 2025",
-      status: "Perbaikan",
-    },
-    {
-      id: "AST - 003",
-      nama: "Server Ruangan IT",
-      kategori: "Aset TI",
-      lokasi: "Kantor Pusat",
-      prioritas: "Sedang",
-      tanggal: "15 - 01 - 2025",
-      status: "Dijadwalkan",
-    },
-    {
-      id: "AST - 004",
-      nama: "Printer Kantor",
-      kategori: "Aset Non TI",
-      lokasi: "Kantor Cabang",
-      prioritas: "Rendah",
-      tanggal: "12 - 01 - 2025",
-      status: "Selesai",
-    },
-  ];
+type PemeliharaanItem = {
+  id: string;
+  nama: string;
+  kategori: string;
+  lokasi: string;
+  prioritas: string;
+  tanggal: string;
+  status: string;
+};
 
-  // 🔧 Fungsi bantu: ubah format "12 - 01 - 2025" → "2025-01-12"
-  const parseCustomDate = (dateStr: string): string => {
-    const [day, month, year] = dateStr.split(" - ").map((x) => x.trim());
-    return `${year}-${month}-${day}`;
-  };
+export default function TablePemeliharaanVerifikator({
+  selectedLevel = "",
+  selectedStatus = "",
+  selectedDate = null,
+}: TablePemeliharaanProps) {
+  const [data, setData] = useState<PemeliharaanItem[]>([]);
 
-  // 🧩 Filter data berdasarkan kategori, status, dan tanggal
+  // 📊 Dummy data
+  useEffect(() => {
+    setData([
+      {
+        id: "AST-001",
+        nama: "Laptop Kerja",
+        kategori: "Aset TI",
+        lokasi: "Kantor Pusat",
+        prioritas: "Rendah",
+        tanggal: "2025-01-12",
+        status: "Aktif",
+      },
+      {
+        id: "AST-002",
+        nama: "CCTV Lobby",
+        kategori: "Aset TI",
+        lokasi: "Kantor Pusat",
+        prioritas: "Tinggi",
+        tanggal: "2025-01-13",
+        status: "Perbaikan",
+      },
+      {
+        id: "AST-003",
+        nama: "Server Ruangan IT",
+        kategori: "Aset TI",
+        lokasi: "Kantor Pusat",
+        prioritas: "Sedang",
+        tanggal: "2025-01-15",
+        status: "Dijadwalkan",
+      },
+      {
+        id: "AST-004",
+        nama: "Printer Kantor",
+        kategori: "Aset Non TI",
+        lokasi: "Kantor Cabang",
+        prioritas: "Rendah",
+        tanggal: "2025-01-12",
+        status: "Selesai",
+      },
+    ]);
+  }, []);
+
+  // ✅ Filter data sesuai filter aktif
   const filteredData = data.filter((item) => {
-    const matchKategori =
-      !selectedKategori || item.prioritas === selectedKategori;
-    const matchStatus = !selectedStatus || item.status === selectedStatus;
-
-    // 🔍 Filter tanggal yang benar-benar cocok (bandingkan format ISO)
-    const matchDate =
-      !selectedDate ||
-      parseCustomDate(item.tanggal) === selectedDate ||
-      parseCustomDate(item.tanggal).startsWith(selectedDate); // antisipasi format
-
-    return matchKategori && matchStatus && matchDate;
+    const matchLevel = selectedLevel
+      ? item.prioritas.toLowerCase() === selectedLevel.toLowerCase()
+      : true;
+    const matchStatus = selectedStatus
+      ? item.status.toLowerCase() === selectedStatus.toLowerCase()
+      : true;
+    const matchDate = selectedDate
+      ? item.tanggal >= selectedDate.start && item.tanggal <= selectedDate.end
+      : true;
+    return matchLevel && matchStatus && matchDate;
   });
 
+  // 🎨 Warna badge prioritas
   const getBadgeColor = (prioritas: string) => {
     switch (prioritas) {
       case "Tinggi":
@@ -84,79 +94,121 @@ export default function TableJadwalPemeliharaan({
     }
   };
 
-  const handleViewDetail = (id: string) => {
-    alert(`👁️ Melihat detail aset: ${id}`);
-  };
-
-  const handleScheduleClick = (id: string) => {
-    alert(`📅 Menjadwalkan pemeliharaan aset: ${id}`);
-  };
-
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full border-collapse">
-        <thead>
-          <tr className="text-sm text-gray-600 border-b">
-            <th className="px-6 py-3 text-left font-medium">ID ASET</th>
-            <th className="px-6 py-3 text-left font-medium">NAMA ASET</th>
-            <th className="px-6 py-3 text-left font-medium">KATEGORI</th>
-            <th className="px-6 py-3 text-left font-medium">LOKASI</th>
-            <th className="px-6 py-3 text-left font-medium">PRIORITAS</th>
-            <th className="px-6 py-3 text-left font-medium">
-              JADWAL PEMELIHARAAN
-            </th>
-            <th className="px-6 py-3 text-center font-medium">AKSI</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredData.map((item, index) => (
-            <tr key={index} className="border-b hover:bg-gray-50 text-sm">
-              <td className="px-6 py-3">{item.id}</td>
-              <td className="px-6 py-3">{item.nama}</td>
-              <td className="px-6 py-3">{item.kategori}</td>
-              <td className="px-6 py-3">{item.lokasi}</td>
-              <td className="px-6 py-3">
-                <span
-                  className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeColor(
-                    item.prioritas
-                  )}`}
-                >
+    <div className="md:pb-10 xl:bg-white xl:shadow-xl xl:p-5 lg:rounded-2xl">
+      {/* 🖥️ Tabel layar besar */}
+      <div className="hidden xl:block">
+        <table className="w-full min-w-[900px] text-[13px] text-center border-collapse">
+          <thead className="text-[#666666]">
+            <tr>
+              <th className="py-5 px-4 font-semibold">ID ASET</th>
+              <th className="py-5 px-4 font-semibold">NAMA ASET</th>
+              <th className="py-5 px-4 font-semibold">KATEGORI</th>
+              <th className="py-5 px-4 font-semibold">LOKASI</th>
+              <th className="py-5 px-4 font-semibold">PRIORITAS</th>
+              <th className="py-5 px-4 font-semibold">STATUS</th>
+              <th className="py-5 px-4 font-semibold">JADWAL <br /> PEMELIHARAAN</th> 
+              <th className="py-5 px-4 font-semibold">AKSI</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredData.map((item) => (
+              <tr
+                key={item.id}
+                className="border-b border-b-[#ddd] hover:bg-gray-50 transition"
+              >
+                <td className="py-5 px-4 ">{item.id}</td>
+                <td className="py-5 px-4">{item.nama}</td>
+                <td className="py-5 px-4">{item.kategori}</td>
+                <td className="py-5 px-4">{item.lokasi}</td>
+                <td className="py-5 px-4">
+                  <span
+                    className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeColor(
+                      item.prioritas
+                    )}`}
+                  >
+                    {item.prioritas}
+                  </span>
+                </td>
+                <td className="py-5 px-4">{item.status}</td>
+                <td className="py-5 px-4 text-gray-600">{item.tanggal}</td>
+                <td className="py-5 px-4 flex items-center justify-center gap-3 text-gray-500">
+                  <button className="hover:text-blue-600" title="Lihat Detail">
+                    <Eye size={18} />
+                  </button>
+                  <button
+                    className="hover:text-green-600"
+                    title="Jadwalkan Pemeliharaan"
+                  >
+                    <CalendarDays size={18} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* 📱 Tampilan mobile */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden">
+        {filteredData.map((item) => (
+          <div
+            key={item.id}
+            className="border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition bg-white"
+          >
+            <div className="flex justify-between items-center mb-2">
+              <p className="text-sm text-gray-500">{item.tanggal}</p>
+              <span className="text-xs font-medium px-3 py-1 rounded-full bg-gray-100 text-gray-600">
+                {item.status}
+              </span>
+            </div>
+
+            <h3 className="text-base font-semibold text-gray-800 mb-1">
+              {item.nama}
+            </h3>
+            <p className="text-sm text-gray-500 mb-3">{item.lokasi}</p>
+
+            <div className="grid grid-cols-2 text-sm text-gray-600 gap-y-1">
+              <p>
+                <span className="font-medium text-gray-700">ID:</span>{" "}
+                {item.id}
+              </p>
+              <p>
+                <span className="font-medium text-gray-700">Prioritas:</span>{" "}
+                <span className={getBadgeColor(item.prioritas)}>
                   {item.prioritas}
                 </span>
-              </td>
-              <td className="px-6 py-3">{item.tanggal}</td>
+              </p>
+              <p>
+                <span className="font-medium text-gray-700">Kategori:</span>{" "}
+                {item.kategori}
+              </p>
+              <p>
+                <span className="font-medium text-gray-700">Status:</span>{" "}
+                {item.status}
+              </p>
+            </div>
 
-              {/* 🔹 Kolom Aksi */}
-              <td className="px-6 py-3 text-center">
-                <div className="flex justify-center items-center space-x-3">
-                  <button
-                    onClick={() => handleViewDetail(item.id)}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition"
-                    title="Lihat Detail"
-                  >
-                    <Eye className="w-5 h-5 text-gray-600 hover:text-gray-800" />
-                  </button>
+            <div className="flex justify-end gap-3 mt-4 text-gray-500">
+              <button className="hover:text-blue-600" title="Lihat Detail">
+                <Eye size={18} />
+              </button>
+              <button
+                className="hover:text-green-600"
+                title="Jadwalkan Pemeliharaan"
+              >
+                <CalendarDays size={18} />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
 
-                  <button
-                    onClick={() => handleScheduleClick(item.id)}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition"
-                    title="Jadwalkan"
-                  >
-                    <CalendarDays className="w-5 h-5 text-gray-600 hover:text-gray-800" />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
-          {filteredData.length === 0 && (
-            <tr>
-              <td colSpan={7} className="text-center py-6 text-gray-400 italic">
-                Tidak ada data yang cocok
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      {filteredData.length === 0 && (
+        <p className="text-center text-gray-500 py-6">
+          Tidak ada data yang cocok dengan filter.
+        </p>
+      )}
     </div>
   );
 }

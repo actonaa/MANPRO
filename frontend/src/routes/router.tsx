@@ -19,7 +19,12 @@ import DetailLaporanPemeliharaan from "../views/dinas/Pemeliharaan/DetailLaporan
 import DetailJadwalPemeliharaan from "../views/dinas/Pemeliharaan/DetailJadwalPemeliharaan";
 
 import Notifications from "../views/dinas/Notifications";
+
 import DashboardVerifikator from "../views/verifikator/Dashboard";
+import RisikoVerifikator from "../views/verifikator/DaftarRisiko";
+import JadwalPemeliharaanVerifikator from "../views/verifikator/JadwalPemeliharaan";
+import LaporanAsetVerifikator from "../views/verifikator/LaporanAset";
+
 import Callback from "../sso/callback";
 import LogoutSSO from "../sso/logout";
 
@@ -70,6 +75,9 @@ export default function AppRoutes() {
             path="/dashboard-verifikator"
             element={<DashboardVerifikator />}
           />
+          <Route path="/aset/laporan-verifikator" element={<LaporanAsetVerifikator />} />
+          <Route path="/risiko-verifikator" element={<RisikoVerifikator />} />
+          <Route path="/jadwal-verifikator" element={<JadwalPemeliharaanVerifikator />} />
         </Route>
 
         <Route path="*" element={<NotFound404 />} />

@@ -47,7 +47,7 @@ export default function ButtonFilter({
       <div className="relative w-full ">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex justify-between items-center w-full bg-white border border-gray-300 rounded-lg lg:rounded-[12px] px-4 py-2 text-gray-700 shadow-sm hover:shadow focus:ring-2 focus:ring-blue-400 transition"
+          className="flex justify-between items-center w-full bg-white border border-gray-300 rounded-lg lg:rounded-[12px] px-4 py-3 text-gray-700 shadow-sm hover:shadow focus:ring-2 focus:ring-blue-400 transition"
         >
           <span className="text-sm font-semibold text-[#6B7280]">
             {selected || label}

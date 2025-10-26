@@ -1,87 +1,72 @@
-import { useState, memo } from "react";
+import { useState } from "react";
 import LayoutDinas from "../layout/LayoutDinas";
 import FilterDate from "../../components/filter/FilterDate";
 import ButtonFilter from "../../components/button/ButtonFilter";
+import TableRisiko from "../../components/table/TableRisiko-verifikator";
 
 export default function DaftarRisiko() {
   const [selectedLevel, setSelectedLevel] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState<{ start: string; end: string } | null>(null);
 
-  // ✅ Tambahkan fungsi ini agar error hilang
+  // ✅ Tangani perubahan tanggal
   const handleDateChange = (range: { start: string; end: string }) => {
-    setSelectedDate(range.start);
+    setSelectedDate(range);
   };
 
   return (
     <LayoutDinas>
-      {/* 🧭 Judul */}
-      <h1 className="font-medium text-sm mb-2 md:text-2xl lg:text-[28px]">
-        Daftar Risiko
+      {/* 🧭 Judul Halaman */}
+      <h1 className="font-semibold text-sm mb-2 md:text-2xl lg:text-[28px]">
+        Verifikasi Risiko
       </h1>
       <p className="text-gray-500 text-sm mb-6">
         Kelola dan konfirmasi risiko yang menunggu persetujuan anda.
       </p>
 
-      {/* 📦 Card Filter */}
-      <div className="bg-white p-6 rounded-xl shadow-sm mb-8 w-full">
-        {/* 📱 MOBILE VIEW */}
-        <div className="block md:hidden">
-          {/* Periode */}
-          <div className="w-full mb-4">
+      {/* 📊 Card Filter */}
+      <div className="bg-white shadow-md rounded-lg p-4 border border-gray-200 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* 📅 Periode */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Periode
+            </label>
             <FilterDate onSelect={handleDateChange} />
           </div>
 
-          {/* Prioritas & Status sejajar */}
-          <div className="flex gap-4 w-full">
-            <div className="w-1/2">
-              <ButtonFilter
-                label="Prioritas"
-                options={["Rendah", "Sedang", "Tinggi"]}
-                onSelect={(val) => setSelectedLevel(val)}
-              />
-            </div>
-            <div className="w-1/2">
-              <ButtonFilter
-                label="Status"
-                options={["Dijadwalkan", "Selesai", "Tertunda"]}
-                onSelect={(val) => setSelectedStatus(val)}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* 💻 DESKTOP VIEW */}
-        <div className="hidden md:flex md:flex-row md:items-center md:justify-between gap-4 w-full">
-          {/* Periode */}
-          <div className="w-full md:w-1/3">
-            <FilterDate onSelect={handleDateChange} />
-          </div>
-
-          {/* Prioritas */}
-          <div className="w-full md:w-1/3">
+          {/* 🔧 Level */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Level
+            </label>
             <ButtonFilter
-              label="Prioritas"
+              label="Pilih level"
               options={["Rendah", "Sedang", "Tinggi"]}
-              onSelect={(val) => setSelectedLevel(val)}
+              onSelect={setSelectedLevel}
             />
           </div>
 
-          {/* Status */}
-          <div className="w-full md:w-1/3">
+          {/* 📊 Status */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Status
+            </label>
             <ButtonFilter
-              label="Status"
-              options={["Dijadwalkan", "Selesai", "Tertunda"]}
-              onSelect={(val) => setSelectedStatus(val)}
+              label="Pilih status"
+              options={["Diterima", "Tertunda", "Ditolak"]}
+              onSelect={setSelectedStatus}
             />
           </div>
         </div>
       </div>
+
+      {/* 📋 Tabel Risiko */}
+      <TableRisiko
+        selectedLevel={selectedLevel}
+        selectedStatus={selectedStatus}
+        selectedDate={selectedDate}
+      />
     </LayoutDinas>
   );
 }
-
-/* ✅ Prevent re-render untuk filter tanggal */
-const StableFilterDate = memo(function StableFilterDate() {
-  return <FilterDate />;
-});
