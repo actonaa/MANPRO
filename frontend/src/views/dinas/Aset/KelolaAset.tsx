@@ -50,12 +50,12 @@ export default function Aset() {
         </div>
       </div>
 
-      <div className="mb-5 overflow-x-auto pb-6 md:pb-0 md:overflow-x-visible">
-        <div className="flex gap-4 min-w-[1000px] md:grid md:grid-cols-2 md:min-w-0 lg:flex lg:min-w-[1000px]">
+      <div className="mb-5 overflow-x-auto pb-6 md:mb-0 xl:overflow-x-visible">
+        <div className="flex gap-4 min-w-[1000px] md:grid md:grid-cols-2 md:min-w-0 xl:flex">
           <CardList title="Total Aset" value="1,250" />
           <CardList title="Aset Perlu Perbaikan" value="560" />
           <CardList title="Aset Akan Dihapus" value="200" />
-          <CardList title="Total Nilai Aset" value="Rp. 2,5M" />
+          <CardList title="Risiko Aktif" value="499" />
         </div>
       </div>
 
@@ -74,14 +74,14 @@ export default function Aset() {
       </div>
 
       {/* Responsive Laptop */}
-      <h1 className="hidden md:block font-medium text-sm mb-4 md:text-2xl lg:text-[28px]">
+      <h1 className="hidden md:block font-medium text-sm lg:mb-4 md:text-2xl lg:text-[28px]">
         Data Aset
       </h1>
 
       {/* Hanya bagian filter dan tombol yang disembunyikan di mobile */}
-      <div className="hidden md:block bg-white rounded-t-xl">
-        <div className="border-b border-[#ddd]">
-          <div className="flex justify-between px-4 py-8">
+      <div className="hidden md:block lg:bg-white rounded-t-xl">
+        <div className="lg:border-b border-[#ddd]">
+          <div className="flex justify-between px-0 lg:px-4 py-8">
             <div className="flex gap-3">
               <ButtonFilter
                 label="Kategori"

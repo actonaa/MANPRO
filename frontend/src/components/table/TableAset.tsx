@@ -69,40 +69,63 @@ export default function TableAset() {
     }
   };
 
-  // 🔹 Skeleton Loader Component
-  const SkeletonRow = () => (
-    <tr className="border-b border-b-[#ddd] animate-pulse">
-      {[...Array(7)].map((_, i) => (
-        <td key={i} className="py-5 px-4">
-          <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto" />
-        </td>
-      ))}
-    </tr>
-  );
-
   if (loading)
     return (
-      <div className="overflow-x-auto mt-5 md:mt-0">
-        <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
-          <thead className="text-[#666666]">
-            <tr>
-              <th className="py-5 px-4 font-semibold">ID ASET</th>
-              <th className="py-5 px-4 font-semibold">NAMA ASET</th>
-              <th className="py-5 px-4 font-semibold">KATEGORI</th>
-              <th className="py-5 px-4 font-semibold">LOKASI</th>
-              <th className="py-5 px-4 font-semibold">STATUS</th>
-              <th className="py-5 px-4 font-semibold">TANGGAL PEROLEHAN</th>
-              <th className="py-5 px-4 font-semibold"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {[...Array(6)].map((_, i) => (
-              <SkeletonRow key={i} />
-            ))}
-          </tbody>
-        </table>
-        <div className="mt-6 flex justify-between p-4">
-          <div className="h-4 bg-gray-200 rounded w-40 animate-pulse" />
+      <div className="mt-5 md:mt-0">
+        {/* 🔹 MOBILE VIEW Skeleton */}
+        <div className="block lg:hidden space-y-4">
+          {[...Array(4)].map((_, i) => (
+            <div
+              key={i}
+              className="rounded-xl border border-gray-200 shadow-sm p-4 bg-white animate-pulse"
+            >
+              <div className="flex justify-between items-center mb-2">
+                <div className="h-3 w-24 bg-gray-200 rounded"></div>
+                <div className="h-3 w-10 bg-gray-200 rounded"></div>
+              </div>
+
+              <div className="h-4 w-3/4 bg-gray-200 rounded mb-3"></div>
+              <hr className="my-3 border-gray-200" />
+
+              <div className="space-y-2">
+                <div className="h-3 w-32 bg-gray-200 rounded"></div>
+                <div className="h-3 w-24 bg-gray-200 rounded"></div>
+                <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+                <div className="h-3 w-28 bg-gray-200 rounded"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* 🔹 DESKTOP VIEW Skeleton */}
+        <div className="hidden lg:block overflow-x-auto bg-white">
+          <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
+            <thead className="text-[#666666]">
+              <tr>
+                <th className="py-5 px-4 font-semibold">ID ASET</th>
+                <th className="py-5 px-4 font-semibold">NAMA ASET</th>
+                <th className="py-5 px-4 font-semibold">KATEGORI</th>
+                <th className="py-5 px-4 font-semibold">LOKASI</th>
+                <th className="py-5 px-4 font-semibold">STATUS</th>
+                <th className="py-5 px-4 font-semibold">TANGGAL PEROLEHAN</th>
+                <th className="py-5 px-4 font-semibold"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...Array(6)].map((_, i) => (
+                <tr key={i} className="border-b border-b-[#ddd] animate-pulse">
+                  {[...Array(7)].map((_, j) => (
+                    <td key={j} className="py-5 px-4">
+                      <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto" />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="mt-6 flex justify-between p-4">
+            <div className="h-4 bg-gray-200 rounded w-40 animate-pulse" />
+          </div>
         </div>
       </div>
     );
@@ -110,14 +133,14 @@ export default function TableAset() {
   if (error) return <p className="text-center py-5 text-red-500">{error}</p>;
 
   return (
-    <div className="mt-5">
+    <div className="lg:rounded-b-xl lg:bg-white">
       {/* 🔹 MOBILE VIEW - Card Layout */}
-      <div className="block lg:hidden space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 md:gap-5 lg:hidden space-y-4 mt-5 md:mt-0">
         {data.length > 0 ? (
           data.map((item) => (
             <div
               key={item.id}
-              className="rounded-xl border border-gray-200 shadow-sm p-4"
+              className="rounded-xl border border-gray-200 shadow-sm p-4 bg-white"
             >
               <div className="flex justify-between items-center">
                 <p className="text-sm text-gray-500 font-medium">
@@ -138,27 +161,27 @@ export default function TableAset() {
               <hr className="my-3 border-gray-200" />
 
               <div className="space-y-1 text-sm text-gray-700">
-                <p>
-                  <span className="font-medium">Kategori: </span>
-                  {item.category?.name || "-"}
+                <p className="flex justify-between">
+                  <p className="font-medium">Kategori </p>
+                  <p>{item.category?.name || "-"}</p>
                 </p>
-                <p>
-                  <span className="font-medium">Lokasi: </span>
-                  {item.lokasi || "-"}
+                <p className="flex justify-between">
+                  <p className="font-medium">Lokasi </p>
+                  <p>{item.lokasi || "-"}</p>
                 </p>
-                <p>
-                  <span className="font-medium">Status: </span>
+                <p className="flex justify-between">
+                  <p className="font-medium">Status </p>
                   <span
                     className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
                       item.status?.name || ""
                     )}`}
                   >
-                    {item.status?.name || "-"}
+                    <p>{item.status?.name || "-"}</p>
                   </span>
                 </p>
-                <p>
-                  <span className="font-medium">Tanggal: </span>
-                  {item.acquisition_date || "-"}
+                <p className="flex justify-between">
+                  <p className="font-medium">Tanggal</p>
+                  <p>{item.acquisition_date || "-"}</p>
                 </p>
               </div>
             </div>

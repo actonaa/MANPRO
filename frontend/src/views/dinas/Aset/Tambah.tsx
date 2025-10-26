@@ -1,6 +1,5 @@
 import { useState, useEffect, type ChangeEvent } from "react";
 import { CheckCircle, X } from "lucide-react";
-import LayoutDinas from "../../layout/LayoutDinas";
 
 // Import gambar wizard untuk desktop dan mobile
 import Step1Desktop from "/wizard/step1.png";
@@ -242,8 +241,8 @@ export default function AssetWizard() {
   };
 
   return (
-    <LayoutDinas>
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+    <>
+      <div className="min-h-screen flex flex-col">
         {/* Header Wizard */}
         <div className="flex flex-col w-full mx-auto">
           <h1 className="text-2xl font-semibold mb-8">Tambah Aset</h1>
@@ -777,6 +776,6 @@ export default function AssetWizard() {
           }}
         />
       )}
-    </LayoutDinas>
+    </>
   );
 }
