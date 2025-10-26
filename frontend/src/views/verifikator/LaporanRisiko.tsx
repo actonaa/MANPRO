@@ -1,5 +1,4 @@
 import { useState, memo } from "react";
-import LayoutDinas from "../layout/LayoutDinas";
 import FilterDate from "../../components/filter/FilterDate";
 import ButtonFilter from "../../components/button/ButtonFilter";
 
@@ -15,7 +14,7 @@ export default function LaporanRisiko() {
   };
 
   return (
-    <LayoutDinas>
+    <>
       {/* 🏷️ Judul Halaman */}
       <h1 className="font-medium text-sm mb-2 md:text-2xl lg:text-[28px]">
         Laporan Risiko
@@ -75,7 +74,7 @@ export default function LaporanRisiko() {
           </div>
         </div>
       </div>
-    </LayoutDinas>
+    </>
   );
 }
 

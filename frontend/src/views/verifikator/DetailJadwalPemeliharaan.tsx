@@ -1,4 +1,3 @@
-import LayoutDinas from "../layout/LayoutDinas";
 import DetailJadwalCard from "../../components/pemeliharaan/verifikator/DetailJadwal";
 import InfoPemeliharaan from "../../components/pemeliharaan/verifikator/InfoPemeliharaan";
 import DeskripsiPemeliharaan from "../../components/pemeliharaan/verifikator/DeskripsiPemeliharaan";
@@ -6,7 +5,7 @@ import RiwayatPemeliharaanCard from "../../components/pemeliharaan/verifikator/R
 
 export default function DetailJadwalPemeliharaan() {
   return (
-    <LayoutDinas>
+    <>
       <div className="p-4 sm:p-6 space-y-6">
         {/* ✅ Header Judul */}
         <h1 className="text-lg sm:text-xl font-semibold text-gray-800 text-center sm:text-left">
@@ -60,6 +59,6 @@ export default function DetailJadwalPemeliharaan() {
           </div>
         </div>
       </div>
-    </LayoutDinas>
+    </>
   );
 }

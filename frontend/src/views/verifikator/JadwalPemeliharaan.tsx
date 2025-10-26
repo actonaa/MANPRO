@@ -1,5 +1,4 @@
 import { useState } from "react";
-import LayoutDinas from "../layout/LayoutDinas";
 import FilterDate from "../../components/filter/FilterDate";
 import ButtonFilter from "../../components/button/ButtonFilter";
 import TablePemeliharaan from "../../components/table/TablePemeliharaan-verifikator";
@@ -18,7 +17,7 @@ export default function JadwalPemeliharaanVerifikator() {
   };
 
   return (
-    <LayoutDinas>
+    <>
       {/* 🧭 Judul Halaman */}
       <h1 className="font-semibold text-sm mb-2 md:text-2xl lg:text-[28px]">
         Jadwal Pemeliharaan Aset
@@ -72,6 +71,6 @@ export default function JadwalPemeliharaanVerifikator() {
         selectedDate={selectedDate}
       /> 
       }
-    </LayoutDinas>
+    </>
   );
 }

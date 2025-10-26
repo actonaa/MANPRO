@@ -8,7 +8,6 @@ import Lampiran from "../../components/kelola-asset/dinas/Lampiran";
 import RiwayatAktivitas from "../../components/kelola-asset/dinas/RiwayatAktivitas";
 import ScanBarcode from "../../components/kelola-asset/dinas/ScanBarcode";
 import SiklusHidup from "../../components/kelola-asset/dinas/SiklusHidup";
-import LayoutDinas from "../layout/LayoutDinas";
 
 export default function DetailAset() {
   const { id } = useParams<{ id: string }>();
@@ -34,7 +33,7 @@ export default function DetailAset() {
   };
 
   return (
-    <LayoutDinas>
+    <>
       <div className="pb-10">
         {/* 🔙 Tombol Back + Judul */}
         <div
@@ -73,6 +72,11 @@ export default function DetailAset() {
                       : "-"
                   }
                   kondisi={asset.condition?.name || "-"}
+                  hostname=""
+                  ipAddress=""
+                  os=""
+                  version=""
+              
                 />
               </div>
 
@@ -94,7 +98,7 @@ export default function DetailAset() {
           {/* 📊 Kolom kanan - Jadwal, Risiko, Riwayat */}
           <div className="flex flex-col gap-5">
             <JadwalPemeliharaan jadwal={[]} />
-            <KeterkaitanRisiko risiko={[]} showAddButton={false} />
+            <KeterkaitanRisiko risiko={[]} />
             <RiwayatAktivitas aktivitas={[]} />
           </div>
         </div>
@@ -104,6 +108,6 @@ export default function DetailAset() {
           <ScanBarcode barcodeUrl={asset.barcode || ""} />
         </div>
       </div>
-    </LayoutDinas>
+    </>
   );
 }

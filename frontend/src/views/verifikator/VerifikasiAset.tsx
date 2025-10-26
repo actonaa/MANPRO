@@ -1,13 +1,11 @@
 import { useState, memo } from "react";
-import LayoutDinas from "../layout/LayoutDinas";
 import FilterDate from "../../components/filter/FilterDate";
 import ButtonFilter from "../../components/button/ButtonFilter";
 
 export default function VerifikasiAset() {
-  const [selectedPeriod, setSelectedPeriod] = useState("");
-  const [selectedCondition, setSelectedCondition] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
+  const [, setSelectedCondition] = useState("");
+  const [, setSelectedStatus] = useState("");
+  const [, setSelectedDate] = useState("");
 
   // ✅ Fungsi ketika tanggal dipilih
   const handleDateChange = (range: { start: string; end: string }) => {
@@ -15,7 +13,7 @@ export default function VerifikasiAset() {
   };
 
   return (
-    <LayoutDinas>
+    <>
       {/* 🏷️ Judul Halaman */}
       <h1 className="font-medium text-sm mb-2 md:text-2xl lg:text-[28px]">
         Verifikasi Aset
@@ -75,7 +73,7 @@ export default function VerifikasiAset() {
           </div>
         </div>
       </div>
-    </LayoutDinas>
+    </>
   );
 }
 

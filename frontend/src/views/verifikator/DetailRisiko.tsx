@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"; // ✅ pastikan kamu pakai react-router
-import LayoutDinas from "../layout/LayoutDinas";
 import RisikoHeader from "../../components/risiko/dinas/RisikoHeader";
 import RisikoDetailCard from "../../components/risiko/dinas/RisikoDetailCard";
 import RencanaMitigasiCard from "../../components/risiko/dinas/RencanaMitigasiCard";
@@ -40,22 +39,22 @@ export default function RisikoPage() {
 
   if (loading)
     return (
-      <LayoutDinas>
+      <>
         <p className="text-center py-10 text-gray-500">Memuat data risiko...</p>
-      </LayoutDinas>
+      </>
     );
 
   if (!data)
     return (
-      <LayoutDinas>
+      <>
         <p className="text-center py-10 text-red-500">
           Gagal memuat detail risiko.
         </p>
-      </LayoutDinas>
+      </>
     );
 
   return (
-    <LayoutDinas>
+    <>
       {/* 🔥 Header + Tombol Edit sejajar */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
         <RisikoHeader
@@ -108,6 +107,6 @@ export default function RisikoPage() {
           </div>
         </div>
       </div>
-    </LayoutDinas>
+    </>
   );
 }

@@ -1,4 +1,3 @@
-import LayoutDinas from "../layout/LayoutDinas";
 import HeaderPemeliharaan from "../../components/pemeliharaan/dinas/HeaderPemeliharaan";
 import InformasiUtama from "../../components/kelola-asset/dinas/InformasiUtama";
 import SiklusHidupCard from "../../components/pemeliharaan/dinas/SiklusHidupCard";
@@ -9,7 +8,7 @@ import InfoPemeliharaan from "../../components/pemeliharaan/verifikator/InfoPeme
 
 export default function DetailPemeliharaanPage() {
   return (
-    <LayoutDinas>
+    <>
       <div className="p-6 space-y-6">
         {/* ✅ Header */}
         <HeaderPemeliharaan id="AST - 003" lastUpdate="10-12-2025" />
@@ -31,6 +30,10 @@ export default function DetailPemeliharaanPage() {
               lokasi="Ruang TU"
               tanggalPerolehan="12-01-2025"
               kondisi="Baik - Ringan"
+              os=""
+              version=""
+              hostname=""
+              ipAddress=""
             />
 
             {/* 🧾 LampiranCard (diperkecil secara vertikal tanpa crop) */}
@@ -54,6 +57,6 @@ export default function DetailPemeliharaanPage() {
           </div>
         </div>
       </div>
-    </LayoutDinas>
+    </>
   );
 }
