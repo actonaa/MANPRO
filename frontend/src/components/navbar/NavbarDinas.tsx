@@ -6,13 +6,14 @@ import {
   CircleChevronDown,
   ChevronDown,
   ChevronUp,
+  LogOut,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
 export default function NavbarDinas() {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null); // dropdown aktif
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   // === Data sidebar utama ===
   const sidebarItems = [
@@ -52,14 +53,10 @@ export default function NavbarDinas() {
     },
   ];
 
-  // === Toggle dropdown ===
   const toggleDropdown = (label: string) => {
-    // Jika klik dropdown yang sama → tutup
-    // Jika klik dropdown lain → buka dropdown itu & tutup lainnya
     setOpenDropdown((prev) => (prev === label ? null : label));
   };
 
-  // === Klik menu biasa (tanpa dropdown) → tutup semua dropdown ===
   const handleNavClick = () => {
     setOpenDropdown(null);
     setIsSidebarOpen(false);
@@ -69,7 +66,6 @@ export default function NavbarDinas() {
     <div>
       {/* === Navbar Atas === */}
       <div className="fixed top-0 left-0 right-0 py-4 px-6 flex items-center justify-between bg-white shadow z-50">
-        {/* Tombol menu (mobile) */}
         <button
           onClick={() => setIsSidebarOpen(true)}
           className="mt-2 text-[#475467] focus:outline-none lg:hidden"
@@ -77,20 +73,17 @@ export default function NavbarDinas() {
           <Menu className="w-6 h-6" />
         </button>
 
-        {/* Logo */}
         <img
           src="/logo/logosirasa.png"
           alt="sirasa"
           className="hidden lg:block w-[140px]"
         />
 
-        {/* Search */}
         <button className="flex items-center gap-2 px-4 py-2 w-1/2 lg:w-1/4 lg:-ml-130 xl:-ml-160 bg-gray-50 border border-gray-200 rounded-full text-gray-500 hover:bg-gray-100 transition">
           <Search className="w-4 h-4" />
           <span className="text-sm">Cari</span>
         </button>
 
-        {/* Profil */}
         <div className="flex items-center gap-3 cursor-pointer">
           <img
             src="/navbar/user.png"
@@ -130,103 +123,113 @@ export default function NavbarDinas() {
         </div>
 
         {/* Isi Sidebar */}
-        <div className="p-4 space-y-2 lg:mt-[88px] overflow-y-auto h-[calc(100vh-88px)]">
-          {sidebarItems.map((item) => {
-            const isOpen =
-              openDropdown === item.label ||
-              (item.children &&
-                item.children.some((sub) =>
-                  location.pathname.startsWith(sub.to)
-                ));
+        <div className="flex flex-col justify-between h-[calc(100vh-88px)] lg:mt-[88px]">
+          {/* Menu atas */}
+          <div className="p-4 space-y-2 overflow-y-auto">
+            {sidebarItems.map((item) => {
+              const isOpen =
+                openDropdown === item.label ||
+                (item.children &&
+                  item.children.some((sub) =>
+                    location.pathname.startsWith(sub.to)
+                  ));
 
-            // === Jika item punya dropdown ===
-            if (item.children) {
+              if (item.children) {
+                return (
+                  <div key={item.label}>
+                    <button
+                      onClick={() => toggleDropdown(item.label)}
+                      className={`group w-full flex items-center justify-between gap-3 p-4 rounded-xl transition duration-200 text-left ${
+                        isOpen
+                          ? "bg-blue-500 text-white"
+                          : "text-slate-500 hover:bg-blue-500 hover:text-white"
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <img
+                          src={item.icon}
+                          alt={item.label}
+                          className={`w-5 h-5 transition duration-200 ${
+                            isOpen
+                              ? "invert brightness-0"
+                              : "group-hover:invert group-hover:brightness-0"
+                          }`}
+                        />
+                        <p className="font-medium">{item.label}</p>
+                      </div>
+                      {isOpen ? (
+                        <ChevronUp className="w-4 h-4" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4" />
+                      )}
+                    </button>
+
+                    {isOpen && (
+                      <div className="mt-1 flex flex-col space-y-1">
+                        {item.children.map((sub) => (
+                          <NavLink
+                            key={sub.to}
+                            to={sub.to}
+                            onClick={() => setIsSidebarOpen(false)}
+                            className={({ isActive }) =>
+                              `block px-3 py-4 rounded-xl text-sm font-medium transition duration-200 ${
+                                isActive
+                                  ? "bg-blue-100 text-blue-500"
+                                  : "text-slate-500 hover:bg-blue-500 hover:text-white"
+                              }`
+                            }
+                          >
+                            {sub.label}
+                          </NavLink>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
               return (
-                <div key={item.label}>
-                  <button
-                    onClick={() => toggleDropdown(item.label)}
-                    className={`group w-full flex items-center justify-between gap-3 p-4 rounded-xl transition duration-200 text-left ${
-                      isOpen
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => handleNavClick()}
+                  className={({ isActive }) =>
+                    `group flex items-center gap-4 p-4 rounded-xl transition duration-200 ${
+                      isActive
                         ? "bg-blue-500 text-white"
                         : "text-slate-500 hover:bg-blue-500 hover:text-white"
-                    }`}
-                  >
-                    <div className="flex items-center gap-4">
+                    }`
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
                       <img
                         src={item.icon}
                         alt={item.label}
                         className={`w-5 h-5 transition duration-200 ${
-                          isOpen
+                          isActive
                             ? "invert brightness-0"
                             : "group-hover:invert group-hover:brightness-0"
                         }`}
                       />
                       <p className="font-medium">{item.label}</p>
-                    </div>
-                    {isOpen ? (
-                      <ChevronUp className="w-4 h-4" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4" />
-                    )}
-                  </button>
-
-                  {/* === Submenu === */}
-                  {isOpen && (
-                    <div className="mt-1 flex flex-col space-y-1">
-                      {item.children.map((sub) => (
-                        <NavLink
-                          key={sub.to}
-                          to={sub.to}
-                          // Jangan tutup sidebar/dropdown saat klik submenu
-                          onClick={() => setIsSidebarOpen(false)}
-                          className={({ isActive }) =>
-                            `block px-3 py-4 rounded-xl text-sm font-medium transition duration-200 ${
-                              isActive
-                                ? "bg-blue-100 text-blue-500"
-                                : "text-slate-500 hover:bg-blue-500 hover:text-white"
-                            }`
-                          }
-                        >
-                          {sub.label}
-                        </NavLink>
-                      ))}
-                    </div>
+                    </>
                   )}
-                </div>
+                </NavLink>
               );
-            }
+            })}
+          </div>
 
-            // === Jika bukan dropdown ===
-            return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                onClick={() => handleNavClick()}
-                className={({ isActive }) =>
-                  `group flex items-center gap-4 p-4 rounded-xl transition duration-200 ${
-                    isActive
-                      ? "bg-blue-500 text-white"
-                      : "text-slate-500 hover:bg-blue-500 hover:text-white"
-                  }`
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <img
-                      src={item.icon}
-                      alt={item.label}
-                      className={`w-5 h-5 transition duration-200 ${
-                        isActive
-                          ? "invert brightness-0"
-                          : "group-hover:invert group-hover:brightness-0"
-                      }`}
-                    />
-                    <p className="font-medium">{item.label}</p>
-                  </>
-                )}
-              </NavLink>
-            );
-          })}
+          {/* Tombol Logout di bawah */}
+          <div className="p-4 border-t border-gray-200">
+            <a
+              href="https://fe-sso.vercel.app"
+              className="flex items-center gap-4 p-4 rounded-xl text-slate-500 hover:bg-red-500 hover:text-white transition duration-200"
+            >
+              <LogOut className="w-5 h-5" />
+              <p className="font-medium">Keluar Aplikasi</p>
+            </a>
+          </div>
         </div>
       </div>
     </div>
