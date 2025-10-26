@@ -1,4 +1,3 @@
-import LayoutDinas from "../../layout/LayoutDinas";
 import RisikoResidual from "..//../../components/kelola-risiko/dinas/RisikoResidual";
 import Top10Risiko from "../../../components/kelola-risiko/dinas/Top10Resiko";
 import ButtonText from "../../../components/button/ButtonText";
@@ -32,7 +31,7 @@ export default function KelolaAset() {
   };
 
   return (
-    <LayoutDinas>
+    <>
       <div className="mb-5 px-4 md:px-0 flex flex-col md:flex-row md:items-center md:justify-between">
         {/* Kiri: Judul dan deskripsi */}
         <div>
@@ -86,6 +85,6 @@ export default function KelolaAset() {
 
       {/* 📉 Risiko Progress Bar */}
       <Top10Risiko data={risikoList} />
-    </LayoutDinas>
+    </>
   );
 }

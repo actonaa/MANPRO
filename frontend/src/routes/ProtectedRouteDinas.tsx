@@ -1,6 +1,7 @@
 // src/routes/ProtectedRoutePegawai.tsx
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "./ProtectedRouteBase";
+import LayoutDinas from "../Layout/LayoutDinas";
 
 export function ProtectedRouteDinas() {
   const { checking, isAuthenticated, user } = useAuth();
@@ -17,5 +18,9 @@ export function ProtectedRouteDinas() {
     return <Navigate to="/unauthorized" replace />;
   }
 
-  return <Outlet />;
+  return (
+    <LayoutDinas>
+      <Outlet />
+    </LayoutDinas>
+  );
 }

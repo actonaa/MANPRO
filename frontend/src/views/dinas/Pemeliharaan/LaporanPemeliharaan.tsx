@@ -1,5 +1,4 @@
 import { useState } from "react";
-import LayoutDinas from "../../layout/LayoutDinas";
 import FilterDate from "../../../components/filter/FilterDate";
 import ButtonFilter from "../../../components/button/ButtonFilter";
 import ButtonImg from "../../../components/button/ButtonImg";
@@ -15,7 +14,7 @@ export default function Pemeliharaan() {
   const handleKategoriChange = (val: string) => setSelectedKategori(val);
 
   return (
-    <LayoutDinas>
+    <>
       {/* 🏷️ Judul Halaman */}
       <div className="flex items-center justify-between mb-4">
         <h1 className="font-medium text-sm md:text-2xl lg:text-[28px] text-gray-800">
@@ -82,6 +81,6 @@ export default function Pemeliharaan() {
           tanggal={selectedDate}
         />
       </div>
-    </LayoutDinas>
+    </>
   );
 }

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import LayoutDinas from "../layout/LayoutDinas";
 import FilterTabs from "../../components/Notifikasi/dinas/FilterTabs";
 import NotifikasiList from "../../components/Notifikasi/dinas/NotifikasiList";
 import SearchBar from "../../components/Notifikasi/dinas/SearchBar";
@@ -10,10 +9,30 @@ export default function NotifikasiPage() {
 
   // ✅ Data dummy sementara
   const allData = [
-    { id: 1, kategori: "Aset", pesan: "Aset baru terdaftar", waktu: "Just Now" },
-    { id: 2, kategori: "Risiko", pesan: "Risiko tinggi terdeteksi", waktu: "30 menit lalu" },
-    { id: 3, kategori: "Aset", pesan: "Perubahan status aset", waktu: "2 jam lalu" },
-    { id: 4, kategori: "Risiko", pesan: "Mitigasi risiko selesai", waktu: "1 hari lalu" },
+    {
+      id: 1,
+      kategori: "Aset",
+      pesan: "Aset baru terdaftar",
+      waktu: "Just Now",
+    },
+    {
+      id: 2,
+      kategori: "Risiko",
+      pesan: "Risiko tinggi terdeteksi",
+      waktu: "30 menit lalu",
+    },
+    {
+      id: 3,
+      kategori: "Aset",
+      pesan: "Perubahan status aset",
+      waktu: "2 jam lalu",
+    },
+    {
+      id: 4,
+      kategori: "Risiko",
+      pesan: "Mitigasi risiko selesai",
+      waktu: "1 hari lalu",
+    },
   ];
 
   // ✅ 1. Filter berdasarkan tab aktif
@@ -35,13 +54,11 @@ export default function NotifikasiPage() {
   }
 
   return (
-    <LayoutDinas>
-      <h1 className="text-2xl md:text-2xl font-semibold">
-          Notifikasi
-        </h1>
-        <p className="text-sm text-gray-600 mt-1 mb-5">
-          Ketahui pesan terbaru untuk akun anda.
-        </p>
+    <>
+      <h1 className="text-2xl md:text-2xl font-semibold">Notifikasi</h1>
+      <p className="text-sm text-gray-600 mt-1 mb-5">
+        Ketahui pesan terbaru untuk akun anda.
+      </p>
       <div className="bg-white rounded-xl space-y-6">
         {/* 🔔 Judul + SearchBar di satu baris */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -61,6 +78,6 @@ export default function NotifikasiPage() {
         {/* 📬 Daftar Notifikasi */}
         <NotifikasiList data={filteredData} />
       </div>
-    </LayoutDinas>
+    </>
   );
 }

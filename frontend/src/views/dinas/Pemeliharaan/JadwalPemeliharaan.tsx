@@ -1,5 +1,4 @@
 import { useState } from "react";
-import LayoutDinas from "../../layout/LayoutDinas";
 import ButtonFilter from "../../../components/button/ButtonFilter";
 import TableJadwalPemeliharaan from "../../../components/table/JadwalPemeliharaan";
 import FilterDate from "../../../components/filter/FilterDate";
@@ -21,7 +20,7 @@ export default function JadwalPemeliharaanPage() {
   };
 
   return (
-    <LayoutDinas>
+    <>
       {/* Header */}
       <div className="mb-5 px-4 md:px-0">
         <h1 className="text-lg md:text-2xl font-semibold">
@@ -77,6 +76,6 @@ export default function JadwalPemeliharaanPage() {
           selectedStatus={selectedStatus}
         />
       </div>
-    </LayoutDinas>
+    </>
   );
 }

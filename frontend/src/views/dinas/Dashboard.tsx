@@ -1,6 +1,5 @@
 import { useState } from "react";
 import CardList from "../../components/card/CardList";
-import LayoutDinas from "../layout/LayoutDinas";
 import RiskHeatmap from "../../components/dashboard/dinas/RiskHeatMap";
 import RisikoResidual from "../../components/dashboard/dinas/RisikoResidual";
 import PemeliharaanMendatang from "../../components/dashboard/dinas/PemeliharaanMendatang";
@@ -10,12 +9,12 @@ import DistribusiKategori from "../../components/dashboard/dinas/DistribusiKateg
 export default function Dashboard() {
   const [searchQuery] = useState("");
   return (
-    <LayoutDinas>
-      <h1 className="font-medium text-sm mb-4 md:text-2xl lg:text-[28px]">
+    <>
+      <h1 className="ffont-semibold text-[22px] mb-4 md:text-2xl lg:text-[28px]">
         Dashboard
       </h1>
-      <div className="mb-5 overflow-x-auto pb-6 md:pb-0 md:overflow-x-visible">
-        <div className="flex gap-4 min-w-[1000px] md:grid md:grid-cols-2 md:min-w-0 lg:flex lg:min-w-[1000px]">
+      <div className="mb-5 overflow-x-auto pb-6 md:mb-0 xl:overflow-x-visible">
+        <div className="flex gap-4 min-w-[1000px] md:grid md:grid-cols-2 md:min-w-0 xl:flex">
           <CardList title="Total Aset" value="1,250" />
           <CardList title="Aset Perlu Perbaikan" value="560" />
           <CardList title="Aset Akan Dihapus" value="200" />
@@ -41,10 +40,10 @@ export default function Dashboard() {
       </div>
 
       {/* 📊 Risiko Residual & Pemeliharaan */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-6">
         <RisikoResidual />
         <PemeliharaanMendatang />
       </div>
-    </LayoutDinas>
+    </>
   );
 }
