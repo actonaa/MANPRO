@@ -26,24 +26,24 @@ export default function NavbarVerifikator() {
       label: "Kelola Aset",
       icon: "/sidebar-icon/Aset.png",
       children: [
-        { label: "Data Aset", to: "/aset" },
-        { label: "Laporan Aset", to: "/aset/laporan-verifikator" },
+        { label: "Data Aset", to: "/aset-verifikator" },
+        { label: "Laporan Aset", to: "/laporan-verifikator" },
       ],
     },
     {
       label: "Kelola Risiko",
       icon: "/sidebar-icon/Risk.png",
       children: [
-        { label: "Data Risiko", to: "/risiko" },
-        { label: "Laporan Risiko", to: "/laporan/risiko" },
+        { label: "Data Risiko", to: "/risiko-verifikator" },
+        { label: "Laporan Risiko", to: "/laporan/risiko-verifikator" },
       ],
     },
     {
       label: "Pemeliharaan",
       icon: "/sidebar-icon/Maintenance.png",
       children: [
-        { label: "Jadwal Pemeliharaan", to: "/pemeliharaan" },
-        { label: "Laporan Pemeliharaan", to: "/laporan/pemeliharaan" },
+        { label: "Jadwal Pemeliharaan", to: "/jadwal-verifikator" },
+        { label: "Laporan Pemeliharaan", to: "/laporan/pemeliharaan-verifikator" },
       ],
     },
     {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Eye } from "lucide-react";
+import { Eye, CheckCircle, XCircle } from "lucide-react";
 
 type TableProps = {
   selectedkondisi?: string;
@@ -17,7 +17,7 @@ type AsetItem = {
   tanggal: string;
 };
 
-export default function TableAset({
+export default function VerifikasiAset({
   selectedkondisi = "",
   selectedStatus = "",
   selectedDate = null,
@@ -46,7 +46,7 @@ export default function TableAset({
         tanggal: "2025-01-12",
       },
       {
-        id: "AST-002",
+        id: "AST-003",
         nama: "Mobil Operasional",
         kategori: "Kendaraan",
         lokasi: "Garasi",
@@ -55,7 +55,7 @@ export default function TableAset({
         tanggal: "2025-01-12",
       },
       {
-        id: "AST-002",
+        id: "AST-004",
         nama: "Mobil Operasional",
         kategori: "Kendaraan",
         lokasi: "Garasi",
@@ -64,7 +64,7 @@ export default function TableAset({
         tanggal: "2025-01-12",
       },
       {
-        id: "AST-003",
+        id: "AST-005",
         nama: "Laptop Asus Zenbook",
         kategori: "Elektronik",
         lokasi: "Ruang Server",
@@ -81,6 +81,7 @@ export default function TableAset({
   // 🗓️ Format tanggal ke bentuk 12 - 01 - 2025
   const formatTanggal = (tanggal: string) => {
     const d = new Date(tanggal);
+    if (isNaN(d.getTime())) return "-";
     const day = String(d.getDate()).padStart(2, "0");
     const month = String(d.getMonth() + 1).padStart(2, "0");
     const year = d.getFullYear();
@@ -130,7 +131,7 @@ export default function TableAset({
       {/* 🖥️ TABEL UNTUK DESKTOP */}
       <div className="hidden xl:block overflow-x-auto">
         <table className="w-full min-w-[900px] text-[13px] text-center border-collapse">
-          <thead className="text-[#666666] ">
+          <thead className="text-[#666666]">
             <tr>
               <th className="py-5 px-4 font-semibold">ID ASET</th>
               <th className="py-5 px-4 font-semibold">NAMA ASET</th>
@@ -170,9 +171,15 @@ export default function TableAset({
                   </span>
                 </td>
                 <td className="py-5 px-4">{formatTanggal(item.tanggal)}</td>
-                <td className="py-5 px-4 text-gray-500 flex justify-center">
+                <td className="py-5 px-4 flex items-center justify-center gap-3 text-gray-500">
                   <button className="hover:text-blue-600" title="Lihat Detail">
                     <Eye size={18} />
+                  </button>
+                  <button className="hover:text-green-600" title="Setujui Aset">
+                    <CheckCircle size={18} />
+                  </button>
+                  <button className="hover:text-red-600" title="Tolak Aset">
+                    <XCircle size={18} />
                   </button>
                 </td>
               </tr>
@@ -189,7 +196,9 @@ export default function TableAset({
             className="border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition bg-white"
           >
             <div className="flex justify-between items-center mb-2">
-              <p className="text-sm text-gray-500">{formatTanggal(item.tanggal)}</p>
+              <p className="text-sm text-gray-500">
+                {formatTanggal(item.tanggal)}
+              </p>
               <span
                 className={`px-3 py-1 text-xs rounded-full font-medium ${getStatusStyle(
                   item.status
@@ -226,9 +235,15 @@ export default function TableAset({
               </p>
             </div>
 
-            <div className="flex justify-end mt-4 text-gray-500">
+            <div className="flex justify-end gap-3 mt-4 text-gray-500">
               <button className="hover:text-blue-600" title="Lihat Detail">
                 <Eye size={18} />
+              </button>
+              <button className="hover:text-green-600" title="Setujui Aset">
+                <CheckCircle size={18} />
+              </button>
+              <button className="hover:text-red-600" title="Tolak Aset">
+                <XCircle size={18} />
               </button>
             </div>
           </div>

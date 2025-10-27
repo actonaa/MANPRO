@@ -24,6 +24,10 @@ import DashboardVerifikator from "../views/verifikator/Dashboard";
 import RisikoVerifikator from "../views/verifikator/DaftarRisiko";
 import JadwalPemeliharaanVerifikator from "../views/verifikator/JadwalPemeliharaan";
 import LaporanAsetVerifikator from "../views/verifikator/LaporanAset";
+import VerifikatorAset from "../views/verifikator/VerifikasiAset";
+import DetailAsetVerifikator from "../views/verifikator/DetailAset";
+import LaporanRisikoVerifikator from "../views/verifikator/LaporanRisiko";
+import LaporanPemeliharaanVerifikator from "../views/verifikator/LaporanPemeliharaan";
 
 import Callback from "../sso/callback";
 import LogoutSSO from "../sso/logout";
@@ -75,9 +79,13 @@ export default function AppRoutes() {
             path="/dashboard-verifikator"
             element={<DashboardVerifikator />}
           />
-          <Route path="/aset/laporan-verifikator" element={<LaporanAsetVerifikator />} />
+          <Route path="/aset-verifikator" element={<VerifikatorAset />} />
+          <Route path="/laporan-verifikator" element={<LaporanAsetVerifikator />} />
           <Route path="/risiko-verifikator" element={<RisikoVerifikator />} />
+          <Route path="/laporan/risiko-verifikator" element={<LaporanRisikoVerifikator />} />
           <Route path="/jadwal-verifikator" element={<JadwalPemeliharaanVerifikator />} />
+          <Route path="/laporan/pemeliharaan-verifikator" element={<LaporanPemeliharaanVerifikator />} />
+          <Route path="/aset/detail-verifikator" element={<DetailAsetVerifikator />} />
         </Route>
 
         <Route path="*" element={<NotFound404 />} />

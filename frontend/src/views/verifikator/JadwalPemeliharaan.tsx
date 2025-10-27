@@ -1,7 +1,7 @@
 import { useState } from "react";
 import FilterDate from "../../components/filter/FilterDate";
 import ButtonFilter from "../../components/button/ButtonFilter";
-import TablePemeliharaan from "../../components/table/TablePemeliharaan-verifikator";
+import TablePemeliharaan from "../../components/table/JadwalPemeliharaan-verifikator";
 
 export default function JadwalPemeliharaanVerifikator() {
   const [selectedLevel, setSelectedLevel] = useState("");
@@ -19,8 +19,8 @@ export default function JadwalPemeliharaanVerifikator() {
   return (
     <>
       {/* 🧭 Judul Halaman */}
-      <h1 className="font-semibold text-sm mb-2 md:text-2xl lg:text-[28px]">
-        Jadwal Pemeliharaan Aset
+      <h1 className="font-semibold text-sm mb-2 md:text-2xl xl:text-[28px]">
+        Jadwal Pemeliharaan
       </h1>
       <p className="text-gray-500 text-sm mb-6">
         Kelola dan konfirmasi jadwal pemeliharaan aset sesuai periode dan status
