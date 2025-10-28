@@ -4,7 +4,7 @@ declare global {
   namespace Express {
     // Override bawaan Express
     interface Request {
-      user: CustomJwtPayload; // sekarang wajib ada (bukan opsional)
+      user: CustomJwtPayload; 
     }
   }
 }

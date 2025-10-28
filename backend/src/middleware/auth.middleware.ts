@@ -1,34 +1,22 @@
 import type { Request, Response, NextFunction } from "express";
-import jwt, { type JwtPayload as OriginalJwtPayload } from "jsonwebtoken";
-
-// Struktur dasar payload JWT sesuai aplikasi Anda
-export interface CustomJwtPayload extends OriginalJwtPayload {
-  sub: string;
-  email: string;
-  name?: string;
-  role: { role_id: string; role_name: string };
-  department?: { department_id: string; department_name: string };
-  division?: string;
-  section?: string | null;
-  phone_number?: string;
-  skills?: string[];
-}
+import jwt from "jsonwebtoken";
+import type { User } from "../types/model.js";
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
-  // 1. Periksa header Authorization
+  //Periksa header Authorization
   if (!authHeader?.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Akses ditolak: Token tidak disediakan." });
   }
 
-  // 2. Ambil token
+  //Ambil token
   const token = authHeader.split(" ")[1];
   if (!token) {
     return res.status(401).json({ message: "Akses ditolak: Token tidak ditemukan." });
   }
 
-  // 3. Ambil secret dari env
+  //Ambil secret dari env
   const secret = process.env.JWT_SECRET;
   if (!secret) {
     console.error("FATAL ERROR: JWT_SECRET tidak diatur di environment variables.");
@@ -36,12 +24,12 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
   }
 
   try {
-    // 4. Verifikasi token
+    //Verifikasi token
     const decoded = jwt.verify(token, secret);
 
-    // 5. Pastikan decoded object
+    //Pastikan decoded object
     if (typeof decoded === "object" && decoded !== null) {
-      const payload = decoded as CustomJwtPayload;
+      const payload = decoded as User;
 
       // 🔑 Normalisasi supaya lebih gampang dipakai di service
       req.user = {
