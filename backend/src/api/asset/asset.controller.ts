@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { AssetService } from "./asset.service.js";
-import type { RequestWithId } from "../../type/express-request.js";
+import type { RequestWithId } from "../../types/express-request.js";
 
 export class AssetController {
   static async getAllAssets(req: Request, res: Response) {
@@ -27,7 +27,25 @@ export class AssetController {
     }
   }
 
-  //Tambah Aset
+  static async getAssetByBarcode(req: Request, res: Response) {
+    try {
+      const { barcode } = req.params;
+
+      if (!barcode) {
+        return res.status(400).json({ message: "Barcode wajib diisi di parameter URL." });
+      }
+
+      const asset = await AssetService.findByBarcode(barcode, req.user);
+      if (!asset) {
+        return res.status(404).json({ message: "Aset dengan barcode ini tidak ditemukan." });
+      }
+
+      res.status(200).json(asset);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   static async createAsset(req: Request, res: Response) {
     try {
       const asset = await AssetService.create(req.body, req.user);
@@ -70,4 +88,18 @@ export class AssetController {
     }
   }
 
+  static async verifyAsset(req: Request, res: Response) {
+    try {
+      const id = String(req.params.id);
+        const { status, notes } = req.body;
+  
+        const result = await AssetService.verifyAsset(id, status, notes, req.user);
+        res.status(200).json({
+          message: "Aset berhasil diverifikasi.",
+          data: result,
+        });
+      } catch (error: any) {
+        res.status(400).json({ message: error.message });
+    }
+  }
 }
