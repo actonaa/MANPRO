@@ -1,16 +1,28 @@
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import DetailJadwalCard from "../../components/pemeliharaan/verifikator/DetailJadwal";
 import InfoPemeliharaan from "../../components/pemeliharaan/verifikator/InfoPemeliharaan";
 import DeskripsiPemeliharaan from "../../components/pemeliharaan/verifikator/DeskripsiPemeliharaan";
 import RiwayatPemeliharaanCard from "../../components/pemeliharaan/verifikator/RiwayatPemeliharaan";
 
 export default function DetailJadwalPemeliharaan() {
+  const navigate = useNavigate(); // ✅ Tambahkan ini agar navigate(-1) berfungsi
+
   return (
     <>
-      <div className="p-4 sm:p-6 space-y-6">
-        {/* ✅ Header Judul */}
-        <h1 className="text-lg sm:text-xl font-semibold text-gray-800 text-center sm:text-left">
-          Detail Jadwal Pemeliharaan
-        </h1>
+      <div className="p-4 sm:p-6 space-y-6 ">
+        {/* 🔹 Header dengan tombol kembali */}
+        <div className="flex items-start gap-3 mb-4">
+          <ArrowLeft
+            className="w-5 h-5 text-gray-700 mt-1 cursor-pointer hover:text-gray-900 transition"
+            onClick={() => navigate(-1)}
+          />
+          <div>
+            <h1 className="text-lg md:text-2xl font-semibold text-gray-800">
+              Detail Jadwal Pemeliharaan
+            </h1>
+          </div>
+        </div>
 
         {/* 🧾 Bagian Utama */}
         <div className="flex flex-col gap-6">
@@ -32,7 +44,7 @@ export default function DetailJadwalPemeliharaan() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <InfoPemeliharaan
               tipePemeliharaan="Terjadwal"
-              biaya="Rp. 112.000.000"
+              biaya="Rp 112.000.000"
               vendor="Princess Hami"
             />
             <DeskripsiPemeliharaan deskripsi="Ini adalah catatan atau deskripsi dari detail jadwal pemeliharaan." />
