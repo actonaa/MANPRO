@@ -59,7 +59,7 @@ export default function NotifikasiPage() {
       <p className="text-sm text-gray-600 mt-1 mb-5">
         Ketahui pesan terbaru untuk akun anda.
       </p>
-      <div className="bg-white rounded-xl space-y-6">
+      <div className="bg-white rounded-xl p-5 space-y-6">
         {/* 🔔 Judul + SearchBar di satu baris */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <h1 className="text-lg font-semibold text-gray-800">

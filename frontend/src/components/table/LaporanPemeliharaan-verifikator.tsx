@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Eye } from "lucide-react";
+import { Link } from "react-router-dom"; // ⬅️ Tambahkan ini
 
 type TablePemeliharaanProps = {
   selectedLevel?: string;
@@ -17,7 +18,7 @@ type PemeliharaanItem = {
   status: string;
 };
 
-// 🔹 Fungsi untuk ubah format tanggal jadi 12 - 01 - 2025
+// 🔹 Fungsi format tanggal
 const formatTanggal = (tanggal: string) => {
   const date = new Date(tanggal);
   const day = String(date.getDate()).padStart(2, "0");
@@ -33,7 +34,6 @@ export default function TablePemeliharaanVerifikator({
 }: TablePemeliharaanProps) {
   const [data, setData] = useState<PemeliharaanItem[]>([]);
 
-  // 📊 Dummy data
   useEffect(() => {
     setData([
       {
@@ -75,7 +75,6 @@ export default function TablePemeliharaanVerifikator({
     ]);
   }, []);
 
-  // ✅ Filter data sesuai filter aktif
   const filteredData = data.filter((item) => {
     const matchLevel = selectedLevel
       ? item.jenis.toLowerCase().includes(selectedLevel.toLowerCase())
@@ -92,7 +91,7 @@ export default function TablePemeliharaanVerifikator({
 
   return (
     <div className="md:pb-10 xl:bg-white xl:shadow-xl xl:p-5 xl:rounded-2xl">
-      {/* 🖥️ Tabel layar besar */}
+      {/* 🖥️ Tabel Desktop */}
       <div className="hidden xl:block overflow-x-auto">
         <table className="w-full min-w-[950px] text-[13px] text-center border-collapse">
           <thead className="text-[#666666] bg-gray-50">
@@ -123,12 +122,14 @@ export default function TablePemeliharaanVerifikator({
                 </td>
                 <td className="py-4 px-6">
                   <div className="flex justify-center gap-2 text-gray-500">
-                    <button
+                    {/* ⬇️ Langsung ke route detail */}
+                    <Link
+                      to="/pemeliharaan-verifikator/detail"
                       className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-blue-50 transition"
                       title="Lihat Detail"
                     >
                       <Eye size={16} />
-                    </button>
+                    </Link>
                   </div>
                 </td>
               </tr>
@@ -137,7 +138,7 @@ export default function TablePemeliharaanVerifikator({
         </table>
       </div>
 
-      {/* 📱 Tampilan mobile */}
+      {/* 📱 Tampilan Mobile */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden">
         {filteredData.map((item) => (
           <div
@@ -169,9 +170,12 @@ export default function TablePemeliharaanVerifikator({
             </div>
 
             <div className="flex justify-end gap-2 mt-4 text-gray-500">
-              <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-blue-50 transition">
+              <Link
+                to="/pemeliharaan-verifikator/detail"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-blue-50 transition"
+              >
                 <Eye size={16} />
-              </button>
+              </Link>
             </div>
           </div>
         ))}

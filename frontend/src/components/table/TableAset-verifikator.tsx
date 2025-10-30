@@ -46,7 +46,7 @@ export default function TableAset({
         tanggal: "2025-01-12",
       },
       {
-        id: "AST-002",
+        id: "AST-003",
         nama: "Mobil Operasional",
         kategori: "Kendaraan",
         lokasi: "Garasi",
@@ -55,7 +55,7 @@ export default function TableAset({
         tanggal: "2025-01-12",
       },
       {
-        id: "AST-002",
+        id: "AST-004",
         nama: "Mobil Operasional",
         kategori: "Kendaraan",
         lokasi: "Garasi",
@@ -64,7 +64,7 @@ export default function TableAset({
         tanggal: "2025-01-12",
       },
       {
-        id: "AST-003",
+        id: "AST-005",
         nama: "Laptop Asus Zenbook",
         kategori: "Elektronik",
         lokasi: "Ruang Server",
@@ -171,9 +171,13 @@ export default function TableAset({
                 </td>
                 <td className="py-5 px-4">{formatTanggal(item.tanggal)}</td>
                 <td className="py-5 px-4 text-gray-500 flex justify-center">
-                  <button className="hover:text-blue-600" title="Lihat Detail">
+                  <a
+                    href={`/aset-verifikator/detail`}
+                    className="hover:text-blue-600"
+                    title="Lihat Detail"
+                  >
                     <Eye size={18} />
-                  </button>
+                  </a>
                 </td>
               </tr>
             ))}
@@ -189,7 +193,9 @@ export default function TableAset({
             className="border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition bg-white"
           >
             <div className="flex justify-between items-center mb-2">
-              <p className="text-sm text-gray-500">{formatTanggal(item.tanggal)}</p>
+              <p className="text-sm text-gray-500">
+                {formatTanggal(item.tanggal)}
+              </p>
               <span
                 className={`px-3 py-1 text-xs rounded-full font-medium ${getStatusStyle(
                   item.status
@@ -227,9 +233,13 @@ export default function TableAset({
             </div>
 
             <div className="flex justify-end mt-4 text-gray-500">
-              <button className="hover:text-blue-600" title="Lihat Detail">
+              <a
+                href={`/aset-verifikator/detail`}
+                className="hover:text-blue-600"
+                title="Lihat Detail"
+              >
                 <Eye size={18} />
-              </button>
+              </a>
             </div>
           </div>
         ))}

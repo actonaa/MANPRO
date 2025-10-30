@@ -10,20 +10,19 @@ export default function DetailJadwalPemeliharaan() {
 
   return (
     <>
-      <div className="p-4 sm:p-6 space-y-6 ">
-        {/* 🔹 Header dengan tombol kembali */}
-        <div className="flex items-start gap-3 mb-4">
-          <ArrowLeft
-            className="w-5 h-5 text-gray-700 mt-1 cursor-pointer hover:text-gray-900 transition"
-            onClick={() => navigate(-1)}
-          />
-          <div>
-            <h1 className="text-lg md:text-2xl font-semibold text-gray-800">
-              Detail Jadwal Pemeliharaan
-            </h1>
-          </div>
+      {/* 🔹 Header dengan tombol kembali */}
+      <div className="flex items-start gap-3 mb-2">
+        <ArrowLeft
+          className="w-5 h-5 text-gray-700 mt-1 cursor-pointer hover:text-gray-900 transition"
+          onClick={() => navigate(-1)}
+        />
+        <div>
+          <h1 className="text-lg md:text-2xl font-semibold text-gray-800">
+            Detail Jadwal Pemeliharaan
+          </h1>
         </div>
-
+      </div>
+      <div className="p-4 sm:p-6 space-y-6 ">
         {/* 🧾 Bagian Utama */}
         <div className="flex flex-col gap-6">
           {/* 🔹 Detail Jadwal */}

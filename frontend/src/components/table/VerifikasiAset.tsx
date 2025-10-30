@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Eye, CheckCircle, XCircle } from "lucide-react";
+import { Link } from "react-router-dom"; // ✅ Gunakan Link untuk navigasi SPA
 
 type TableProps = {
   selectedkondisi?: string;
@@ -172,14 +173,14 @@ export default function VerifikasiAset({
                 </td>
                 <td className="py-5 px-4">{formatTanggal(item.tanggal)}</td>
                 <td className="py-5 px-4 flex items-center justify-center gap-3 text-gray-500">
-                  {/* 🔗 Tambahkan Link ke halaman detail */}
-                  <a
-                    href={`/aset/detail-verifikator`}
+                  {/* 🔗 Navigasi ke halaman detail */}
+                  <Link
+                    to={`/aset-verifikator/detail`}
                     className="hover:text-blue-600"
                     title="Lihat Detail"
                   >
                     <Eye size={18} />
-                  </a>
+                  </Link>
                   <button className="hover:text-green-600" title="Setujui Aset">
                     <CheckCircle size={18} />
                   </button>
@@ -241,14 +242,14 @@ export default function VerifikasiAset({
             </div>
 
             <div className="flex justify-end gap-3 mt-4 text-gray-500">
-              {/* 🔗 Link ke halaman detail di mobile */}
-              <a
-                href={`/aset/detail-verifikator`}
+              {/* 🔗 Navigasi ke halaman detail di mobile */}
+              <Link
+                to={`/aset-verifikator/detail`}
                 className="hover:text-blue-600"
                 title="Lihat Detail"
               >
                 <Eye size={18} />
-              </a>
+              </Link>
               <button className="hover:text-green-600" title="Setujui Aset">
                 <CheckCircle size={18} />
               </button>

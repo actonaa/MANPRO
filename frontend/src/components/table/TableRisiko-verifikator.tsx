@@ -137,9 +137,13 @@ export default function TableRisiko({
                 <td className="py-5 px-4">{item.category}</td>
                 <td className="py-5 px-4">{item.entry_level}</td>
                 <td className="py-5 px-4 flex items-center justify-center gap-3 text-gray-500">
-                  <button className="hover:text-blue-600" title="Lihat Detail">
+                  <a
+                    href="/risiko-verifikator/detail"
+                    className="hover:text-blue-600"
+                    title="Lihat Detail"
+                  >
                     <Eye size={18} />
-                  </button>
+                  </a>
                   <button
                     className="hover:text-green-600"
                     title="Setujui Risiko"
@@ -212,9 +216,13 @@ export default function TableRisiko({
             </div>
 
             <div className="flex justify-end gap-3 mt-4 text-gray-500">
-              <button className="hover:text-blue-600" title="Lihat Detail">
+              <a
+                href="/risiko-verifikator/detail"
+                className="hover:text-blue-600"
+                title="Lihat Detail"
+              >
                 <Eye size={18} />
-              </button>
+              </a>
               <button className="hover:text-green-600" title="Setujui Risiko">
                 <CheckCircle size={18} />
               </button>

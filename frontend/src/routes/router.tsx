@@ -19,6 +19,7 @@ import DetailLaporanPemeliharaan from "../views/dinas/Pemeliharaan/DetailLaporan
 import DetailJadwalPemeliharaan from "../views/dinas/Pemeliharaan/DetailJadwalPemeliharaan";
 
 import Notifications from "../views/dinas/Notifications";
+import NotificationsVerifikator from "../views/dinas/Notifications";
 
 import DashboardVerifikator from "../views/verifikator/Dashboard";
 import RisikoVerifikator from "../views/verifikator/DaftarRisiko";
@@ -83,15 +84,40 @@ export default function AppRoutes() {
             element={<DashboardVerifikator />}
           />
           <Route path="/aset-verifikator" element={<VerifikatorAset />} />
-          <Route path="/laporan-verifikator" element={<LaporanAsetVerifikator />} />
+          <Route
+            path="/laporan/aset-verifikator"
+            element={<LaporanAsetVerifikator />}
+          />
           <Route path="/risiko-verifikator" element={<RisikoVerifikator />} />
-          <Route path="/laporan/risiko-verifikator" element={<LaporanRisikoVerifikator />} />
-          <Route path="/jadwal-verifikator" element={<JadwalPemeliharaanVerifikator />} />
-          <Route path="/laporan/pemeliharaan-verifikator" element={<LaporanPemeliharaanVerifikator />} />
-          <Route path="/aset/detail-verifikator" element={<DetailAsetVerifikator />} />
-          <Route path="/risiko/detail-verifikator" element={<DetailRisikoVerifikator />} />
-          <Route path="/pemeliharaan/detail-verifikator" element={<DetailPemeliharaanVerifikator />} />
-          <Route path="/jadwal/detail-verifikator" element={<DetailJadwalVerifikator />} />
+          <Route
+            path="/laporan/risiko-verifikator"
+            element={<LaporanRisikoVerifikator />}
+          />
+          <Route
+            path="/jadwal-verifikator"
+            element={<JadwalPemeliharaanVerifikator />}
+          />
+          <Route
+            path="/pemeliharaan-verifikator"
+            element={<LaporanPemeliharaanVerifikator />}
+          />
+          <Route
+            path="/aset-verifikator/detail"
+            element={<DetailAsetVerifikator />}
+          />
+          <Route
+            path="/risiko-verifikator/detail"
+            element={<DetailRisikoVerifikator />}
+          />
+          <Route
+            path="/pemeliharaan-verifikator/detail"
+            element={<DetailPemeliharaanVerifikator />}
+          />
+          <Route
+            path="/jadwal-verifikator/detail"
+            element={<DetailJadwalVerifikator />}
+          />
+          <Route path="/notifikasi-verifikator" element={<NotificationsVerifikator />} />
         </Route>
 
         <Route path="*" element={<NotFound404 />} />

@@ -27,7 +27,7 @@ export default function NavbarVerifikator() {
       icon: "/sidebar-icon/Aset.png",
       children: [
         { label: "Data Aset", to: "/aset-verifikator" },
-        { label: "Laporan Aset", to: "/laporan-verifikator" },
+        { label: "Laporan Aset", to: "/laporan/aset-verifikator" },
       ],
     },
     {
@@ -43,13 +43,13 @@ export default function NavbarVerifikator() {
       icon: "/sidebar-icon/Maintenance.png",
       children: [
         { label: "Jadwal Pemeliharaan", to: "/jadwal-verifikator" },
-        { label: "Laporan Pemeliharaan", to: "/laporan/pemeliharaan-verifikator" },
+        { label: "Laporan Pemeliharaan", to: "/pemeliharaan-verifikator" },
       ],
     },
     {
       label: "Notifikasi",
       icon: "/sidebar-icon/Notif.png",
-      to: "/notifikasi",
+      to: "/notifikasi-verifikator",
     },
   ];
 
