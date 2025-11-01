@@ -13,10 +13,11 @@ export default function Dashboard() {
       </h1>
       <div className="mb-5 overflow-x-auto pb-6 md:mb-0 xl:overflow-x-visible">
         <div className="flex gap-4 min-w-[1000px] md:grid md:grid-cols-2 md:min-w-0 xl:flex">
-          <CardList title="Total Aset" value="1,250" />
-          <CardList title="Aset Perlu Perbaikan" value="560" />
-          <CardList title="Aset Akan Dihapus" value="200" />
-          <CardList title="Risiko Aktif" value="499" />
+          <CardList title="Aset Aktif" value="1,250" />
+          <CardList title="Aset Dalam Pemeliharaan" value="560" />
+          <CardList title="Aset Dalam Perawatan" value="200" />
+          <CardList title="Aset Habis Masa Pakai" value="499" />
+          <CardList title="Aset Yang Terverifikasi" value="499" />
         </div>
       </div>
       {/* Pemeliharaan */}
