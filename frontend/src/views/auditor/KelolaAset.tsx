@@ -2,19 +2,33 @@ import ButtonImg from "../../components/button/ButtonImg";
 import FilterDate from "../../components/filter/FilterDate";
 import ButtonFilter from "../../components/button/ButtonFilter";
 import CardList from "../../components/card/CardList";
-import TableAset from "../../components/table/TableAset";
+import TableAset from "../../components/table/TableAset-Auditor";
+import { useState } from "react";
 
 export default function Aset() {
+  // ✅ Tambahkan state filters dengan tipe eksplisit
+  const [filters, setFilters] = useState<Record<string, string>>({
+    kategori: "",
+    status: "",
+    dinas: "",
+    tanggal: "",
+  });
+
+  // ✅ Handler untuk update setiap filter
   const handleStatusChange = (val: string) => {
-    console.log("Status dipilih:", val);
+    setFilters((prev) => ({ ...prev, status: val }));
   };
 
   const handleKategoriChange = (val: string) => {
-    console.log("Kategori dipilih:", val);
+    setFilters((prev) => ({ ...prev, kategori: val }));
   };
 
   const handleDinasChange = (val: string) => {
-    console.log("Dinas dipilih:", val);
+    setFilters((prev) => ({ ...prev, dinas: val }));
+  };
+
+  const handleTanggalChange = (val: string) => {
+    setFilters((prev) => ({ ...prev, tanggal: val }));
   };
 
   return (
@@ -44,7 +58,11 @@ export default function Aset() {
       <div className="flex flex-nowrap md:hidden items-center justify-between w-full gap-2">
         {/* 📅 Filter Tanggal */}
         <div className="flex-1 min-w-0 relative z-[40]">
-          <FilterDate />
+          <FilterDate
+            onSelect={({ start, end }) =>
+              handleTanggalChange(`${start} — ${end}`)
+            }
+          />
         </div>
 
         {/* 🧩 Kategori */}
@@ -102,7 +120,11 @@ export default function Aset() {
                 onSelect={handleStatusChange}
               />
 
-              <FilterDate />
+              <FilterDate
+                onSelect={({ start, end }) =>
+                  handleTanggalChange(`${start} — ${end}`)
+                }
+              />
 
               <div className="flex items-center">
                 <div className="w-[210px]">
@@ -134,7 +156,7 @@ export default function Aset() {
 
       {/* Table tampil di semua ukuran layar */}
       <div className=" rounded-xl md:rounded-none md:rounded-b-xl">
-        <TableAset />
+        <TableAset filters={filters} />
       </div>
     </>
   );

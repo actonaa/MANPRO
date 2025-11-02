@@ -1,20 +1,26 @@
 import { useState } from "react";
 import FilterDate from "../../components/filter/FilterDate";
 import ButtonFilter from "../../components/button/ButtonFilter";
-import LaporanRiskVerif from "../../components/table/TableDataRisiko";
+import LaporanRiskVerif from "../../components/table/TabelRisiko-Auditor";
 import ButtonImg from "../../components/button/ButtonImg";
 
 export default function DaftarRisiko() {
-  const [selectedLevel, setSelectedLevel] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
-  const [selectedDate, setSelectedDate] = useState<{
-    start: string;
-    end: string;
-  } | null>(null);
+  const [filters, setFilters] = useState({
+    kategori: "",
+    status: "",
+    dinas: "",
+    date: { start: "", end: "" },
+    search: "",
+  });
 
-  // ✅ Tangani perubahan tanggal
+  // 🔹 Update filter umum
+  const handleFilterChange = (key: string, value: string) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  // 🔹 Tangani perubahan tanggal
   const handleDateChange = (range: { start: string; end: string }) => {
-    setSelectedDate(range);
+    setFilters((prev) => ({ ...prev, date: range }));
   };
 
   return (
@@ -52,6 +58,8 @@ export default function DaftarRisiko() {
               <input
                 type="text"
                 placeholder="Cari berdasarkan ID, Nama, Kategori"
+                value={filters.search}
+                onChange={(e) => handleFilterChange("search", e.target.value)}
                 className="border border-gray-300 rounded-lg pl-9 pr-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 w-full"
               />
             </div>
@@ -61,6 +69,7 @@ export default function DaftarRisiko() {
               <ButtonFilter
                 label="Kategori"
                 options={["Aset TI", "Aset Non TI"]}
+                onSelect={(value) => handleFilterChange("kategori", value)}
               />
             </div>
 
@@ -73,7 +82,8 @@ export default function DaftarRisiko() {
             <div className="w-full sm:w-auto">
               <ButtonFilter
                 label="Status"
-                options={["Aktif", "Perbaikan", "Tidak Aktif"]}
+                options={["Diterima", "Tertunda", "Ditolak"]}
+                onSelect={(value) => handleFilterChange("status", value)}
               />
             </div>
 
@@ -88,6 +98,7 @@ export default function DaftarRisiko() {
                   "Dinas Perhubungan",
                   "Dinas Lingkungan Hidup",
                 ]}
+                onSelect={(value) => handleFilterChange("dinas", value)}
               />
             </div>
           </div>
@@ -104,11 +115,7 @@ export default function DaftarRisiko() {
       </div>
 
       {/* 📋 Tabel Risiko */}
-      <LaporanRiskVerif
-        selectedLevel={selectedLevel}
-        selectedStatus={selectedStatus}
-        selectedDate={selectedDate}
-      />
+      <LaporanRiskVerif filters={filters} />
     </>
   );
 }
