@@ -3,6 +3,7 @@ import 'dotenv/config';
 import cors from "cors";
 import assetRoutes from './api/asset/asset.route.js';
 import riskRoutes from './api/risk/risk.route.js';
+import maintenanceRoutes from "./api/maintenancelogs/maintenance.route.js";
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -17,11 +18,18 @@ app.get('/api', (req, res) => {
 });
 
 
-// Daftarkan rute aset
+// rute aset
 app.use('/api/assets', assetRoutes);
 
-// Daftarkan rute risiko
+// rute risiko
 app.use('/api/risks', riskRoutes);
+
+//rute maintenenace
+app.use("/api/maintenance", maintenanceRoutes);
+
+// 🕐 Jalankan CRON otomatis setiap hari
+import "./scheduler/maintenance.cron.js";
+
 
 app.listen(port, () => {
   console.log(`API Aset & Risiko berjalan di http://localhost:${port}`);

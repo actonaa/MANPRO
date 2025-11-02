@@ -27,6 +27,35 @@ export class AssetController {
     }
   }
 
+  //api publik
+  static async getAllPublic(req: Request, res: Response) {
+    try {
+      const assets = await AssetService.findAllPublic();
+      res.status(200).json(assets);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  static async getPublicById(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        return res.status(400).json({ message: "Parameter id wajib diisi." });
+      }
+
+      const asset = await AssetService.findByIdPublic(id);
+      if (!asset) {
+        return res.status(404).json({ message: "Aset tidak ditemukan atau tidak tersedia untuk publik." });
+      }
+
+      res.status(200).json(asset);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   static async getAssetByBarcode(req: Request, res: Response) {
     try {
       const { barcode } = req.params;

@@ -59,6 +59,54 @@ export class AssetService {
     return data;
   }
 
+  //api publik
+  static async findAllPublic() {
+  const { data, error } = await supabase
+    .from('asset')
+    .select(`
+      id,
+      name,
+      serial_number,
+      lokasi,
+      merk_type,
+      status:status_id(name),
+      category:category_id(name),
+      sub_category:sub_category_id(name),
+      department:department_id(name)
+    `)
+    .eq('approval_status', 'approved')
+    .neq('status_id', '6494a4a6-41e6-42b5-be69-b587a0371c4f') // status_id Non-Aktif
+    .order('name', { ascending: true });
+
+    if (error) throw error;
+    return data;
+  }
+
+  static async findByIdPublic(id: string) {
+    const { data, error } = await supabase
+      .from('asset')
+      .select(`
+        id,
+        name,
+        serial_number,
+        lokasi,
+        merk_type,
+        vendor,
+        status:status_id(name),
+        category:category_id(name),
+        sub_category:sub_category_id(name),
+        department:department_id(name)
+      `)
+      .eq('id', id)
+      .eq('approval_status', 'approved')
+      .neq('status_id', '6494a4a6-41e6-42b5-be69-b587a0371c4f') // Non-aktif disembunyikan
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+
   //User Service - (Create)
   static async create(assetData: any, user: any) {
     try {

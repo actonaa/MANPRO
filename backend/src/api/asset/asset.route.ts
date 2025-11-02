@@ -4,6 +4,10 @@ import { authMiddleware } from '../../middleware/auth.middleware.js';
 
 const router = Router();
 
+// ✅ Route publik (tanpa auth)
+router.get('/public', AssetController.getAllPublic);
+router.get('/public/:id', AssetController.getPublicById);
+
 // Terapkan middleware keamanan pada rute ini
 router.get('/', authMiddleware, AssetController.getAllAssets);
 router.get('/barcode/:barcode', authMiddleware, AssetController.getAssetByBarcode);
@@ -12,5 +16,7 @@ router.post('/', authMiddleware, AssetController.createAsset);
 router.put('/:id', authMiddleware, AssetController.updateAsset);
 router.patch('/:id/request-delete', authMiddleware, AssetController.requestDeleteAsset);
 router.patch("/:id/verify", authMiddleware, AssetController.verifyAsset);
+
+
 
 export default router;
