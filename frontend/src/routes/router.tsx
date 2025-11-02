@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 import Dashboard from "../views/dinas/Dashboard";
 import KelolaAset from "../views/dinas/Aset/KelolaAset";
@@ -44,7 +49,7 @@ export default function AppRoutes() {
 
         {/* Route dinas */}
         <Route element={<ProtectedRouteDinas />}>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/aset" element={<KelolaAset />} />
           <Route path="/aset/:id" element={<DetailAset />} />
@@ -75,9 +80,15 @@ export default function AppRoutes() {
             path="/dashboard-verifikator"
             element={<DashboardVerifikator />}
           />
-          <Route path="/aset/laporan-verifikator" element={<LaporanAsetVerifikator />} />
+          <Route
+            path="/aset/laporan-verifikator"
+            element={<LaporanAsetVerifikator />}
+          />
           <Route path="/risiko-verifikator" element={<RisikoVerifikator />} />
-          <Route path="/jadwal-verifikator" element={<JadwalPemeliharaanVerifikator />} />
+          <Route
+            path="/jadwal-verifikator"
+            element={<JadwalPemeliharaanVerifikator />}
+          />
         </Route>
 
         <Route path="*" element={<NotFound404 />} />
