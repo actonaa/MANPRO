@@ -1,8 +1,7 @@
 import { useState } from "react";
-import LayoutDinas from "../layout/LayoutDinas";
 import FilterDate from "../../components/filter/FilterDate";
 import ButtonFilter from "../../components/button/ButtonFilter";
-import TableAset from "../../components/table/TableAset";
+import TableAsetVerif from "../../components/table/TableAset-verifikator";
 
 export default function JadwalPemeliharaanVerifikator() {
   const [selectedkondisi, setSelectedLevel] = useState("");
@@ -15,7 +14,7 @@ export default function JadwalPemeliharaanVerifikator() {
   };
 
   return (
-    <LayoutDinas>
+    <>
       {/* 🧭 Judul Halaman */}
       <h1 className="font-semibold text-sm mb-2 md:text-2xl lg:text-[28px]">
         Laporan Aset
@@ -62,11 +61,11 @@ export default function JadwalPemeliharaanVerifikator() {
       </div>
 
       {/* 📋 Tabel Jadwal */}
-      <TableAset
+      <TableAsetVerif
         selectedkondisi={selectedkondisi}
         selectedStatus={selectedStatus}
         selectedDate={selectedDate}
       />
-    </LayoutDinas>
+    </>
   );
 }

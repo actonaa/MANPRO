@@ -1,12 +1,11 @@
 import CardList from "../../components/card/CardList";
-import LayoutDinas from "../layout/LayoutDinas";
 import DistribusiKategori from "../../components/dashboard/verifikator/DistribusiKategori";
 import StatusJadwalPemeliharaan from "../../components/dashboard/verifikator/StatusJadwalPemeliharaan";
 import VerifikasiTertunda from "../../components/dashboard/verifikator/VerifikasiTertunda";
 
 export default function Dashboard() {
   return (
-    <LayoutDinas>
+    <>
       {/* 🧭 Judul */}
       <h1 className="font-medium text-sm mb-4 md:text-2xl lg:text-[28px]">
         Dashboard
@@ -43,6 +42,6 @@ export default function Dashboard() {
           <StatusJadwalPemeliharaan />
         </div>
       </div>
-    </LayoutDinas>
+    </>
   );
 }

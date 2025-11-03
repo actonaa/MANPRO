@@ -1,6 +1,7 @@
 // src/routes/ProtectedRouteVerifikator.tsx
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "./ProtectedRouteBase";
+import LayoutVerifikator from "../Layout/LayoutVerifikator";
 
 export function ProtectedRouteVerifikator() {
   const { checking, isAuthenticated, user } = useAuth();
@@ -12,5 +13,10 @@ export function ProtectedRouteVerifikator() {
     return <Navigate to="/dashboard" replace />;
   }
 
-  return <Outlet />;
+  return (
+    <LayoutVerifikator>
+      <Outlet />
+    </LayoutVerifikator>
+  );
+
 }

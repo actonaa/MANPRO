@@ -1,5 +1,4 @@
 import { useState } from "react";
-import LayoutDinas from "../layout/LayoutDinas";
 import FilterDate from "../../components/filter/FilterDate";
 import ButtonFilter from "../../components/button/ButtonFilter";
 import TableRisiko from "../../components/table/TableRisiko-verifikator";
@@ -15,7 +14,7 @@ export default function DaftarRisiko() {
   };
 
   return (
-    <LayoutDinas>
+    <>
       {/* 🧭 Judul Halaman */}
       <h1 className="font-semibold text-sm mb-2 md:text-2xl lg:text-[28px]">
         Verifikasi Risiko
@@ -67,6 +66,6 @@ export default function DaftarRisiko() {
         selectedStatus={selectedStatus}
         selectedDate={selectedDate}
       />
-    </LayoutDinas>
+    </>
   );
 }

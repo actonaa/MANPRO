@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { Eye, CheckCircle, XCircle } from "lucide-react";
+import { Eye } from "lucide-react";
 
-type TableRisikoProps = {
+type LaporanRiskVerifProps = {
   selectedStatus?: string;
   selectedLevel?: string;
   selectedDate?: { start: string; end: string } | null;
@@ -19,11 +19,11 @@ type RisikoItem = {
   department: { name: string };
 };
 
-export default function TableRisiko({
+export default function LaporanRiskVerif({
   selectedStatus = "",
   selectedLevel = "",
   selectedDate = null,
-}: TableRisikoProps) {
+}: LaporanRiskVerifProps) {
   const [data, setData] = useState<RisikoItem[]>([]);
 
   // 📊 Dummy data
@@ -83,9 +83,9 @@ export default function TableRisiko({
   });
 
   return (
-    <div className="md:pb-10 lg:bg-white lg:shadow-xl lg:p-5 lg:rounded-2xl">
+    <div className="md:pb-10 xl:bg-white xl:shadow-xl xl:p-5 xl:rounded-2xl">
       {/* 🖥️ Tabel untuk layar besar */}
-      <div className="hidden lg:block">
+      <div className="hidden xl:block">
         <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
           <thead className="text-[#666666]">
             <tr>
@@ -140,15 +140,6 @@ export default function TableRisiko({
                   <button className="hover:text-blue-600" title="Lihat Detail">
                     <Eye size={18} />
                   </button>
-                  <button
-                    className="hover:text-green-600"
-                    title="Setujui Risiko"
-                  >
-                    <CheckCircle size={18} />
-                  </button>
-                  <button className="hover:text-red-600" title="Tolak Risiko">
-                    <XCircle size={18} />
-                  </button>
                 </td>
               </tr>
             ))}
@@ -157,7 +148,7 @@ export default function TableRisiko({
       </div>
 
       {/* 📱 Card layout untuk mobile dan tablet */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden">
         {filteredData.map((item) => (
           <div
             key={item.id}
@@ -214,12 +205,6 @@ export default function TableRisiko({
             <div className="flex justify-end gap-3 mt-4 text-gray-500">
               <button className="hover:text-blue-600" title="Lihat Detail">
                 <Eye size={18} />
-              </button>
-              <button className="hover:text-green-600" title="Setujui Risiko">
-                <CheckCircle size={18} />
-              </button>
-              <button className="hover:text-red-600" title="Tolak Risiko">
-                <XCircle size={18} />
               </button>
             </div>
           </div>

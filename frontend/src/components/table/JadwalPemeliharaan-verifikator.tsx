@@ -108,7 +108,7 @@ export default function TablePemeliharaanVerifikator({
               <th className="py-5 px-4 font-semibold">PRIORITAS</th>
               <th className="py-5 px-4 font-semibold">STATUS</th>
               <th className="py-5 px-4 font-semibold">JADWAL <br /> PEMELIHARAAN</th> 
-              <th className="py-5 px-4 font-semibold">AKSI</th>
+              <th className="py-5 px-4 font-semibold"></th>
             </tr>
           </thead>
           <tbody>

@@ -3,12 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import InformasiUtama from "../../components/kelola-asset/dinas/InformasiUtama";
 import JadwalPemeliharaan from "../../components/kelola-asset/dinas/JadwalPemeliharaan";
-import KeterkaitanRisiko from "../../components/kelola-asset/dinas/KeterkaitanRisiko";
+import KeterkaitanRisiko from "../../components/verifikator/KeterkaitanRisiko";
 import Lampiran from "../../components/kelola-asset/dinas/Lampiran";
 import RiwayatAktivitas from "../../components/kelola-asset/dinas/RiwayatAktivitas";
 import ScanBarcode from "../../components/kelola-asset/dinas/ScanBarcode";
 import SiklusHidup from "../../components/kelola-asset/dinas/SiklusHidup";
-import LayoutDinas from "../layout/LayoutDinas";
 
 export default function DetailAset() {
   const { id } = useParams<{ id: string }>();
@@ -31,58 +30,59 @@ export default function DetailAset() {
     acquisition_date: "2024-06-14",
     condition: { name: "Baik" },
     barcode: "/assets/barcode-sample.png",
+    hostname: "",
+    ip_address: "",
+    os: "",
+    version: "",
   };
 
   return (
-    <LayoutDinas>
+    <>
       <div className="pb-10">
-        {/* 🔙 Tombol Back + Judul */}
-        <div
-          className="flex items-center gap-2 mb-6 cursor-pointer"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft className="w-5 h-5 text-gray-800" />
-          <h1 className="text-xl md:text-2xl font-semibold text-gray-800">
-            Detail Aset
-          </h1>
+        {/* 🔹 Header Atas */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+          {/* 🔙 Tombol Back + Info */}
+          <div className="flex items-start gap-3">
+            <ArrowLeft
+              className="w-5 h-5 text-gray-700 mt-1 cursor-pointer"
+              onClick={() => navigate(-1)}
+            />
+            <div>
+              <h1 className="text-lg md:text-2xl font-semibold text-gray-800">
+                Detail Aset
+              </h1>
+            </div>
+          </div>
         </div>
 
+        {/* 🔹 Layout Utama Dua Kolom */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          {/* 📄 Kolom kiri - Informasi Utama & Lampiran dalam 1 card tanpa shadow */}
+          {/* Kolom kiri */}
           <div className="flex flex-col gap-5">
-            <div className="bg-white rounded-lg p-6 w-full h-auto flex flex-col">
-              {/* Informasi Utama */}
-              <div className="mb-8">
-                <InformasiUtama
-                  merk={asset.merk_type || "-"}
-                  penanggungJawab={asset.pic || "-"}
-                  status={asset.status?.name || "Aktif"}
-                  nomorSerial={asset.serial_number || "-"}
-                  kategori={asset.category?.name || "-"}
-                  subKategori={asset.sub_category?.name || "-"}
-                  nilaiAset={`Rp ${asset.acquisition_value?.toLocaleString(
-                    "id-ID"
-                  )}`}
-                  kodeBMD={asset.bmd_code || "-"}
-                  lokasi={asset.lokasi || "-"}
-                  tanggalPerolehan={
-                    asset.acquisition_date
-                      ? new Date(asset.acquisition_date).toLocaleDateString(
-                          "id-ID"
-                        )
-                      : "-"
-                  }
-                  kondisi={asset.condition?.name || "-"}
-                />
-              </div>
+            <InformasiUtama
+              merk={asset.merk_type || "-"}
+              penanggungJawab={asset.pic || "-"}
+              status={asset.status?.name || "Aktif"}
+              nomorSerial={asset.serial_number || "-"}
+              kategori={asset.category?.name || "-"}
+              subKategori={asset.sub_category?.name || "-"}
+              nilaiAset={`Rp ${asset.acquisition_value?.toLocaleString(
+                "id-ID"
+              )}`}
+              kodeBMD={asset.bmd_code || "-"}
+              lokasi={asset.lokasi || "-"}
+              tanggalPerolehan={
+                asset.acquisition_date
+                  ? new Date(asset.acquisition_date).toLocaleDateString("id-ID")
+                  : "-"
+              }
+              kondisi={asset.condition?.name || "-"}
+              hostname={asset.hostname}
+              ipAddress={asset.ip_address}
+              os={asset.os}
+              version={asset.version}
+            />
 
-              {/* 📎 Lampiran di bawah Informasi Utama */}
-              <div className="pt-6 border-t border-gray-200 w-full">
-                <Lampiran lampiran={[]} />
-              </div>
-            </div>
-
-            {/* 📆 Card Siklus Hidup terpisah */}
             <SiklusHidup
               siklus={[
                 { tahap: "Pengadaan", tanggal: asset.acquisition_date || "-" },
@@ -91,19 +91,59 @@ export default function DetailAset() {
             />
           </div>
 
-          {/* 📊 Kolom kanan - Jadwal, Risiko, Riwayat */}
+          {/* Kolom kanan */}
           <div className="flex flex-col gap-5">
-            <JadwalPemeliharaan jadwal={[]} />
-            <KeterkaitanRisiko risiko={[]} showAddButton={false} />
-            <RiwayatAktivitas aktivitas={[]} />
+            <JadwalPemeliharaan
+              jadwal={[
+                {
+                  tanggal: "10-09-2025",
+                  kegiatan: "Pengecekan rutin kamera CCTV",
+                },
+                {
+                  tanggal: "15-10-2025",
+                  kegiatan: "Pembersihan dan kalibrasi alat",
+                },
+              ]}
+            />
+
+            <KeterkaitanRisiko
+              risiko={[
+                {
+                  kode: "RSK-001",
+                  deskripsi: "Kerusakan modul kamera",
+                  dampak: "Sedang",
+                },
+                {
+                  kode: "RSK-002",
+                  deskripsi: "Gangguan jaringan CCTV",
+                  dampak: "Tinggi",
+                },
+              ]}
+            />
+
+            <RiwayatAktivitas
+              aktivitas={[
+                {
+                  tanggal: "12-09-2025",
+                  deskripsi: "Pemeliharaan preventif dilakukan oleh teknisi A",
+                  status: "Selesai",
+                },
+                {
+                  tanggal: "20-09-2025",
+                  deskripsi: "Laporan kerusakan diterima dari user",
+                  status: "Dalam Proses",
+                },
+              ]}
+            />
           </div>
         </div>
 
-        {/* 📷 Barcode */}
-        <div className="mt-6">
+        {/* 🔹 Lampiran & Barcode */}
+        <div className="flex flex-col lg:flex-row gap-5 mt-6">
+          <Lampiran lampiran={[]} />
           <ScanBarcode barcodeUrl={asset.barcode || ""} />
         </div>
       </div>
-    </LayoutDinas>
+    </>
   );
 }
