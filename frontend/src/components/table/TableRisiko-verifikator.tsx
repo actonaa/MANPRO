@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { Eye, CheckCircle, XCircle } from "lucide-react";
+import RisikoSetuju from "../../components/form/verifikator/RisikoSetuju";
+import RisikoTolak from "../../components/form/verifikator/RisikoTolak";
 
 type TableRisikoProps = {
   selectedStatus?: string;
@@ -25,6 +27,9 @@ export default function TableRisiko({
   selectedDate = null,
 }: TableRisikoProps) {
   const [data, setData] = useState<RisikoItem[]>([]);
+  const [selectedRisiko, setSelectedRisiko] = useState<RisikoItem | null>(null);
+  const [showApproveModal, setShowApproveModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
 
   // 📊 Dummy data
   useEffect(() => {
@@ -70,11 +75,9 @@ export default function TableRisiko({
     const matchesStatus = selectedStatus
       ? item.status.toLowerCase() === selectedStatus.toLowerCase()
       : true;
-
     const matchesLevel = selectedLevel
       ? item.criteria.toLowerCase() === selectedLevel.toLowerCase()
       : true;
-
     const matchesDate = selectedDate
       ? item.date >= selectedDate.start && item.date <= selectedDate.end
       : true;
@@ -82,8 +85,34 @@ export default function TableRisiko({
     return matchesStatus && matchesLevel && matchesDate;
   });
 
+  // 🟢 Handler untuk setuju
+  const handleApproveClick = (item: RisikoItem) => {
+    setSelectedRisiko(item);
+    setShowApproveModal(true);
+  };
+
+  // 🔴 Handler untuk tolak
+  const handleRejectClick = (item: RisikoItem) => {
+    setSelectedRisiko(item);
+    setShowRejectModal(true);
+  };
+
+  // ✅ Konfirmasi persetujuan
+  const confirmApprove = () => {
+    console.log("✅ Risiko disetujui:", selectedRisiko);
+    setShowApproveModal(false);
+    setSelectedRisiko(null);
+  };
+
+  // ❌ Konfirmasi penolakan
+  const confirmReject = () => {
+    console.log("❌ Risiko ditolak:", selectedRisiko);
+    setShowRejectModal(false);
+    setSelectedRisiko(null);
+  };
+
   return (
-    <div className="md:pb-10 lg:bg-white lg:shadow-xl lg:p-5 lg:rounded-2xl">
+    <div className="md:pb-10 lg:bg-white lg:shadow-xl lg:p-5 lg:rounded-2xl relative">
       {/* 🖥️ Tabel untuk layar besar */}
       <div className="hidden lg:block">
         <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
@@ -106,8 +135,8 @@ export default function TableRisiko({
                 key={item.id}
                 className="border-b border-b-[#ddd] hover:bg-gray-50 transition"
               >
-                <td className="py-5 px-4 ">{item.date}</td>
-                <td className="py-5 px-4 ">{item.id}</td>
+                <td className="py-5 px-4">{item.date}</td>
+                <td className="py-5 px-4">{item.id}</td>
                 <td className="py-5 px-4">{item.asset.name}</td>
                 <td className="py-5 px-4">{item.title}</td>
                 <td
@@ -145,12 +174,17 @@ export default function TableRisiko({
                     <Eye size={18} />
                   </a>
                   <button
+                    onClick={() => handleApproveClick(item)}
                     className="hover:text-green-600"
                     title="Setujui Risiko"
                   >
                     <CheckCircle size={18} />
                   </button>
-                  <button className="hover:text-red-600" title="Tolak Risiko">
+                  <button
+                    onClick={() => handleRejectClick(item)}
+                    className="hover:text-red-600"
+                    title="Tolak Risiko"
+                  >
                     <XCircle size={18} />
                   </button>
                 </td>
@@ -160,7 +194,7 @@ export default function TableRisiko({
         </table>
       </div>
 
-      {/* 📱 Card layout untuk mobile dan tablet */}
+      {/* 📱 Card layout untuk mobile */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden">
         {filteredData.map((item) => (
           <div
@@ -223,10 +257,18 @@ export default function TableRisiko({
               >
                 <Eye size={18} />
               </a>
-              <button className="hover:text-green-600" title="Setujui Risiko">
+              <button
+                onClick={() => handleApproveClick(item)}
+                className="hover:text-green-600"
+                title="Setujui Risiko"
+              >
                 <CheckCircle size={18} />
               </button>
-              <button className="hover:text-red-600" title="Tolak Risiko">
+              <button
+                onClick={() => handleRejectClick(item)}
+                className="hover:text-red-600"
+                title="Tolak Risiko"
+              >
                 <XCircle size={18} />
               </button>
             </div>
@@ -238,6 +280,30 @@ export default function TableRisiko({
         <p className="text-center text-gray-500 py-6">
           Tidak ada data yang cocok dengan filter.
         </p>
+      )}
+
+      {/* 🟢 Popup Persetujuan */}
+      {showApproveModal && selectedRisiko && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <RisikoSetuju
+            namaRisiko={selectedRisiko.title}
+            asetTerkait={selectedRisiko.asset.name}
+            onCancel={() => setShowApproveModal(false)}
+            onConfirm={confirmApprove}
+          />
+        </div>
+      )}
+
+      {/* 🔴 Popup Penolakan */}
+      {showRejectModal && selectedRisiko && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <RisikoTolak
+            namaRisiko={selectedRisiko.title}
+            asetTerkait={selectedRisiko.asset.name}
+            onCancel={() => setShowRejectModal(false)}
+            onConfirm={confirmReject}
+          />
+        </div>
       )}
     </div>
   );
