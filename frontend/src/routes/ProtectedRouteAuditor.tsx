@@ -2,7 +2,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "./ProtectedRouteBase";
 import LayoutAuditor from "../Layout/LayoutAuditor";
 
-export function ProtectedRouteVerifikator() {
+export function ProtectedRouteAuditor() {
   const { checking, isAuthenticated, user } = useAuth();
 
   if (checking) return <p>Mengautentikasi sesi...</p>;
@@ -17,5 +17,4 @@ export function ProtectedRouteVerifikator() {
       <Outlet />
     </LayoutAuditor>
   );
-
 }

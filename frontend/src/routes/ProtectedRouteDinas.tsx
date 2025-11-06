@@ -10,7 +10,11 @@ export function ProtectedRouteDinas() {
   if (!isAuthenticated) return <Navigate to="/sso/callback" replace />;
 
   if (user.role?.role_name !== "pegawai_opd") {
-    return <Navigate to="/dashboard-verifikator" replace />;
+    if (user.role?.role_name == "verifikator") {
+      return <Navigate to="/dashboard-verifikator" replace />;
+    } else if(user.role?.role_name == "auditor") {
+      return <Navigate to="/dashboard-auditor" replace />;
+    }
   }
 
   // (opsional) Cek dinas/departemen spesifik

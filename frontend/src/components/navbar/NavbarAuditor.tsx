@@ -39,11 +39,13 @@ export default function NavbarAuditor() {
       ],
     },
     {
-      label: "Pemeliharaan",
+      label: "Laporan Audit",
       icon: "/sidebar-icon/Maintenance.png",
       children: [
-        { label: "Jadwal Pemeliharaan", to: "/jadwal-auditor" },
         { label: "Laporan Pemeliharaan", to: "/pemeliharaan-auditor" },
+        { label: "Laporan Penghapusan", to: "/penghapusan-auditor" },
+        { label: "Laporan Insiden / RFC", to: "/insiden-auditor" },
+        { label: "Laporan SDM", to: "/sdm-auditor" },
       ],
     },
     {

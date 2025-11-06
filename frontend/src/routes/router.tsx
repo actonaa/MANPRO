@@ -47,6 +47,7 @@ import LogoutSSO from "../sso/logout";
 
 import { ProtectedRouteDinas } from "./ProtectedRouteDinas";
 import { ProtectedRouteVerifikator } from "./ProtectedRouteVerifikator";
+import { ProtectedRouteAuditor } from "./ProtectedRouteAuditor";
 
 import NotFound404 from "../views/Error/NotFound";
 
@@ -130,6 +131,7 @@ export default function AppRoutes() {
         </Route>
 
          {/* Route AUDITOR */}
+         <Route element={<ProtectedRouteAuditor />}>
           <Route path="/dashboard-auditor" element={<DashboardAuditor />} />
           <Route path="/aset-auditor" element={<AuditorAset />} />
           <Route
@@ -150,7 +152,7 @@ export default function AppRoutes() {
             path="/notifikasi-auditor"
             element={<NotificationsAuditor />}
           />
-
+        </Route>
         <Route path="*" element={<NotFound404 />} />
       </Routes>
     </Router>
