@@ -1,9 +1,29 @@
 import CardList from "../../components/card/CardList";
 import RiskHeatmap from "../../components/dashboard/dinas/RiskHeatMap";
 import PemeliharaanTrendCard from "../../components/dashboard/auditor/PemeliharaanTrendCard";
-import AktivitasSistemTerkini from "../../components/dashboard/auditor/AktivitasSistemTerkini";
-
+import TabelDashboardAdmin from "../../components/table/TabelDashboardAdmin";
 export default function Dashboard() {
+  // 🧩 Tambahkan dummy data di sini
+  const dummyData = [
+    {
+      dinas: "Dinas Pariwisata",
+      verifikasi: "98%",
+      risiko: 12,
+      kepatuhan: "90%",
+    },
+    {
+      dinas: "Dinas Pendidikan",
+      verifikasi: "82%",
+      risiko: 20,
+      kepatuhan: "87%",
+    },
+    {
+      dinas: "Dinas Perhubungan",
+      verifikasi: "90%",
+      risiko: 19,
+      kepatuhan: "93%",
+    },
+  ];
   return (
     <>
       <h1 className="ffont-semibold text-[22px] mb-4 md:text-2xl lg:text-[28px]">
@@ -29,10 +49,9 @@ export default function Dashboard() {
         <div className="lg:col-span-1 w-full">
           <RiskHeatmap />
         </div>
-        {/* aktivitas terkini */}
-        {/* 🧾 Aktivitas Sistem Terkini (Full Width dalam konten utama, tidak menabrak sidebar) */}
+        {/* Tabel */}
         <div className="col-span-full w-full mb-6">
-          <AktivitasSistemTerkini />
+          <TabelDashboardAdmin data={dummyData} />
         </div>
       </div>
     </>
