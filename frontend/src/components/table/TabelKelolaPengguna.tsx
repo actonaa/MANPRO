@@ -16,10 +16,16 @@ interface KelolaPenggunaTableProps {
     peran: string;
     status: string;
   };
+  onDelete?: (nama: string, email: string) => void;
+  onView?: (user: Pengguna) => void;
+  onEdit?: (user: Pengguna) => void; // ✅ Tambahkan handler edit
 }
 
 export default function KelolaPenggunaTable({
   filters,
+  onDelete,
+  onView,
+  onEdit, // ✅ Tambahkan destruktur di sini
 }: KelolaPenggunaTableProps) {
   const [data] = useState<Pengguna[]>([
     {
@@ -28,7 +34,7 @@ export default function KelolaPenggunaTable({
       peran: "User Dinas",
       dinas: "Dinas Pariwisata",
       status: "Aktif",
-      terakhirAktif: "2 Jam yang lalu",
+      terakhirAktif: "15 Oktober 2025, 14:30",
     },
     {
       nama: "Diyan Rahma",
@@ -56,7 +62,7 @@ export default function KelolaPenggunaTable({
     },
   ]);
 
-  // 🔍 Filter data berdasarkan pilihan dropdown
+  // 🔍 Filter data
   const filteredData = data.filter((item) => {
     return (
       (!filters?.dinas || item.dinas === filters.dinas) &&
@@ -88,8 +94,6 @@ export default function KelolaPenggunaTable({
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 overflow-x-auto">
-      <div className="flex justify-between items-center mb-4"></div>
-
       <table className="min-w-full border-collapse w-full">
         <thead>
           <tr className="text-left text-gray-400 text-sm border-b border-gray-200 uppercase">
@@ -139,13 +143,27 @@ export default function KelolaPenggunaTable({
                   {user.terakhirAktif}
                 </td>
                 <td className="py-3 px-4 text-center flex justify-center gap-3">
-                  <button className="text-gray-400 hover:text-gray-600">
+                  {/* 👁️ Detail */}
+                  <button
+                    onClick={() => onView && onView(user)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
                     <Eye size={18} />
                   </button>
-                  <button className="text-gray-400 hover:text-gray-600">
+
+                  {/* ✏️ Edit */}
+                  <button
+                    onClick={() => onEdit && onEdit(user)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
                     <Edit size={18} />
                   </button>
-                  <button className="text-red-500 hover:text-red-700">
+
+                  {/* 🗑️ Hapus */}
+                  <button
+                    onClick={() => onDelete && onDelete(user.nama, user.email)}
+                    className="text-red-500 hover:text-red-700"
+                  >
                     <Trash2 size={18} />
                   </button>
                 </td>
