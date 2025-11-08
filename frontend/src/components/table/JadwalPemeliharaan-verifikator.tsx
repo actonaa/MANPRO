@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Eye, CalendarDays } from "lucide-react";
-import { Link } from "react-router-dom"; // ✅ Tambah ini
+import { Link } from "react-router-dom";
+import PopupJadwalPemeliharaan from "../../components/form/verifikator/JadwalPemeliharaan";
 
 type TablePemeliharaanProps = {
   selectedLevel?: string;
@@ -24,6 +25,10 @@ export default function TablePemeliharaanVerifikator({
   selectedDate = null,
 }: TablePemeliharaanProps) {
   const [data, setData] = useState<PemeliharaanItem[]>([]);
+  const [openPopup, setOpenPopup] = useState(false);
+  const [selectedAset, setSelectedAset] = useState<PemeliharaanItem | null>(
+    null
+  );
 
   useEffect(() => {
     setData([
@@ -92,8 +97,24 @@ export default function TablePemeliharaanVerifikator({
     }
   };
 
+  const handleJadwalkan = (item: PemeliharaanItem) => {
+    setSelectedAset(item);
+    setOpenPopup(true);
+  };
+
+  const handleSubmitJadwal = (tanggal: string) => {
+    if (!selectedAset) return;
+    setData((prev) =>
+      prev.map((x) =>
+        x.id === selectedAset.id
+          ? { ...x, tanggal, status: "Dijadwalkan" }
+          : x
+      )
+    );
+  };
+
   return (
-    <div className="md:pb-10 xl:bg-white xl:shadow-xl xl:p-5 lg:rounded-2xl">
+    <div className="md:pb-10 xl:bg-white xl:shadow-xl xl:p-5 lg:rounded-2xl relative">
       {/* 🖥️ Tabel layar besar */}
       <div className="hidden xl:block">
         <table className="w-full min-w-[900px] text-[13px] text-center border-collapse">
@@ -133,7 +154,6 @@ export default function TablePemeliharaanVerifikator({
                 <td className="py-5 px-4">{item.status}</td>
                 <td className="py-5 px-4 text-gray-600">{item.tanggal}</td>
                 <td className="py-5 px-4 flex items-center justify-center gap-3 text-gray-500">
-                  {/* 👁️ Pakai Link */}
                   <Link
                     to="/jadwal-verifikator/detail"
                     className="hover:text-blue-600"
@@ -144,6 +164,7 @@ export default function TablePemeliharaanVerifikator({
                   <button
                     className="hover:text-green-600"
                     title="Jadwalkan Pemeliharaan"
+                    onClick={() => handleJadwalkan(item)}
                   >
                     <CalendarDays size={18} />
                   </button>
@@ -194,7 +215,6 @@ export default function TablePemeliharaanVerifikator({
             </div>
 
             <div className="flex justify-end gap-3 mt-4 text-gray-500">
-              {/* 👁️ Pakai Link juga di mobile */}
               <Link
                 to="/jadwal-verifikator/detail"
                 className="hover:text-blue-600"
@@ -205,6 +225,7 @@ export default function TablePemeliharaanVerifikator({
               <button
                 className="hover:text-green-600"
                 title="Jadwalkan Pemeliharaan"
+                onClick={() => handleJadwalkan(item)}
               >
                 <CalendarDays size={18} />
               </button>
@@ -218,6 +239,13 @@ export default function TablePemeliharaanVerifikator({
           Tidak ada data yang cocok dengan filter.
         </p>
       )}
+
+      {/* ✅ Popup jadwal */}
+      <PopupJadwalPemeliharaan
+        open={openPopup}
+        onClose={() => setOpenPopup(false)}
+        onSubmit={handleSubmitJadwal}
+      />
     </div>
   );
 }

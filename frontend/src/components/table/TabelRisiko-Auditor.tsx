@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 type Filters = {
   kategori: string;
@@ -62,7 +63,7 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
     ]);
   }, []);
 
-  // ✅ Filter logic (pencarian, status, kategori, dinas, dan tanggal)
+  // ✅ Filter logic
   const filteredData = data.filter((item) => {
     const { kategori, status, dinas, date, search } = filters;
 
@@ -95,11 +96,11 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
     );
   });
 
-  // ⬇️ TAMPILAN TIDAK DIUBAH SAMA SEKALI
   return (
     <div className="md:pb-10 xl:bg-white xl:shadow-xl xl:p-5 xl:rounded-2xl">
+      {/* 💻 DESKTOP TABLE */}
       <div className="hidden xl:block">
-        <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
+        <table className="w-full min-w-[950px] text-[13px] text-center border-collapse">
           <thead className="text-[#666666]">
             <tr>
               <th className="py-5 px-4 font-semibold">TANGGAL</th>
@@ -119,8 +120,8 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
                 key={item.id}
                 className="border-b border-b-[#ddd] hover:bg-gray-50 transition"
               >
-                <td className="py-5 px-4 ">{item.date}</td>
-                <td className="py-5 px-4 ">{item.id}</td>
+                <td className="py-5 px-4">{item.date}</td>
+                <td className="py-5 px-4">{item.id}</td>
                 <td className="py-5 px-4">{item.asset.name}</td>
                 <td className="py-5 px-4">{item.title}</td>
                 <td
@@ -150,12 +151,13 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
                 <td className="py-5 px-4">{item.category}</td>
                 <td className="py-5 px-4">{item.entry_level}</td>
                 <td className="py-5 px-4">
-                  <button
+                  <Link
+                    to={`/risiko-auditor/detail`}
                     className="text-blue-600 font-medium hover:underline"
                     title="Lihat Detail"
                   >
                     Detail
-                  </button>
+                  </Link>
                 </td>
               </tr>
             ))}
@@ -163,7 +165,7 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
         </table>
       </div>
 
-      {/* 📱 Card layout */}
+      {/* 📱 MOBILE CARD */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden">
         {filteredData.map((item) => (
           <div
@@ -219,12 +221,13 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
             </div>
 
             <div className="flex justify-end mt-4">
-              <button
+              <Link
+                to={`/risiko-auditor/detail`}
                 className="text-blue-600 text-sm font-medium hover:underline"
                 title="Lihat Detail"
               >
                 Detail
-              </button>
+              </Link>
             </div>
           </div>
         ))}

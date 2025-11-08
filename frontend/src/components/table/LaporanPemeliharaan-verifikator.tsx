@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
-import { Eye } from "lucide-react";
-import { Link } from "react-router-dom"; // ⬅️ Tambahkan ini
+import { Eye, CheckCircle, XCircle } from "lucide-react";
+import { Link } from "react-router-dom";
+import SetujuPemeliharaan from "../../components/form/verifikator/setujuPemeliharaan";
+import TolakPemeliharaan from "../../components/form/verifikator/tolakPemeliharaan";
 
 type TablePemeliharaanProps = {
   selectedLevel?: string;
@@ -33,6 +35,11 @@ export default function TablePemeliharaanVerifikator({
   selectedDate = null,
 }: TablePemeliharaanProps) {
   const [data, setData] = useState<PemeliharaanItem[]>([]);
+  const [openSetuju, setOpenSetuju] = useState(false);
+  const [openTolak, setOpenTolak] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<PemeliharaanItem | null>(
+    null
+  );
 
   useEffect(() => {
     setData([
@@ -75,6 +82,18 @@ export default function TablePemeliharaanVerifikator({
     ]);
   }, []);
 
+  // ✅ Fungsi tombol aksi
+  const handleSetuju = (item: PemeliharaanItem) => {
+    setSelectedItem(item);
+    setOpenSetuju(true);
+  };
+
+  const handleTolak = (item: PemeliharaanItem) => {
+    setSelectedItem(item);
+    setOpenTolak(true);
+  };
+
+  // 🔍 Filter data
   const filteredData = data.filter((item) => {
     const matchLevel = selectedLevel
       ? item.jenis.toLowerCase().includes(selectedLevel.toLowerCase())
@@ -121,15 +140,28 @@ export default function TablePemeliharaanVerifikator({
                   {formatTanggal(item.realisasi)}
                 </td>
                 <td className="py-4 px-6">
-                  <div className="flex justify-center gap-2 text-gray-500">
-                    {/* ⬇️ Langsung ke route detail */}
+                  <div className="flex justify-center gap-3 text-gray-500">
                     <Link
-                      to="/pemeliharaan-verifikator/detail"
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-blue-50 transition"
+                      to={`/pemeliharaan-verifikator/detail`}
+                      className="hover:text-blue-600"
                       title="Lihat Detail"
                     >
-                      <Eye size={16} />
+                      <Eye size={18} />
                     </Link>
+                    <button
+                      onClick={() => handleSetuju(item)}
+                      className="hover:text-green-600"
+                      title="Setujui Pemeliharaan"
+                    >
+                      <CheckCircle size={18} />
+                    </button>
+                    <button
+                      onClick={() => handleTolak(item)}
+                      className="hover:text-red-600"
+                      title="Tolak Pemeliharaan"
+                    >
+                      <XCircle size={18} />
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -169,17 +201,53 @@ export default function TablePemeliharaanVerifikator({
               </p>
             </div>
 
-            <div className="flex justify-end gap-2 mt-4 text-gray-500">
+            {/* 🔹 Tombol Aksi (Mobile) */}
+            <div className="flex justify-end gap-3 mt-4 text-gray-500">
               <Link
-                to="/pemeliharaan-verifikator/detail"
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-blue-50 transition"
+                to={`/pemeliharaan-verifikator/detail`}
+                className="hover:text-blue-600"
+                title="Lihat Detail"
               >
-                <Eye size={16} />
+                <Eye size={18} />
               </Link>
+              <button
+                onClick={() => handleSetuju(item)}
+                className="hover:text-green-600"
+                title="Setujui Pemeliharaan"
+              >
+                <CheckCircle size={18} />
+              </button>
+              <button
+                onClick={() => handleTolak(item)}
+                className="hover:text-red-600"
+                title="Tolak Pemeliharaan"
+              >
+                <XCircle size={18} />
+              </button>
             </div>
           </div>
         ))}
       </div>
+
+      {openSetuju && selectedItem && (
+        <SetujuPemeliharaan
+          open={openSetuju}
+          onClose={() => setOpenSetuju(false)}
+          onConfirm={() => console.log("Setuju:", selectedItem)}
+          namaRisiko={selectedItem.jenis}
+          asetTerkait={selectedItem.idAset}
+        />
+      )}
+
+      {openTolak && selectedItem && (
+        <TolakPemeliharaan
+          open={openTolak}
+          onClose={() => setOpenTolak(false)}
+          onConfirm={() => console.log("Tolak:", selectedItem)}
+          namaRisiko={selectedItem.jenis}
+          asetTerkait={selectedItem.idAset}
+        />
+      )}
 
       {filteredData.length === 0 && (
         <p className="text-center text-gray-500 py-6">

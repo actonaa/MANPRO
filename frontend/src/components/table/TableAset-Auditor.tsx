@@ -7,7 +7,6 @@ interface Asset {
   serial_number: string;
   lokasi: string;
   acquisition_date: string;
-  kondisi: string;
   category?: { name: string };
   status?: { name: string };
   dinas?: { name: string };
@@ -28,7 +27,6 @@ export default function TableAset({ filters }: { filters?: any }) {
           serial_number: "SN-001",
           lokasi: "Kantor Pusat",
           acquisition_date: "12 - 01 - 2025",
-          kondisi: "BAIK",
           category: { name: "Infrastruktur" },
           status: { name: "Aktif" },
           dinas: { name: "Dinas Kesehatan" },
@@ -39,7 +37,6 @@ export default function TableAset({ filters }: { filters?: any }) {
           serial_number: "SN-002",
           lokasi: "Garasi",
           acquisition_date: "12 - 01 - 2025",
-          kondisi: "BAIK",
           category: { name: "Kendaraan" },
           status: { name: "Perbaikan" },
           dinas: { name: "Perhubungan" },
@@ -50,7 +47,6 @@ export default function TableAset({ filters }: { filters?: any }) {
           serial_number: "SN-003",
           lokasi: "Garasi",
           acquisition_date: "12 - 01 - 2025",
-          kondisi: "RUSAK - RINGAN",
           category: { name: "Kendaraan" },
           status: { name: "Perbaikan" },
           dinas: { name: "Pendidikan" },
@@ -61,7 +57,6 @@ export default function TableAset({ filters }: { filters?: any }) {
           serial_number: "SN-004",
           lokasi: "Garasi",
           acquisition_date: "12 - 01 - 2025",
-          kondisi: "RUSAK - BERAT",
           category: { name: "Kendaraan" },
           status: { name: "Perbaikan" },
           dinas: { name: "Kesehatan" },
@@ -72,7 +67,6 @@ export default function TableAset({ filters }: { filters?: any }) {
           serial_number: "SN-005",
           lokasi: "Ruang Server",
           acquisition_date: "12 - 01 - 2025",
-          kondisi: "RUSAK - BERAT",
           category: { name: "Elektronik" },
           status: { name: "Tidak Aktif" },
           dinas: { name: "Dinas TI" },
@@ -81,7 +75,6 @@ export default function TableAset({ filters }: { filters?: any }) {
 
       // 🔹 Terapkan filter dari props
       let filtered = [...dummyData];
-      // ✅ Filter berdasarkan kategori, status, dinas
       if (filters?.kategori)
         filtered = filtered.filter(
           (d) =>
@@ -96,7 +89,6 @@ export default function TableAset({ filters }: { filters?: any }) {
           (d) => d.dinas?.name.toLowerCase() === filters.dinas.toLowerCase()
         );
 
-      // ✅ Filter berdasarkan rentang tanggal (start–end)
       if (filters?.tanggal?.includes("—")) {
         const [start, end] = filters.tanggal
           .split("—")
@@ -104,12 +96,10 @@ export default function TableAset({ filters }: { filters?: any }) {
           .map((t: string) => new Date(t));
 
         filtered = filtered.filter((d) => {
-          // konversi "12 - 01 - 2025" jadi "2025-01-12" biar bisa dibandingkan
           const [day, month, year] = d.acquisition_date
             .split(" - ")
             .map((v) => v.trim());
           const formattedDate = new Date(`${year}-${month}-${day}`);
-
           return formattedDate >= start && formattedDate <= end;
         });
       }
@@ -119,7 +109,6 @@ export default function TableAset({ filters }: { filters?: any }) {
     }, 500);
   }, [filters]);
 
-  // ✅ Warna status baru
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Aktif":
@@ -131,13 +120,6 @@ export default function TableAset({ filters }: { filters?: any }) {
       default:
         return "bg-gray-100 text-gray-800";
     }
-  };
-
-  const getKondisiColor = (kondisi: string) => {
-    if (kondisi === "BAIK") return "text-green-600 font-semibold";
-    if (kondisi.includes("RINGAN")) return "text-orange-500 font-semibold";
-    if (kondisi.includes("BERAT")) return "text-red-600 font-semibold";
-    return "text-gray-700";
   };
 
   if (loading)
@@ -161,8 +143,9 @@ export default function TableAset({ filters }: { filters?: any }) {
                 <p className="text-sm text-gray-500 font-medium">
                   {item.serial_number || "-"}
                 </p>
+                {/* 🔗 Link ke detail risiko auditor */}
                 <a
-                  href={`/aset/${item.id}`}
+                  href={`/risiko-auditor/detail`}
                   className="text-[#0095E8] font-medium text-sm hover:underline"
                 >
                   Detail
@@ -183,12 +166,6 @@ export default function TableAset({ filters }: { filters?: any }) {
                 <p className="flex justify-between">
                   <span className="font-medium">Lokasi</span>
                   <span>{item.lokasi || "-"}</span>
-                </p>
-                <p className="flex justify-between">
-                  <span className="font-medium">Kondisi</span>
-                  <span className={getKondisiColor(item.kondisi)}>
-                    {item.kondisi}
-                  </span>
                 </p>
                 <p className="flex justify-between">
                   <span className="font-medium">Dinas</span>
@@ -227,7 +204,6 @@ export default function TableAset({ filters }: { filters?: any }) {
               <th className="py-5 px-4 font-semibold">NAMA ASET</th>
               <th className="py-5 px-4 font-semibold">KATEGORI</th>
               <th className="py-5 px-4 font-semibold">LOKASI</th>
-              <th className="py-5 px-4 font-semibold">KONDISI</th>
               <th className="py-5 px-4 font-semibold">DINAS</th>
               <th className="py-5 px-4 font-semibold">STATUS</th>
               <th className="py-5 px-4 font-semibold">TANGGAL PENGAJUAN</th>
@@ -252,13 +228,6 @@ export default function TableAset({ filters }: { filters?: any }) {
                 <td className="py-5 px-4 text-[#666] lg:text-[17px]">
                   {item.lokasi || "-"}
                 </td>
-                <td
-                  className={`py-5 px-4 lg:text-[17px] ${getKondisiColor(
-                    item.kondisi
-                  )}`}
-                >
-                  {item.kondisi}
-                </td>
                 <td className="py-5 px-4 text-[#666] lg:text-[17px]">
                   {item.dinas?.name || "-"}
                 </td>
@@ -267,7 +236,7 @@ export default function TableAset({ filters }: { filters?: any }) {
                     className={`inline-flex items-center justify-center px-6 py-2 rounded-full text-sm font-medium whitespace-nowrap ${getStatusColor(
                       item.status?.name || ""
                     )}`}
-                    style={{ minWidth: "120px" }} // tambahkan ini biar cukup lebar
+                    style={{ minWidth: "120px" }}
                   >
                     {item.status?.name || "-"}
                   </span>
@@ -277,8 +246,9 @@ export default function TableAset({ filters }: { filters?: any }) {
                   {item.acquisition_date || "-"}
                 </td>
                 <td className="py-5 px-4">
+                  {/* 🔗 Link ke detail risiko auditor */}
                   <a
-                    href={`/aset/${item.id}`}
+                    href={`/aset-auditor/detail`}
                     className="text-[#0095E8] font-medium lg:text-[17px] cursor-pointer hover:underline"
                   >
                     detail

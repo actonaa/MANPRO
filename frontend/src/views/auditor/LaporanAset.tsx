@@ -1,12 +1,12 @@
 import { useState } from "react";
 import FilterDate from "../../components/filter/FilterDate";
 import ButtonFilter from "../../components/button/ButtonFilter";
-import TableAsetVerif from "../../components/table/TableAset-verifikator";
+import TableAset from "../../components/table/TableAset-Auditor";
 
 export default function JadwalPemeliharaanVerifikator() {
-  const [selectedkondisi, setSelectedLevel] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
-  const [selectedDate, setSelectedDate] = useState<{
+  const [, setSelectedLevel] = useState("");
+  const [, setSelectedStatus] = useState("");
+  const [, setSelectedDate] = useState<{
     start: string;
     end: string;
   } | null>(null);
@@ -63,12 +63,10 @@ export default function JadwalPemeliharaanVerifikator() {
         </div>
       </div>
 
-      {/* 📋 Tabel Jadwal */}
-      <TableAsetVerif
-        selectedkondisi={selectedkondisi}
-        selectedStatus={selectedStatus}
-        selectedDate={selectedDate}
-      />
+       {/* Table tampil di semua ukuran layar */}
+            <div className=" rounded-xl md:rounded-none md:rounded-b-xl">
+              <TableAset />
+            </div>
     </>
   );
 }

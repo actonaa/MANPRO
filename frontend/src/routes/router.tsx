@@ -149,6 +149,10 @@ export default function AppRoutes() {
             element={<DetailRisikoAuditor />}
           />
           <Route
+            path="/aset-auditor/detail"
+            element={<DetailAsetAuditor />}
+          />
+          <Route
             path="/notifikasi-auditor"
             element={<NotificationsAuditor />}
           />
