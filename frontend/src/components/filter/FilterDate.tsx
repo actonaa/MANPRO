@@ -13,7 +13,6 @@ export default function FilterDate({ onSelect }: FilterDateProps) {
 
   // 🔹 Tutup dropdown saat klik di luar
   useEffect(() => {
-
     const handleClickOutside = (e: MouseEvent) => {
       if (
         calendarRef.current &&
@@ -37,22 +36,30 @@ export default function FilterDate({ onSelect }: FilterDateProps) {
   };
 
   return (
-    <div className="relative w-full md:w-auto" ref={calendarRef}>
-      {/* 🔘 Tombol utama filter */}
+    <div className="relative w-full" ref={calendarRef}>
+      {/* 🔘 Tombol utama filter — tampilan disamakan dengan ButtonFilter */}
       <button
         onClick={() => setShowCalendar(!showCalendar)}
-        className="flex justify-between items-center w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-gray-700 shadow-sm hover:shadow focus:ring-2 focus:ring-blue-400 transition"
+        className="
+          flex justify-between items-center
+          w-full h-[44px]
+          border border-gray-300 rounded-lg
+          bg-white shadow-sm hover:shadow-md
+          px-3 text-gray-700
+          focus:ring-2 focus:ring-blue-400 focus:outline-none
+          transition-all duration-150
+        "
       >
         <div className="flex items-center gap-2 truncate">
-          <CalendarDays className="w-5 h-5 text-[#6B7280]" />
-          <span className="truncate text-sm font-semibold text-[#6B7280]">
+          <CalendarDays className="w-5 h-5 text-gray-500" />
+          <span className="truncate text-sm font-medium text-gray-700">
             {startDate && endDate
               ? `${startDate} — ${endDate}`
-              : "Pilih tanggal"}
+              : "Pilih Tanggal"}
           </span>
         </div>
         <ChevronDown
-          className={`w-4 h-4 transition-transform ${
+          className={`w-4 h-4 text-gray-500 transition-transform ${
             showCalendar ? "rotate-180" : ""
           }`}
         />
@@ -62,40 +69,55 @@ export default function FilterDate({ onSelect }: FilterDateProps) {
       {showCalendar && (
         <div
           className="
-            absolute top-full left-0 right-0 mt-2 
-            bg-white border border-gray-200 rounded-lg shadow-lg z-50
+            absolute top-full left-0 mt-2
+            bg-white border border-gray-200 rounded-xl shadow-xl z-50
             flex flex-col gap-3 p-4
-            w-full sm:w-auto min-w-[280px] sm:min-w-[360px] max-w-[95vw]
+            w-full sm:min-w-[350px] max-w-[95vw]
           "
         >
-          {/* Input tanggal */}
-          <div className="flex flex-col sm:flex-row gap-3 w-full">
+          {/* 🔹 Input tanggal range */}
+          <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex flex-col w-full">
               <label className="text-xs text-gray-500 mb-1">Dari:</label>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="border border-gray-300 rounded-lg px-2 py-1 text-gray-700 focus:ring-2 focus:ring-blue-400 focus:outline-none w-full"
+                className="
+                  border border-gray-300 rounded-lg
+                  px-2 py-1.5 text-gray-700 text-sm
+                  focus:ring-2 focus:ring-blue-400 focus:outline-none
+                  w-full
+                "
               />
             </div>
-
             <div className="flex flex-col w-full">
               <label className="text-xs text-gray-500 mb-1">Sampai:</label>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="border border-gray-300 rounded-lg px-2 py-1 text-gray-700 focus:ring-2 focus:ring-blue-400 focus:outline-none w-full"
+                className="
+                  border border-gray-300 rounded-lg
+                  px-2 py-1.5 text-gray-700 text-sm
+                  focus:ring-2 focus:ring-blue-400 focus:outline-none
+                  w-full
+                "
               />
             </div>
           </div>
 
-          {/* Tombol Filter */}
+          {/* 🔹 Tombol Terapkan */}
           <div className="flex justify-end w-full mt-2">
             <button
               onClick={handleApplyFilter}
-              className="flex items-center gap-2 bg-blue-500 text-white text-sm font-medium rounded-lg px-4 py-2 hover:bg-blue-600 transition"
+              className="
+                flex items-center gap-2 
+                bg-blue-500 text-white 
+                text-sm font-medium rounded-lg 
+                px-4 py-2 hover:bg-blue-600 
+                transition-all duration-150
+              "
             >
               <span>Terapkan</span>
               <svg

@@ -133,7 +133,6 @@ export default function KelolaPengguna() {
                   "Dinas Pariwisata",
                   "Dinas Pendidikan",
                   "Dinas Komunikasi",
-                  "Global",
                 ]}
                 onSelect={(val) => handleFilterChange("dinas", val)}
               />
