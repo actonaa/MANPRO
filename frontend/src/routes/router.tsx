@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Dashboard from "../views/dinas/Dashboard";
 import KelolaAset from "../views/dinas/Aset/KelolaAset";
-import AsetTambah from "../views/dinas/Aset/Tambah";
 import DetailAset from "../views/dinas/Aset/DetailAset";
 import LaporanAset from "../views/dinas/Aset/LaporanAset";
 
@@ -50,6 +49,7 @@ import { ProtectedRouteVerifikator } from "./ProtectedRouteVerifikator";
 import { ProtectedRouteAuditor } from "./ProtectedRouteAuditor";
 
 import NotFound404 from "../views/Error/NotFound";
+import Tambah from "../views/dinas/Aset/Tambah";
 
 export default function AppRoutes() {
   return (
@@ -66,7 +66,6 @@ export default function AppRoutes() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/aset" element={<KelolaAset />} />
           <Route path="/aset/:id" element={<DetailAset />} />
-          <Route path="/aset/tambah" element={<AsetTambah />} />
           <Route path="/laporan/aset" element={<LaporanAset />} />
           <Route path="/risiko" element={<DashboardRisiko />} />
           <Route path="/risiko/data" element={<DaftarRisiko />} />
@@ -158,6 +157,7 @@ export default function AppRoutes() {
           />
         </Route>
         <Route path="*" element={<NotFound404 />} />
+        <Route path="/tambah" element={<Tambah />} />
       </Routes>
     </Router>
   );
