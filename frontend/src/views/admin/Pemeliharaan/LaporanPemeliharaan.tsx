@@ -2,11 +2,11 @@ import { useState } from "react";
 import FilterDate from "../../../components/filter/FilterDate";
 import ButtonFilter from "../../../components/button/ButtonFilter";
 import CardList from "../../../components/card/CardList";
-import TablePemeliharaan from "../../../components/table/TablePemeliharaan";
 import { Download } from "lucide-react";
 import ExportModal from "../../../components/dropdown/Export";
+import TablePemeliharaanAdmin from "../../../components/table/TablePemeliharaanAdmin";
 
-export default function Pemeliharaan() {
+export default function PemeliharaanAdmin() {
   const [selectedKategori, setSelectedKategori] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
@@ -53,7 +53,7 @@ export default function Pemeliharaan() {
       </div>
 
       {/* 🎯 Filter Bar */}
-      <div className="border-b border-[#ddd] px-4 py-4 flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
+      <div className="border-b bg-white rounded-t-xl border-[#ddd] px-4 py-4 flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
         <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full">
           <div className="w-full sm:w-auto">
             <FilterDate
@@ -95,8 +95,8 @@ export default function Pemeliharaan() {
       </div>
 
       {/* 📋 Tabel / Card Data */}
-      <div className="mt-6">
-        <TablePemeliharaan
+      <div className="">
+        <TablePemeliharaanAdmin
           kategori={selectedKategori}
           status={selectedStatus}
           tanggal={selectedDate}

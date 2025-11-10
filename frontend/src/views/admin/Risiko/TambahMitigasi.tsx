@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import LayoutDinas from "../../layout/LayoutDinas";
 
 export default function TambahMitigasi() {
   const [probabilitas, setProbabilitas] = useState("");
@@ -12,7 +11,7 @@ export default function TambahMitigasi() {
   const [pemilik, setPemilik] = useState("");
 
   return (
-    <LayoutDinas>
+    <>
       <div>
         {/* 🧭 Judul & Deskripsi */}
         <div className="mb-6">
@@ -199,6 +198,6 @@ export default function TambahMitigasi() {
           </div>
         </div>
       </div>
-    </LayoutDinas>
+    </>
   );
 }

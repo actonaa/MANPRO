@@ -14,6 +14,8 @@ export function ProtectedRouteDinas() {
       return <Navigate to="/dashboard-verifikator" replace />;
     } else if (user.role == "auditor") {
       return <Navigate to="/dashboard-auditor" replace />;
+    }else if (user.role == "admin_diskominfo") {
+      return <Navigate to="/dashboard-admin" replace />;
     }
   }
   return (

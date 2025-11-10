@@ -7,7 +7,7 @@ import RencanaMitigasiCard from "../../../components/risiko/dinas/RencanaMitigas
 import RiwayatAktivitasCard from "../../../components/risiko/dinas/RiwayatAktivitasCard";
 import ButtonCard from "../../../components/button/Button";
 
-export default function RisikoPage() {
+export default function DetailRisiko() {
   const { id } = useParams(); // ambil id dari URL misalnya /risiko/detail/:id
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);

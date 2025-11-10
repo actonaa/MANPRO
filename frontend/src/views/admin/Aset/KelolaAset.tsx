@@ -1,16 +1,10 @@
-import { useNavigate } from "react-router-dom";
 import FilterDate from "../../../components/filter/FilterDate";
 import ButtonFilter from "../../../components/button/ButtonFilter";
 import CardList from "../../../components/card/CardList";
 import TableAsetAdmin from "../../../components/table/TableAsetAdmin";
 
 export default function AsetAdmin() {
-  const navigate = useNavigate();
-
-  const handleNavigate = () => {
-    navigate("/aset/tambah");
-  };
-
+  
   const handleStatusChange = (val: string) => {
     console.log("Status dipilih:", val);
   };

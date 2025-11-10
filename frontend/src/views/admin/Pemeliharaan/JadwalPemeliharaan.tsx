@@ -73,7 +73,7 @@ export default function JadwalPemeliharaanPage() {
         {/* 🔹 Tabel Jadwal */}
         <TableJadwalPemeliharaan
           selectedKategori={selectedKategori}
-          selectedStatus={selectedStatus}
+          selectedPrioritas={selectedStatus}
         />
       </div>
     </>

@@ -3,7 +3,7 @@ import Top10Risiko from "../../../components/kelola-risiko/dinas/Top10Resiko";
 import ButtonText from "../../../components/button/ButtonText";
 import CardList from "../../../components/card/CardList";
 
-export default function KelolaAset() {
+export default function DashboardRisikoAdmin() {
   // ✅ Data sementara dari backend (dummy)
   const totalRisiko = {
     rendah: 46,
@@ -27,7 +27,7 @@ export default function KelolaAset() {
 
   // 📍 Fungsi klik tombol
   const handleLihatRisiko = () => {
-    window.location.href = "/risiko";
+    window.location.href = "/risiko-admin/daftar";
   };
 
   return (

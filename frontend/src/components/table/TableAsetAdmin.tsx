@@ -165,7 +165,7 @@ export default function TableAsetAdmin() {
         </button>
 
         <button
-          onClick={() => navigate("/tambah-aset-admin")}
+          onClick={() => navigate("/aset-admin/tambah")}
           className="flex items-center gap-2 text-white bg-[#0095E8] hover:bg-[#007ACC] rounded-lg px-4 py-2 text-sm font-medium transition"
         >
           <Plus className="w-4 h-4" />

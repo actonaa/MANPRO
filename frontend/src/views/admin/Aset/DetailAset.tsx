@@ -12,7 +12,7 @@ import ScanBarcode from "../../../components/kelola-asset/dinas/ScanBarcode";
 import SiklusHidup from "../../../components/kelola-asset/dinas/SiklusHidup";
 import ExportModal from "../../../components/form/Admin/Export"; // ✅ Modal Ekspor
 
-export default function DetailAset() {
+export default function DetailAsetAdmin() {
   const { id } = useParams<{ id: string }>();
   const [asset, setAsset] = useState<any>(null);
   const [loading, setLoading] = useState(true);

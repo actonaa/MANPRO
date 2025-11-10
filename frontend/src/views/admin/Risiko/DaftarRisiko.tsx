@@ -1,8 +1,8 @@
 import ButtonFilter from "../../../components/button/ButtonFilter";
-import TableRisiko from "../../../components/table/TableRisiko";
+import TableRisikoAdmin from "../../../components/table/TabelRisikoAdmin";
 import { useState } from "react";
 
-export default function Risiko() {
+export default function DaftarRisikoAdmin() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedKategori, setSelectedKategori] = useState("");
@@ -112,7 +112,7 @@ export default function Risiko() {
 
         {/* === Table Risiko === */}
         <div className="px-2 md:px-6">
-          <TableRisiko
+          <TableRisikoAdmin
             searchTerm={searchTerm}
             selectedStatus={selectedStatus}
             selectedKategori={selectedKategori}

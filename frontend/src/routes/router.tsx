@@ -54,6 +54,12 @@ import DashboardAdmin from "../views/admin/dashboard";
 import EditPengguna from "../views/admin/EditPengguna";
 import KelolaPengguna from "../views/admin/KelolaPengguna";
 import AsetAdmin from "../views/admin/Aset/KelolaAset";
+import PemeliharaanAdmin from "../views/admin/Pemeliharaan/LaporanPemeliharaan";
+import { ProtectedRouteAdmin } from "./ProtectedAdmin";
+import DetailAsetAdmin from "../views/dinas/Aset/DetailAset";
+import TambahAdmin from "../views/admin/Aset/Tambah";
+import DaftarRisikoAdmin from "../views/admin/Risiko/DaftarRisiko";
+import DashboardRisikoAdmin from "../views/admin/Risiko/Dashboard";
 
 export default function AppRoutes() {
   return (
@@ -161,12 +167,28 @@ export default function AppRoutes() {
             element={<NotificationsAuditor />}
           />
         </Route>
+        
+        <Route element={<ProtectedRouteAdmin />}>
         <Route path="*" element={<NotFound404 />} />
         <Route path="/dashboard-admin" element={<DashboardAdmin/>} />
         <Route path="/editpengguna-admin" element={<EditPengguna/>}/>
         <Route path="/kelolapengguna-admin" element={<KelolaPengguna/>}/>
+
         <Route path="/aset-admin" element={<AsetAdmin/>}/>
+        <Route path="/aset-admin/:id" element={<DetailAsetAdmin/>}/>
+        <Route path="/aset-admin/tambah" element={<TambahAdmin />} />
         <Route path="/laporan/aset-admin" element={<LaporanAset/>}/>
+
+        <Route path="/risiko-admin" element={<DashboardRisikoAdmin/>}/>
+        <Route path="/laporan/risiko-admin" element={<LaporanRisiko/>}/>
+        <Route path="/risiko-admin/daftar" element={<DaftarRisikoAdmin/>}/>
+        <Route path="/risiko-admin/:id" element={<DetailRisiko/>}/>
+        <Route path="/risiko-admin/tambah" element={<TambahMitigasi />} />
+
+        <Route path="/pemeliharaan-admin" element={<JadwalPemeliharaanVerifikator />}/>
+        <Route path="/laporan/pemeliharaan-admin" element={<PemeliharaanAdmin />}/>
+        
+        </Route>
       </Routes>
     </Router>
   );
