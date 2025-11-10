@@ -4,8 +4,6 @@ import ButtonFilter from "../../../components/button/ButtonFilter";
 import CardList from "../../../components/card/CardList";
 import TableAset from "../../../components/table/TableAset";
 
-
-
 export default function Aset() {
   const navigate = useNavigate();
 
