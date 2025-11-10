@@ -1,12 +1,10 @@
 type TablePemeliharaanProps = {
   kategori?: string;
-  status?: string;
   tanggal?: string;
 };
 
 export default function TablePemeliharaan({
   kategori = "",
-  status = "",
   tanggal = "",
 }: TablePemeliharaanProps) {
   const data = [
@@ -17,7 +15,6 @@ export default function TablePemeliharaan({
       biaya: "Rp5.000.000,00",
       vendor: "Service Desk",
       realisasi: "12 - 01 - 2025",
-      status: "Selesai",
     },
     {
       idAset: "AST - 002",
@@ -26,7 +23,6 @@ export default function TablePemeliharaan({
       biaya: "Rp10.000.000,00",
       vendor: "Service Desk",
       realisasi: "12 - 01 - 2025",
-      status: "Berlangsung",
     },
     {
       idAset: "AST - 003",
@@ -35,33 +31,29 @@ export default function TablePemeliharaan({
       biaya: "Rp8.000.000,00",
       vendor: "PT Teknologi Nusantara",
       realisasi: "10 - 02 - 2025",
-      status: "Dibatalkan",
     },
   ];
 
   // 🔍 Filter data
   const filteredData = data.filter((row) => {
     const matchKategori = kategori ? row.jenis === kategori : true;
-    const matchStatus = status ? row.status === status : true;
     const matchTanggal = tanggal ? row.realisasi.includes(tanggal) : true;
-    return matchKategori && matchStatus && matchTanggal;
+    return matchKategori && matchTanggal;
   });
 
   return (
     <>
       {/* 💻 TABLE VIEW — hanya tampil di layar besar (lg ke atas) */}
-      <div className="hidden lg:block bg-white overflow-x-auto">
+      <div className="hidden lg:block bg-white overflow-x-auto md:rounded-b-xl ">
         <table className="w-full text-sm text-left border-spacing-y-3">
           <thead className="text-gray-600 border-b border-gray-200">
             <tr>
-              <th className="px-6 py-3">ID ASET</th>
-              <th className="px-6 py-3">ID LAPORAN</th>
-              <th className="px-6 py-3">JENIS</th>
-              <th className="px-6 py-3">BIAYA</th>
-              <th className="px-6 py-3">VENDOR</th>
-              <th className="px-6 py-3">REALISASI</th>
-              <th className="px-6 py-3">STATUS</th>
-              <th className="px-6 py-3 text-right">DETAIL</th>
+              <th className="px-6 py-7">ID ASET</th>
+              <th className="px-6 py-7">ID LAPORAN</th>
+              <th className="px-6 py-7">JENIS</th>
+              <th className="px-6 py-7">BIAYA</th>
+              <th className="px-6 py-7">VENDOR</th>
+              <th className="px-6 py-7">REALISASI</th>
             </tr>
           </thead>
           <tbody>
@@ -71,16 +63,15 @@ export default function TablePemeliharaan({
                   key={idx}
                   className="bg-white border-b border-gray-200 hover:bg-gray-50"
                 >
-                  <td className="px-6 py-5">{row.idAset}</td>
-                  <td className="px-6 py-5">{row.idLaporan}</td>
-                  <td className="px-6 py-5">{row.jenis}</td>
-                  <td className="px-6 py-5">{row.biaya}</td>
-                  <td className="px-6 py-5">{row.vendor}</td>
-                  <td className="px-6 py-5">{row.realisasi}</td>
-                  <td className="px-6 py-5">{row.status}</td>
-                  <td className="px-6 py-5 text-right">
+                  <td className="px-6 py-7">{row.idAset}</td>
+                  <td className="px-6 py-7">{row.idLaporan}</td>
+                  <td className="px-6 py-7">{row.jenis}</td>
+                  <td className="px-6 py-7">{row.biaya}</td>
+                  <td className="px-5 py-7">{row.vendor}</td>
+                  <td className="px-6 py-7">{row.realisasi}</td>
+                  <td className="px-6 py-7 text-right">
                     <a
-                      href={`/detail/laporan`}
+                      href={`/laporan/pemeliharaan/detail`}
                       className="text-[#0095E8] font-medium hover:underline"
                     >
                       Detail
@@ -114,7 +105,7 @@ export default function TablePemeliharaan({
                 <div className="flex justify-between items-center mb-2">
                   <p className="text-xs text-gray-500">{row.idAset}</p>
                   <a
-                    href={`/detail/laporan`}
+                    href={`/laporan/pemeliharaan/detail`}
                     className="text-[#0095E8] text-sm font-medium hover:underline"
                   >
                     Detail
@@ -130,10 +121,7 @@ export default function TablePemeliharaan({
                     <span className="font-medium text-gray-700">Kategori:</span>{" "}
                     {row.jenis}
                   </p>
-                  <p className="text-right">
-                    <span className="font-medium text-gray-700">Status:</span>{" "}
-                    {row.status}
-                  </p>
+                 
                   <p>
                     <span className="font-medium text-gray-700">Biaya:</span>{" "}
                     {row.biaya}

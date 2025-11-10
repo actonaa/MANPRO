@@ -66,6 +66,7 @@ export default function AppRoutes() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/aset" element={<KelolaAset />} />
           <Route path="/aset/:id" element={<DetailAset />} />
+          <Route path="/aset/tambah" element={<Tambah />} />
           <Route path="/laporan/aset" element={<LaporanAset />} />
           <Route path="/risiko" element={<DashboardRisiko />} />
           <Route path="/risiko/data" element={<DaftarRisiko />} />
@@ -126,11 +127,14 @@ export default function AppRoutes() {
             path="/jadwal-verifikator/detail"
             element={<DetailJadwalVerifikator />}
           />
-          <Route path="/notifikasi-verifikator" element={<NotificationsVerifikator />} />
+          <Route
+            path="/notifikasi-verifikator"
+            element={<NotificationsVerifikator />}
+          />
         </Route>
 
-         {/* Route AUDITOR */}
-         <Route element={<ProtectedRouteAuditor />}>
+        {/* Route AUDITOR */}
+        <Route element={<ProtectedRouteAuditor />}>
           <Route path="/dashboard-auditor" element={<DashboardAuditor />} />
           <Route path="/aset-auditor" element={<AuditorAset />} />
           <Route
@@ -147,17 +151,13 @@ export default function AppRoutes() {
             path="/risiko-auditor/detail"
             element={<DetailRisikoAuditor />}
           />
-          <Route
-            path="/aset-auditor/detail"
-            element={<DetailAsetAuditor />}
-          />
+          <Route path="/aset-auditor/detail" element={<DetailAsetAuditor />} />
           <Route
             path="/notifikasi-auditor"
             element={<NotificationsAuditor />}
           />
         </Route>
         <Route path="*" element={<NotFound404 />} />
-        <Route path="/tambah" element={<Tambah />} />
       </Routes>
     </Router>
   );

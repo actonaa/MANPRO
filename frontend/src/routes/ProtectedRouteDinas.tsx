@@ -9,19 +9,13 @@ export function ProtectedRouteDinas() {
   if (checking) return <p>Mengautentikasi sesi...</p>;
   if (!isAuthenticated) return <Navigate to="/sso/callback" replace />;
 
-  if (user.role?.role_name !== "pegawai_opd") {
-    if (user.role?.role_name == "verifikator") {
+  if (user.role !== "teknisi") {
+    if (user.role == "verifikator") {
       return <Navigate to="/dashboard-verifikator" replace />;
-    } else if(user.role?.role_name == "auditor") {
+    } else if (user.role == "auditor") {
       return <Navigate to="/dashboard-auditor" replace />;
     }
   }
-
-  // (opsional) Cek dinas/departemen spesifik
-  if (user.department?.department_name !== "Dinas Pemuda dan Olahraga") {
-    return <Navigate to="/unauthorized" replace />;
-  }
-
   return (
     <LayoutDinas>
       <Outlet />

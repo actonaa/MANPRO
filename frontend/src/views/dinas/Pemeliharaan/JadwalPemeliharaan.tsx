@@ -2,78 +2,95 @@ import { useState } from "react";
 import ButtonFilter from "../../../components/button/ButtonFilter";
 import TableJadwalPemeliharaan from "../../../components/table/JadwalPemeliharaan";
 import FilterDate from "../../../components/filter/FilterDate";
-import ButtonImg from "../../../components/button/ButtonImg"; // pastikan path benar
+import ButtonImg from "../../../components/button/ButtonImg";
 
 export default function JadwalPemeliharaanPage() {
   const [selectedKategori, setSelectedKategori] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedPrioritas, setSelectedPrioritas] = useState("");
 
-  // Fungsi untuk menangani perubahan filter
   const handleKategoriChange = (value: string) => {
     setSelectedKategori(value);
     console.log("Kategori dipilih:", value);
   };
 
-  const handleStatusChange = (value: string) => {
-    setSelectedStatus(value);
-    console.log("Status dipilih:", value);
+  const handlePrioritasChange = (value: string) => {
+    setSelectedPrioritas(value);
+    console.log("Prioritas dipilih:", value);
   };
 
   return (
     <>
-      {/* Header */}
-      <div className="mb-5 px-4 md:px-0">
-        <h1 className="text-lg md:text-2xl font-semibold">
-          Jadwal Pemeliharaan
-        </h1>
-        <p className="text-sm text-gray-600 mt-1 mb-4">
-          Pantau dan kelola jadwal pemeliharaan aset berdasarkan prioritas.
-        </p>
-        {/* Kanan: Tombol Import */}
-        <div className="md:hidden ">
+      {/* 🏷️ Judul Halaman */}
+      <h1 className="font-semibold text-[22px] mb-2 md:text-2xl lg:text-[28px]">
+        Jadwal Pemeliharaan
+      </h1>
+      <p className="text-gray-600 text-sm mb-4">
+        Pantau dan kelola jadwal pemeliharaan aset berdasarkan prioritas.
+      </p>
+
+      {/* 📱 Tombol Import (mobile) */}
+      <div className="flex gap-2 mb-5 md:hidden items-start justify-start">
+        <div className="w-full">
           <ButtonImg
             title="Impor"
             img="/kelola-asset/import.png"
             justify="justify-center"
-            px="4"
           />
         </div>
       </div>
 
-      {/* Kontainer tabel */}
-      <div className=" rounded-lg">
-        {/* 🔹 Filter section */}
-        <div className="flex flex-wrap justify-between mb-4">
-          {/* Kiri: Filter Buttons */}
-          <div className="flex flex-row items-center gap-2">
-            <FilterDate />
-            <ButtonFilter
-              label="Kategori"
-              options={["Aset TI", "Aset Non TI"]}
-              onSelect={handleKategoriChange}
-            />
-            <ButtonFilter
-              label="Status"
-              options={["Aktif", "Perbaikan", "Tidak Aktif"]}
-              onSelect={handleStatusChange}
-            />
-          </div>
+      {/* 💻 Filter Bar (desktop) */}
+      <div className="hidden md:block lg:bg-white rounded-t-xl">
+        <div className="lg:border-b border-[#ddd]">
+          <div className="flex justify-between px-0 lg:px-4 py-6">
+            {/* Filter kiri */}
+            <div className="flex gap-3 items-center">
+              <FilterDate />
+              <ButtonFilter
+                label="Kategori"
+                options={["Aset TI", "Aset Fasilitas"]}
+                onSelect={handleKategoriChange}
+              />
+              <ButtonFilter
+                label="Prioritas"
+                options={["Rendah", "Sedang", "Tinggi"]}
+                onSelect={handlePrioritasChange}
+              />
+            </div>
 
-          {/* Kanan: Tombol Import */}
-          <div className="hidden  md:justify-end md:flex">
-            <ButtonImg
-              title="Impor"
-              img="/kelola-asset/import.png"
-              justify="justify-center"
-              px="4"
-            />
+            {/* Tombol kanan */}
+            <div className="flex gap-3">
+              <ButtonImg
+                title="Impor"
+                img="/kelola-asset/import.png"
+                justify="justify-center"
+                px="4"
+              />
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* 🔹 Tabel Jadwal */}
+      {/* 📱 Filter Bar (mobile) */}
+      <div className="flex gap-3 md:hidden mb-3">
+        <FilterDate />
+        <ButtonFilter
+          label="Kategori"
+          options={["Aset TI", "Aset Fasilitas"]}
+          onSelect={handleKategoriChange}
+        />
+        <ButtonFilter
+          label="Prioritas"
+          options={["Rendah", "Sedang", "Tinggi"]}
+          onSelect={handlePrioritasChange}
+        />
+      </div>
+
+      {/* 📋 Tabel Jadwal */}
+      <div className="rounded-xl md:rounded-none md:rounded-b-xl">
         <TableJadwalPemeliharaan
           selectedKategori={selectedKategori}
-          selectedStatus={selectedStatus}
+          selectedPrioritas={selectedPrioritas}
         />
       </div>
     </>

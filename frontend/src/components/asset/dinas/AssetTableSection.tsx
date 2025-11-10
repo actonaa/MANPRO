@@ -17,7 +17,7 @@ const data: Asset[] = [
     category: "Infrastruktur",
     location: "Kantor Pusat",
     condition: "BAIK",
-    status: "Diterima",
+    status: "Aktif",
     date: "12 - 01 - 2025",
   },
   {
@@ -26,7 +26,7 @@ const data: Asset[] = [
     category: "Kendaraan",
     location: "Garasi",
     condition: "BAIK",
-    status: "Tertunda",
+    status: "Perbaikan",
     date: "15 - 01 - 2025",
   },
   {
@@ -35,7 +35,7 @@ const data: Asset[] = [
     category: "Elektronik",
     location: "Ruang Server",
     condition: "RUSAK - BERAT",
-    status: "Ditolak",
+    status: "Tidak Aktif",
     date: "12 - 01 - 2025",
   },
 ];
@@ -48,11 +48,11 @@ const getConditionColor = (condition: string) => {
 };
 
 const getStatusStyle = (status: string) => {
-  if (status === "Diterima")
+  if (status === "Aktif")
     return "bg-green-100 text-green-700 px-4 py-1 rounded-full text-sm font-medium";
-  if (status === "Tertunda")
+  if (status === "Perbaikan")
     return "bg-yellow-100 text-yellow-700 px-4 py-1 rounded-full text-sm font-medium";
-  if (status === "Ditolak")
+  if (status === "Tidak Aktif")
     return "bg-red-100 text-red-700 px-4 py-1 rounded-full text-sm font-medium";
   return "text-gray-600";
 };
@@ -82,7 +82,7 @@ export default function AssetTableSection({
   return (
     <div className="mt-5">
       {/* 💻 TABEL (Desktop) */}
-      <div className="overflow-x-auto hidden md:block">
+      <div className="overflow-x-auto hidden md:block bg-white rounded-2xl">
         <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
           <thead className="text-[#666666]">
             <tr>
@@ -92,7 +92,7 @@ export default function AssetTableSection({
               <th className="py-5 px-4 font-semibold">LOKASI</th>
               <th className="py-5 px-4 font-semibold">KONDISI</th>
               <th className="py-5 px-4 font-semibold">STATUS</th>
-              <th className="py-5 px-4 font-semibold">TANGGAL</th>
+              <th className="py-5 px-4 font-semibold">TANGGA PEROLEHAn</th>
               <th className="py-5 px-4 font-semibold"></th>
             </tr>
           </thead>

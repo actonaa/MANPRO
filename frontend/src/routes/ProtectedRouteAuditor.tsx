@@ -8,7 +8,7 @@ export function ProtectedRouteAuditor() {
   if (checking) return <p>Mengautentikasi sesi...</p>;
   if (!isAuthenticated) return <Navigate to="/sso/callback" replace />;
 
-  if (user.role?.role_name !== "auditor") {
+  if (user.role !== "auditor") {
     return <Navigate to="/dashboard" replace />;
   }
 

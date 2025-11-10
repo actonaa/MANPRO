@@ -6,9 +6,9 @@ export default function StatusDropdown({
   onChange: (v: string) => void;
 }) {
   const options = [
-    { value: "Diterima", label: "DITERIMA" },
-    { value: "Tertunda", label: "TERTUNDA" },
-    { value: "Ditolak", label: "DITOLAK" },
+    { value: "Aktif", label: "Aktif" },
+    { value: "Perbaikan", label: "Perbaikan" },
+    { value: "Tidak Aktif", label: "Tidak Aktif" },
   ];
   return (
     <CustomDropdown

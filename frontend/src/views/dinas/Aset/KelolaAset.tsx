@@ -1,3 +1,4 @@
+import { useState } from "react";
 import ButtonImg from "../../../components/button/ButtonImg";
 import { useNavigate } from "react-router-dom";
 import FilterDate from "../../../components/filter/FilterDate";
@@ -8,23 +9,31 @@ import TableAset from "../../../components/table/TableAset";
 export default function Aset() {
   const navigate = useNavigate();
 
+  // 🔹 State untuk filter
+  const [selectedKategori, setSelectedKategori] = useState<string>("");
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
+
   const handleNavigate = () => {
     navigate("/aset/tambah");
   };
 
   const handleStatusChange = (val: string) => {
-    console.log("Status dipilih:", val);
+    // Jika memilih "Semua", kosongkan filter agar semua data tampil
+    setSelectedStatus(val === "Status" ? "" : val);
   };
 
   const handleKategoriChange = (val: string) => {
-    console.log("Kategori dipilih:", val);
+    setSelectedKategori(val === "Kategori" ? "" : val);
   };
 
   return (
     <>
+      {/* 🏷️ Judul Halaman */}
       <h1 className="font-semibold text-[22px] mb-4 md:text-2xl lg:text-[28px]">
         Kelola Aset
       </h1>
+
+      {/* 📱 Tombol Import & Tambah (Mobile) */}
       <div className="flex gap-2 mb-5 md:hidden items-start justify-start">
         <div className="w-full">
           <ButtonImg
@@ -50,6 +59,7 @@ export default function Aset() {
         </div>
       </div>
 
+      {/* 📊 Card Statistik */}
       <div className="mb-5 overflow-x-auto pb-6 md:mb-0 xl:overflow-x-visible">
         <div className="flex gap-4 min-w-[1000px] md:grid md:grid-cols-2 md:min-w-0 xl:flex">
           <CardList title="Total Aset" value="1,250" />
@@ -59,38 +69,38 @@ export default function Aset() {
         </div>
       </div>
 
+      {/* 📱 Filter di Mobile */}
       <div className="flex gap-3 md:hidden">
         <FilterDate />
         <ButtonFilter
           label="Kategori"
-          options={["Aset TI", "Aset Non TI"]}
+          options={["Kategori", "TI", "Non-TI"]} // 🔹 Tambahkan "Semua"
           onSelect={handleKategoriChange}
         />
         <ButtonFilter
           label="Status"
-          options={["Aktif", "Perbaikan", "Tidak Aktif"]}
+          options={["Status", "Aktif", "Perbaikan", "Tidak Aktif"]} // 🔹 Tambahkan "Semua"
           onSelect={handleStatusChange}
         />
       </div>
 
-      {/* Responsive Laptop */}
+      {/* 💻 Filter di Desktop */}
       <h1 className="hidden md:block font-medium text-sm lg:mb-4 md:text-2xl lg:text-[28px]">
         Data Aset
       </h1>
 
-      {/* Hanya bagian filter dan tombol yang disembunyikan di mobile */}
       <div className="hidden md:block lg:bg-white rounded-t-xl">
         <div className="lg:border-b border-[#ddd]">
           <div className="flex justify-between px-0 lg:px-4 py-8">
             <div className="flex gap-3">
               <ButtonFilter
                 label="Kategori"
-                options={["Aset TI", "Aset Non TI"]}
+                options={["Kategori", "TI", "Non-TI"]} // 🔹 Tambahkan "Semua"
                 onSelect={handleKategoriChange}
               />
               <ButtonFilter
                 label="Status"
-                options={["Aktif", "Perbaikan", "Tidak Aktif"]}
+                options={["Status", "Aktif", "Perbaikan", "Tidak Aktif"]} // 🔹 Tambahkan "Semua"
                 onSelect={handleStatusChange}
               />
               <FilterDate />
@@ -118,9 +128,12 @@ export default function Aset() {
         </div>
       </div>
 
-      {/* Table tampil di semua ukuran layar */}
-      <div className=" rounded-xl md:rounded-none md:rounded-b-xl">
-        <TableAset />
+      {/* 📋 Tabel Data */}
+      <div className="rounded-xl md:rounded-none md:rounded-b-xl">
+        <TableAset
+          selectedKategori={selectedKategori}
+          selectedStatus={selectedStatus}
+        />
       </div>
     </>
   );

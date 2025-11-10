@@ -27,7 +27,7 @@ export default function KelolaAset() {
 
   // 📍 Fungsi klik tombol
   const handleLihatRisiko = () => {
-    window.location.href = "/risiko";
+    window.location.href = "/risiko/data";
   };
 
   return (
