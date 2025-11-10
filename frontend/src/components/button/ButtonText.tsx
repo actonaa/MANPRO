@@ -1,4 +1,4 @@
-import type { MouseEventHandler } from "react"; // ✅ perbaiki baris ini
+import type { MouseEventHandler, ReactNode  } from "react"; // ✅ perbaiki baris ini
 
 type ButtonTextProps = {
   title: string;
@@ -7,6 +7,7 @@ type ButtonTextProps = {
   hoverColor?: string;
   textColor?: string;
   fontWeight?: string;
+  iconLeft?: ReactNode;
 };
 
 export default function ButtonText({

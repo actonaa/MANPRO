@@ -50,6 +50,9 @@ import { ProtectedRouteAuditor } from "./ProtectedRouteAuditor";
 
 import NotFound404 from "../views/Error/NotFound";
 import Tambah from "../views/dinas/Aset/Tambah";
+import DashboardAdmin from "../views/admin/dashboard";
+import EditPengguna from "../views/admin/EditPengguna";
+import KelolaPengguna from "../views/admin/KelolaPengguna";
 
 export default function AppRoutes() {
   return (
@@ -158,6 +161,11 @@ export default function AppRoutes() {
           />
         </Route>
         <Route path="*" element={<NotFound404 />} />
+        <Route path="/dashboard-admin" element={<DashboardAdmin/>} />
+        <Route path="/editpengguna-admin" element={<EditPengguna/>}/>
+        <Route path="/kelolapengguna-admin" element={<KelolaPengguna/>}/>
+        <Route path="/aset-admin" element={<KelolaAset/>}/>
+        <Route path="/laporan/aset-admin" element={<LaporanAset/>}/>
       </Routes>
     </Router>
   );

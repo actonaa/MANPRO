@@ -1,4 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare global {
+  interface Window {
+    XLSX: any;
+  }
+}
+
 import { useEffect, useState } from "react";
 
 interface Asset {
@@ -25,7 +31,6 @@ export default function TableAset({
   const [currentPage, setCurrentPage] = useState(1);
 
   const ITEMS_PER_PAGE = 5; // 🔹 tampil 5 data per halaman
-
   useEffect(() => {
     const getData = async () => {
       try {
@@ -100,7 +105,6 @@ export default function TableAset({
         return "bg-gray-200 text-gray-800";
     }
   };
-
   if (loading) return <p className="py-5 text-center">Memuat data...</p>;
   if (error) return <p className="text-center py-5 text-red-500">{error}</p>;
 
@@ -212,7 +216,9 @@ export default function TableAset({
             </button>
           </div>
         )}
+
       </div>
     </div>
   );
+
 }

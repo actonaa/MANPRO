@@ -61,7 +61,7 @@ export default function TablePemeliharaan({
               filteredData.map((row, idx) => (
                 <tr
                   key={idx}
-                  className="bg-white border-b border-gray-200 hover:bg-gray-50"
+                  className="bg-white border-b border-gray-200 hover:bg-gray-50 transition"
                 >
                   <td className="px-6 py-7">{row.idAset}</td>
                   <td className="px-6 py-7">{row.idLaporan}</td>
@@ -93,17 +93,20 @@ export default function TablePemeliharaan({
         </table>
       </div>
 
-      {/* 📱 CARD VIEW — tampil di mobile dan tablet (sm & md) */}
+      {/* 📱 CARD VIEW — tampil di mobile & tablet */}
       <div className="block lg:hidden">
         {filteredData.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {filteredData.map((row, idx) => (
               <div
                 key={idx}
-                className="bg-white border border-gray-200 rounded-xl shadow-sm p-4"
+                className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 hover:shadow-md transition"
               >
+                {/* Header Card */}
                 <div className="flex justify-between items-center mb-2">
-                  <p className="text-xs text-gray-500">{row.idAset}</p>
+                  <p className="text-xs text-gray-500 font-medium">
+                    {row.idAset}
+                  </p>
                   <a
                     href={`/laporan/pemeliharaan/detail`}
                     className="text-[#0095E8] text-sm font-medium hover:underline"
@@ -112,10 +115,10 @@ export default function TablePemeliharaan({
                   </a>
                 </div>
 
-                <h3 className="font-semibold border-b pb-2 text-gray-800 text-[15px] mb-3">
+                {/* Vendor Info */}
+                <h3 className="font-semibold text-gray-800 text-[15px] mb-3 border-b pb-2">
                   {row.vendor}
                 </h3>
-
                 <div className="grid grid-cols-2 gap-y-1 text-sm text-gray-600">
                   <p>
                     <span className="font-medium text-gray-700">Kategori:</span>{" "}
