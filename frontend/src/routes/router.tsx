@@ -53,6 +53,7 @@ import Tambah from "../views/dinas/Aset/Tambah";
 import DashboardAdmin from "../views/admin/dashboard";
 import EditPengguna from "../views/admin/EditPengguna";
 import KelolaPengguna from "../views/admin/KelolaPengguna";
+import AsetAdmin from "../views/admin/Aset/KelolaAset";
 
 export default function AppRoutes() {
   return (
@@ -164,7 +165,7 @@ export default function AppRoutes() {
         <Route path="/dashboard-admin" element={<DashboardAdmin/>} />
         <Route path="/editpengguna-admin" element={<EditPengguna/>}/>
         <Route path="/kelolapengguna-admin" element={<KelolaPengguna/>}/>
-        <Route path="/aset-admin" element={<KelolaAset/>}/>
+        <Route path="/aset-admin" element={<AsetAdmin/>}/>
         <Route path="/laporan/aset-admin" element={<LaporanAset/>}/>
       </Routes>
     </Router>
