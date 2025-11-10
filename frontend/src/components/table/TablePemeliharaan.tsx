@@ -49,8 +49,8 @@ export default function TablePemeliharaan({
 
   return (
     <>
-      {/* 💻 TABLE VIEW — hanya tampil di layar besar (lg ke atas) */}
-      <div className="hidden lg:block bg-white overflow-x-auto">
+      {/* 💻 TABLE VIEW — tampil di layar besar */}
+      <div className="hidden lg:block bg-white overflow-x-auto rounded-xl shadow-sm">
         <table className="w-full text-sm text-left border-spacing-y-3">
           <thead className="text-gray-600 border-b border-gray-200">
             <tr>
@@ -69,7 +69,7 @@ export default function TablePemeliharaan({
               filteredData.map((row, idx) => (
                 <tr
                   key={idx}
-                  className="bg-white border-b border-gray-200 hover:bg-gray-50"
+                  className="bg-white border-b border-gray-200 hover:bg-gray-50 transition"
                 >
                   <td className="px-6 py-5">{row.idAset}</td>
                   <td className="px-6 py-5">{row.idLaporan}</td>
@@ -102,17 +102,20 @@ export default function TablePemeliharaan({
         </table>
       </div>
 
-      {/* 📱 CARD VIEW — tampil di mobile dan tablet (sm & md) */}
+      {/* 📱 CARD VIEW — tampil di mobile & tablet */}
       <div className="block lg:hidden">
         {filteredData.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {filteredData.map((row, idx) => (
               <div
                 key={idx}
-                className="bg-white border border-gray-200 rounded-xl shadow-sm p-4"
+                className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 hover:shadow-md transition"
               >
+                {/* Header Card */}
                 <div className="flex justify-between items-center mb-2">
-                  <p className="text-xs text-gray-500">{row.idAset}</p>
+                  <p className="text-xs text-gray-500 font-medium">
+                    {row.idAset}
+                  </p>
                   <a
                     href={`/detail/laporan`}
                     className="text-[#0095E8] text-sm font-medium hover:underline"
@@ -121,27 +124,39 @@ export default function TablePemeliharaan({
                   </a>
                 </div>
 
-                <h3 className="font-semibold border-b pb-2 text-gray-800 text-[15px] mb-3">
+                {/* Vendor Info */}
+                <h3 className="font-semibold text-gray-800 text-[15px] mb-3 border-b pb-2">
                   {row.vendor}
                 </h3>
 
-                <div className="grid grid-cols-2 gap-y-1 text-sm text-gray-600">
-                  <p>
-                    <span className="font-medium text-gray-700">Kategori:</span>{" "}
-                    {row.jenis}
-                  </p>
-                  <p className="text-right">
-                    <span className="font-medium text-gray-700">Status:</span>{" "}
-                    {row.status}
-                  </p>
-                  <p>
-                    <span className="font-medium text-gray-700">Biaya:</span>{" "}
-                    {row.biaya}
-                  </p>
-                  <p className="text-right">
-                    <span className="font-medium text-gray-700">Jadwal:</span>{" "}
-                    {row.realisasi}
-                  </p>
+                {/* Content */}
+                <div className="space-y-1 text-sm text-gray-700">
+                  <div className="flex justify-between">
+                    <span className="font-medium">Kategori:</span>
+                    <span>{row.jenis}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Status:</span>
+                    <span
+                      className={`${
+                        row.status === "Selesai"
+                          ? "text-green-600"
+                          : row.status === "Berlangsung"
+                          ? "text-blue-600"
+                          : "text-red-600"
+                      } font-semibold`}
+                    >
+                      {row.status}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Biaya:</span>
+                    <span>{row.biaya}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Realisasi:</span>
+                    <span>{row.realisasi}</span>
+                  </div>
                 </div>
               </div>
             ))}
