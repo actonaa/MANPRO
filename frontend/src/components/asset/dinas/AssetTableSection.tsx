@@ -8,6 +8,7 @@ type Asset = {
   condition: string;
   status: string;
   date: string;
+  dinas?: string;
 };
 
 const data: Asset[] = [
@@ -58,12 +59,14 @@ const getStatusStyle = (status: string) => {
 };
 
 interface Props {
+  dinas?: string;
   period?: string;
   condition?: string;
   status?: string;
 }
 
 export default function AssetTableSection({
+  dinas,
   period,
   condition,
   status,
@@ -72,12 +75,13 @@ export default function AssetTableSection({
   const filteredData = useMemo(() => {
     return data.filter((item) => {
       const formattedDate = item.date.split(" - ").reverse().join("-");
+      const matchDinas = dinas ? item.dinas === dinas : true; // ✅ Tambah 1 baris filter dinas
       const matchPeriod = period ? formattedDate === period : true;
       const matchCondition = condition ? item.condition === condition : true;
       const matchStatus = status ? item.status === status : true;
-      return matchPeriod && matchCondition && matchStatus;
+      return matchDinas && matchPeriod && matchCondition && matchStatus; // ✅ tambahkan matchDinas di sini
     });
-  }, [period, condition, status]);
+  }, [dinas, period, condition, status]);
 
   return (
     <div className="mt-5">
@@ -107,7 +111,9 @@ export default function AssetTableSection({
                   <td className="py-5 px-4 text-[#666]">{item.name}</td>
                   <td className="py-5 px-4 text-[#666]">{item.category}</td>
                   <td className="py-5 px-4 text-[#666]">{item.location}</td>
-                  <td className={`py-5 px-4 ${getConditionColor(item.condition)}`}>
+                  <td
+                    className={`py-5 px-4 ${getConditionColor(item.condition)}`}
+                  >
                     {item.condition}
                   </td>
                   <td className="py-5 px-4">
@@ -128,7 +134,10 @@ export default function AssetTableSection({
               ))
             ) : (
               <tr>
-                <td colSpan={8} className="text-center py-5 text-gray-500 italic">
+                <td
+                  colSpan={8}
+                  className="text-center py-5 text-gray-500 italic"
+                >
                   Tidak ada data yang sesuai dengan filter.
                 </td>
               </tr>
