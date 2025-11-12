@@ -4,7 +4,7 @@ import InfoPemeliharaan from "../../../components/pemeliharaan/dinas/InfoPemelih
 export default function LaptopKerjaDetail() {
   return (
     <>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 p-5 rounded-2xl">
         <div className="max-w-6xl mx-auto">
           {/* Breadcrumb */}
           <div className="text-sm text-gray-600 mb-4">

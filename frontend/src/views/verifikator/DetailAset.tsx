@@ -38,23 +38,23 @@ export default function DetailAset() {
 
   return (
     <>
-      <div className="pb-10">
-        {/* 🔹 Header Atas */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-          {/* 🔙 Tombol Back + Info */}
-          <div className="flex items-start gap-3">
-            <ArrowLeft
-              className="w-5 h-5 text-gray-700 mt-1 cursor-pointer"
-              onClick={() => navigate(-1)}
-            />
-            <div>
-              <h1 className="text-lg md:text-2xl font-semibold text-gray-800">
-                Detail Aset
-              </h1>
-            </div>
+      {/* 🔹 Header Atas */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+        {/* 🔙 Tombol Back + Info */}
+        <div className="flex items-start gap-3">
+          <ArrowLeft
+            className="w-5 h-5 text-gray-700 mt-1 cursor-pointer"
+            onClick={() => navigate(-1)}
+          />
+          <div>
+            <h1 className="text-lg md:text-2xl font-semibold text-gray-800">
+              Detail Aset
+            </h1>
           </div>
         </div>
+      </div>
 
+      <div className="pb-10 p-5">
         {/* 🔹 Layout Utama Dua Kolom */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {/* Kolom kiri */}

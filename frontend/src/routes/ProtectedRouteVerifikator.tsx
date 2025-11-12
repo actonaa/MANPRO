@@ -9,7 +9,7 @@ export function ProtectedRouteVerifikator() {
   if (checking) return <p>Mengautentikasi sesi...</p>;
   if (!isAuthenticated) return <Navigate to="/sso/callback" replace />;
 
-  if (user.role?.role_name !== "verifikator") {
+  if (user.role !== "verifikator") {
     return <Navigate to="/dashboard" replace />;
   }
 

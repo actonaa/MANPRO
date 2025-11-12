@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import { Eye, CheckCircle, XCircle } from "lucide-react";
+import { Link } from "react-router-dom";
+import SetujuAsset from "../../components/form/verifikator/setujuAsset";
+import TolakAsset from "../../components/form/verifikator/tolakAsset"; // ✅ tambahkan import
 
 type TableProps = {
   selectedkondisi?: string;
@@ -23,8 +26,10 @@ export default function VerifikasiAset({
   selectedDate = null,
 }: TableProps) {
   const [data, setData] = useState<AsetItem[]>([]);
+  const [openSetuju, setOpenSetuju] = useState(false); // ✅ modal Setuju
+  const [openTolak, setOpenTolak] = useState(false); // ✅ modal Tolak
+  const [selectedAset, setSelectedAset] = useState<AsetItem | null>(null);
 
-  // 📊 Dummy data
   useEffect(() => {
     setData([
       {
@@ -75,10 +80,8 @@ export default function VerifikasiAset({
     ]);
   }, []);
 
-  // 🧮 Konversi string ke tanggal
   const parseDate = (dateStr: string) => new Date(dateStr);
 
-  // 🗓️ Format tanggal ke bentuk 12 - 01 - 2025
   const formatTanggal = (tanggal: string) => {
     const d = new Date(tanggal);
     if (isNaN(d.getTime())) return "-";
@@ -88,7 +91,6 @@ export default function VerifikasiAset({
     return `${day} - ${month} - ${year}`;
   };
 
-  // 🔍 Filter data
   const filteredData = data.filter((item) => {
     const kondisiMatch =
       !selectedkondisi ||
@@ -100,11 +102,9 @@ export default function VerifikasiAset({
       !selectedDate ||
       (parseDate(item.tanggal) >= parseDate(selectedDate.start) &&
         parseDate(item.tanggal) <= parseDate(selectedDate.end));
-
     return kondisiMatch && statusMatch && dateMatch;
   });
 
-  // 🎨 Warna kondisi
   const getKondisiColor = (kondisi: string) => {
     if (kondisi === "BAIK") return "text-green-600";
     if (kondisi.includes("RINGAN")) return "text-orange-500";
@@ -112,7 +112,6 @@ export default function VerifikasiAset({
     return "text-gray-600";
   };
 
-  // 🎨 Warna status
   const getStatusStyle = (status: string) => {
     switch (status) {
       case "Diterima":
@@ -126,9 +125,21 @@ export default function VerifikasiAset({
     }
   };
 
+  // ✅ buka modal Setuju
+  const handleSetuju = (aset: AsetItem) => {
+    setSelectedAset(aset);
+    setOpenSetuju(true);
+  };
+
+  // ✅ buka modal Tolak
+  const handleTolak = (aset: AsetItem) => {
+    setSelectedAset(aset);
+    setOpenTolak(true);
+  };
+
   return (
     <div className="md:pb-10 xl:bg-white xl:shadow-xl xl:p-5 xl:rounded-2xl">
-      {/* 🖥️ TABEL UNTUK DESKTOP */}
+      {/* 🖥️ DESKTOP TABLE */}
       <div className="hidden xl:block overflow-x-auto">
         <table className="w-full min-w-[900px] text-[13px] text-center border-collapse">
           <thead className="text-[#666666]">
@@ -143,7 +154,6 @@ export default function VerifikasiAset({
               <th className="py-5 px-4 font-semibold"></th>
             </tr>
           </thead>
-
           <tbody>
             {filteredData.map((item) => (
               <tr
@@ -172,18 +182,25 @@ export default function VerifikasiAset({
                 </td>
                 <td className="py-5 px-4">{formatTanggal(item.tanggal)}</td>
                 <td className="py-5 px-4 flex items-center justify-center gap-3 text-gray-500">
-                  {/* 🔗 Tambahkan Link ke halaman detail */}
-                  <a
-                    href={`/aset/detail-verifikator`}
+                  <Link
+                    to={`/aset-verifikator/detail`}
                     className="hover:text-blue-600"
                     title="Lihat Detail"
                   >
                     <Eye size={18} />
-                  </a>
-                  <button className="hover:text-green-600" title="Setujui Aset">
+                  </Link>
+                  <button
+                    onClick={() => handleSetuju(item)}
+                    className="hover:text-green-600"
+                    title="Setujui Aset"
+                  >
                     <CheckCircle size={18} />
                   </button>
-                  <button className="hover:text-red-600" title="Tolak Aset">
+                  <button
+                    onClick={() => handleTolak(item)} // ✅ buka popup tolak
+                    className="hover:text-red-600"
+                    title="Tolak Aset"
+                  >
                     <XCircle size={18} />
                   </button>
                 </td>
@@ -193,7 +210,7 @@ export default function VerifikasiAset({
         </table>
       </div>
 
-      {/* 📱 CARD UNTUK MOBILE */}
+      {/* 📱 MOBILE CARD */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden">
         {filteredData.map((item) => (
           <div
@@ -241,18 +258,25 @@ export default function VerifikasiAset({
             </div>
 
             <div className="flex justify-end gap-3 mt-4 text-gray-500">
-              {/* 🔗 Link ke halaman detail di mobile */}
-              <a
-                href={`/aset/detail-verifikator`}
+              <Link
+                to={`/aset-verifikator/detail`}
                 className="hover:text-blue-600"
                 title="Lihat Detail"
               >
                 <Eye size={18} />
-              </a>
-              <button className="hover:text-green-600" title="Setujui Aset">
+              </Link>
+              <button
+                onClick={() => handleSetuju(item)}
+                className="hover:text-green-600"
+                title="Setujui Aset"
+              >
                 <CheckCircle size={18} />
               </button>
-              <button className="hover:text-red-600" title="Tolak Aset">
+              <button
+                onClick={() => handleTolak(item)} // ✅ buka popup tolak
+                className="hover:text-red-600"
+                title="Tolak Aset"
+              >
                 <XCircle size={18} />
               </button>
             </div>
@@ -264,6 +288,16 @@ export default function VerifikasiAset({
         <p className="text-center text-gray-500 py-6">
           Tidak ada data yang cocok dengan filter.
         </p>
+      )}
+
+      {/* ✅ POPUP SETUJU ASET */}
+      {openSetuju && selectedAset && (
+        <SetujuAsset aset={selectedAset} onClose={() => setOpenSetuju(false)} />
+      )}
+
+      {/* ❌ POPUP TOLAK ASET */}
+      {openTolak && selectedAset && (
+        <TolakAsset aset={selectedAset} onClose={() => setOpenTolak(false)} />
       )}
     </div>
   );

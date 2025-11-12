@@ -1,55 +1,73 @@
 import React from "react";
 import { CircleHelp } from "lucide-react";
 
-interface KonfirmasiPersetujuanProps {
-  onCancel?: () => void;
-  onConfirm?: () => void;
+interface AsetItem {
+  id: string;
+  nama: string;
+  kategori: string;
+  lokasi: string;
+  kondisi: string;
+  status: string;
+  tanggal: string;
 }
 
-const KonfirmasiPersetujuan: React.FC<KonfirmasiPersetujuanProps> = ({
-  onCancel,
-  onConfirm,
-}) => {
+interface SetujuAssetProps {
+  aset: AsetItem; 
+  onClose: () => void; 
+}
+
+const SetujuAsset: React.FC<SetujuAssetProps> = ({ aset, onClose }) => {
+  const handleConfirm = () => {
+    console.log("✅ Aset disetujui:", aset);
+    // Tambahkan logika API di sini untuk menyetujui aset
+    onClose();
+  };
+
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 max-w-md w-full mx-auto text-center">
-      {/* Icon */}
-      <div className="flex justify-center mb-3">
-        <div className="bg-blue-100 p-3 rounded-full">
-          <CircleHelp className="text-blue-500 w-6 h-6" />
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+      <div className="bg-white rounded-2xl shadow-xl p-5 sm:p-6 w-full max-w-sm sm:max-w-md text-center animate-fadeIn">
+        {/* Icon */}
+        <div className="flex justify-center mb-3">
+          <div className="bg-blue-100 p-3 rounded-full">
+            <CircleHelp className="text-blue-500 w-6 h-6" />
+          </div>
         </div>
-      </div>
 
-      {/* Title */}
-      <h2 className="text-lg font-semibold text-gray-800">
-        Konfirmasi Persetujuan
-      </h2>
-      <p className="text-gray-600 text-sm mt-1">
-        Aset ini akan disetujui dan aktif
-      </p>
+        {/* Title */}
+        <h2 className="text-base sm:text-lg font-semibold text-gray-800">
+          Konfirmasi Persetujuan
+        </h2>
+        <p className="text-gray-600 text-sm mt-1">
+          Aset berikut akan disetujui dan diaktifkan.
+        </p>
 
-      {/* Divider */}
-      <hr className="my-4" />
+        {/* Divider */}
+        <hr className="my-4 border-gray-300" />
 
-      {/* Question */}
-      <p className="font-medium text-gray-700 mb-4">Apakah anda yakin?</p>
+        
+        {/* Question */}
+        <p className="font-medium text-gray-700 mb-4">
+          Apakah Anda yakin ingin menyetujui aset ini?
+        </p>
 
-      {/* Buttons */}
-      <div className="flex justify-center gap-3">
-        <button
-          onClick={onCancel}
-          className="px-4 py-2 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 transition"
-        >
-          Batal
-        </button>
-        <button
-          onClick={onConfirm}
-          className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
-        >
-          Setuju & Aktifkan
-        </button>
+        {/* Buttons */}
+        <div className="flex flex-col sm:flex-row justify-center gap-3">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 transition w-full sm:w-auto"
+          >
+            Batal
+          </button>
+          <button
+            onClick={handleConfirm}
+            className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition w-full sm:w-auto"
+          >
+            Setuju & Aktifkan
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
-export default KonfirmasiPersetujuan;
+export default SetujuAsset;

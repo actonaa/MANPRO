@@ -1,4 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare global {
+  interface Window {
+    XLSX: any;
+  }
+}
+
 import { useEffect, useState } from "react";
 
 interface Asset {
@@ -11,11 +17,20 @@ interface Asset {
   status?: { name: string };
 }
 
-export default function TableAset() {
+export default function TableAset({
+  selectedKategori,
+  selectedStatus,
+}: {
+  selectedKategori?: string;
+  selectedStatus?: string;
+}) {
   const [data, setData] = useState<Asset[]>([]);
+  const [filteredData, setFilteredData] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
+  const ITEMS_PER_PAGE = 5; // 🔹 tampil 5 data per halaman
   useEffect(() => {
     const getData = async () => {
       try {
@@ -34,18 +49,13 @@ export default function TableAset() {
         });
 
         if (!res.ok) {
-          if (res.status === 401) {
-            throw new Error(
-              "Unauthorized — Token tidak valid atau kadaluarsa."
-            );
-          }
           throw new Error(`Gagal mengambil data (${res.status})`);
         }
 
         const json = await res.json();
         setData(json);
+        setFilteredData(json); // awalnya tampil semua
       } catch (err: any) {
-        console.error("Gagal memuat data aset:", err);
         setError(err.message || "Terjadi kesalahan.");
       } finally {
         setLoading(false);
@@ -54,6 +64,33 @@ export default function TableAset() {
 
     getData();
   }, []);
+
+  // 🔹 Filter otomatis setiap kali kategori/status berubah
+  useEffect(() => {
+    let filtered = data;
+
+    if (selectedKategori) {
+      filtered = filtered.filter(
+        (item) => item.category?.name === selectedKategori
+      );
+    }
+
+    if (selectedStatus) {
+      filtered = filtered.filter(
+        (item) => item.status?.name === selectedStatus
+      );
+    }
+
+    setFilteredData(filtered);
+    setCurrentPage(1); // reset ke halaman pertama setiap kali filter berubah
+  }, [selectedKategori, selectedStatus, data]);
+
+  // 🔹 Hitung data yang ditampilkan per halaman
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const paginatedData = filteredData.slice(startIndex, endIndex);
+
+  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -68,132 +105,11 @@ export default function TableAset() {
         return "bg-gray-200 text-gray-800";
     }
   };
-
-  if (loading)
-    return (
-      <div className="mt-5 md:mt-0">
-        {/* 🔹 MOBILE VIEW Skeleton */}
-        <div className="block lg:hidden space-y-4">
-          {[...Array(4)].map((_, i) => (
-            <div
-              key={i}
-              className="rounded-xl border border-gray-200 shadow-sm p-4 bg-white animate-pulse"
-            >
-              <div className="flex justify-between items-center mb-2">
-                <div className="h-3 w-24 bg-gray-200 rounded"></div>
-                <div className="h-3 w-10 bg-gray-200 rounded"></div>
-              </div>
-
-              <div className="h-4 w-3/4 bg-gray-200 rounded mb-3"></div>
-              <hr className="my-3 border-gray-200" />
-
-              <div className="space-y-2">
-                <div className="h-3 w-32 bg-gray-200 rounded"></div>
-                <div className="h-3 w-24 bg-gray-200 rounded"></div>
-                <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
-                <div className="h-3 w-28 bg-gray-200 rounded"></div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* 🔹 DESKTOP VIEW Skeleton */}
-        <div className="hidden lg:block overflow-x-auto bg-white">
-          <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
-            <thead className="text-[#666666]">
-              <tr>
-                <th className="py-5 px-4 font-semibold">ID ASET</th>
-                <th className="py-5 px-4 font-semibold">NAMA ASET</th>
-                <th className="py-5 px-4 font-semibold">KATEGORI</th>
-                <th className="py-5 px-4 font-semibold">LOKASI</th>
-                <th className="py-5 px-4 font-semibold">STATUS</th>
-                <th className="py-5 px-4 font-semibold">TANGGAL PEROLEHAN</th>
-                <th className="py-5 px-4 font-semibold"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...Array(6)].map((_, i) => (
-                <tr key={i} className="border-b border-b-[#ddd] animate-pulse">
-                  {[...Array(7)].map((_, j) => (
-                    <td key={j} className="py-5 px-4">
-                      <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto" />
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="mt-6 flex justify-between p-4">
-            <div className="h-4 bg-gray-200 rounded w-40 animate-pulse" />
-          </div>
-        </div>
-      </div>
-    );
-
+  if (loading) return <p className="py-5 text-center">Memuat data...</p>;
   if (error) return <p className="text-center py-5 text-red-500">{error}</p>;
 
   return (
     <div className="lg:rounded-b-xl lg:bg-white">
-      {/* 🔹 MOBILE VIEW - Card Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 md:gap-5 lg:hidden space-y-4 mt-5 md:mt-0">
-        {data.length > 0 ? (
-          data.map((item) => (
-            <div
-              key={item.id}
-              className="rounded-xl border border-gray-200 shadow-sm p-4 bg-white"
-            >
-              <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-500 font-medium">
-                  {item.serial_number || "-"}
-                </p>
-                <a
-                  href={`/aset/${item.id}`}
-                  className="text-[#0095E8] font-medium text-sm hover:underline"
-                >
-                  Detail
-                </a>
-              </div>
-
-              <h2 className="text-base font-semibold text-gray-900 mt-1">
-                {item.name}
-              </h2>
-
-              <hr className="my-3 border-gray-200" />
-
-              <div className="space-y-1 text-sm text-gray-700">
-                <p className="flex justify-between">
-                  <p className="font-medium">Kategori </p>
-                  <p>{item.category?.name || "-"}</p>
-                </p>
-                <p className="flex justify-between">
-                  <p className="font-medium">Lokasi </p>
-                  <p>{item.lokasi || "-"}</p>
-                </p>
-                <p className="flex justify-between">
-                  <p className="font-medium">Status </p>
-                  <span
-                    className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                      item.status?.name || ""
-                    )}`}
-                  >
-                    <p>{item.status?.name || "-"}</p>
-                  </span>
-                </p>
-                <p className="flex justify-between">
-                  <p className="font-medium">Tanggal</p>
-                  <p>{item.acquisition_date || "-"}</p>
-                </p>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="text-center text-gray-500 italic">
-            Tidak ada data aset tersedia.
-          </p>
-        )}
-      </div>
-
-      {/* 🔹 DESKTOP VIEW - Table Layout (Tidak Diubah) */}
       <div className="hidden lg:block overflow-x-auto mt-5 md:mt-0">
         <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
           <thead className="text-[#666666]">
@@ -204,69 +120,105 @@ export default function TableAset() {
               <th className="py-5 px-4 font-semibold">LOKASI</th>
               <th className="py-5 px-4 font-semibold">STATUS</th>
               <th className="py-5 px-4 font-semibold">TANGGAL PEROLEHAN</th>
-              <th className="py-5 px-4 font-semibold"></th>
             </tr>
           </thead>
           <tbody>
-            {data.length > 0 ? (
-              data.map((item) => (
+            {paginatedData.length > 0 ? (
+              paginatedData.map((item) => (
                 <tr
                   key={item.id}
                   className="border-b border-b-[#ddd] hover:bg-gray-50"
                 >
-                  <td className="py-5 px-4 text-[#333]  lg:text-[17px]">
+                  <td className="py-5 px-4 text-[#333]">
                     {item.serial_number || "-"}
                   </td>
-                  <td className="py-5 px-4 text-[#666]  lg:text-[17px]">
-                    {item.name}
-                  </td>
-                  <td className="py-5 px-4 text-[#666]  lg:text-[17px]">
+                  <td className="py-5 px-4 text-[#666]">{item.name}</td>
+                  <td className="py-5 px-4 text-[#666]">
                     {item.category?.name || "-"}
                   </td>
-                  <td className="py-5 px-4 text-[#666]  lg:text-[17px]">
+                  <td className="py-5 px-4 text-[#666]">
                     {item.lokasi || "-"}
                   </td>
-                  <td className="py-5 px-4 text-[#666]  lg:text-[17px]">
+                  <td className="py-5 px-4 text-[#666]">
                     <span
-                      className={`px-5 md:px-7 py-2 rounded-[16px] text-base font-normal ${getStatusColor(
+                      className={`px-5 py-2 rounded-[16px] text-[13px] font-normal ${getStatusColor(
                         item.status?.name || ""
                       )}`}
                     >
                       {item.status?.name || "-"}
                     </span>
                   </td>
-                  <td className="py-5 px-4 text-[#666]  lg:text-[17px]">
+                  <td className="py-5 px-4 text-[#666]">
                     {item.acquisition_date || "-"}
-                  </td>
-                  <td className="py-5 px-4">
-                    <a
-                      href={`/aset/${item.id}`}
-                      className="text-[#0095E8] font-medium  lg:text-[17px] cursor-pointer hover:underline"
-                    >
-                      detail
-                    </a>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={6}
                   className="py-5 text-center text-gray-500 italic"
                 >
-                  Tidak ada data aset tersedia.
+                  Tidak ada data yang cocok dengan filter.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
 
-        <div className="mt-6 flex justify-between p-4">
-          <p className="text-[13px] text-[#6B7280]">
-            Menampilkan {data.length} hasil
-          </p>
-        </div>
+        {/* 🔹 Pagination Control (tampilkan hanya 5 nomor dinamis) */}
+        {filteredData.length > ITEMS_PER_PAGE && (
+          <div className="flex justify-center items-center gap-2 py-5">
+            {/* Tombol kiri */}
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+              className={`px-2 text-lg ${
+                currentPage === 1
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
+            >
+              ‹
+            </button>
+
+            {/* Nomor halaman dinamis */}
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .slice(
+                Math.max(0, Math.min(currentPage - 3, totalPages - 5)),
+                Math.max(5, Math.min(currentPage + 2, totalPages))
+              )
+              .map((page) => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-8 h-8 rounded-md flex items-center justify-center text-sm transition ${
+                    currentPage === page
+                      ? "bg-gray-100 text-black font-medium"
+                      : "text-gray-700 hover:text-blue-600"
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+
+            {/* Tombol kanan */}
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className={`px-2 text-lg ${
+                currentPage === totalPages
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
+            >
+              ›
+            </button>
+          </div>
+        )}
+
       </div>
     </div>
   );
+
 }

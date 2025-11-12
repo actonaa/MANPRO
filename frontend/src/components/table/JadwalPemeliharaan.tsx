@@ -1,11 +1,11 @@
 interface Props {
   selectedKategori?: string;
-  selectedStatus?: string;
+  selectedPrioritas?: string;
 }
 
 export default function TableJadwalPemeliharaan({
   selectedKategori,
-  selectedStatus,
+  selectedPrioritas,
 }: Props) {
   const data = [
     {
@@ -24,7 +24,6 @@ export default function TableJadwalPemeliharaan({
       lokasi: "Kantor Pusat",
       prioritas: "Tinggi",
       tanggal: "12 - 01 - 2025",
-      status: "Perbaikan",
     },
     {
       id: "AST - 003",
@@ -33,14 +32,13 @@ export default function TableJadwalPemeliharaan({
       lokasi: "Kantor Cabang",
       prioritas: "Sedang",
       tanggal: "14 - 02 - 2025",
-      status: "Non-Aktif",
     },
   ];
 
   const filteredData = data.filter(
     (item) =>
       (!selectedKategori || item.kategori === selectedKategori) &&
-      (!selectedStatus || item.status === selectedStatus)
+      (!selectedPrioritas || item.prioritas === selectedPrioritas)
   );
 
   const getBadgeColor = (prioritas: string) => {
@@ -58,7 +56,7 @@ export default function TableJadwalPemeliharaan({
 
   return (
     <div className="mt-5 bg-white md:mt-0">
-      {/* 💻 TABLE VIEW (Desktop) */}
+      {/* 💻 TABLE VIEW */}
       <div className="overflow-x-auto hidden lg:block">
         <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
           <thead className="text-[#666666]">
@@ -79,34 +77,34 @@ export default function TableJadwalPemeliharaan({
                   key={index}
                   className="border-b border-b-[#ddd] hover:bg-gray-50"
                 >
-                  <td className="py-5 px-4 text-[#333] lg:text-[17px]">
+                  <td className="py-5 px-4 text-[#333] lg:text-[13px]">
                     {item.id}
                   </td>
-                  <td className="py-5 px-4 text-[#666] lg:text-[17px]">
+                  <td className="py-5 px-4 text-[#666] lg:text-[13px]">
                     {item.nama}
                   </td>
-                  <td className="py-5 px-4 text-[#666] lg:text-[17px]">
+                  <td className="py-5 px-4 text-[#666] lg:text-[13px]">
                     {item.kategori}
                   </td>
-                  <td className="py-5 px-4 text-[#666] lg:text-[17px]">
+                  <td className="py-5 px-4 text-[#666] lg:text-[13px]">
                     {item.lokasi}
                   </td>
                   <td className="py-5 px-4">
                     <span
-                      className={`px-5 md:px-7 py-2 rounded-[16px] text-base font-normal ${getBadgeColor(
+                      className={`px-5 md:px-7 py-2 rounded-[16px] text-[13px] font-normal ${getBadgeColor(
                         item.prioritas
                       )}`}
                     >
                       {item.prioritas}
                     </span>
                   </td>
-                  <td className="py-5 px-4 text-[#666] lg:text-[17px]">
+                  <td className="py-5 px-4 text-[#666] lg:text-[13px]">
                     {item.tanggal}
                   </td>
                   <td className="py-5 px-4">
                     <a
-                      href={`/pemeliharaan/detail/jadwal`}
-                      className="text-[#0095E8] font-medium lg:text-[17px] cursor-pointer hover:underline"
+                      href={`/pemeliharaan/detail`}
+                      className="text-[#0095E8] font-medium lg:text-[13px] hover:underline"
                     >
                       Detail
                     </a>
@@ -133,7 +131,7 @@ export default function TableJadwalPemeliharaan({
         </div>
       </div>
 
-      {/* 📱 CARD VIEW (Mobile & Tablet) */}
+      {/* 📱 CARD VIEW */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden">
         {filteredData.length > 0 ? (
           filteredData.map((item, index) => (
@@ -141,23 +139,18 @@ export default function TableJadwalPemeliharaan({
               key={index}
               className="border border-gray-200 rounded-xl shadow-sm p-4 bg-white"
             >
-              {/* Header */}
               <div className="flex justify-between items-center mb-1">
                 <p className="text-sm text-gray-500">{item.id}</p>
                 <a
-                  href={`/pemeliharaan/detail/jadwal`}
+                  href={`/pemeliharaan/detail`}
                   className="text-[#0095E8] text-sm font-medium hover:underline"
                 >
                   Detail
                 </a>
               </div>
-
-              {/* Nama aset */}
               <h3 className="font-semibold border-b pb-2 border-gray-300 text-gray-800 text-[15px] mb-3">
                 {item.nama}
               </h3>
-
-              {/* Informasi detail 2 kolom */}
               <div className="text-sm text-gray-600 space-y-1">
                 <div className="flex justify-between">
                   <span className="text-gray-500">Kategori</span>

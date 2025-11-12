@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
-import { Eye } from "lucide-react";
+import { Eye, CheckCircle, XCircle } from "lucide-react";
+import { Link } from "react-router-dom";
+import SetujuPemeliharaan from "../../components/form/verifikator/setujuPemeliharaan";
+import TolakPemeliharaan from "../../components/form/verifikator/tolakPemeliharaan";
 
 type TablePemeliharaanProps = {
   selectedLevel?: string;
@@ -17,7 +20,7 @@ type PemeliharaanItem = {
   status: string;
 };
 
-// 🔹 Fungsi untuk ubah format tanggal jadi 12 - 01 - 2025
+// 🔹 Fungsi format tanggal
 const formatTanggal = (tanggal: string) => {
   const date = new Date(tanggal);
   const day = String(date.getDate()).padStart(2, "0");
@@ -32,8 +35,12 @@ export default function TablePemeliharaanVerifikator({
   selectedDate = null,
 }: TablePemeliharaanProps) {
   const [data, setData] = useState<PemeliharaanItem[]>([]);
+  const [openSetuju, setOpenSetuju] = useState(false);
+  const [openTolak, setOpenTolak] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<PemeliharaanItem | null>(
+    null
+  );
 
-  // 📊 Dummy data
   useEffect(() => {
     setData([
       {
@@ -75,7 +82,18 @@ export default function TablePemeliharaanVerifikator({
     ]);
   }, []);
 
-  // ✅ Filter data sesuai filter aktif
+  // ✅ Fungsi tombol aksi
+  const handleSetuju = (item: PemeliharaanItem) => {
+    setSelectedItem(item);
+    setOpenSetuju(true);
+  };
+
+  const handleTolak = (item: PemeliharaanItem) => {
+    setSelectedItem(item);
+    setOpenTolak(true);
+  };
+
+  // 🔍 Filter data
   const filteredData = data.filter((item) => {
     const matchLevel = selectedLevel
       ? item.jenis.toLowerCase().includes(selectedLevel.toLowerCase())
@@ -92,7 +110,7 @@ export default function TablePemeliharaanVerifikator({
 
   return (
     <div className="md:pb-10 xl:bg-white xl:shadow-xl xl:p-5 xl:rounded-2xl">
-      {/* 🖥️ Tabel layar besar */}
+      {/* 🖥️ Tabel Desktop */}
       <div className="hidden xl:block overflow-x-auto">
         <table className="w-full min-w-[950px] text-[13px] text-center border-collapse">
           <thead className="text-[#666666] bg-gray-50">
@@ -122,12 +140,27 @@ export default function TablePemeliharaanVerifikator({
                   {formatTanggal(item.realisasi)}
                 </td>
                 <td className="py-4 px-6">
-                  <div className="flex justify-center gap-2 text-gray-500">
-                    <button
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-blue-50 transition"
+                  <div className="flex justify-center gap-3 text-gray-500">
+                    <Link
+                      to={`/pemeliharaan-verifikator/detail`}
+                      className="hover:text-blue-600"
                       title="Lihat Detail"
                     >
-                      <Eye size={16} />
+                      <Eye size={18} />
+                    </Link>
+                    <button
+                      onClick={() => handleSetuju(item)}
+                      className="hover:text-green-600"
+                      title="Setujui Pemeliharaan"
+                    >
+                      <CheckCircle size={18} />
+                    </button>
+                    <button
+                      onClick={() => handleTolak(item)}
+                      className="hover:text-red-600"
+                      title="Tolak Pemeliharaan"
+                    >
+                      <XCircle size={18} />
                     </button>
                   </div>
                 </td>
@@ -137,7 +170,7 @@ export default function TablePemeliharaanVerifikator({
         </table>
       </div>
 
-      {/* 📱 Tampilan mobile */}
+      {/* 📱 Tampilan Mobile */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden">
         {filteredData.map((item) => (
           <div
@@ -168,14 +201,53 @@ export default function TablePemeliharaanVerifikator({
               </p>
             </div>
 
-            <div className="flex justify-end gap-2 mt-4 text-gray-500">
-              <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-blue-50 transition">
-                <Eye size={16} />
+            {/* 🔹 Tombol Aksi (Mobile) */}
+            <div className="flex justify-end gap-3 mt-4 text-gray-500">
+              <Link
+                to={`/pemeliharaan-verifikator/detail`}
+                className="hover:text-blue-600"
+                title="Lihat Detail"
+              >
+                <Eye size={18} />
+              </Link>
+              <button
+                onClick={() => handleSetuju(item)}
+                className="hover:text-green-600"
+                title="Setujui Pemeliharaan"
+              >
+                <CheckCircle size={18} />
+              </button>
+              <button
+                onClick={() => handleTolak(item)}
+                className="hover:text-red-600"
+                title="Tolak Pemeliharaan"
+              >
+                <XCircle size={18} />
               </button>
             </div>
           </div>
         ))}
       </div>
+
+      {openSetuju && selectedItem && (
+        <SetujuPemeliharaan
+          open={openSetuju}
+          onClose={() => setOpenSetuju(false)}
+          onConfirm={() => console.log("Setuju:", selectedItem)}
+          namaRisiko={selectedItem.jenis}
+          asetTerkait={selectedItem.idAset}
+        />
+      )}
+
+      {openTolak && selectedItem && (
+        <TolakPemeliharaan
+          open={openTolak}
+          onClose={() => setOpenTolak(false)}
+          onConfirm={() => console.log("Tolak:", selectedItem)}
+          namaRisiko={selectedItem.jenis}
+          asetTerkait={selectedItem.idAset}
+        />
+      )}
 
       {filteredData.length === 0 && (
         <p className="text-center text-gray-500 py-6">

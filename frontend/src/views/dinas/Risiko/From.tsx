@@ -1,6 +1,5 @@
 import { useState, useEffect, type ChangeEvent } from "react";
 import { CheckCircle, X } from "lucide-react";
-import LayoutDinas from "../../layout/LayoutDinas";
 import { Plus, Trash } from "lucide-react";
 
 // Import gambar wizard untuk desktop dan mobile
@@ -65,7 +64,7 @@ function SuccessPopup({
       onClick={handleClose}
     >
       {/* Backdrop blur */}
-      <div className="absolute inset-0 bg-white/30 backdrop-blur-sm"></div>
+      <div className="absolute inset-0 bg-black/50 "></div>
 
       {/* Popup Modal */}
       <div
@@ -277,8 +276,8 @@ export default function RisikoWizard() {
   };
 
   return (
-    <LayoutDinas>
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+    <>
+      <div className="min-h-screen bg-gray-50 flex flex-col p-5 rounded-2xl">
         {/* Header Wizard */}
         <div className="flex flex-col w-full mx-auto">
           <h1 className="text-2xl font-semibold mb-8">Tambah Risiko</h1>
@@ -294,7 +293,7 @@ export default function RisikoWizard() {
             />
           </div>
 
-          <div className="bg-white shadow-md rounded-2xl p-6 w-full">
+          <div className="bg-white rounded-2xl p-6 w-full">
             {step === 1 && (
               <>
                 {/* Nama Risiko */}
@@ -914,6 +913,6 @@ export default function RisikoWizard() {
           />
         )}
       </div>
-    </LayoutDinas>
+    </>
   );
 }

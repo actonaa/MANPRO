@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:4000/api", // ganti sesuai backend aset
+  baseURL: import.meta.env.VITE_API_URL || "https://api.diskominfo.go.id", // ganti sesuai backend aset
 });
 
 // Interceptor untuk menambahkan token JWT ke setiap request

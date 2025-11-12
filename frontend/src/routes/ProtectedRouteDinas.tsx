@@ -9,15 +9,15 @@ export function ProtectedRouteDinas() {
   if (checking) return <p>Mengautentikasi sesi...</p>;
   if (!isAuthenticated) return <Navigate to="/sso/callback" replace />;
 
-  if (user.role?.role_name !== "pegawai_opd") {
-    return <Navigate to="/dashboard-verifikator" replace />;
+  if (user.role !== "teknisi") {
+    if (user.role == "verifikator") {
+      return <Navigate to="/dashboard-verifikator" replace />;
+    } else if (user.role == "auditor") {
+      return <Navigate to="/dashboard-auditor" replace />;
+    }else if (user.role == "admin_diskominfo") {
+      return <Navigate to="/dashboard-admin" replace />;
+    }
   }
-
-  // (opsional) Cek dinas/departemen spesifik
-  if (user.department?.department_name !== "Dinas Pemuda dan Olahraga") {
-    return <Navigate to="/unauthorized" replace />;
-  }
-
   return (
     <LayoutDinas>
       <Outlet />

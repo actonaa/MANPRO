@@ -7,7 +7,6 @@ import {
 
 import Dashboard from "../views/dinas/Dashboard";
 import KelolaAset from "../views/dinas/Aset/KelolaAset";
-import AsetTambah from "../views/dinas/Aset/Tambah";
 import DetailAset from "../views/dinas/Aset/DetailAset";
 import LaporanAset from "../views/dinas/Aset/LaporanAset";
 
@@ -24,6 +23,8 @@ import DetailLaporanPemeliharaan from "../views/dinas/Pemeliharaan/DetailLaporan
 import DetailJadwalPemeliharaan from "../views/dinas/Pemeliharaan/DetailJadwalPemeliharaan";
 
 import Notifications from "../views/dinas/Notifications";
+import NotificationsVerifikator from "../views/dinas/Notifications";
+import NotificationsAuditor from "../views/dinas/Notifications";
 
 import DashboardVerifikator from "../views/verifikator/Dashboard";
 import RisikoVerifikator from "../views/verifikator/DaftarRisiko";
@@ -37,13 +38,33 @@ import LaporanPemeliharaanVerifikator from "../views/verifikator/LaporanPemeliha
 import DetailPemeliharaanVerifikator from "../views/verifikator/DetailLaporanPemeliharaan";
 import DetailJadwalVerifikator from "../views/verifikator/DetailJadwalPemeliharaan";
 
+import DashboardAuditor from "../views/auditor/dashboard";
+import AuditorAset from "../views/auditor/KelolaAset";
+import LaporanAsetAuditor from "../views/auditor/LaporanAset";
+import RisikoAuditor from "../views/auditor/Risiko";
+import LaporanRisikoAuditor from "../views/auditor/LaporanRisiko";
+import DetailAsetAuditor from "../views/auditor/DetailAset";
+import DetailRisikoAuditor from "../views/auditor/DetailRisiko";
+
 import Callback from "../sso/callback";
 import LogoutSSO from "../sso/logout";
 
 import { ProtectedRouteDinas } from "./ProtectedRouteDinas";
 import { ProtectedRouteVerifikator } from "./ProtectedRouteVerifikator";
+import { ProtectedRouteAuditor } from "./ProtectedRouteAuditor";
 
 import NotFound404 from "../views/Error/NotFound";
+import Tambah from "../views/dinas/Aset/Tambah";
+import DashboardAdmin from "../views/admin/dashboard";
+import EditPengguna from "../views/admin/EditPengguna";
+import KelolaPengguna from "../views/admin/KelolaPengguna";
+import AsetAdmin from "../views/admin/Aset/KelolaAset";
+import PemeliharaanAdmin from "../views/admin/Pemeliharaan/LaporanPemeliharaan";
+import { ProtectedRouteAdmin } from "./ProtectedAdmin";
+import DetailAsetAdmin from "../views/dinas/Aset/DetailAset";
+import TambahAdmin from "../views/admin/Aset/Tambah";
+import DaftarRisikoAdmin from "../views/admin/Risiko/DaftarRisiko";
+import DashboardRisikoAdmin from "../views/admin/Risiko/Dashboard";
 
 export default function AppRoutes() {
   return (
@@ -60,7 +81,7 @@ export default function AppRoutes() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/aset" element={<KelolaAset />} />
           <Route path="/aset/:id" element={<DetailAset />} />
-          <Route path="/aset/tambah" element={<AsetTambah />} />
+          <Route path="/aset/tambah" element={<Tambah />} />
           <Route path="/laporan/aset" element={<LaporanAset />} />
           <Route path="/risiko" element={<DashboardRisiko />} />
           <Route path="/risiko/data" element={<DaftarRisiko />} />
@@ -89,7 +110,8 @@ export default function AppRoutes() {
           />
           <Route path="/aset-verifikator" element={<VerifikatorAset />} />
           <Route
-            path="/laporan-verifikator"
+
+            path="/laporan/aset-verifikator"
             element={<LaporanAsetVerifikator />}
           />
           <Route path="/risiko-verifikator" element={<RisikoVerifikator />} />
@@ -102,28 +124,78 @@ export default function AppRoutes() {
             element={<JadwalPemeliharaanVerifikator />}
           />
           <Route
-            path="/laporan/pemeliharaan-verifikator"
+
+            path="/pemeliharaan-verifikator"
             element={<LaporanPemeliharaanVerifikator />}
           />
           <Route
-            path="/aset/detail-verifikator"
+            path="/aset-verifikator/detail"
             element={<DetailAsetVerifikator />}
           />
           <Route
-            path="/risiko/detail-verifikator"
+            path="/risiko-verifikator/detail"
             element={<DetailRisikoVerifikator />}
           />
           <Route
-            path="/pemeliharaan/detail-verifikator"
+            path="/pemeliharaan-verifikator/detail"
             element={<DetailPemeliharaanVerifikator />}
           />
           <Route
-            path="/jadwal/detail-verifikator"
+            path="/jadwal-verifikator/detail"
             element={<DetailJadwalVerifikator />}
+          />
+          <Route
+            path="/notifikasi-verifikator"
+            element={<NotificationsVerifikator />}
           />
         </Route>
 
+        {/* Route AUDITOR */}
+        <Route element={<ProtectedRouteAuditor />}>
+          <Route path="/dashboard-auditor" element={<DashboardAuditor />} />
+          <Route path="/aset-auditor" element={<AuditorAset />} />
+          <Route
+            path="/laporan/aset-auditor"
+            element={<LaporanAsetAuditor />}
+          />
+          <Route path="/risiko-auditor" element={<RisikoAuditor />} />
+          <Route
+            path="/laporan/risiko-auditor"
+            element={<LaporanRisikoAuditor />}
+          />
+          <Route path="/aset-auditor/detail" element={<DetailAsetAuditor />} />
+          <Route
+            path="/risiko-auditor/detail"
+            element={<DetailRisikoAuditor />}
+          />
+          <Route path="/aset-auditor/detail" element={<DetailAsetAuditor />} />
+          <Route
+            path="/notifikasi-auditor"
+            element={<NotificationsAuditor />}
+          />
+        </Route>
+        
+        <Route element={<ProtectedRouteAdmin />}>
         <Route path="*" element={<NotFound404 />} />
+        <Route path="/dashboard-admin" element={<DashboardAdmin/>} />
+        <Route path="/editpengguna-admin" element={<EditPengguna/>}/>
+        <Route path="/kelolapengguna-admin" element={<KelolaPengguna/>}/>
+
+        <Route path="/aset-admin" element={<AsetAdmin/>}/>
+        <Route path="/aset-admin/:id" element={<DetailAsetAdmin/>}/>
+        <Route path="/aset-admin/tambah" element={<TambahAdmin />} />
+        <Route path="/laporan/aset-admin" element={<LaporanAset/>}/>
+
+        <Route path="/risiko-admin" element={<DashboardRisikoAdmin/>}/>
+        <Route path="/laporan/risiko-admin" element={<LaporanRisiko/>}/>
+        <Route path="/risiko-admin/daftar" element={<DaftarRisikoAdmin/>}/>
+        <Route path="/risiko-admin/:id" element={<DetailRisiko/>}/>
+        <Route path="/risiko-admin/tambah" element={<TambahMitigasi />} />
+
+        <Route path="/pemeliharaan-admin" element={<JadwalPemeliharaanVerifikator />}/>
+        <Route path="/laporan/pemeliharaan-admin" element={<PemeliharaanAdmin />}/>
+        
+        </Route>
       </Routes>
     </Router>
   );

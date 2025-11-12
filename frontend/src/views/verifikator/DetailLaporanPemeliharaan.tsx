@@ -12,20 +12,20 @@ export default function DetailPemeliharaanPage() {
 
   return (
     <>
-      <div className="p-6 space-y-6">
-        {/* 🔹 Header Utama */}
-        <div className="flex items-start gap-3 mb-4">
-          <ArrowLeft
-            className="w-5 h-5 text-gray-700 mt-1 cursor-pointer hover:text-gray-900 transition"
-            onClick={() => navigate(-1)}
-          />
-          <div>
-            <h1 className="text-lg md:text-2xl font-semibold text-gray-800">
-              Detail Laporan Pemeliharaan
-            </h1>
-          </div>
+      {/* 🔹 Header Utama */}
+      <div className="flex items-start gap-3 mb-4">
+        <ArrowLeft
+          className="w-5 h-5 text-gray-700 mt-1 cursor-pointer hover:text-gray-900 transition"
+          onClick={() => navigate(-1)}
+        />
+        <div>
+          <h1 className="text-lg md:text-2xl font-semibold text-gray-800">
+            Detail Laporan Pemeliharaan
+          </h1>
         </div>
-
+      </div>
+      
+      <div className="p-6 space-y-6">
         {/* 📊 Dua kolom utama */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
           {/* 📍 Kolom Kiri */}

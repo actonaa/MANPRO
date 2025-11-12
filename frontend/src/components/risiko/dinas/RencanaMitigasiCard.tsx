@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import ButtonImg from "../../button/ButtonImg";
-import ButtonCard from "../../button/Button";
+import { useAuth } from "../../../routes/ProtectedRouteBase";
 
 type Mitigasi = {
   aksi: string;
@@ -17,20 +17,34 @@ type Mitigasi = {
 
 type RencanaMitigasiCardProps = {
   mitigasiList?: Mitigasi[];
-  showAddButton?: boolean; // ✅ Tambahkan prop opsional ini
 };
 
 export default function RencanaMitigasiCard({
   mitigasiList = [],
-  showAddButton = true, // ✅ Default: tombol tetap muncul
 }: RencanaMitigasiCardProps) {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleNavigate = () => {
-    navigate("/aset/tambah");
+    if (!user) return;
+
+    switch (user.role) {
+      case "teknisi":
+        navigate("/aset/tambah");
+        break;
+      case "admin_diskominfo":
+        navigate("/risiko-admin/tambah");
+        break;
+      default:
+        // role lain tidak bisa menambah
+        break;
+    }
   };
 
-  // 🎨 Warna badge status
+  // Menentukan apakah tombol "Tambah Aksi" ditampilkan
+  const canAdd =
+    user?.role === "teknisi" || user?.role === "admin_diskominfo";
+
   const getStatusColor = (status: string) => {
     if (status.toLowerCase().includes("selesai"))
       return "bg-green-100 text-green-700";
@@ -49,22 +63,24 @@ export default function RencanaMitigasiCard({
           Rencana Mitigasi
         </h2>
 
-        <ButtonImg
-          title="Tambah Aksi"
-          img="/kelola-asset/tambah-asset.png"
-          color="#00a9ff"
-          hoverColor="#a0e9ff"
-          borderColor="#00a9ff"
-          textColor="white"
-          px="2"
-          fontWeight="font-medium"
-          wFull="w-40"
-          paddingY="py-0"
-          onClick={handleNavigate}
-        />
+        {canAdd && (
+          <ButtonImg
+            title="Tambah Aksi"
+            img="/kelola-asset/tambah-asset.png"
+            color="#00a9ff"
+            hoverColor="#a0e9ff"
+            borderColor="#00a9ff"
+            textColor="white"
+            px="2"
+            fontWeight="font-medium"
+            wFull="w-40"
+            paddingY="py-0"
+            onClick={handleNavigate}
+          />
+        )}
       </div>
 
-      {/* Tabel */}
+      {/* Tabel Mitigasi */}
       {mitigasiList.length > 0 ? (
         <table className="w-full text-sm text-left border-collapse">
           <thead className="border-b text-gray-600">
@@ -83,7 +99,7 @@ export default function RencanaMitigasiCard({
           </thead>
           <tbody>
             {mitigasiList.map((item) => (
-              <tr className="border-b">
+              <tr key={item.aksi + item.targetTanggal} className="border-b">
                 <td className="py-2 text-gray-800 font-medium">{item.aksi}</td>
                 <td className="py-2">
                   <span
@@ -124,19 +140,6 @@ export default function RencanaMitigasiCard({
         <p className="text-gray-500 italic">
           Belum ada rencana mitigasi ditambahkan.
         </p>
-      )}
-      {/* 🔘 Tombol Tambah (hanya tampil jika showAddButton = true) */}
-      {showAddButton && (
-        <div className="md:flex md:justify-center md:items-center">
-          <ButtonCard
-            title="+ Tambah Aksi"
-            color="#007DFA"
-            hoverColor="#0066cc"
-            textColor="#ffffff"
-            borderColor="#007DFA"
-            onClick={() => navigate("/edit-risiko")}
-          />
-        </div>
       )}
     </div>
   );

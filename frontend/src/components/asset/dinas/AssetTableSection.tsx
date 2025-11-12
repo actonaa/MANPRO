@@ -8,6 +8,7 @@ type Asset = {
   condition: string;
   status: string;
   date: string;
+  dinas?: string;
 };
 
 const data: Asset[] = [
@@ -17,7 +18,7 @@ const data: Asset[] = [
     category: "Infrastruktur",
     location: "Kantor Pusat",
     condition: "BAIK",
-    status: "Diterima",
+    status: "Aktif",
     date: "12 - 01 - 2025",
   },
   {
@@ -26,7 +27,7 @@ const data: Asset[] = [
     category: "Kendaraan",
     location: "Garasi",
     condition: "BAIK",
-    status: "Tertunda",
+    status: "Perbaikan",
     date: "15 - 01 - 2025",
   },
   {
@@ -35,7 +36,7 @@ const data: Asset[] = [
     category: "Elektronik",
     location: "Ruang Server",
     condition: "RUSAK - BERAT",
-    status: "Ditolak",
+    status: "Tidak Aktif",
     date: "12 - 01 - 2025",
   },
 ];
@@ -48,22 +49,24 @@ const getConditionColor = (condition: string) => {
 };
 
 const getStatusStyle = (status: string) => {
-  if (status === "Diterima")
+  if (status === "Aktif")
     return "bg-green-100 text-green-700 px-4 py-1 rounded-full text-sm font-medium";
-  if (status === "Tertunda")
+  if (status === "Perbaikan")
     return "bg-yellow-100 text-yellow-700 px-4 py-1 rounded-full text-sm font-medium";
-  if (status === "Ditolak")
+  if (status === "Tidak Aktif")
     return "bg-red-100 text-red-700 px-4 py-1 rounded-full text-sm font-medium";
   return "text-gray-600";
 };
 
 interface Props {
+  dinas?: string;
   period?: string;
   condition?: string;
   status?: string;
 }
 
 export default function AssetTableSection({
+  dinas,
   period,
   condition,
   status,
@@ -72,17 +75,18 @@ export default function AssetTableSection({
   const filteredData = useMemo(() => {
     return data.filter((item) => {
       const formattedDate = item.date.split(" - ").reverse().join("-");
+      const matchDinas = dinas ? item.dinas === dinas : true; // ✅ Tambah 1 baris filter dinas
       const matchPeriod = period ? formattedDate === period : true;
       const matchCondition = condition ? item.condition === condition : true;
       const matchStatus = status ? item.status === status : true;
-      return matchPeriod && matchCondition && matchStatus;
+      return matchDinas && matchPeriod && matchCondition && matchStatus; // ✅ tambahkan matchDinas di sini
     });
-  }, [period, condition, status]);
+  }, [dinas, period, condition, status]);
 
   return (
     <div className="mt-5">
       {/* 💻 TABEL (Desktop) */}
-      <div className="overflow-x-auto hidden md:block">
+      <div className="overflow-x-auto hidden md:block bg-white rounded-2xl">
         <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
           <thead className="text-[#666666]">
             <tr>
@@ -92,7 +96,7 @@ export default function AssetTableSection({
               <th className="py-5 px-4 font-semibold">LOKASI</th>
               <th className="py-5 px-4 font-semibold">KONDISI</th>
               <th className="py-5 px-4 font-semibold">STATUS</th>
-              <th className="py-5 px-4 font-semibold">TANGGAL</th>
+              <th className="py-5 px-4 font-semibold">TANGGA PEROLEHAn</th>
               <th className="py-5 px-4 font-semibold"></th>
             </tr>
           </thead>
@@ -107,7 +111,9 @@ export default function AssetTableSection({
                   <td className="py-5 px-4 text-[#666]">{item.name}</td>
                   <td className="py-5 px-4 text-[#666]">{item.category}</td>
                   <td className="py-5 px-4 text-[#666]">{item.location}</td>
-                  <td className={`py-5 px-4 ${getConditionColor(item.condition)}`}>
+                  <td
+                    className={`py-5 px-4 ${getConditionColor(item.condition)}`}
+                  >
                     {item.condition}
                   </td>
                   <td className="py-5 px-4">
@@ -128,7 +134,10 @@ export default function AssetTableSection({
               ))
             ) : (
               <tr>
-                <td colSpan={8} className="text-center py-5 text-gray-500 italic">
+                <td
+                  colSpan={8}
+                  className="text-center py-5 text-gray-500 italic"
+                >
                   Tidak ada data yang sesuai dengan filter.
                 </td>
               </tr>
