@@ -44,7 +44,7 @@ export default function FilterDate({ onSelect }: FilterDateProps) {
           flex justify-between items-center
           w-full h-[44px]
           border border-gray-300 rounded-lg
-          bg-white shadow-sm hover:shadow-md
+          bg-white 
           px-3 text-gray-700
           focus:ring-2 focus:ring-blue-400 focus:outline-none
           transition-all duration-150
@@ -52,10 +52,10 @@ export default function FilterDate({ onSelect }: FilterDateProps) {
       >
         <div className="flex items-center gap-2 truncate">
           <CalendarDays className="w-5 h-5 text-gray-500" />
-          <span className="truncate text-sm font-medium text-gray-700">
+          <span className="truncate text-sm font-semibold text-[#6B7280]">
             {startDate && endDate
               ? `${startDate} — ${endDate}`
-              : "Pilih Tanggal"}
+              : "Filter"}
           </span>
         </div>
         <ChevronDown

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Search } from "lucide-react"; // <-- ICON SEARCH
 import ButtonImg from "../../../components/button/ButtonImg";
 import { useNavigate } from "react-router-dom";
 import FilterDate from "../../../components/filter/FilterDate";
@@ -12,13 +13,13 @@ export default function Aset() {
   // 🔹 State untuk filter
   const [selectedKategori, setSelectedKategori] = useState<string>("");
   const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [searchValue, setSearchValue] = useState<string>("");
 
   const handleNavigate = () => {
     navigate("/aset/tambah");
   };
 
   const handleStatusChange = (val: string) => {
-    // Jika memilih "Semua", kosongkan filter agar semua data tampil
     setSelectedStatus(val === "Status" ? "" : val);
   };
 
@@ -28,7 +29,6 @@ export default function Aset() {
 
   return (
     <>
-      {/* 🏷️ Judul Halaman */}
       <h1 className="font-semibold text-[22px] mb-4 md:text-2xl lg:text-[28px]">
         Kelola Aset
       </h1>
@@ -69,17 +69,30 @@ export default function Aset() {
         </div>
       </div>
 
+      {/* 🔎 Search Filter (MOBILE) */}
+      <div className="md:hidden mb-3 relative bg-white">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <input
+          type="text"
+          placeholder="Cari aset..."
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          className="w-full text-sm pl-10 pr-3 py-2 border border-gray-300 rounded-lg 
+          focus:outline-none focus:ring focus:ring-blue-200"
+        />
+      </div>
+
       {/* 📱 Filter di Mobile */}
       <div className="flex gap-3 md:hidden">
         <FilterDate />
         <ButtonFilter
           label="Kategori"
-          options={["Kategori", "TI", "Non-TI"]} // 🔹 Tambahkan "Semua"
+          options={["Kategori", "TI", "Non-TI"]}
           onSelect={handleKategoriChange}
         />
         <ButtonFilter
           label="Status"
-          options={["Status", "Aktif", "Perbaikan", "Tidak Aktif"]} // 🔹 Tambahkan "Semua"
+          options={["Status", "Aktif", "Perbaikan", "Tidak Aktif"]}
           onSelect={handleStatusChange}
         />
       </div>
@@ -91,38 +104,55 @@ export default function Aset() {
 
       <div className="hidden md:block lg:bg-white rounded-t-xl">
         <div className="lg:border-b border-[#ddd]">
-          <div className="flex justify-between px-0 lg:px-4 py-8">
-            <div className="flex gap-3">
-              <ButtonFilter
-                label="Kategori"
-                options={["Kategori", "TI", "Non-TI"]} // 🔹 Tambahkan "Semua"
-                onSelect={handleKategoriChange}
+          <div className="px-0 lg:px-4 py-8">
+
+            {/* 🔎 Search Filter (DESKTOP) */}
+            <div className="mb-5 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Cari berdasarkan ID, Nama, Kategori"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                className="w-[300px] text-sm pl-10 pr-3 py-2 border border-gray-300 rounded-lg
+                focus:outline-none focus:ring focus:ring-blue-200"
               />
-              <ButtonFilter
-                label="Status"
-                options={["Status", "Aktif", "Perbaikan", "Tidak Aktif"]} // 🔹 Tambahkan "Semua"
-                onSelect={handleStatusChange}
-              />
-              <FilterDate />
             </div>
-            <div className="flex gap-3">
-              <ButtonImg
-                title="Import"
-                img="/kelola-asset/import.png"
-                justify="justify-center"
-                px="4"
-              />
-              <ButtonImg
-                title="Tambah Aset"
-                img="/kelola-asset/tambah-asset.png"
-                color="#00a9ff"
-                hoverColor="#a0e9ff"
-                borderColor="#00a9ff"
-                textColor="white"
-                px="6"
-                fontWeight="font-medium"
-                onClick={handleNavigate}
-              />
+
+            <div className="flex justify-between">
+              <div className="flex gap-3">
+                <ButtonFilter
+                  label="Kategori"
+                  options={["Kategori", "TI", "Non-TI"]}
+                  onSelect={handleKategoriChange}
+                />
+                <ButtonFilter
+                  label="Status"
+                  options={["Status", "Aktif", "Perbaikan", "Tidak Aktif"]}
+                  onSelect={handleStatusChange}
+                />
+                <FilterDate />
+              </div>
+
+              <div className="flex gap-3">
+                <ButtonImg
+                  title="Import"
+                  img="/kelola-asset/import.png"
+                  justify="justify-center"
+                  px="4"
+                />
+                <ButtonImg
+                  title="Tambah Aset"
+                  img="/kelola-asset/tambah-asset.png"
+                  color="#00a9ff"
+                  hoverColor="#a0e9ff"
+                  borderColor="#00a9ff"
+                  textColor="white"
+                  px="6"
+                  fontWeight="font-medium"
+                  onClick={handleNavigate}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -133,6 +163,7 @@ export default function Aset() {
         <TableAset
           selectedKategori={selectedKategori}
           selectedStatus={selectedStatus}
+          searchValue={searchValue}
         />
       </div>
     </>

@@ -2,32 +2,31 @@ import { useState, useEffect } from "react";
 import { Eye, CheckCircle, XCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import SetujuAsset from "../../components/form/verifikator/setujuAsset";
-import TolakAsset from "../../components/form/verifikator/tolakAsset"; // ✅ tambahkan import
+import TolakAsset from "../../components/form/verifikator/tolakAsset";
 
 type TableProps = {
   selectedkondisi?: string;
-  selectedStatus?: string;
   selectedDate?: { start: string; end: string } | null;
 };
 
 type AsetItem = {
   id: string;
   nama: string;
-  kategori: string;
+  kategori: "TI" | "NON-TI";
   lokasi: string;
   kondisi: string;
-  status: string;
   tanggal: string;
+  pic: string;
+  status: string; // ⚠ tetap ada supaya kompatibel dengan modal
 };
 
 export default function VerifikasiAset({
   selectedkondisi = "",
-  selectedStatus = "",
   selectedDate = null,
 }: TableProps) {
   const [data, setData] = useState<AsetItem[]>([]);
-  const [openSetuju, setOpenSetuju] = useState(false); // ✅ modal Setuju
-  const [openTolak, setOpenTolak] = useState(false); // ✅ modal Tolak
+  const [openSetuju, setOpenSetuju] = useState(false);
+  const [openTolak, setOpenTolak] = useState(false);
   const [selectedAset, setSelectedAset] = useState<AsetItem | null>(null);
 
   useEffect(() => {
@@ -35,47 +34,52 @@ export default function VerifikasiAset({
       {
         id: "AST-001",
         nama: "CCTV Lobby",
-        kategori: "Infrastruktur",
+        kategori: "TI",
         lokasi: "Kantor Pusat",
         kondisi: "BAIK",
-        status: "Diterima",
         tanggal: "2025-01-12",
+        pic: "Fahmi",
+        status: "Tertunda",
       },
       {
         id: "AST-002",
         nama: "Mobil Operasional",
-        kategori: "Kendaraan",
+        kategori: "NON-TI",
         lokasi: "Garasi",
         kondisi: "BAIK",
-        status: "Tertunda",
         tanggal: "2025-01-12",
+        pic: "Andi",
+        status: "Tertunda",
       },
       {
         id: "AST-003",
-        nama: "Mobil Operasional",
-        kategori: "Kendaraan",
-        lokasi: "Garasi",
-        kondisi: "RUSAK - RINGAN",
-        status: "Tertunda",
+        nama: "Laptop Asus Zenbook",
+        kategori: "TI",
+        lokasi: "Ruang Server",
+        kondisi: "RUSAK - BERAT",
         tanggal: "2025-01-12",
+        pic: "Sari",
+        status: "Tertunda",
       },
       {
         id: "AST-004",
-        nama: "Mobil Operasional",
-        kategori: "Kendaraan",
-        lokasi: "Garasi",
-        kondisi: "RUSAK - BERAT",
-        status: "Tertunda",
+        nama: "Meja Kantor",
+        kategori: "NON-TI",
+        lokasi: "Ruang Rapat",
+        kondisi: "RUSAK - RINGAN",
         tanggal: "2025-01-12",
+        pic: "Budi",
+        status: "Tertunda",
       },
       {
         id: "AST-005",
-        nama: "Laptop Asus Zenbook",
-        kategori: "Elektronik",
-        lokasi: "Ruang Server",
-        kondisi: "RUSAK - BERAT",
-        status: "Ditolak",
+        nama: "Projector",
+        kategori: "TI",
+        lokasi: "Ruang Meeting",
+        kondisi: "BAIK",
         tanggal: "2025-01-12",
+        pic: "Rina",
+        status: "Tertunda",
       },
     ]);
   }, []);
@@ -95,14 +99,11 @@ export default function VerifikasiAset({
     const kondisiMatch =
       !selectedkondisi ||
       item.kondisi.toLowerCase().includes(selectedkondisi.toLowerCase());
-    const statusMatch =
-      !selectedStatus ||
-      item.status.toLowerCase() === selectedStatus.toLowerCase();
     const dateMatch =
       !selectedDate ||
       (parseDate(item.tanggal) >= parseDate(selectedDate.start) &&
         parseDate(item.tanggal) <= parseDate(selectedDate.end));
-    return kondisiMatch && statusMatch && dateMatch;
+    return kondisiMatch && dateMatch;
   });
 
   const getKondisiColor = (kondisi: string) => {
@@ -112,26 +113,11 @@ export default function VerifikasiAset({
     return "text-gray-600";
   };
 
-  const getStatusStyle = (status: string) => {
-    switch (status) {
-      case "Diterima":
-        return "bg-green-100 text-green-700";
-      case "Tertunda":
-        return "bg-yellow-100 text-yellow-700";
-      case "Ditolak":
-        return "bg-red-100 text-red-700";
-      default:
-        return "bg-gray-100 text-gray-700";
-    }
-  };
-
-  // ✅ buka modal Setuju
   const handleSetuju = (aset: AsetItem) => {
     setSelectedAset(aset);
     setOpenSetuju(true);
   };
 
-  // ✅ buka modal Tolak
   const handleTolak = (aset: AsetItem) => {
     setSelectedAset(aset);
     setOpenTolak(true);
@@ -149,7 +135,7 @@ export default function VerifikasiAset({
               <th className="py-5 px-4 font-semibold">KATEGORI</th>
               <th className="py-5 px-4 font-semibold">LOKASI</th>
               <th className="py-5 px-4 font-semibold">KONDISI</th>
-              <th className="py-5 px-4 font-semibold">STATUS</th>
+              <th className="py-5 px-4 font-semibold">PIC</th>
               <th className="py-5 px-4 font-semibold">TANGGAL PENGAJUAN</th>
               <th className="py-5 px-4 font-semibold"></th>
             </tr>
@@ -171,15 +157,7 @@ export default function VerifikasiAset({
                 >
                   {item.kondisi}
                 </td>
-                <td className="py-5 px-4">
-                  <span
-                    className={`px-4 py-1 rounded-full text-xs font-medium ${getStatusStyle(
-                      item.status
-                    )}`}
-                  >
-                    {item.status}
-                  </span>
-                </td>
+                <td className="py-5 px-4">{item.pic}</td>
                 <td className="py-5 px-4">{formatTanggal(item.tanggal)}</td>
                 <td className="py-5 px-4 flex items-center justify-center gap-3 text-gray-500">
                   <Link
@@ -197,7 +175,7 @@ export default function VerifikasiAset({
                     <CheckCircle size={18} />
                   </button>
                   <button
-                    onClick={() => handleTolak(item)} // ✅ buka popup tolak
+                    onClick={() => handleTolak(item)}
                     className="hover:text-red-600"
                     title="Tolak Aset"
                   >
@@ -221,13 +199,6 @@ export default function VerifikasiAset({
               <p className="text-sm text-gray-500">
                 {formatTanggal(item.tanggal)}
               </p>
-              <span
-                className={`px-3 py-1 text-xs rounded-full font-medium ${getStatusStyle(
-                  item.status
-                )}`}
-              >
-                {item.status}
-              </span>
             </div>
 
             <h3 className="text-base font-semibold text-gray-800 mb-1">
@@ -252,8 +223,7 @@ export default function VerifikasiAset({
                 {item.lokasi}
               </p>
               <p>
-                <span className="font-medium text-gray-700">Kategori:</span>{" "}
-                {item.kategori}
+                <span className="font-medium text-gray-700">PIC:</span> {item.pic}
               </p>
             </div>
 
@@ -273,7 +243,7 @@ export default function VerifikasiAset({
                 <CheckCircle size={18} />
               </button>
               <button
-                onClick={() => handleTolak(item)} // ✅ buka popup tolak
+                onClick={() => handleTolak(item)}
                 className="hover:text-red-600"
                 title="Tolak Aset"
               >
@@ -290,12 +260,10 @@ export default function VerifikasiAset({
         </p>
       )}
 
-      {/* ✅ POPUP SETUJU ASET */}
       {openSetuju && selectedAset && (
         <SetujuAsset aset={selectedAset} onClose={() => setOpenSetuju(false)} />
       )}
 
-      {/* ❌ POPUP TOLAK ASET */}
       {openTolak && selectedAset && (
         <TolakAsset aset={selectedAset} onClose={() => setOpenTolak(false)} />
       )}

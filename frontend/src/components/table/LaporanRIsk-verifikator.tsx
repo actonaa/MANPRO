@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { Eye } from "lucide-react";
-import { Link } from "react-router-dom"; // ✅ Tambahkan ini untuk routing
+import { Link } from "react-router-dom"; // ✅ Untuk routing
 
 type LaporanRiskVerifProps = {
-  selectedStatus?: string;
   selectedLevel?: string;
   selectedDate?: { start: string; end: string } | null;
 };
@@ -14,14 +13,12 @@ type RisikoItem = {
   title: string;
   criteria: string;
   category: string;
-  status: string;
   entry_level: number;
   asset: { name: string; lokasi: string };
   department: { name: string };
 };
 
 export default function LaporanRiskVerif({
-  selectedStatus = "",
   selectedLevel = "",
   selectedDate = null,
 }: LaporanRiskVerifProps) {
@@ -36,7 +33,6 @@ export default function LaporanRiskVerif({
         title: "Gangguan Jaringan",
         criteria: "Tinggi",
         category: "IT",
-        status: "Diterima",
         entry_level: 25,
         asset: { name: "Server Utama", lokasi: "Data Center" },
         department: { name: "IT" },
@@ -47,7 +43,6 @@ export default function LaporanRiskVerif({
         title: "Kehilangan Data",
         criteria: "Sedang",
         category: "IT",
-        status: "Tertunda",
         entry_level: 18,
         asset: { name: "Database", lokasi: "Server Room" },
         department: { name: "IT" },
@@ -58,7 +53,6 @@ export default function LaporanRiskVerif({
         title: "Kerusakan Perangkat",
         criteria: "Rendah",
         category: "NON-IT",
-        status: "Ditolak",
         entry_level: 10,
         asset: { name: "CCTV Lobby", lokasi: "Lobi Utama" },
         department: { name: "Maintenance" },
@@ -66,12 +60,8 @@ export default function LaporanRiskVerif({
     ]);
   }, []);
 
-  // ✅ Filter data sesuai filter aktif
+  // Filter data
   const filteredData = data.filter((item) => {
-    const matchesStatus = selectedStatus
-      ? item.status.toLowerCase() === selectedStatus.toLowerCase()
-      : true;
-
     const matchesLevel = selectedLevel
       ? item.criteria.toLowerCase() === selectedLevel.toLowerCase()
       : true;
@@ -80,12 +70,12 @@ export default function LaporanRiskVerif({
       ? item.date >= selectedDate.start && item.date <= selectedDate.end
       : true;
 
-    return matchesStatus && matchesLevel && matchesDate;
+    return matchesLevel && matchesDate;
   });
 
   return (
     <div className="md:pb-10 xl:bg-white xl:shadow-xl xl:p-5 xl:rounded-2xl">
-      {/* 🖥️ Tabel untuk layar besar */}
+      {/* 🖥️ Tabel Desktop */}
       <div className="hidden xl:block">
         <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
           <thead className="text-[#666666]">
@@ -95,7 +85,6 @@ export default function LaporanRiskVerif({
               <th className="py-5 px-4 font-semibold">NAMA ASET</th>
               <th className="py-5 px-4 font-semibold">NAMA RISIKO</th>
               <th className="py-5 px-4 font-semibold">LEVEL</th>
-              <th className="py-5 px-4 font-semibold">STATUS</th>
               <th className="py-5 px-4 font-semibold">KATEGORI</th>
               <th className="py-5 px-4 font-semibold">SKOR</th>
               <th className="py-5 px-4 font-semibold"></th>
@@ -107,8 +96,8 @@ export default function LaporanRiskVerif({
                 key={item.id}
                 className="border-b border-b-[#ddd] hover:bg-gray-50 transition"
               >
-                <td className="py-5 px-4 ">{item.date}</td>
-                <td className="py-5 px-4 ">{item.id}</td>
+                <td className="py-5 px-4">{item.date}</td>
+                <td className="py-5 px-4">{item.id}</td>
                 <td className="py-5 px-4">{item.asset.name}</td>
                 <td className="py-5 px-4">{item.title}</td>
                 <td
@@ -122,23 +111,9 @@ export default function LaporanRiskVerif({
                 >
                   {item.criteria}
                 </td>
-                <td className="py-5 px-4">
-                  <span
-                    className={`px-4 py-1 rounded-full text-xs font-medium ${
-                      item.status === "Diterima"
-                        ? "bg-green-100 text-green-600"
-                        : item.status === "Tertunda"
-                        ? "bg-yellow-100 text-yellow-600"
-                        : "bg-red-100 text-red-600"
-                    }`}
-                  >
-                    {item.status}
-                  </span>
-                </td>
                 <td className="py-5 px-4">{item.category}</td>
                 <td className="py-5 px-4">{item.entry_level}</td>
-                <td className="py-5 px-4 flex items-center justify-center gap-3 text-gray-500">
-                  {/* 🔗 Link ke halaman detail */}
+                <td className="py-5 px-4 flex items-center justify-center text-gray-500">
                   <Link
                     to={`/risiko-verifikator/detail/`}
                     className="hover:text-blue-600"
@@ -153,27 +128,14 @@ export default function LaporanRiskVerif({
         </table>
       </div>
 
-      {/* 📱 Card layout untuk mobile dan tablet */}
+      {/* 📱 Card Mobile */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden">
         {filteredData.map((item) => (
           <div
             key={item.id}
             className="border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition bg-white"
           >
-            <div className="flex justify-between items-center mb-2">
-              <p className="text-sm text-gray-500">{item.date}</p>
-              <span
-                className={`px-3 py-1 text-xs rounded-full font-medium ${
-                  item.status === "Diterima"
-                    ? "bg-green-100 text-green-600"
-                    : item.status === "Tertunda"
-                    ? "bg-yellow-100 text-yellow-600"
-                    : "bg-red-100 text-red-600"
-                }`}
-              >
-                {item.status}
-              </span>
-            </div>
+            <p className="text-sm text-gray-500 mb-2">{item.date}</p>
 
             <h3 className="text-base font-semibold text-gray-800 mb-1">
               {item.title}
@@ -208,8 +170,7 @@ export default function LaporanRiskVerif({
               </p>
             </div>
 
-            <div className="flex justify-end gap-3 mt-4 text-gray-500">
-              {/* 🔗 Link ke halaman detail */}
+            <div className="flex justify-end mt-4 text-gray-500">
               <Link
                 to={`/risiko-verifikator/detail/`}
                 className="hover:text-blue-600"

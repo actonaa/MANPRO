@@ -5,7 +5,6 @@ import PopupJadwalPemeliharaan from "../../components/form/verifikator/JadwalPem
 
 type TablePemeliharaanProps = {
   selectedLevel?: string;
-  selectedStatus?: string;
   selectedDate?: { start: string; end: string } | null;
 };
 
@@ -16,12 +15,10 @@ type PemeliharaanItem = {
   lokasi: string;
   prioritas: string;
   tanggal: string;
-  status: string;
 };
 
 export default function TablePemeliharaanVerifikator({
   selectedLevel = "",
-  selectedStatus = "",
   selectedDate = null,
 }: TablePemeliharaanProps) {
   const [data, setData] = useState<PemeliharaanItem[]>([]);
@@ -39,7 +36,6 @@ export default function TablePemeliharaanVerifikator({
         lokasi: "Kantor Pusat",
         prioritas: "Rendah",
         tanggal: "2025-01-12",
-        status: "Aktif",
       },
       {
         id: "AST-002",
@@ -48,7 +44,6 @@ export default function TablePemeliharaanVerifikator({
         lokasi: "Kantor Pusat",
         prioritas: "Tinggi",
         tanggal: "2025-01-13",
-        status: "Perbaikan",
       },
       {
         id: "AST-003",
@@ -57,7 +52,6 @@ export default function TablePemeliharaanVerifikator({
         lokasi: "Kantor Pusat",
         prioritas: "Sedang",
         tanggal: "2025-01-15",
-        status: "Dijadwalkan",
       },
       {
         id: "AST-004",
@@ -66,7 +60,6 @@ export default function TablePemeliharaanVerifikator({
         lokasi: "Kantor Cabang",
         prioritas: "Rendah",
         tanggal: "2025-01-12",
-        status: "Selesai",
       },
     ]);
   }, []);
@@ -75,13 +68,10 @@ export default function TablePemeliharaanVerifikator({
     const matchLevel = selectedLevel
       ? item.prioritas.toLowerCase() === selectedLevel.toLowerCase()
       : true;
-    const matchStatus = selectedStatus
-      ? item.status.toLowerCase() === selectedStatus.toLowerCase()
-      : true;
     const matchDate = selectedDate
       ? item.tanggal >= selectedDate.start && item.tanggal <= selectedDate.end
       : true;
-    return matchLevel && matchStatus && matchDate;
+    return matchLevel && matchDate;
   });
 
   const getBadgeColor = (prioritas: string) => {
@@ -107,7 +97,7 @@ export default function TablePemeliharaanVerifikator({
     setData((prev) =>
       prev.map((x) =>
         x.id === selectedAset.id
-          ? { ...x, tanggal, status: "Dijadwalkan" }
+          ? { ...x, tanggal }
           : x
       )
     );
@@ -115,7 +105,7 @@ export default function TablePemeliharaanVerifikator({
 
   return (
     <div className="md:pb-10 xl:bg-white xl:shadow-xl xl:p-5 lg:rounded-2xl relative">
-      {/* 🖥️ Tabel layar besar */}
+      {/* 🖥️ Tabel Desktop */}
       <div className="hidden xl:block">
         <table className="w-full min-w-[900px] text-[13px] text-center border-collapse">
           <thead className="text-[#666666]">
@@ -125,10 +115,7 @@ export default function TablePemeliharaanVerifikator({
               <th className="py-5 px-4 font-semibold">KATEGORI</th>
               <th className="py-5 px-4 font-semibold">LOKASI</th>
               <th className="py-5 px-4 font-semibold">PRIORITAS</th>
-              <th className="py-5 px-4 font-semibold">STATUS</th>
-              <th className="py-5 px-4 font-semibold">
-                JADWAL <br /> PEMELIHARAAN
-              </th>
+              <th className="py-5 px-4 font-semibold">TANGGAL</th>
               <th className="py-5 px-4 font-semibold"></th>
             </tr>
           </thead>
@@ -151,7 +138,6 @@ export default function TablePemeliharaanVerifikator({
                     {item.prioritas}
                   </span>
                 </td>
-                <td className="py-5 px-4">{item.status}</td>
                 <td className="py-5 px-4 text-gray-600">{item.tanggal}</td>
                 <td className="py-5 px-4 flex items-center justify-center gap-3 text-gray-500">
                   <Link
@@ -175,19 +161,14 @@ export default function TablePemeliharaanVerifikator({
         </table>
       </div>
 
-      {/* 📱 Tampilan mobile */}
+      {/* 📱 Card Mobile */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden">
         {filteredData.map((item) => (
           <div
             key={item.id}
             className="border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition bg-white"
           >
-            <div className="flex justify-between items-center mb-2">
-              <p className="text-sm text-gray-500">{item.tanggal}</p>
-              <span className="text-xs font-medium px-3 py-1 rounded-full bg-gray-100 text-gray-600">
-                {item.status}
-              </span>
-            </div>
+            <p className="text-sm text-gray-500 mb-2">{item.tanggal}</p>
 
             <h3 className="text-base font-semibold text-gray-800 mb-1">
               {item.nama}
@@ -209,8 +190,8 @@ export default function TablePemeliharaanVerifikator({
                 {item.kategori}
               </p>
               <p>
-                <span className="font-medium text-gray-700">Status:</span>{" "}
-                {item.status}
+                <span className="font-medium text-gray-700">Tanggal:</span>{" "}
+                {item.tanggal}
               </p>
             </div>
 

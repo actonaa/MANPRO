@@ -5,7 +5,7 @@ import TablePemeliharaan from "../../components/table/JadwalPemeliharaan-verifik
 
 export default function JadwalPemeliharaanVerifikator() {
   const [selectedLevel, setSelectedLevel] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [, setSelectedStatus] = useState("");
   const [selectedDate, setSelectedDate] = useState<{
     start: string;
     end: string;
@@ -67,7 +67,6 @@ export default function JadwalPemeliharaanVerifikator() {
       {
       <TablePemeliharaan
         selectedLevel={selectedLevel}
-        selectedStatus={selectedStatus}
         selectedDate={selectedDate}
       /> 
       }

@@ -21,9 +21,9 @@ export default function Risiko() {
         </p>
       </div>
 
-      <div className="shadow-md bg-white rounded-lg">
+      <div className=" bg-white rounded-lg">
         {/* === Desktop Filter + Search === */}
-        <div className="hidden md:block bg-white border-b border-[#ddd]">
+        <div className="hidden md:block bg-white border-b border-[#ddd] rounded-t-xl">
           <div className="flex justify-between px-6 py-6">
             {/* Search Bar */}
             <div className="w-[240px] md:w-[300px] lg:w-[360px] md:mr-20">
@@ -109,16 +109,15 @@ export default function Risiko() {
             />
           </div>
         </div>
-
+      </div>
         {/* === Table Risiko === */}
-        <div className="px-2 md:px-6">
+        <div className="px-2 md:px-6 lg:bg-white rounded-b-xl">
           <TableRisiko
             searchTerm={searchTerm}
             selectedStatus={selectedStatus}
             selectedKategori={selectedKategori}
           />
         </div>
-      </div>
     </>
   );
 }

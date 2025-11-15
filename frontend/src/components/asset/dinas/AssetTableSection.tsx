@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import { useMemo } from "react";
 
 type Asset = {
@@ -71,22 +72,24 @@ export default function AssetTableSection({
   condition,
   status,
 }: Props) {
-  // ✅ Filter berdasarkan dropdown
   const filteredData = useMemo(() => {
     return data.filter((item) => {
       const formattedDate = item.date.split(" - ").reverse().join("-");
-      const matchDinas = dinas ? item.dinas === dinas : true; // ✅ Tambah 1 baris filter dinas
+
+      const matchDinas = dinas ? item.dinas === dinas : true;
       const matchPeriod = period ? formattedDate === period : true;
       const matchCondition = condition ? item.condition === condition : true;
       const matchStatus = status ? item.status === status : true;
-      return matchDinas && matchPeriod && matchCondition && matchStatus; // ✅ tambahkan matchDinas di sini
+
+      return matchDinas && matchPeriod && matchCondition && matchStatus;
     });
   }, [dinas, period, condition, status]);
 
   return (
     <div className="mt-5">
-      {/* 💻 TABEL (Desktop) */}
-      <div className="overflow-x-auto hidden md:block bg-white rounded-2xl">
+
+      {/* 💻 DESKTOP → TABEL */}
+      <div className="overflow-x-auto hidden lg:block bg-white rounded-2xl">
         <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
           <thead className="text-[#666666]">
             <tr>
@@ -96,32 +99,26 @@ export default function AssetTableSection({
               <th className="py-5 px-4 font-semibold">LOKASI</th>
               <th className="py-5 px-4 font-semibold">KONDISI</th>
               <th className="py-5 px-4 font-semibold">STATUS</th>
-              <th className="py-5 px-4 font-semibold">TANGGA PEROLEHAn</th>
+              <th className="py-5 px-4 font-semibold">TANGGAL PEROLEHAN</th>
               <th className="py-5 px-4 font-semibold"></th>
             </tr>
           </thead>
+
           <tbody>
             {filteredData.length > 0 ? (
               filteredData.map((item, index) => (
-                <tr
-                  key={index}
-                  className="border-b border-b-[#ddd] hover:bg-gray-50 transition"
-                >
-                  <td className="py-5 px-4 text-[#333]">{item.id}</td>
-                  <td className="py-5 px-4 text-[#666]">{item.name}</td>
-                  <td className="py-5 px-4 text-[#666]">{item.category}</td>
-                  <td className="py-5 px-4 text-[#666]">{item.location}</td>
-                  <td
-                    className={`py-5 px-4 ${getConditionColor(item.condition)}`}
-                  >
+                <tr key={index} className="border-b border-gray-200 hover:bg-gray-50 transition">
+                  <td className="py-5 px-4">{item.id}</td>
+                  <td className="py-5 px-4">{item.name}</td>
+                  <td className="py-5 px-4">{item.category}</td>
+                  <td className="py-5 px-4">{item.location}</td>
+                  <td className={`py-5 px-4 ${getConditionColor(item.condition)}`}>
                     {item.condition}
                   </td>
                   <td className="py-5 px-4">
-                    <span className={getStatusStyle(item.status)}>
-                      {item.status}
-                    </span>
+                    <span className={getStatusStyle(item.status)}>{item.status}</span>
                   </td>
-                  <td className="py-5 px-4 text-[#666]">{item.date}</td>
+                  <td className="py-5 px-4">{item.date}</td>
                   <td className="py-5 px-4">
                     <a
                       href={`/aset/${item.id}`}
@@ -134,10 +131,7 @@ export default function AssetTableSection({
               ))
             ) : (
               <tr>
-                <td
-                  colSpan={8}
-                  className="text-center py-5 text-gray-500 italic"
-                >
+                <td colSpan={8} className="py-5 text-gray-500 italic">
                   Tidak ada data yang sesuai dengan filter.
                 </td>
               </tr>
@@ -146,13 +140,13 @@ export default function AssetTableSection({
         </table>
       </div>
 
-      {/* 📱 CARD (Mobile) */}
-      <div className="md:hidden space-y-4">
+      {/* 📱📲 MOBILE & TABLET → CARD (1 kolom mobile, 2 kolom tablet) */}
+      <div className="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
         {filteredData.length > 0 ? (
           filteredData.map((item, index) => (
             <div
               key={index}
-              className="border border-gray-200 rounded-xl shadow-sm p-4"
+              className="border bg-white border-gray-200 rounded-xl shadow-sm p-4"
             >
               <div className="flex justify-between items-center mb-1">
                 <p className="text-sm text-gray-500">{item.id}</p>
@@ -173,22 +167,26 @@ export default function AssetTableSection({
                   <span className="text-gray-500">Kategori</span>
                   <span className="text-gray-700">{item.category}</span>
                 </div>
+
                 <div className="flex justify-between">
                   <span className="text-gray-500">Lokasi</span>
                   <span className="text-gray-700">{item.location}</span>
                 </div>
+
                 <div className="flex justify-between">
                   <span className="text-gray-500">Kondisi</span>
                   <span className={getConditionColor(item.condition)}>
                     {item.condition}
                   </span>
                 </div>
+
                 <div className="flex justify-between">
                   <span className="text-gray-500">Status</span>
                   <span className={getStatusStyle(item.status)}>
                     {item.status}
                   </span>
                 </div>
+
                 <div className="flex justify-between">
                   <span className="text-gray-500">Tanggal</span>
                   <span className="text-gray-700">{item.date}</span>
@@ -197,7 +195,7 @@ export default function AssetTableSection({
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-500 italic">
+          <p className="col-span-2 text-center text-gray-500 italic">
             Tidak ada data yang sesuai dengan filter.
           </p>
         )}

@@ -5,7 +5,7 @@ import TableRisiko from "../../components/table/TableRisiko-verifikator";
 
 export default function DaftarRisiko() {
   const [selectedLevel, setSelectedLevel] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [, setSelectedStatus] = useState("");
   const [selectedDate, setSelectedDate] = useState<{ start: string; end: string } | null>(null);
 
   // ✅ Tangani perubahan tanggal
@@ -63,7 +63,6 @@ export default function DaftarRisiko() {
       {/* 📋 Tabel Risiko */}
       <TableRisiko
         selectedLevel={selectedLevel}
-        selectedStatus={selectedStatus}
         selectedDate={selectedDate}
       />
     </>

@@ -5,7 +5,7 @@ import LaporanRiskVerif from "../../components/table/LaporanRIsk-verifikator";
 
 export default function DaftarRisiko() {
   const [selectedLevel, setSelectedLevel] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [, setSelectedStatus] = useState("");
   const [selectedDate, setSelectedDate] = useState<{
     start: string;
     end: string;
@@ -66,7 +66,6 @@ export default function DaftarRisiko() {
       {/* 📋 Tabel Risiko */}
       <LaporanRiskVerif
         selectedLevel={selectedLevel}
-        selectedStatus={selectedStatus}
         selectedDate={selectedDate}
       />
     </>

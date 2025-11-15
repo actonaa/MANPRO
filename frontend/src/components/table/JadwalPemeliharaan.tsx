@@ -1,6 +1,7 @@
 interface Props {
   selectedKategori?: string;
   selectedPrioritas?: string;
+  searchQuery?: string;
 }
 
 export default function TableJadwalPemeliharaan({

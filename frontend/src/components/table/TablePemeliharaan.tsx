@@ -1,6 +1,7 @@
 type TablePemeliharaanProps = {
   kategori?: string;
   tanggal?: string;
+  searchQuery?: string;
 };
 
 export default function TablePemeliharaan({
@@ -43,8 +44,8 @@ export default function TablePemeliharaan({
 
   return (
     <>
-      {/* 💻 TABLE VIEW — hanya tampil di layar besar (lg ke atas) */}
-      <div className="hidden lg:block bg-white overflow-x-auto md:rounded-b-xl ">
+      {/* 💻 TABLE VIEW — desktop lg ke atas */}
+      <div className="hidden lg:block bg-white md:rounded-b-xl">
         <table className="w-full text-sm text-left border-spacing-y-3">
           <thead className="text-gray-600 border-b border-gray-200">
             <tr>
@@ -54,6 +55,7 @@ export default function TablePemeliharaan({
               <th className="px-6 py-7">BIAYA</th>
               <th className="px-6 py-7">VENDOR</th>
               <th className="px-6 py-7">REALISASI</th>
+              <th className="px-6 py-7"></th>
             </tr>
           </thead>
           <tbody>
@@ -67,7 +69,7 @@ export default function TablePemeliharaan({
                   <td className="px-6 py-7">{row.idLaporan}</td>
                   <td className="px-6 py-7">{row.jenis}</td>
                   <td className="px-6 py-7">{row.biaya}</td>
-                  <td className="px-5 py-7">{row.vendor}</td>
+                  <td className="px-6 py-7">{row.vendor}</td>
                   <td className="px-6 py-7">{row.realisasi}</td>
                   <td className="px-6 py-7 text-right">
                     <a
@@ -82,7 +84,7 @@ export default function TablePemeliharaan({
             ) : (
               <tr>
                 <td
-                  colSpan={8}
+                  colSpan={7}
                   className="text-center py-6 text-gray-400 italic"
                 >
                   Tidak ada data yang cocok
@@ -93,10 +95,10 @@ export default function TablePemeliharaan({
         </table>
       </div>
 
-      {/* 📱 CARD VIEW — tampil di mobile & tablet */}
-      <div className="block lg:hidden">
+      {/* 📱 CARD VIEW — mobile & tablet */}
+      <div className="block lg:hidden mt-5">
         {filteredData.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredData.map((row, idx) => (
               <div
                 key={idx}
@@ -104,9 +106,7 @@ export default function TablePemeliharaan({
               >
                 {/* Header Card */}
                 <div className="flex justify-between items-center mb-2">
-                  <p className="text-xs text-gray-500 font-medium">
-                    {row.idAset}
-                  </p>
+                  <p className="text-xs text-gray-500 font-medium">{row.idAset}</p>
                   <a
                     href={`/laporan/pemeliharaan/detail`}
                     className="text-[#0095E8] text-sm font-medium hover:underline"
@@ -119,17 +119,17 @@ export default function TablePemeliharaan({
                 <h3 className="font-semibold text-gray-800 text-[15px] mb-3 border-b pb-2">
                   {row.vendor}
                 </h3>
+
                 <div className="grid grid-cols-2 gap-y-1 text-sm text-gray-600">
                   <p>
                     <span className="font-medium text-gray-700">Kategori:</span>{" "}
                     {row.jenis}
                   </p>
-                 
                   <p>
                     <span className="font-medium text-gray-700">Biaya:</span>{" "}
                     {row.biaya}
                   </p>
-                  <p className="text-right">
+                  <p className="text-right col-span-2">
                     <span className="font-medium text-gray-700">Jadwal:</span>{" "}
                     {row.realisasi}
                   </p>
