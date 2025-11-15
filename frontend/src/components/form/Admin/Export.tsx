@@ -26,18 +26,18 @@ export default function ExportModal({
         fileContent =
           "ID,Name,Category\n1,Laptop,Aset TI\n2,Printer,Aset Non TI";
         mimeType = "text/csv";
-        fileName = "data-aset.csv";
+        fileName = "data.csv";
         break;
       case "PDF":
         fileContent = "Ini adalah contoh export PDF (dummy)";
         mimeType = "application/pdf";
-        fileName = "data-aset.pdf";
+        fileName = "data.pdf";
         break;
       case "XLSX":
         fileContent = "Ini adalah contoh export Excel (dummy)";
         mimeType =
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-        fileName = "data-aset.xlsx";
+        fileName = "data.xlsx";
         break;
       default:
         return;
