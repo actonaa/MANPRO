@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { Calendar } from "lucide-react";
+import React, { useState, useRef } from "react";
 
 interface PopupJadwalPemeliharaanProps {
   open: boolean;
@@ -13,6 +12,7 @@ const PopupJadwalPemeliharaan: React.FC<PopupJadwalPemeliharaanProps> = ({
   onSubmit,
 }) => {
   const [tanggal, setTanggal] = useState("");
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   if (!open) return null;
 
@@ -25,28 +25,30 @@ const PopupJadwalPemeliharaan: React.FC<PopupJadwalPemeliharaanProps> = ({
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 text-center animate-fadeIn">
-        {/* Judul */}
+
         <h2 className="text-lg font-semibold text-gray-800 mb-6">
           Tambahkan Jadwal Pemeliharaan
         </h2>
 
-        {/* Input tanggal */}
         <div className="text-left mb-8">
           <label className="text-sm font-medium text-gray-600 mb-1 block">
             Atur Jadwal
           </label>
+
           <div className="relative">
             <input
+              ref={inputRef}
               type="date"
               value={tanggal}
               onChange={(e) => setTanggal(e.target.value)}
               className="w-full border border-gray-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
-            <Calendar className="absolute right-3 top-2.5 text-gray-400 w-5 h-5" />
+
+            {/* 🔥 CALENDAR IKON YANG MEMBUKA DATE PICKER */}
+           
           </div>
         </div>
 
-        {/* Tombol di bawah */}
         <div className="flex justify-between mt-4">
           <button
             onClick={onClose}
@@ -61,6 +63,7 @@ const PopupJadwalPemeliharaan: React.FC<PopupJadwalPemeliharaanProps> = ({
             Atur Jadwal
           </button>
         </div>
+
       </div>
     </div>
   );

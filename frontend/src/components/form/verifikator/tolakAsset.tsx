@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { CircleHelp } from "lucide-react";
 
 interface AsetItem {
@@ -20,9 +20,13 @@ const KonfirmasiPenolakan: React.FC<KonfirmasiPenolakanProps> = ({
   aset,
   onClose,
 }) => {
+  const [alasan, setAlasan] = useState("");
+
   const handleConfirm = () => {
     console.log("❌ Aset ditolak:", aset);
-    // TODO: tambahkan logika API kirim alasan penolakan di sini
+    console.log("📝 Alasan penolakan:", alasan);
+
+    // TODO: Kirim alasan penolakan ke API
     onClose();
   };
 
@@ -36,7 +40,6 @@ const KonfirmasiPenolakan: React.FC<KonfirmasiPenolakanProps> = ({
           </div>
         </div>
 
-        {/* Title */}
         <h2 className="text-base sm:text-lg font-semibold text-gray-800">
           Konfirmasi Penolakan
         </h2>
@@ -44,10 +47,22 @@ const KonfirmasiPenolakan: React.FC<KonfirmasiPenolakanProps> = ({
           Aset akan dikirim kembali kepada pengguna dinas untuk diperbaiki.
         </p>
 
-        {/* Divider */}
         <hr className="my-4 border-gray-300" />
 
-        {/* Question */}
+        {/* Textarea Alasan */}
+        <div className="text-left mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Alasan Penolakan
+          </label>
+          <textarea
+            value={alasan}
+            onChange={(e) => setAlasan(e.target.value)}
+            placeholder="Tuliskan alasan penolakan aset..."
+            rows={3}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+          ></textarea>
+        </div>
+
         <p className="font-medium text-gray-700 mb-4">
           Apakah Anda yakin ingin menolak aset ini?
         </p>

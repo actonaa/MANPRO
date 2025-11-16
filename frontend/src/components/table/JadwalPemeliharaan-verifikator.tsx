@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { Eye, CalendarDays } from "lucide-react";
-import { Link } from "react-router-dom";
+import { CalendarDays } from "lucide-react";
 import PopupJadwalPemeliharaan from "../../components/form/verifikator/JadwalPemeliharaan";
 
 type TablePemeliharaanProps = {
@@ -95,11 +94,7 @@ export default function TablePemeliharaanVerifikator({
   const handleSubmitJadwal = (tanggal: string) => {
     if (!selectedAset) return;
     setData((prev) =>
-      prev.map((x) =>
-        x.id === selectedAset.id
-          ? { ...x, tanggal }
-          : x
-      )
+      prev.map((x) => (x.id === selectedAset.id ? { ...x, tanggal } : x))
     );
   };
 
@@ -139,21 +134,18 @@ export default function TablePemeliharaanVerifikator({
                   </span>
                 </td>
                 <td className="py-5 px-4 text-gray-600">{item.tanggal}</td>
-                <td className="py-5 px-4 flex items-center justify-center gap-3 text-gray-500">
-                  <Link
-                    to="/jadwal-verifikator/detail"
-                    className="hover:text-blue-600"
-                    title="Lihat Detail"
-                  >
-                    <Eye size={18} />
-                  </Link>
-                  <button
-                    className="hover:text-green-600"
-                    title="Jadwalkan Pemeliharaan"
-                    onClick={() => handleJadwalkan(item)}
-                  >
-                    <CalendarDays size={18} />
-                  </button>
+
+                {/* ICON TUNGGAL */}
+                <td className="py-5 px-4">
+                  <div className="flex items-center justify-center min-w-[60px]">
+                    <button
+                      className="hover:text-green-600"
+                      title="Jadwalkan Pemeliharaan"
+                      onClick={() => handleJadwalkan(item)}
+                    >
+                      <CalendarDays size={18} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -195,14 +187,8 @@ export default function TablePemeliharaanVerifikator({
               </p>
             </div>
 
+            {/* ICON TUNGGAL MOBILE */}
             <div className="flex justify-end gap-3 mt-4 text-gray-500">
-              <Link
-                to="/jadwal-verifikator/detail"
-                className="hover:text-blue-600"
-                title="Lihat Detail"
-              >
-                <Eye size={18} />
-              </Link>
               <button
                 className="hover:text-green-600"
                 title="Jadwalkan Pemeliharaan"
@@ -221,7 +207,7 @@ export default function TablePemeliharaanVerifikator({
         </p>
       )}
 
-      {/* ✅ Popup jadwal */}
+      {/* Popup Jadwal */}
       <PopupJadwalPemeliharaan
         open={openPopup}
         onClose={() => setOpenPopup(false)}
