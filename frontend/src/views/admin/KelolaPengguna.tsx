@@ -1,10 +1,11 @@
-import { useState, useMemo } from "react"; 
+import { useState, useMemo } from "react";
 import { Eye, Edit, Trash2 } from "lucide-react";
 import ButtonFilter from "../../components/button/ButtonFilter";
 import KelolaPenggunaTable from "../../components/table/TabelKelolaPengguna";
 import PopupHapusPengguna from "../../components/form/Admin/HapusPengguna";
 import PopupDetailPengguna from "../../components/form/Admin/DetailPengguna";
 import { useNavigate } from "react-router-dom";
+import SearchBar from "../../components/filter/Search";
 
 export default function KelolaPengguna() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export default function KelolaPengguna() {
     dinas: "",
     peran: "",
     status: "",
+    search: "", // ⭐ Search ditambahkan ke state
   });
 
   const [showPopup, setShowPopup] = useState(false);
@@ -60,13 +62,23 @@ export default function KelolaPengguna() {
     },
   ];
 
+  // ⭐ Tambahkan search filter
   const filteredData = useMemo(() => {
-    return data.filter(
-      (item) =>
+    return data.filter((item) => {
+      const s = filters.search.toLowerCase();
+
+      const matchSearch =
+        item.nama.toLowerCase().includes(s) ||
+        item.email.toLowerCase().includes(s) ||
+        item.dinas.toLowerCase().includes(s);
+
+      return (
+        matchSearch &&
         (!filters.dinas || item.dinas === filters.dinas) &&
         (!filters.peran || item.peran === filters.peran) &&
         (!filters.status || item.status === filters.status)
-    );
+      );
+    });
   }, [filters]);
 
   const handleDeleteClick = (nama: string, email: string) => {
@@ -89,7 +101,6 @@ export default function KelolaPengguna() {
     setShowDetail(true);
   };
 
-  // ⭐ FIX: direct ke /editpengguna-admin
   const handleEditClick = (user: any) => {
     navigate("/editpengguna-admin", { state: user });
   };
@@ -102,10 +113,11 @@ export default function KelolaPengguna() {
           <h1 className="font-semibold text-[22px] md:text-2xl text-gray-800 mb-1">
             Kelola Pengguna
           </h1>
-          <p className="text-sm text-gray-500">Pantau dan kelola seluruh pengguna yang terdaftar.</p>
+          <p className="text-sm text-gray-500">
+            Pantau dan kelola seluruh pengguna yang terdaftar.
+          </p>
         </div>
 
-        {/* ⭐ FIXED: tombol tambah pengguna */}
         <button
           onClick={() => navigate("/tambahpengguna-admin")}
           className="flex items-center gap-2 bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
@@ -114,40 +126,51 @@ export default function KelolaPengguna() {
         </button>
       </div>
 
-      {/* FILTER */}
+      {/* ⭐ FILTER CARD + SEARCH BAR */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
-        <div className="p-4 flex flex-wrap gap-4">
-          <div className="flex-1 min-w-[200px]">
-            <ButtonFilter
-              label="Pilih Dinas"
-              options={[
-                "Dinas Pariwisata",
-                "Dinas Pendidikan",
-                "Dinas Komunikasi",
-              ]}
-              onSelect={(val) => handleFilterChange("dinas", val)}
+        <div className="p-4 flex flex-col gap-4">
+          {/* 🔍 SEARCH BAR — NEW */}
+          <div className="w-full md:w-1/2">
+            <SearchBar
+              placeholder="Cari nama, email, atau dinas..."
+              onChange={(v) => setFilters((p) => ({ ...p, search: v }))}
             />
           </div>
 
-          <div className="flex-1 min-w-[200px]">
-            <ButtonFilter
-              label="Pilih Peran"
-              options={[
-                "User Dinas",
-                "Verifikator",
-                "Administrator",
-                "Auditor",
-              ]}
-              onSelect={(val) => handleFilterChange("peran", val)}
-            />
-          </div>
+          {/* FILTER DROPDOWN */}
+          <div className="flex flex-wrap gap-4">
+            <div className="flex-1 min-w-[200px]">
+              <ButtonFilter
+                label="Pilih Dinas"
+                options={[
+                  "Dinas Pariwisata",
+                  "Dinas Pendidikan",
+                  "Dinas Komunikasi",
+                ]}
+                onSelect={(val) => handleFilterChange("dinas", val)}
+              />
+            </div>
 
-          <div className="flex-1 min-w-[200px]">
-            <ButtonFilter
-              label="Pilih Status"
-              options={["Aktif", "Non-Aktif"]}
-              onSelect={(val) => handleFilterChange("status", val)}
-            />
+            <div className="flex-1 min-w-[200px]">
+              <ButtonFilter
+                label="Pilih Peran"
+                options={[
+                  "User Dinas",
+                  "Verifikator",
+                  "Administrator",
+                  "Auditor",
+                ]}
+                onSelect={(val) => handleFilterChange("peran", val)}
+              />
+            </div>
+
+            <div className="flex-1 min-w-[200px]">
+              <ButtonFilter
+                label="Pilih Status"
+                options={["Aktif", "Non-Aktif"]}
+                onSelect={(val) => handleFilterChange("status", val)}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -183,21 +206,30 @@ export default function KelolaPengguna() {
                 </span>
               </div>
 
-              <span className="text-xs text-gray-500">{user.terakhirAktif}</span>
+              <span className="text-xs text-gray-500">
+                {user.terakhirAktif}
+              </span>
             </div>
 
             <h2 className="font-semibold text-gray-800">{user.nama}</h2>
             <p className="text-gray-500 text-sm">{user.email}</p>
 
-            <p className="mt-2 text-sm font-medium text-gray-700">{user.dinas.toUpperCase()}</p>
+            <p className="mt-2 text-sm font-medium text-gray-700">
+              {user.dinas.toUpperCase()}
+            </p>
 
             <div className="flex justify-end gap-4 mt-3">
-              <button onClick={() => handleViewClick(user)} className="text-gray-500 hover:text-gray-700">
+              <button
+                onClick={() => handleViewClick(user)}
+                className="text-gray-500 hover:text-gray-700"
+              >
                 <Eye size={18} />
               </button>
 
-              {/* ⭐ FIXED: mobile edit → /editpengguna-admin */}
-              <button onClick={() => handleEditClick(user)} className="text-gray-500 hover:text-gray-700">
+              <button
+                onClick={() => handleEditClick(user)}
+                className="text-gray-500 hover:text-gray-700"
+              >
                 <Edit size={18} />
               </button>
 
@@ -218,13 +250,11 @@ export default function KelolaPengguna() {
           filters={filters}
           onDelete={handleDeleteClick}
           onView={handleViewClick}
-          
-          // ⭐ FIXED: desktop edit → /editpengguna-admin
           onEdit={(user) => navigate("/editpengguna-admin", { state: user })}
         />
       </div>
 
-      {/* POPUP HAPUS */}
+      {/* POPUPS */}
       {showPopup && selectedUser && (
         <PopupHapusPengguna
           isOpen={showPopup}
@@ -235,7 +265,6 @@ export default function KelolaPengguna() {
         />
       )}
 
-      {/* POPUP DETAIL */}
       {showDetail && selectedDetail && (
         <PopupDetailPengguna
           isOpen={showDetail}
