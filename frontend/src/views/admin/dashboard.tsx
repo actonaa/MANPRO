@@ -2,6 +2,7 @@ import CardList from "../../components/card/CardList";
 import RiskHeatmap from "../../components/dashboard/dinas/RiskHeatMap";
 import PemeliharaanTrendCard from "../../components/dashboard/auditor/PemeliharaanTrendCard";
 import TabelDashboardAdmin from "../../components/table/TabelDashboardAdmin";
+import AdminTertunda from "../../components/dashboard/admin/AdminTertunda";
 export default function Dashboard() {
   // 🧩 Tambahkan dummy data di sini
   const dummyData = [
@@ -38,6 +39,13 @@ export default function Dashboard() {
           <CardList title="Aset Yang Terverifikasi" value="499" />
         </div>
       </div>
+
+       {/* 📋 Admin Tertunda */}
+            <div className="mb-6">
+              <AdminTertunda />
+            </div>
+      
+
       {/* Pemeliharaan */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Pemeliharaan */}
