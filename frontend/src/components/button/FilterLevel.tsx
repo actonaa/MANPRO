@@ -1,14 +1,14 @@
 import FilterButtonBase from "./FilterButtonBase";
 
-export default function FilterStatus({
+export default function FilterLevel({
   onSelect,
 }: {
   onSelect: (v: string) => void;
 }) {
   return (
     <FilterButtonBase
-      label="Pilih Status"
-      options={["Aktif", "Perbaikan", "Tidak Aktif"]}
+      label="Pilih Level"
+      options={["Tinggi", "Sedang", "Rendah"]}
       onSelect={(v) => onSelect(v.toLowerCase())}
     />
   );

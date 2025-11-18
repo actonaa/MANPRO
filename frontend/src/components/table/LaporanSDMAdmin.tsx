@@ -1,8 +1,7 @@
-import { Download, Upload, Plus } from "lucide-react";
-import ExportModal from "../form/Admin/Export";
-import ImportModal from "../form/Admin/Import";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import Export from "../../components/dropdown/Export";
+import { Download } from "lucide-react";
 
 interface SDM {
   nip: string;
@@ -14,49 +13,48 @@ interface SDM {
 
 export default function TabelSDM({ data }: { data: SDM[] }) {
   const [showExportModal, setShowExportModal] = useState(false);
-  const [showImportModal, setShowImportModal] = useState(false);
+  const [hover, setHover] = useState(false);
 
   return (
     <div className="lg:rounded-b-xl lg:bg-white mt-6 border border-gray-200 shadow-sm rounded-2xl">
-
-      {/* === HEADER BUTTON === */}
-      <div className="flex justify-end items-center gap-2 p-4 bg-white border-b border-gray-200 rounded-t-2xl">
+      {/* ========================================================= */}
+      {/*                 EXPORT BAR — MOBILE VERSION              */}
+      {/* ========================================================= */}
+      <div className="lg:hidden p-4 pb-0">
         <button
           onClick={() => setShowExportModal(true)}
-          className="flex items-center gap-2 text-[#444] border border-gray-300 bg-white hover:bg-gray-50 rounded-lg px-4 py-2 text-[14px] font-medium"
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          className={`flex items-center justify-center gap-2 py-2 px-4 rounded-md border w-full transition
+            ${
+              hover
+                ? "bg-gray-100 border-gray-400 text-gray-800"
+                : "bg-white border-gray-300 text-gray-600"
+            }`}
         >
-          <Download className="w-4 h-4" />
-          Ekspor
+          <Download
+            className={`w-4 h-4 ${hover ? "text-gray-800" : "text-gray-600"}`}
+          />
+          <span className={hover ? "text-gray-800" : "text-gray-600"}>
+            Export
+          </span>
         </button>
-
-        <button
-          onClick={() => setShowImportModal(true)}
-          className="flex items-center gap-2 text-[#444] border border-gray-300 bg-white hover:bg-gray-50 rounded-lg px-4 py-2 text-[14px] font-medium"
-        >
-          <Upload className="w-4 h-4" />
-          Impor
-        </button>
-
-        <Link
-          to="/sdm-admin-tambah"
-          className="flex items-center gap-2 text-white bg-[#0095E8] hover:bg-[#007ACC] rounded-lg px-4 py-2 text-[14px] font-medium"
-        >
-          <Plus className="w-4 h-4" />
-          Tambah SDM
-        </Link>
       </div>
 
-      {/* === MOBILE VIEW === */}
-      <div className="grid grid-cols-1 md:grid-cols-2 md:gap-5 lg:hidden space-y-4 mt-5 md:mt-0">
+      {/* ========================================================= */}
+      {/*                 MOBILE CARD VIEW (TIDAK DIUBAH)          */}
+      {/* ========================================================= */}
+      <div className="grid grid-cols-1 md:grid-cols-2 md:gap-5 lg:hidden space-y-4 mt-4">
         {data.length > 0 ? (
           data.map((item) => (
             <div
               key={item.nip}
               className="rounded-xl border border-gray-200 shadow-sm p-4 bg-white"
             >
-              {/* NIP + DETAIL */}
               <div className="flex justify-between items-center">
-                <p className="text-[15px] text-gray-600 font-medium">{item.nip}</p>
+                <p className="text-[15px] text-gray-500 font-medium">
+                  {item.nip}
+                </p>
 
                 <Link
                   to="/sdm-admin-id"
@@ -66,27 +64,25 @@ export default function TabelSDM({ data }: { data: SDM[] }) {
                 </Link>
               </div>
 
-              {/* NAMA */}
               <h2 className="text-[16px] font-semibold text-gray-900 mt-1">
                 {item.nama}
               </h2>
 
               <hr className="my-3 border-gray-200" />
 
-              {/* INFORMASI */}
-              <div className="space-y-1 text-[15px] text-gray-700">
+              <div className="space-y-1 text-[15px] text-gray-600">
                 <p className="flex justify-between">
-                  <span className="text-gray-500 font-medium">Jabatan</span>
+                  <span className="font-medium text-gray-500">Jabatan</span>
                   <span>{item.jabatan}</span>
                 </p>
 
                 <p className="flex justify-between">
-                  <span className="text-gray-500 font-medium">Dinas</span>
+                  <span className="font-medium text-gray-500">Dinas</span>
                   <span>{item.dinas}</span>
                 </p>
 
                 <p className="flex justify-between">
-                  <span className="text-gray-500 font-medium">Periode</span>
+                  <span className="font-medium text-gray-500">Periode</span>
                   <span>{item.periodeKerja}</span>
                 </p>
               </div>
@@ -99,8 +95,37 @@ export default function TabelSDM({ data }: { data: SDM[] }) {
         )}
       </div>
 
-      {/* === DESKTOP TABLE === */}
+      {/* ========================================================= */}
+      {/*                    DESKTOP VIEW                           */}
+      {/* ========================================================= */}
       <div className="hidden lg:block overflow-x-auto bg-white rounded-b-xl">
+        {/* HEADER EXPORT */}
+        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-gray-200">
+          <h2 className="text-[16px] font-semibold text-gray-800">
+            Data Sumber Daya Manusia
+          </h2>
+
+          <button
+            onClick={() => setShowExportModal(true)}
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+            className={`flex items-center gap-2 py-2 px-4 rounded-md border transition
+              ${
+                hover
+                  ? "bg-gray-100 border-gray-400 text-gray-800"
+                  : "bg-white border-gray-300 text-gray-600"
+              }`}
+          >
+            <Download
+              className={`w-4 h-4 ${hover ? "text-gray-800" : "text-gray-600"}`}
+            />
+            <span className={hover ? "text-gray-800" : "text-gray-600"}>
+              Export
+            </span>
+          </button>
+        </div>
+
+        {/* TABLE — TIDAK DIUBAH */}
         <table className="w-full text-[14px] border-collapse text-center">
           <thead className="text-[#555]">
             <tr>
@@ -119,15 +144,18 @@ export default function TabelSDM({ data }: { data: SDM[] }) {
                 key={item.nip}
                 className="border-b border-gray-200 hover:bg-gray-50"
               >
-                <td className="py-5 px-4 font-semibold text-[#444]">{item.nip}</td>
+                <td className="py-5 px-4 font-semibold text-[#444]">
+                  {item.nip}
+                </td>
                 <td className="py-5 px-4 text-[#444]">{item.nama}</td>
                 <td className="py-5 px-4 text-[#444]">{item.jabatan}</td>
                 <td className="py-5 px-4 text-[#444]">{item.dinas}</td>
                 <td className="py-5 px-4 text-[#444]">{item.periodeKerja}</td>
+
                 <td className="py-5 px-4">
                   <Link
                     to="/sdm-admin-id"
-                    className="text-[#0095E8] text-[14px] hover:underline"
+                    className="text-[#0095E8] text-sm hover:underline"
                   >
                     Detail
                   </Link>
@@ -144,20 +172,14 @@ export default function TabelSDM({ data }: { data: SDM[] }) {
         </div>
       </div>
 
-      {/* === MODALS === */}
+      {/* ========================================================= */}
+      {/*                       MODAL EXPORT                        */}
+      {/* ========================================================= */}
       {showExportModal && (
-        <ExportModal
+        <Export
           isOpen={showExportModal}
           onClose={() => setShowExportModal(false)}
-          onExport={() => console.log("Export SDM: ", data)}
-        />
-      )}
-
-      {showImportModal && (
-        <ImportModal
-          isOpen={showImportModal}
-          onClose={() => setShowImportModal(false)}
-          onImport={(file) => console.log("Import SDM:", file)}
+          onExport={() => console.log("Export SDM:", data)}
         />
       )}
     </div>

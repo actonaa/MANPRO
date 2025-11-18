@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"; // ✅ pastikan kamu pakai react-router
-import RisikoHeader from "../../components/risiko/dinas/RisikoHeader";
-import RisikoDetailCard from "../../components/risiko/dinas/RisikoDetailCard";
-import RencanaMitigasiCard from "../../components/no-button-card/RencanaMitigasi-Laporan";
-import RiwayatAktivitasCard from "../../components/risiko/dinas/RiwayatAktivitasCard";
+import RisikoHeader from "../../../components/risiko/dinas/RisikoHeader";
+import RisikoDetailCard from "../../../components/risiko/dinas/RisikoDetailCard";
+import RencanaMitigasiCard from "../../../components/no-button-card/RencanaMitigasi-Laporan";
+import RiwayatAktivitasCard from "../../../components/risiko/dinas/RiwayatAktivitasCard";
+
 
 export default function DetailRisiko() {
   const { id } = useParams(); // ambil id dari URL misalnya /risiko/detail/:id
@@ -62,6 +63,7 @@ export default function DetailRisiko() {
           criteria={data.criteria?.name}
           status={data.status}
         />
+        
       </div>
 
       {/* 🧩 Card utama */}
