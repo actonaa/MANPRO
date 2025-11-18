@@ -2,13 +2,10 @@ import { type ChangeEvent } from "react";
 
 export type FormDataTI = {
   ipAddress: string;
+  hostname: string;
   os: string;
   version: string;
-  cpu: string;
-  ram: string;
-  storage: string;
   tanggalDeployment: string;
-  vendor: string;
   url: string;
   serialNumber: string;
 };
@@ -50,6 +47,19 @@ export default function StepTI({
         />
       </div>
 
+      {/* Hostname */}
+      <div>
+        <label className="block text-sm font-medium mb-1">Hostname</label>
+        <input
+          type="text"
+          name="hostname"
+          value={formData.hostname}
+          onChange={handleChange}
+          placeholder="Masukkan Hostname"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+        />
+      </div>
+
       {/* OS */}
       <div>
         <label className="block text-sm font-medium mb-1">OS</label>
@@ -76,45 +86,6 @@ export default function StepTI({
         />
       </div>
 
-      {/* CPU */}
-      <div>
-        <label className="block text-sm font-medium mb-1">CPU</label>
-        <input
-          type="text"
-          name="cpu"
-          value={formData.cpu}
-          onChange={handleChange}
-          placeholder="Masukkan CPU"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-        />
-      </div>
-
-      {/* RAM */}
-      <div>
-        <label className="block text-sm font-medium mb-1">RAM</label>
-        <input
-          type="text"
-          name="ram"
-          value={formData.ram}
-          onChange={handleChange}
-          placeholder="Masukkan RAM"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-        />
-      </div>
-
-      {/* Storage */}
-      <div>
-        <label className="block text-sm font-medium mb-1">Storage</label>
-        <input
-          type="text"
-          name="storage"
-          value={formData.storage}
-          onChange={handleChange}
-          placeholder="Masukkan Storage"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-        />
-      </div>
-
       {/* Tanggal Deployment */}
       <div>
         <label className="block text-sm font-medium mb-1">
@@ -125,19 +96,6 @@ export default function StepTI({
           name="tanggalDeployment"
           value={formData.tanggalDeployment}
           onChange={handleChange}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-        />
-      </div>
-
-      {/* Vendor */}
-      <div>
-        <label className="block text-sm font-medium mb-1">Vendor</label>
-        <input
-          type="text"
-          name="vendor"
-          value={formData.vendor}
-          onChange={handleChange}
-          placeholder="Masukkan Vendor"
           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
       </div>

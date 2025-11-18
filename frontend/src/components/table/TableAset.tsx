@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any */
 declare global {
   interface Window {
     XLSX: any;
@@ -15,7 +15,7 @@ interface Asset {
   acquisition_date: string;
   category?: { name: string };
   status?: { name: string };
-  status_perolehan?: string;
+  approval_status?: string; // <--- GANTI INI
 }
 
 export default function TableAset({
@@ -59,17 +59,8 @@ export default function TableAset({
 
         const json = await res.json();
 
-        const withStatusPerolehan = json.map((item: Asset) => ({
-          ...item,
-          status_perolehan:
-            item.status_perolehan ||
-            ["Diterima", "Menunggu", "Ditolak"][
-              Math.floor(Math.random() * 3)
-            ],
-        }));
-
-        setData(withStatusPerolehan);
-        setFilteredData(withStatusPerolehan);
+        setData(json);
+        setFilteredData(json);
       } catch (err: any) {
         setError(err.message || "Terjadi kesalahan.");
       } finally {
@@ -105,7 +96,7 @@ export default function TableAset({
           item.lokasi,
           item.category?.name,
           item.status?.name,
-          item.status_perolehan,
+          item.approval_status, // <--- GANTI INI
         ]
           .filter(Boolean)
           .some((val) => val!.toLowerCase().includes(s))
@@ -122,24 +113,36 @@ export default function TableAset({
   const paginatedData = filteredData.slice(startIndex, endIndex);
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
 
-  // Fungsi bantu buat pagination ringkas
   const getPageNumbers = () => {
-    const delta = 1;
-    const range = [];
-    const left = Math.max(2, currentPage - delta);
-    const right = Math.min(totalPages - 1, currentPage + delta);
+    const pages = [];
+    const maxVisible = 5;
 
-    for (let i = left; i <= right; i++) {
-      range.push(i);
+    if (totalPages <= maxVisible + 1) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+      return pages;
     }
 
-    if (left > 2) range.unshift(-1); // -1 = …
-    if (right < totalPages - 1) range.push(-1);
+    if (currentPage <= maxVisible) {
+      for (let i = 1; i <= maxVisible; i++) pages.push(i);
+      pages.push(-1);
+      pages.push(totalPages);
+    } else if (currentPage >= totalPages - maxVisible + 1) {
+      pages.push(1);
+      pages.push(-1);
+      for (let i = totalPages - maxVisible + 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+      pages.push(-1);
+      pages.push(currentPage - 1);
+      pages.push(currentPage);
+      pages.push(currentPage + 1);
+      pages.push(-1);
+      pages.push(totalPages);
+    }
 
-    range.unshift(1); // halaman pertama
-    if (totalPages > 1) range.push(totalPages); // halaman terakhir
-
-    return range;
+    return pages;
   };
 
   const getStatusColor = (status: string) => {
@@ -156,20 +159,77 @@ export default function TableAset({
     }
   };
 
-  const getStatusPerolehanColor = (val: string) => {
+  // 🔥 MAP COLOR UNTUK APPROVAL STATUS
+  const getApprovalStatusColor = (val: string) => {
     switch (val) {
-      case "Diterima":
+      case "approved":
         return "bg-green-200 text-green-800";
-      case "Menunggu":
+      case "pending":
         return "bg-yellow-200 text-yellow-800";
-      case "Ditolak":
+      case "rejected":
         return "bg-red-200 text-red-800";
       default:
         return "bg-gray-200 text-gray-800";
     }
   };
 
-  if (loading) return <p className="py-5 text-center">Memuat data...</p>;
+  if (loading)
+    return (
+      <div className="animate-pulse">
+        {/* MOBILE & TABLET (CARD) */}
+        <div className="lg:hidden mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="bg-white rounded-xl shadow-sm p-4 flex flex-col gap-3"
+            >
+              <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+              <div className="h-3 bg-gray-300 rounded w-1/3"></div>
+
+              <div className="flex flex-col gap-2 mt-2">
+                <div className="h-3 bg-gray-300 rounded w-full"></div>
+                <div className="h-3 bg-gray-300 rounded w-5/6"></div>
+                <div className="h-3 bg-gray-300 rounded w-full"></div>
+                <div className="h-3 bg-gray-300 rounded w-4/5"></div>
+                <div className="h-3 bg-gray-300 rounded w-3/4"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* DESKTOP (TABLE) */}
+        <div className="hidden lg:block bg-white rounded-b-xl">
+          <table className="w-full min-w-[950px] text-[13px] border-collapse">
+            <thead>
+              <tr className="bg-white">
+                {Array(8)
+                  .fill(0)
+                  .map((_, i) => (
+                    <th key={i} className="py-5 px-4">
+                      <div className="h-3 bg-gray-300 rounded w-20 mx-auto"></div>
+                    </th>
+                  ))}
+              </tr>
+            </thead>
+
+            <tbody>
+              {[1, 2, 3, 4, 5].map((row) => (
+                <tr key={row} className="border-b border-gray-200 bg-white">
+                  {Array(8)
+                    .fill(0)
+                    .map((_, i) => (
+                      <td key={i} className="py-5 px-4">
+                        <div className="h-3 bg-gray-300 rounded w-full"></div>
+                      </td>
+                    ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+
   if (error) return <p className="text-center py-5 text-red-500">{error}</p>;
 
   return (
@@ -226,13 +286,13 @@ export default function TableAset({
                 </div>
 
                 <div className="flex justify-between">
-                  <span>Status Perolehan</span>
+                  <span>Status Pengajuan</span>
                   <span
-                    className={`px-3 py-1 text-xs rounded-lg ${getStatusPerolehanColor(
-                      item.status_perolehan || ""
+                    className={`px-3 py-1 text-xs rounded-lg ${getApprovalStatusColor(
+                      item.approval_status || ""
                     )}`}
                   >
-                    {item.status_perolehan}
+                    {item.approval_status}
                   </span>
                 </div>
 
@@ -250,147 +310,6 @@ export default function TableAset({
             Tidak ada data yang cocok.
           </p>
         )}
-
-                {/* Pagination ringkas */}
-        {filteredData.length > ITEMS_PER_PAGE && (
-          <div className="flex justify-center items-center gap-2 py-5">
-            <button
-              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-              disabled={currentPage === 1}
-              className={`px-2 text-lg ${
-                currentPage === 1
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "text-gray-700 hover:text-blue-600"
-              }`}
-            >
-              ‹
-            </button>
-
-            {getPageNumbers().map((p, idx) =>
-              p === -1 ? (
-                <span key={idx} className="px-2 text-gray-400">
-                  …
-                </span>
-              ) : (
-                <button
-                  key={idx}
-                  onClick={() => setCurrentPage(p)}
-                  className={`w-8 h-8 rounded-md flex items-center justify-center text-sm transition ${
-                    currentPage === p
-                      ? "bg-gray-200 text-black font-semibold"
-                      : "text-gray-700 hover:text-blue-600"
-                  }`}
-                >
-                  {p}
-                </button>
-              )
-            )}
-
-            <button
-              onClick={() =>
-                setCurrentPage((p) => Math.min(p + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
-              className={`px-2 text-lg ${
-                currentPage === totalPages
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "text-gray-700 hover:text-blue-600"
-              }`}
-            >
-              ›
-            </button>
-          </div>
-        )}
-
-        {/* Info jumlah data */}
-        <div className="text-sm p-2 text-gray-600 mt-3">
-          Menampilkan{" "}
-          <span className="font-semibold">
-            {filteredData.length === 0 ? 0 : startIndex + 1}
-          </span>
-          –
-          <span className="font-semibold">
-            {Math.min(endIndex, filteredData.length)}
-          </span>{" "}
-          dari <span className="font-semibold">{filteredData.length}</span> data
-        </div>
-
-      </div>
-
-      {/* 🖥️ DESKTOP → TABEL */}
-      <div className="hidden lg:block overflow-x-auto mt-5 md:mt-0">
-        <table className="w-full min-w-[950px] text-[13px] text-center border-collapse">
-          <thead className="text-[#666]">
-            <tr>
-              <th className="py-5 px-4 font-semibold">ID ASET</th>
-              <th className="py-5 px-4 font-semibold">NAMA ASET</th>
-              <th className="py-5 px-4 font-semibold">KATEGORI</th>
-              <th className="py-5 px-4 font-semibold">LOKASI</th>
-              <th className="py-5 px-4 font-semibold">STATUS ASET</th>
-              <th className="py-5 px-4 font-semibold">STATUS PEROLEHAN</th>
-              <th className="py-5 px-4 font-semibold">TANGGAL PEROLEHAN</th>
-              <th className="py-5 px-4 font-semibold">DETAIL</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {paginatedData.length > 0 ? (
-              paginatedData.map((item) => (
-                <tr
-                  key={item.id}
-                  className="border-b border-b-[#ddd] hover:bg-gray-50"
-                >
-                  <td className="py-5 px-4 text-[#333]">
-                    {item.serial_number || "-"}
-                  </td>
-                  <td className="py-5 px-4 text-[#666]">{item.name}</td>
-                  <td className="py-5 px-4 text-[#666]">
-                    {item.category?.name || "-"}
-                  </td>
-                  <td className="py-5 px-4 text-[#666]">{item.lokasi || "-"}</td>
-                  <td className="py-5 px-4">
-                    <span
-                      className={`px-5 py-2 rounded-[16px] text-[13px] font-normal ${getStatusColor(
-                        item.status?.name || ""
-                      )}`}
-                    >
-                      {item.status?.name || "-"}
-                    </span>
-                  </td>
-                  <td className="py-5 px-4">
-                    <span
-                      className={`px-5 py-2 rounded-[16px] text-[13px] font-normal ${getStatusPerolehanColor(
-                        item.status_perolehan || ""
-                      )}`}
-                    >
-                      {item.status_perolehan}
-                    </span>
-                  </td>
-                  <td className="py-5 px-4 text-[#666]">
-                    {item.acquisition_date || "-"}
-                  </td>
-                  <td className="py-5 px-4 text-right">
-                    <a
-                      href={`/aset/${item.id}`}
-                      className="text-blue-500 font-medium hover:underline"
-                    >
-                      Detail
-                    </a>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan={8}
-                  className="py-5 text-center text-gray-500 italic"
-                >
-                  Tidak ada data yang cocok dengan filter.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
 
         {/* Pagination ringkas */}
         {filteredData.length > ITEMS_PER_PAGE && (
@@ -428,9 +347,7 @@ export default function TableAset({
             )}
 
             <button
-              onClick={() =>
-                setCurrentPage((p) => Math.min(p + 1, totalPages))
-              }
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
               disabled={currentPage === totalPages}
               className={`px-2 text-lg ${
                 currentPage === totalPages
@@ -444,7 +361,7 @@ export default function TableAset({
         )}
 
         {/* Info jumlah data */}
-        <div className="text-sm p-2 text-gray-600 mt-3">
+        <div className="text-sm p-2 text-gray-600 mt-3 ">
           Menampilkan{" "}
           <span className="font-semibold">
             {filteredData.length === 0 ? 0 : startIndex + 1}
@@ -454,6 +371,156 @@ export default function TableAset({
             {Math.min(endIndex, filteredData.length)}
           </span>{" "}
           dari <span className="font-semibold">{filteredData.length}</span> data
+        </div>
+      </div>
+
+      {/* 🖥️ DESKTOP → TABEL */}
+      <div className="hidden lg:block overflow-x-auto mt-5 md:mt-0">
+        <table className="w-full min-w-[950px] text-[13px] text-center border-collapse">
+          <thead className="text-[#666]">
+            <tr>
+              <th className="py-5 px-4 font-semibold">ID ASET</th>
+              <th className="py-5 px-4 font-semibold">NAMA ASET</th>
+              <th className="py-5 px-4 font-semibold">KATEGORI</th>
+              <th className="py-5 px-4 font-semibold">LOKASI</th>
+              <th className="py-5 px-4 font-semibold">STATUS ASET</th>
+              <th className="py-5 px-4 font-semibold">STATUS PENGAJUAN</th>
+              <th className="py-5 px-4 font-semibold">TANGGAL PEROLEHAN</th>
+              <th className="py-5 px-4 font-semibold">DETAIL</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {paginatedData.length > 0 ? (
+              paginatedData.map((item) => (
+                <tr
+                  key={item.id}
+                  className="border-b border-b-[#ddd] hover:bg-gray-50"
+                >
+                  <td className="py-5 px-4 text-[#333]">
+                    {item.serial_number || "-"}
+                  </td>
+                  <td className="py-5 px-4 text-[#666]">{item.name}</td>
+                  <td className="py-5 px-4 text-[#666]">
+                    {item.category?.name || "-"}
+                  </td>
+                  <td className="py-5 px-4 text-[#666]">
+                    {item.lokasi || "-"}
+                  </td>
+                  <td className="py-5 px-4">
+                    <span
+                      className={`px-5 py-2 rounded-[16px] text-[13px] font-normal ${getStatusColor(
+                        item.status?.name || ""
+                      )}`}
+                    >
+                      {item.status?.name || "-"}
+                    </span>
+                  </td>
+                  <td className="py-5 px-4">
+                    <span
+                      className={`px-5 py-2 rounded-[16px] text-[13px] font-normal ${getApprovalStatusColor(
+                        item.approval_status || ""
+                      )}`}
+                    >
+                      {item.approval_status}
+                    </span>
+                  </td>
+                  <td className="py-5 px-4 text-[#666]">
+                    {item.acquisition_date || "-"}
+                  </td>
+                  <td className="py-5 px-4">
+                    <a
+                      href={`/aset/${item.id}`}
+                      className="text-blue-500 font-medium hover:underline"
+                    >
+                      Detail
+                    </a>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={8}
+                  className="py-5 text-center text-gray-500 italic"
+                >
+                  Tidak ada data yang cocok dengan filter.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+
+        <div className="grid grid-cols-3 items-center px-5">
+          {/* KIRI - Info jumlah data */}
+          <div className="text-sm py-5 text-gray-600">
+            Menampilkan{" "}
+            <span className="font-semibold">
+              {filteredData.length === 0 ? 0 : startIndex + 1}
+            </span>
+            –
+            <span className="font-semibold">
+              {Math.min(endIndex, filteredData.length)}
+            </span>{" "}
+            dari <span className="font-semibold">{filteredData.length}</span>{" "}
+            data
+          </div>
+
+          {/* TENGAH - Pagination */}
+          <div className="flex justify-center">
+            {filteredData.length > ITEMS_PER_PAGE && (
+              <div className="flex items-center gap-2 py-5">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                  disabled={currentPage === 1}
+                  className={`px-2 text-lg ${
+                    currentPage === 1
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-gray-700 hover:text-blue-600"
+                  }`}
+                >
+                  ‹
+                </button>
+
+                {getPageNumbers().map((p, idx) =>
+                  p === -1 ? (
+                    <span key={idx} className="px-2 text-gray-400">
+                      …
+                    </span>
+                  ) : (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentPage(p)}
+                      className={`w-8 h-8 rounded-md flex items-center justify-center text-sm transition ${
+                        currentPage === p
+                          ? "bg-gray-200 text-black font-semibold"
+                          : "text-gray-700 hover:text-blue-600"
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  )
+                )}
+
+                <button
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(p + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                  className={`px-2 text-lg ${
+                    currentPage === totalPages
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-gray-700 hover:text-blue-600"
+                  }`}
+                >
+                  ›
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* KANAN - Kosong untuk keseimbangan */}
+          <div></div>
         </div>
       </div>
     </div>

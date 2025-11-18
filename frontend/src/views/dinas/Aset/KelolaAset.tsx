@@ -1,4 +1,5 @@
-import { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from "react";
 import { Search } from "lucide-react"; // <-- ICON SEARCH
 import ButtonImg from "../../../components/button/ButtonImg";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +9,51 @@ import CardList from "../../../components/card/CardList";
 import TableAset from "../../../components/table/TableAset";
 
 export default function Aset() {
+  const [assets, setAssets] = useState<any[]>([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const res = await fetch("/api/assets", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error(`Gagal mengambil data (${res.status})`);
+        }
+
+        const data = await res.json();
+        setAssets(data); // ⬅️ Simpan data aset
+      } catch (err) {
+        console.error("❌ Gagal memuat data:", err);
+      }
+    };
+
+    getData();
+  }, []);
+
+  // 🔢 Hitung statistik
+  const totalAset = assets.length;
+
+  const asetPerluPerbaikan = assets.filter(
+    (item) => item.status?.name === "Perbaikan"
+  ).length;
+
+  const asetAkanDihapus = assets.filter(
+    (item) => item.status?.name === "Tidak Aktif"
+  ).length;
+
+  const nilaiAset = assets.reduce(
+    (total, item) => total + (item.acquisition_value || 0),
+    0
+  );
 
   // 🔹 State untuk filter
   const [selectedKategori, setSelectedKategori] = useState<string>("");
@@ -62,10 +107,27 @@ export default function Aset() {
       {/* 📊 Card Statistik */}
       <div className="mb-5 overflow-x-auto pb-6 md:mb-0 xl:overflow-x-visible">
         <div className="flex gap-4 min-w-[1000px] md:grid md:grid-cols-2 md:min-w-0 xl:flex">
-          <CardList title="Total Aset" value="1,250" />
-          <CardList title="Aset Perlu Perbaikan" value="560" />
-          <CardList title="Aset Akan Dihapus" value="200" />
-          <CardList title="Risiko Aktif" value="499" />
+          <CardList title="Total Aset" value={totalAset.toLocaleString()} />
+
+          <CardList
+            title="Aset Perlu Perbaikan"
+            value={asetPerluPerbaikan.toLocaleString()}
+          />
+
+          <CardList
+            title="Aset Akan Dihapus"
+            value={asetAkanDihapus.toLocaleString()}
+          />
+
+          <CardList
+            title="Nilai Aset"
+            value={
+              "Rp " +
+              nilaiAset.toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+              })
+            }
+          />
         </div>
       </div>
 
@@ -98,13 +160,13 @@ export default function Aset() {
       </div>
 
       {/* 💻 Filter di Desktop */}
-      <h1 className="hidden md:block font-medium text-sm lg:mb-4 md:text-2xl lg:text-[28px]">
-        Data Aset
-      </h1>
 
       <div className="hidden md:block lg:bg-white rounded-t-xl">
         <div className="lg:border-b border-[#ddd]">
           <div className="px-0 lg:px-4 py-8">
+            <h1 className="hidden md:block font-medium text-sm lg:mb-4 md:text-2xl lg:text-[17px] lg:font-semibold">
+              Data Aset
+            </h1>
 
             {/* 🔎 Search Filter (DESKTOP) */}
             <div className="mb-5 relative">

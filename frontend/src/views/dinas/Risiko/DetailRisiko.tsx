@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; // ✅ pastikan kamu pakai react-router
+import { useParams } from "react-router-dom";
+
 import RisikoHeader from "../../../components/risiko/dinas/RisikoHeader";
 import RisikoDetailCard from "../../../components/risiko/dinas/RisikoDetailCard";
 import RencanaMitigasiCard from "../../../components/risiko/dinas/RencanaMitigasiCard";
@@ -8,10 +9,14 @@ import RiwayatAktivitasCard from "../../../components/risiko/dinas/RiwayatAktivi
 import ButtonCard from "../../../components/button/Button";
 
 export default function RisikoPage() {
-  const { id } = useParams(); // ambil id dari URL misalnya /risiko/detail/:id
+  const { id } = useParams();
+
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  // ============================
+  //   FETCH DETAIL RISIKO
+  // ============================
   useEffect(() => {
     const fetchRisikoDetail = async () => {
       try {
@@ -38,30 +43,29 @@ export default function RisikoPage() {
     if (id) fetchRisikoDetail();
   }, [id]);
 
+  // ============================
+  //   LOADING / ERROR STATES
+  // ============================
   if (loading)
     return (
-      <>
-        <p className="text-center py-10 text-gray-500">Memuat data risiko...</p>
-      </>
+      <p className="text-center py-10 text-gray-500">Memuat data risiko...</p>
     );
 
   if (!data)
     return (
-      <>
-        <p className="text-center py-10 text-red-500">
-          Gagal memuat detail risiko.
-        </p>
-      </>
+      <p className="text-center py-10 text-red-500">
+        Gagal memuat detail risiko.
+      </p>
     );
 
   return (
     <>
-      {/* 🔥 Header + Tombol Edit sejajar */}
+      {/* ---------------- Header ---------------- */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
         <RisikoHeader
-          title={data.title}
-          criteria={data.criteria?.name}
-          status={data.status}
+          title={data.title ?? "-"}
+          criteria={data.criteria ?? "-"}
+          status={data.status ?? "-"}
         />
         <div className="w-full md:w-auto">
           <ButtonCard
@@ -77,30 +81,35 @@ export default function RisikoPage() {
         </div>
       </div>
 
-      {/* 🧩 Card utama */}
+      {/* ---------------- Konten ---------------- */}
       <div className="mt-5">
-        <div className="bg-white rounded-2xl space-y-6">
-          {/* 📊 Detail Risiko */}
+        <div className="bg-white rounded-2xl space-y-6 p-4">
+          {/* ===============================
+              DETAIL RISIKO
+          ================================== */}
           <RisikoDetailCard
             idRisiko={data.id}
-            assetName={data.asset_name}
-            owner={data.owner}
-            description={data.description}
-            impact={data.impact}
-            cause={data.cause}
-            impactCriteria={data.impact_criteria}
-            nilaiProbabilitas={data.probability_value}
-            nilaiDampak={data.impact_value}
-            nilaiRisiko={data.risk_value}
-            levelRisiko={data.risk_level}
+            assetName={data.asset_info?.name ?? "-"}
+            owner={data.department?.name ?? "-"}
+            description={data.description ?? "-"}
+            impact={data.impact ?? "-"}
+            cause={data.cause ?? "-"}
+            impactCriteria={data.criteria ?? "-"}
+            nilaiProbabilitas={data.probability ?? 0}
+            nilaiDampak={data.impact_score ?? 0}
+            nilaiRisiko={(data.probability ?? 0) * (data.impact_score ?? 0)}
+            levelRisiko={data.criteria ?? "-"}
+            areaDampak={data.impact_area?.name ?? "-"}
+            kategoriRisiko={data.risk_category?.name ?? "-"}
+            jenis={data.type_of_risk ?? "-"}
+            tipeAset={data.type ?? "-"}
           />
 
-          {/* 🔧 Layout 2 kolom untuk Mitigasi & Value */}
-          <div className="grid grid-cols-1 gap-6 items-start">
-            {/* 📁 Kiri: Rencana Mitigasi */}
-            <RiwayatAktivitasCard aktivitasList={data.aktivitas} />
-          </div>
-          <RencanaMitigasiCard mitigasiList={data.mitigasi} />
+          {/* ===============================
+                Aktivitas / Mitigasi
+          ================================== */}
+          <RiwayatAktivitasCard aktivitasList={data.aktivitas ?? []} />
+          <RencanaMitigasiCard mitigasiList={data.mitigasi ?? []} />
         </div>
       </div>
     </>

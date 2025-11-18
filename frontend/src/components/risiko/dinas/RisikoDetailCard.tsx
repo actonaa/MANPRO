@@ -10,6 +10,10 @@ type RisikoDetailCardProps = {
   nilaiDampak?: number;
   nilaiRisiko?: number;
   levelRisiko?: string;
+  areaDampak?: string;
+  kategoriRisiko?: string;
+  jenis?: string;
+  tipeAset?: string;
 };
 
 export default function RisikoDetailCard({
@@ -24,6 +28,10 @@ export default function RisikoDetailCard({
   nilaiDampak = 0,
   nilaiRisiko = 0,
   levelRisiko = "-",
+  areaDampak = "-",
+  kategoriRisiko = "-",
+  jenis = "-",
+  tipeAset = "-",
 }: RisikoDetailCardProps) {
   // 🎨 Warna nilai sesuai level risiko
   const getRiskColor = (level: string) => {
@@ -46,8 +54,14 @@ export default function RisikoDetailCard({
           <p className="mt-4 text-sm text-gray-500 font-bold">NAMA ASET</p>
           <p className="font-bold text-gray-800">{assetName}</p>
 
+          <p className="mt-4 text-sm text-gray-500 font-bold">TIPE ASET</p>
+          <p className="font-bold text-gray-800">{tipeAset}</p>
+
           <p className="mt-4 text-sm text-gray-500 font-bold">Pemilik Risiko</p>
           <p className="font-bold text-gray-800">{owner}</p>
+
+          <p className="mt-4 text-sm text-gray-500 font-bold">Jenis Risiko</p>
+          <p className="font-bold text-gray-800">{jenis}</p>
 
           <p className="mt-4 text-sm text-gray-500 font-bold">Deskripsi</p>
           <p className="font-bold text-gray-700">{description}</p>
@@ -55,8 +69,14 @@ export default function RisikoDetailCard({
 
         {/* 📁 Kolom kanan */}
         <div>
-          <p className="text-sm text-gray-500 font-bold">Dampak</p>
+          <p className="text-sm text-gray-500 font-bold">Kategori Risiko</p>
+          <p className="font-bold text-gray-800">{kategoriRisiko}</p>
+
+          <p className="mt-4 text-sm text-gray-500 font-bold">Dampak</p>
           <p className="font-bold text-gray-800">{impact}</p>
+
+          <p className="mt-4 text-sm text-gray-500 font-bold">Area Dampak</p>
+          <p className="font-bold text-gray-800">{areaDampak}</p>
 
           <p className="mt-4 text-sm text-gray-500 font-bold">Penyebab</p>
           <p className="font-bold text-gray-800">{cause}</p>

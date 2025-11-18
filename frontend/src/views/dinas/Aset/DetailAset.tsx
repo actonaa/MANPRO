@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+
 import ButtonText from "../../../components/button/ButtonText";
 import InformasiUtama from "../../../components/kelola-asset/dinas/InformasiUtama";
 import JadwalPemeliharaan from "../../../components/kelola-asset/dinas/JadwalPemeliharaan";
@@ -12,35 +13,59 @@ import SiklusHidup from "../../../components/kelola-asset/dinas/SiklusHidup";
 
 export default function DetailAset() {
   const { id } = useParams<{ id: string }>();
+
   const [asset, setAsset] = useState<any>(null);
+  const [risikoAset, setRisikoAset] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchAsset = async () => {
+    const fetchAll = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`/api/assets/${id}`, {
+
+        // 🔹 Fetch ASSET
+        const resAsset = await fetch(`/api/assets/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
 
-        if (!res.ok)
-          throw new Error(`Gagal mengambil data aset (${res.status})`);
+        if (!resAsset.ok)
+          throw new Error(`Gagal mengambil data aset (${resAsset.status})`);
 
-        const data = await res.json();
-        setAsset(data);
+        const dataAsset = await resAsset.json();
+        setAsset(dataAsset);
+
+        // 🔹 Fetch RISKS
+        const resRisk = await fetch(`/api/risks`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        const dataRisk = await resRisk.json();
+
+        // 🔥 Filter risiko berdasarkan asset_id
+        const filtered = dataRisk.filter(
+          (r: any) => r.asset_id === dataAsset.id
+        );
+
+        setRisikoAset(filtered);
       } catch (err) {
-        console.error("❌ Gagal memuat data aset:", err);
+        console.error("❌ Error:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) fetchAsset();
+    if (id) fetchAll();
   }, [id]);
 
+  // =======================
+  // LOADING
+  // =======================
   if (loading) {
     return (
       <div className="p-6 animate-pulse">
@@ -59,8 +84,11 @@ export default function DetailAset() {
     );
   }
 
-  // 🔹 Tentukan tambahan info berdasarkan kategori
+  // =======================
+  // ADDITIONAL INFO (TI / Non-TI)
+  // =======================
   const isTI = asset.category?.name === "TI";
+
   const additionalInfo = isTI
     ? {
         version: asset.version || "-",
@@ -69,35 +97,40 @@ export default function DetailAset() {
         hostname: asset.hostname || "-",
         masaPakai: asset.masa_pakai || "-",
         url: asset.url || "-",
-        tanggalDeploy: asset.tanggal_deploy
-          ? new Date(asset.tanggal_deploy).toLocaleDateString("id-ID")
+        tanggalDeploy: asset.deploy_date
+          ? new Date(asset.deploy_date).toLocaleDateString("id-ID")
           : "-",
       }
     : {
-        materialBahan: asset.material_bahan || "-",
-        ukuranSpesifikasi: asset.ukuran_spesifikasi || "-",
+        materialBahan: asset.material || "-",
+        ukuranSpesifikasi: asset.specification || "-",
         vendor: asset.vendor || "-",
         masaPakai: asset.masa_pakai || "-",
       };
 
+  // =======================
+  // RENDER
+  // =======================
   return (
     <div className="pb-10">
-      {/* 🔹 Header Atas */}
+      {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
         <div>
           <h1 className="text-lg md:text-xl font-semibold text-gray-800">
             Kelola Aset / Detail Aset
           </h1>
+
           <p className="text-2xl md:text-3xl font-medium text-gray-700 mt-1">
             {asset.name}
           </p>
+
           <p className="text-sm text-gray-500">
             {asset.serial_number} • Terakhir diperbarui{" "}
             {new Date(asset.updated_at).toLocaleDateString("id-ID")}
           </p>
         </div>
 
-        {/* 🔘 Tombol Aksi */}
+        {/* ACTION BUTTONS */}
         <div className="flex flex-row items-center justify-center gap-3">
           <a href="/insiden">
             <ButtonText
@@ -108,6 +141,7 @@ export default function DetailAset() {
               fontWeight="font-medium"
             />
           </a>
+
           <a href={`/aset/tambah?id=${asset.id}`}>
             <ButtonText
               title="Ubah"
@@ -117,6 +151,7 @@ export default function DetailAset() {
               fontWeight="font-medium"
             />
           </a>
+
           <button>
             <ButtonText
               title="Hapus Aset"
@@ -129,7 +164,7 @@ export default function DetailAset() {
         </div>
       </div>
 
-      {/* 🔹 Layout Utama Dua Kolom */}
+      {/* TWO COLUMN LAYOUT */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div className="flex flex-col gap-5">
           <InformasiUtama
@@ -148,7 +183,7 @@ export default function DetailAset() {
                 : "-"
             }
             kondisi={asset.condition?.name || "-"}
-            {...additionalInfo} // ✅ Spread untuk TI / Non-TI
+            {...additionalInfo}
           />
 
           <SiklusHidup
@@ -161,12 +196,15 @@ export default function DetailAset() {
 
         <div className="flex flex-col gap-5">
           <JadwalPemeliharaan jadwal={[]} />
-          <KeterkaitanRisiko risiko={[]} />
+
+          {/* 🔥 Risiko hasil filter */}
+          <KeterkaitanRisiko risiko={risikoAset} />
+
           <RiwayatAktivitas aktivitas={[]} />
         </div>
       </div>
 
-      {/* 🔹 Lampiran & Scan Barcode */}
+      {/* LAMPIRAN & BARCODE */}
       <div className="flex flex-col lg:flex-row gap-5 mt-6">
         <Lampiran lampiran={[]} />
         <ScanBarcode barcodeUrl={asset.barcode || ""} />

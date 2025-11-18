@@ -1,16 +1,61 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { CheckCircle, X } from "lucide-react";
-import Step1 from "../../../components/asset/dinas/form/Step1";
-import StepTI, { type FormDataTI } from "../../../components/asset/dinas/form/TI";
-import StepNonTI, { type FormDataNonTI } from "../../../components/asset/dinas/form/Non-TI";
+import Step1, {
+  type AsetFormData,
+} from "../../../components/asset/dinas/form/Step1";
+import StepTI, {
+  type FormDataTI,
+} from "../../../components/asset/dinas/form/TI";
+import StepNonTI, {
+  type FormDataNonTI,
+} from "../../../components/asset/dinas/form/Non-TI";
 
 export default function Tambah() {
+  const navigate = useNavigate();
+
+  const [savedAsset, setSavedAsset] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const [step, setStep] = useState(1);
   const [showPopup, setShowPopup] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const LABELS_STEP1: Record<string, string> = {
+    namaAset: "Nama Aset",
+    merkTipe: "Merk / Tipe",
+    kodeBMD: "Kode BMD",
+    tanggalPerolehan: "Tanggal Perolehan",
+    indukAset: "Induk Aset",
+    lokasiAset: "Lokasi Aset",
+    penanggungJawab: "Penanggung Jawab",
+    kategoriAset: "Kategori Aset",
+    subKategori: "Sub Kategori",
+    kondisi: "Kondisi",
+    masaPakai: "Masa Pakai",
+    nilaiAset: "Nilai Aset",
+    vendor: "Vendor",
+  };
+
+  const LABELS_TI: Record<keyof FormDataTI, string> = {
+    ipAddress: "IP Address",
+    os: "Sistem Operasi",
+    version: "Versi",
+    tanggalDeployment: "Tanggal Deployment",
+    url: "URL",
+    serialNumber: "Serial Number",
+    hostname: "Hostname",
+  };
+
+  const LABEL_NON_TI: Record<string, string> = {
+    material: "Material",
+    ukuran: "Ukuran",
+  };
 
   // --- Data Step 1 ---
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<AsetFormData>({
     namaAset: "",
     merkTipe: "",
     kodeBMD: "",
@@ -20,18 +65,20 @@ export default function Tambah() {
     penanggungJawab: "",
     kategoriAset: "",
     subKategori: "",
+    kondisi: "",
+    masaPakai: "",
+    nilaiAset: "",
+    vendor: "",
+    kategoriAsetNama: "",
   });
 
   // --- Data Step TI ---
   const [formDataTI, setFormDataTI] = useState<FormDataTI>({
     ipAddress: "",
+    hostname: "",
     os: "",
     version: "",
-    cpu: "",
-    ram: "",
-    storage: "",
     tanggalDeployment: "",
-    vendor: "",
     url: "",
     serialNumber: "",
   });
@@ -40,21 +87,101 @@ export default function Tambah() {
   const [formDataNonTI, setFormDataNonTI] = useState<FormDataNonTI>({
     material: "",
     ukuran: "",
-    tanggalPerolehan: "",
-    nilaiAset: "",
-    kondisi: [],
-    vendor: "",
-    lokasiPenyimpanan: "",
-    masaPakai: "",
   });
+
+  // === SUBMIT DATA ===
+  const submitData = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Token tidak ditemukan. Pastikan Anda sudah login.");
+      return;
+    }
+
+    setIsLoading(true); // <-- START LOADING
+
+    const baseData = {
+      name: formData.namaAset,
+      merk_type: formData.merkTipe,
+      bmd_code: formData.kodeBMD,
+      acquisition_date: formData.tanggalPerolehan || null,
+      parent_id: formData.indukAset || null,
+      lokasi: formData.lokasiAset,
+      pic: formData.penanggungJawab,
+      category_id: formData.kategoriAset,
+      sub_category_id: formData.subKategori,
+      condition_id: formData.kondisi || null,
+      acquisition_value: Number(formData.nilaiAset),
+      vendor: formData.vendor,
+    };
+
+    const tiData = isTI
+      ? {
+          ip_address: formDataTI.ipAddress,
+          os: formDataTI.os,
+          version: formDataTI.version,
+          deploy_date: formDataTI.tanggalDeployment || null,
+          serial_number: formDataTI.serialNumber,
+          hostname: formDataTI.hostname,
+        }
+      : {};
+
+    const nonTiData = !isTI
+      ? {
+          material: formDataNonTI.material,
+          specification: formDataNonTI.ukuran,
+        }
+      : {};
+
+    const finalData = {
+      ...baseData,
+      ...tiData,
+      ...nonTiData,
+    };
+
+    try {
+      const response = await fetch("/api/assets", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(finalData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error(result);
+        alert("Gagal menyimpan aset: " + result?.message);
+        return;
+      }
+
+      setSavedAsset({
+        id: result.id,
+        name: result.name || formData.namaAset,
+      });
+
+      console.log("POST RESULT:", result);
+
+      handleShowPopup();
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Terjadi kesalahan saat mengirim data.");
+    } finally {
+      setIsLoading(false); // <-- STOP LOADING
+    }
+  };
 
   // === Gambar step dinamis ===
   const [stepImage, setStepImage] = useState("/wizard/step1.png");
 
   const updateStepImage = (currentStep: number, kategori: string) => {
     if (currentStep === 1) setStepImage("/wizard/step1.png");
-    else if (currentStep === 2 && kategori.toLowerCase() === "ti") setStepImage("/wizard/stepTI.png");
-    else if (currentStep === 2 && kategori.toLowerCase() === "non-ti") setStepImage("/wizard/stepNon-TI.png");
+    else if (currentStep === 2 && kategori.toLowerCase() === "ti")
+      setStepImage("/wizard/stepTI.png");
+    else if (currentStep === 2 && kategori.toLowerCase() === "non-ti")
+      setStepImage("/wizard/stepNon-TI.png");
     else if (currentStep === 3)
       setStepImage(
         kategori.toLowerCase() === "ti"
@@ -64,8 +191,8 @@ export default function Tambah() {
   };
 
   useEffect(() => {
-    updateStepImage(step, formData.kategoriAset);
-  }, [step, formData.kategoriAset]);
+    updateStepImage(step, formData.kategoriAsetNama);
+  }, [step, formData.kategoriAset, formData.kategoriAsetNama]);
 
   const nextStep = () => {
     setStep((prev) => prev + 1);
@@ -77,7 +204,7 @@ export default function Tambah() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const isTI = formData.kategoriAset.toLowerCase() === "ti";
+  const isTI = formData.kategoriAsetNama === "ti";
 
   const handleShowPopup = () => {
     setShowPopup(true);
@@ -135,7 +262,9 @@ export default function Tambah() {
 
         {step === 3 && (
           <div className="bg-white rounded-2xl shadow p-6 space-y-6">
-            <h2 className="text-xl font-semibold mb-4">Step 3 - Konfirmasi Data</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              Step 3 - Konfirmasi Data
+            </h2>
 
             {/* Step 1 Data */}
             <div className="mb-6">
@@ -143,12 +272,25 @@ export default function Tambah() {
               <div className="grid grid-cols-2 gap-4">
                 {Object.entries(formData).map(([key, value]) => (
                   <div key={key} className="flex flex-col">
-                    <span className="text-gray-500 text-sm">{key}</span>
+                    <span className="text-gray-500 text-sm">
+                      {LABELS_STEP1[key] || key}
+                    </span>
+
                     <input
                       type="text"
-                      value={value}
+                      value={
+                        Array.isArray(value)
+                          ? value.join(", ")
+                          : (value as string)
+                      }
                       disabled
-                      className="border border-gray-300 rounded px-2 py-1 bg-gray-100"
+                      className="
+                border border-gray-300 rounded px-2 py-1 
+                bg-gray-100 
+                cursor-not-allowed 
+                select-none 
+                pointer-events-none
+              "
                     />
                   </div>
                 ))}
@@ -157,20 +299,24 @@ export default function Tambah() {
 
             {/* Step TI / Non-TI */}
             <div className="flex gap-6">
+              {/* TI */}
               <div className="flex-1">
                 <h3 className="font-semibold mb-2">Form TI</h3>
                 <div className="grid grid-cols-1 gap-3">
                   {Object.entries(formDataTI).map(([key, value]) => (
                     <div key={key} className="flex flex-col">
-                      <span className="text-gray-500 text-sm">{key}</span>
+                      <span className="text-gray-500 text-sm">
+                        {LABELS_TI[key as keyof FormDataTI] || key}
+                      </span>
+
                       <input
                         type="text"
                         value={value}
                         disabled={!isTI}
-                        className={`border rounded px-2 py-1 ${
+                        className={`border rounded px-2 py-1 cursor-not-allowed select-none pointer-events-none ${
                           isTI
                             ? "border-gray-300 bg-gray-100"
-                            : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                            : "bg-gray-200 text-gray-400"
                         }`}
                       />
                     </div>
@@ -178,53 +324,48 @@ export default function Tambah() {
                 </div>
               </div>
 
+              {/* NON TI */}
               <div className="flex-1">
                 <h3 className="font-semibold mb-2">Form Non-TI</h3>
                 <div className="grid grid-cols-1 gap-3">
                   {Object.entries(formDataNonTI).map(([key, value]) => (
                     <div key={key} className="flex flex-col">
-                      <span className="text-gray-500 text-sm">{key}</span>
-                      {Array.isArray(value) ? (
-                        <input
-                          type="text"
-                          value={value.join(", ")}
-                          disabled={isTI}
-                          className={`border rounded px-2 py-1 ${
-                            !isTI
-                              ? "border-gray-300 bg-gray-100"
-                              : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                          }`}
-                        />
-                      ) : (
-                        <input
-                          type="text"
-                          value={value as string}
-                          disabled={isTI}
-                          className={`border rounded px-2 py-1 ${
-                            !isTI
-                              ? "border-gray-300 bg-gray-100"
-                              : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                          }`}
-                        />
-                      )}
+                      <span className="text-gray-500 text-sm">
+                        {LABEL_NON_TI[key] || key}
+                      </span>
+
+                      <input
+                        type="text"
+                        value={
+                          Array.isArray(value)
+                            ? value.join(", ")
+                            : (value as string)
+                        }
+                        disabled={isTI}
+                        className={`border rounded px-2 py-1 cursor-not-allowed select-none pointer-events-none ${
+                          !isTI
+                            ? "border-gray-300 bg-gray-100"
+                            : "bg-gray-200 text-gray-400"
+                        }`}
+                      />
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
+            {/* Buttons */}
             <div className="flex justify-between mt-4">
               <button
-                onClick={prevStep}
-                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+                onClick={submitData}
+                disabled={isLoading}
+                className={`px-6 py-2 rounded-lg text-white ${
+                  isLoading
+                    ? "bg-blue-400 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700"
+                }`}
               >
-                Kembali
-              </button>
-              <button
-                onClick={handleShowPopup}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-              >
-                Simpan
+                {isLoading ? "Loading..." : "Simpan"}
               </button>
             </div>
           </div>
@@ -258,7 +399,10 @@ export default function Tambah() {
             {/* Icon Success */}
             <div className="flex justify-center mb-6">
               <div className="bg-blue-50 rounded-full p-4">
-                <CheckCircle className="w-12 h-12 text-blue-600" strokeWidth={2} />
+                <CheckCircle
+                  className="w-12 h-12 text-blue-600"
+                  strokeWidth={2}
+                />
               </div>
             </div>
 
@@ -268,24 +412,29 @@ export default function Tambah() {
             </h2>
 
             <p className="text-sm text-gray-500 text-center mb-8">
-              AST-11-2025 • Asus Vivobook
+              {savedAsset?.id || "-"} • {savedAsset?.name || "-"}
             </p>
 
             {/* Tombol */}
-            <button className="w-full bg-blue-600 text-white py-3.5 rounded-lg font-medium hover:bg-blue-700">
+            <button
+              onClick={() => navigate(`/aset/${savedAsset?.id}`)}
+              className="w-full bg-blue-600 text-white py-3.5 rounded-lg font-medium hover:bg-blue-700"
+            >
               Lihat Detail Aset
             </button>
 
-            <button className="w-full text-blue-600 py-3.5 rounded-lg font-medium hover:bg-blue-50 mt-3">
+            <button
+              onClick={() => navigate("/aset/tambah")}
+              className="w-full text-blue-600 py-3.5 rounded-lg font-medium hover:bg-blue-50 mt-3"
+            >
               Tambah Aset Lain
             </button>
 
-            <button className="w-full text-gray-600 py-2 text-sm hover:text-gray-800 mt-2">
+            <button
+              onClick={() => navigate("/aset")}
+              className="w-full text-gray-600 py-2 text-sm hover:text-gray-800 mt-2"
+            >
               Kembali ke Dashboard Aset
-            </button>
-
-            <button className="w-full bg-blue-50 text-blue-600 py-3.5 rounded-lg font-medium hover:bg-blue-100 mt-6">
-              Tambah Risiko
             </button>
           </div>
         </div>
