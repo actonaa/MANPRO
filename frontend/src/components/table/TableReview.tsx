@@ -104,7 +104,7 @@ export default function TableReview({ filters }: any) {
         {filtered.map((item, idx) => (
           <div
             key={idx}
-            className="border border-gray-300 rounded-xl p-4 bg-white shadow-sm"
+            className="border border-gray-300 rounded-xl p-4 shadow-sm"
           >
             <p className="text-sm text-gray-500">{item.date}</p>
 

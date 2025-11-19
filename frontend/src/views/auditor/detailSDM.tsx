@@ -4,7 +4,7 @@ import ButtonText from "../../components/button/ButtonText";
 import { useRef, useState } from "react";
 import DeleteSDMModal from "../../components/form/SDM/DeleteSDM";
 
-export default function DetailSDM() {
+export default function DetailSdmAuditor() {
   const navigate = useNavigate();
   const printRef = useRef(null);
 
@@ -29,13 +29,35 @@ export default function DetailSDM() {
       { name: "Garansi.pdf", type: "pdf" },
     ],
     keahlian: ["Sertifikasi Keamanan Informasi (ISO 27001)", "BNSP"],
+
+    // ✅ ASET DITAMBAHKAN — bisa lebih dari 1
+    aset: [
+      {
+        id: "AST - 001",
+        nama: "ASUS ZENBOOK",
+        nilai: "Rp21.500.000,00",
+        jadwal: "10-11-2025",
+        realisasi: "10-12-2025",
+        risiko: "Kehilangan data akibat kegagalan hardware",
+        lampiran: ["Invoice.pdf", "FotoAset.jpg", "Garansi.pdf"],
+      },
+      {
+        id: "AST - 002",
+        nama: "Pajero Sport",
+        nilai: "Rp300.500.000,00",
+        jadwal: "10-03-2025",
+        realisasi: "10-04-2025",
+        risiko: "Kehilangan data akibat kegagalan hardware",
+        lampiran: ["Invoice.pdf", "FotoAset.jpg", "Garansi.pdf"],
+      },
+    ],
   };
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   return (
     <>
-      {/* CSS PRINT SECTION */}
+      {/* PRINT STYLE */}
       <style>
         {`
           @media print {
@@ -56,6 +78,12 @@ export default function DetailSDM() {
               display: none !important;
             }
 
+            /* Hilangkan scroll saat print */
+            .aset-scroll {
+              max-height: none !important;
+              overflow: visible !important;
+            }
+
             @page {
               size: A4;
               margin: 20mm;
@@ -64,8 +92,8 @@ export default function DetailSDM() {
         `}
       </style>
 
-      <div className="p-4 md:p-6 lg:p-10">
-        {/* BACK + BREADCRUMB */}
+      <div className="">
+        {/* BACK */}
         <div className="flex items-center gap-2 mb-4 no-print">
           <button
             onClick={() => navigate(-1)}
@@ -80,14 +108,13 @@ export default function DetailSDM() {
           </span>
         </div>
 
-        {/* HEADER TITLE */}
+        {/* HEADER */}
         <div className="flex justify-between items-center mb-6 no-print">
           <h1 className="text-xl md:text-2xl font-semibold">
             Detail Data Informasi SDM
           </h1>
 
-          {/* BUTTONS */}
-          <div className="flex flex-row items-center justify-center gap-3">
+          <div className="flex gap-3">
             <button onClick={handleExport}>
               <ButtonText
                 title="Ekspor"
@@ -100,79 +127,26 @@ export default function DetailSDM() {
           </div>
         </div>
 
-        {/* MAIN CARD — PRINT ONLY */}
+        {/* MAIN CARD */}
         <div
           id="print-area"
           ref={printRef}
           className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 md:p-8"
         >
-          {/* GRID INFORMASI */}
+          {/* DATA GRID */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-8 gap-x-10">
-            <div>
-              <p className="text-gray-500 text-sm">Nama</p>
-              <p className="font-semibold text-gray-900 text-[15px]">
-                {data.nama}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-gray-500 text-sm">NIP</p>
-              <p className="font-semibold text-gray-900 text-[15px]">
-                {data.nip}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-gray-500 text-sm">Alamat</p>
-              <p className="font-semibold text-gray-900 text-[15px]">
-                {data.alamat}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-gray-500 text-sm">Jabatan</p>
-              <p className="font-semibold text-gray-900 text-[15px]">
-                {data.jabatan}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-gray-500 text-sm">Hak Akses Sistem</p>
-              <p className="font-semibold text-gray-900 text-[15px]">
-                {data.hakAkses}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-gray-500 text-sm">Dinas</p>
-              <p className="font-semibold text-gray-900 text-[15px]">
-                {data.dinas}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-gray-500 text-sm">Divisi</p>
-              <p className="font-semibold text-gray-900 text-[15px]">
-                {data.divisi}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-gray-500 text-sm">Seksi</p>
-              <p className="font-semibold text-gray-900 text-[15px]">
-                {data.seksi}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-gray-500 text-sm">Periode Kerja</p>
-              <p className="font-semibold text-gray-900 text-[15px]">
-                {data.periode}
-              </p>
-            </div>
+            <Info label="Nama" value={data.nama} />
+            <Info label="NIP" value={data.nip} />
+            <Info label="Alamat" value={data.alamat} />
+            <Info label="Jabatan" value={data.jabatan} />
+            <Info label="Hak Akses Sistem" value={data.hakAkses} />
+            <Info label="Dinas" value={data.dinas} />
+            <Info label="Divisi" value={data.divisi} />
+            <Info label="Seksi" value={data.seksi} />
+            <Info label="Periode Kerja" value={data.periode} />
           </div>
 
-          {/* LAMPIRAN */}
+          {/* LAMPIRAN SDM */}
           <div className="mt-12">
             <p className="font-medium text-gray-700 mb-3">Lampiran</p>
 
@@ -209,7 +183,52 @@ export default function DetailSDM() {
               ))}
             </div>
           </div>
+
+          {/* ========================================================= */}
+          {/*              ASET — BAGIAN DARI GAMBAR ANDA              */}
+          {/* ========================================================= */}
+          <div className="mt-12">
+            <p className="font-semibold text-gray-800 mb-3">Aset yang Ditangani</p>
+
+            <div className="aset-scroll max-h-80 overflow-y-auto pr-2 space-y-8">
+              {data.aset.map((a, i) => (
+                <div key={i} className="border-b pb-5">
+                  {/* GRID 4 KOLOM */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+                    <Info label="ID ASET" value={a.id} />
+                    <Info label="Nama Aset" value={a.nama} />
+                    <Info label="Nilai Aset" value={a.nilai} />
+                    <Info label="Jadwal Pemeliharaan" value={a.jadwal} />
+                    <Info label="Realisasi" value={a.realisasi} />
+
+                  </div>
+
+                  {/* RISIKO */}
+                  <div className="mt-4">
+                    <p className="text-gray-500 text-sm">Skenario Risiko</p>
+                    <p className="text-gray-800 font-medium">{a.risiko}</p>
+                  </div>
+
+                  {/* LAMPIRAN */}
+                  <div className="mt-4">
+                    <p className="text-gray-500 text-sm">Lampiran</p>
+
+                    <div className="flex flex-wrap gap-3 mt-1">
+                      {a.lampiran.map((file, idx) => (
+                        <span key={idx} className="text-blue-700 text-sm underline cursor-pointer">
+                          {file}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
+
         <DeleteSDMModal
           isOpen={showDeleteModal}
           onClose={() => setShowDeleteModal(false)}
@@ -221,5 +240,14 @@ export default function DetailSDM() {
         />
       </div>
     </>
+  );
+}
+
+function Info({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-gray-500 text-sm">{label}</p>
+      <p className="font-semibold text-gray-900 text-[15px]">{value}</p>
+    </div>
   );
 }

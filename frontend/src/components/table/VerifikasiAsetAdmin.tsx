@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Eye, XCircle } from "lucide-react";
+import { Eye, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import HapusAsetConfirm from "../../components/dashboard/admin/HapusAdmin";
 
@@ -179,7 +179,7 @@ export default function VerifikasiAsetAdmin({
                     onClick={() => handleHapus(item)}
                     className="hover:text-red-600"
                   >
-                    <XCircle size={18} />
+                    <CheckCircle size={18} />
                   </button>
                 </td>
               </tr>
@@ -238,7 +238,7 @@ export default function VerifikasiAsetAdmin({
                 onClick={() => handleHapus(item)}
                 className="hover:text-red-600"
               >
-                <XCircle size={18} />
+                <CheckCircle size={18} />
               </button>
             </div>
           </div>

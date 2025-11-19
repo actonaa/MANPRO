@@ -57,7 +57,7 @@ export default function TabelSDM({ data }: { data: SDM[] }) {
                 </p>
 
                 <Link
-                  to="/sdm-admin-id"
+                  to="/laporan/sdm-admin/id"
                   className="text-[#0095E8] font-medium text-[15px] hover:underline"
                 >
                   Detail
@@ -154,7 +154,7 @@ export default function TabelSDM({ data }: { data: SDM[] }) {
 
                 <td className="py-5 px-4">
                   <Link
-                    to="/sdm-admin-id"
+                    to="/laporan/sdm-admin/id"
                     className="text-[#0095E8] text-sm hover:underline"
                   >
                     Detail

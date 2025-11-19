@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { MessageCircleMore } from "lucide-react";
+import AuditorModal from "../auditor/AuditorModal"; // pastikan path sesuai
 
 export default function TablePenghapusan({ filters }: any) {
   const [data, setData] = useState<any[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
 
   useEffect(() => {
     setData([
@@ -41,6 +44,19 @@ export default function TablePenghapusan({ filters }: any) {
       },
     ]);
   }, []);
+
+  // OPEN MODAL
+  const openModal = (item: any) => {
+    setSelectedItem(item);
+    setIsModalOpen(true);
+  };
+
+  // SUBMIT KOMENTAR
+  const handleSubmit = (comment: string) => {
+    console.log("Komentar:", comment);
+    console.log("Untuk Aset:", selectedItem);
+    setIsModalOpen(false);
+  };
 
   // FILTER
   const filteredData = data.filter((item) => {
@@ -93,7 +109,7 @@ export default function TablePenghapusan({ filters }: any) {
 
                 <td className="py-5">
                   <Link
-                    to="/penghapusan/detail"
+                    to="/laporan/Penghapusan-auditor/id"
                     className="text-blue-600 font-medium hover:underline"
                   >
                     Detail
@@ -101,7 +117,10 @@ export default function TablePenghapusan({ filters }: any) {
                 </td>
 
                 <td className="py-5">
-                  <button className="p-2 rounded-full hover:bg-gray-100">
+                  <button
+                    onClick={() => openModal(item)}
+                    className="p-2 rounded-full hover:bg-gray-100"
+                  >
                     <MessageCircleMore className="w-5 h-5 text-gray-700" />
                   </button>
                 </td>
@@ -118,7 +137,10 @@ export default function TablePenghapusan({ filters }: any) {
             key={item.id}
             className="border border-gray-300 rounded-xl p-4 shadow-sm bg-white relative"
           >
-            <button className="absolute top-3 right-3 p-2 hover:bg-gray-100 rounded-full">
+            <button
+              onClick={() => openModal(item)}
+              className="absolute top-3 right-3 p-2 hover:bg-gray-100 rounded-full"
+            >
               <MessageCircleMore className="w-5 h-5 text-gray-800" />
             </button>
 
@@ -150,7 +172,7 @@ export default function TablePenghapusan({ filters }: any) {
 
               <div className="flex justify-end pt-3">
                 <Link
-                  to="/penghapusan/detail"
+                  to="/laporan/Penghapusan-auditor/id"
                   className="text-blue-600 text-sm font-medium hover:underline"
                 >
                   Detail
@@ -160,6 +182,13 @@ export default function TablePenghapusan({ filters }: any) {
           </div>
         ))}
       </div>
+
+      {/* POPUP AUDITOR */}
+      <AuditorModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 }

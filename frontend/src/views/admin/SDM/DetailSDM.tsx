@@ -64,7 +64,7 @@ export default function DetailSDM() {
         `}
       </style>
 
-      <div className="p-4 md:p-6 lg:p-10">
+      <div className="">
         {/* BACK + BREADCRUMB */}
         <div className="flex items-center gap-2 mb-4 no-print">
           <button
@@ -98,7 +98,7 @@ export default function DetailSDM() {
               />
             </button>
 
-            <a href="/sdm-admin-edit">
+            <a href="/sdm/aset-admin/edit">
               <ButtonText
                 title="Ubah"
                 color="bg-[#BFDEFF]"

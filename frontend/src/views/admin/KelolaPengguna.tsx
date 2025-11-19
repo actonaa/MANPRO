@@ -106,7 +106,7 @@ export default function KelolaPengguna() {
   };
 
   return (
-    <div className="px-3 sm:px-4 py-4 md:p-6">
+    <div className="">
       {/* HEADER */}
       <div className="flex justify-between items-start mb-4">
         <div>
@@ -117,24 +117,28 @@ export default function KelolaPengguna() {
             Pantau dan kelola seluruh pengguna yang terdaftar.
           </p>
         </div>
-
-        <button
-          onClick={() => navigate("/tambahpengguna-admin")}
-          className="flex items-center gap-2 bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
-        >
-          + Tambah
-        </button>
       </div>
 
       {/* ⭐ FILTER CARD + SEARCH BAR */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
         <div className="p-4 flex flex-col gap-4">
-          {/* 🔍 SEARCH BAR — NEW */}
-          <div className="w-full md:w-1/2">
-            <SearchBar
-              placeholder="Cari nama, email, atau dinas..."
-              onChange={(v) => setFilters((p) => ({ ...p, search: v }))}
-            />
+          {/* 🔍 SEARCH & BUTTON — SEJAJAR */}
+          <div className="flex justify-between items-center w-full">
+            {/* SEARCH BAR */}
+            <div className="w-full md:w-1/2">
+              <SearchBar
+                placeholder="Cari nama, email, atau dinas..."
+                onChange={(v) => setFilters((p) => ({ ...p, search: v }))}
+              />
+            </div>
+
+            {/* + TAMBAH BUTTON */}
+            <button
+              onClick={() => navigate("/tambahpengguna-admin")}
+              className="flex items-center gap-2 bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm ml-3"
+            >
+              + Tambah Pengguna
+            </button>
           </div>
 
           {/* FILTER DROPDOWN */}

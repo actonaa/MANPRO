@@ -80,7 +80,7 @@ export default function EditSDM() {
   const aksesOptions = ["Admin", "User", "Viewer"];
 
   return (
-    <div className="min-h-screen p-4 md:p-6 lg:p-8">
+    <div className="min-h-screen">
       <div className="max-w-5xl mx-auto">
         <h1 className="text-xl md:text-2xl font-semibold mb-4">
           Edit Sumber Daya Manusia

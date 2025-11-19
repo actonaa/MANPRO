@@ -23,29 +23,27 @@ export default function NavbarAuditor() {
       to: "/dashboard-auditor",
     },
     {
-      label: "Kelola Aset",
-      icon: "/sidebar-icon/Aset.png",
-      children: [
-        { label: "Data Aset", to: "/aset-auditor" },
-        { label: "Laporan Aset", to: "/laporan/aset-auditor" },
-      ],
+      label: "Audit Trail",
+      icon: "/sidebar-icon/dashboard.png",
+      to: "/audit-auditor",
     },
     {
-      label: "Kelola Risiko",
-      icon: "/sidebar-icon/Risk.png",
-      children: [
-        { label: "Data Risiko", to: "/risiko-auditor" },
-        { label: "Laporan Risiko", to: "/laporan/risiko-auditor" },
-      ],
+      label: "Hasil Audit",
+      icon: "/sidebar-icon/dashboard.png",
+      to: "/hasil-auditor",
     },
     {
       label: "Laporan Audit",
       icon: "/sidebar-icon/Maintenance.png",
       children: [
-        { label: "Laporan Pemeliharaan", to: "/pemeliharaan-auditor" },
-        { label: "Laporan Penghapusan", to: "/penghapusan-auditor" },
-        { label: "Laporan Insiden / RFC", to: "/insiden-auditor" },
-        { label: "Laporan SDM", to: "/sdm-auditor" },
+        { label: "Laporan Pemeliharaan", to: "/laporan/Pemeliharaan-auditor" },
+        { label: "Laporan Penghapusan", to: "/laporan/Penghapusan-auditor" },
+        { label: "Laporan SDM", to: "/laporan/sdm-auditor" },
+        { label: "Laporan Review", to: "/laporan/riview-auditor" },
+        { label: "Laporan Insiden", to: "/sdm-auditor" },
+        { label: "Laporan RFC", to: "/sdm-auditor" },
+        { label: "Laporan Risiko", to: "/laporan/risiko-auditor" },
+        { label: "Laporan Aset", to: "/laporan/aset-auditor" },
       ],
     },
     {

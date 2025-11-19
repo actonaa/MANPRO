@@ -126,7 +126,7 @@ export default function TabelSDM({ data }: { data: SDM[] }) {
                 <td className="py-5 px-4 text-[#444]">{item.periodeKerja}</td>
                 <td className="py-5 px-4">
                   <Link
-                    to="/sdm-admin-id"
+                    to="/sdm/aset-admin/id"
                     className="text-[#0095E8] text-[14px] hover:underline"
                   >
                     Detail

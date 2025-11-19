@@ -61,7 +61,7 @@ export default function PemeliharaanAdmin() {
         <div className="hidden lg:flex justify-end mt-4">
           <button
             onClick={() => setIsExportOpen(true)}
-            className="flex items-center justify-center gap-2 py-2 px-4 rounded-md border bg-white text-gray-600"
+            className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl shadow-md border border-gray-300 bg-white text-gray-600"
           >
             <Download className="w-4 h-4" />
             Export

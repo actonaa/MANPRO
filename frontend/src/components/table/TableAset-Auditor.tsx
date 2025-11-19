@@ -20,6 +20,13 @@ export default function TableAset({ filters }: { filters?: any }) {
   const [loading, setLoading] = useState(true);
 
   // ============================
+  // 🔵 MODAL KOMENTAR
+  // ============================
+  const [commentOpen, setCommentOpen] = useState(false);
+  const openComment = () => setCommentOpen(true);
+  const closeComment = () => setCommentOpen(false);
+
+  // ============================
   // 1️⃣ LOAD DUMMY DATA SEKALI
   // ============================
   useEffect(() => {
@@ -149,7 +156,7 @@ export default function TableAset({ filters }: { filters?: any }) {
   if (loading) return <p className="text-center py-5">Memuat data aset...</p>;
 
   return (
-    <div className="lg:rounded-b-xl lg:bg-white">
+    <div className="lg:rounded-xl p-2 lg:bg-white">
       {/* 📱 MOBILE VIEW */}
       <div className="grid grid-cols-1 md:grid-cols-2 md:gap-5 lg:hidden space-y-4 mt-5">
         {filteredData.map((item) => (
@@ -158,7 +165,10 @@ export default function TableAset({ filters }: { filters?: any }) {
             className="rounded-xl border border-gray-200 shadow-sm p-4 bg-white relative"
           >
             {/* ICON CHAT */}
-            <button className="absolute top-3 right-3 p-2 rounded-full hover:bg-gray-100">
+            <button
+              onClick={openComment}
+              className="absolute top-3 right-3 p-2 rounded-full hover:bg-gray-100"
+            >
               <MessageCircleMore className="w-5 h-5 text-gray-700" />
             </button>
 
@@ -168,7 +178,7 @@ export default function TableAset({ filters }: { filters?: any }) {
               </p>
 
               <a
-                href="/aset-auditor/detail"
+                href="/laporan/aset-auditor/id"
                 className="text-[#0095E8] font-medium text-sm hover:underline"
               >
                 Detail
@@ -262,12 +272,15 @@ export default function TableAset({ filters }: { filters?: any }) {
                 <td className="py-5 px-4">
                   <div className="flex items-center justify-center gap-3">
                     <a
-                      href="/aset-auditor/detail"
+                      href="/laporan/aset-auditor/id"
                       className="text-[#0095E8] font-medium hover:underline"
                     >
                       Detail
                     </a>
-                    <button className="p-2 hover:bg-gray-100 rounded-full">
+                    <button
+                      onClick={openComment}
+                      className="p-2 hover:bg-gray-100 rounded-full"
+                    >
                       <MessageCircleMore className="w-5 h-5 text-gray-700" />
                     </button>
                   </div>
@@ -277,6 +290,39 @@ export default function TableAset({ filters }: { filters?: any }) {
           </tbody>
         </table>
       </div>
+
+      {/* =======================
+          🔵 MODAL KOMENTAR
+      ======================= */}
+      {commentOpen && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white w-[400px] rounded-xl shadow-xl p-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-3">
+              Tambahkan Komentar
+            </h2>
+
+            <textarea
+              className="w-full h-32 border border-gray-300 rounded-lg p-3 text-sm focus:ring focus:ring-blue-200 outline-none"
+              placeholder="Tulis komentar di sini..."
+            />
+
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                onClick={closeComment}
+                className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm"
+              >
+                Tutup
+              </button>
+              <button
+                onClick={closeComment}
+                className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm"
+              >
+                Kirim
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

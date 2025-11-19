@@ -103,7 +103,7 @@ export default function TabelLaporanAuditAdmin({
       {/* 💻 Desktop */}
       <div className="hidden md:block bg-white shadow-md rounded-lg border border-gray-200 overflow-x-auto">
         <table className="w-full text-sm text-center border-collapse min-w-[900px]">
-          <thead className="bg-gray-100 text-gray-700 text-[15px]">
+          <thead className="bg-white text-gray-700 text-[15px]">
             <tr className="border-b border-gray-300">
               <th className="py-4 px-4 font-semibold">TANGGAL & WAKTU</th>
               <th className="py-4 px-4 font-semibold">NAMA PENGGUNA</th>
@@ -147,7 +147,7 @@ export default function TabelLaporanAuditAdmin({
 
                   <td
                     onClick={() => openModal(item)}
-                    className="py-4 px-4 text-gray-600 font-medium hover:underline cursor-pointer"
+                    className="py-4 px-4 text-blue-600 font-medium hover:underline cursor-pointer"
                   >
                     Lihat
                   </td>

@@ -39,12 +39,18 @@ import DetailPemeliharaanVerifikator from "../views/verifikator/DetailLaporanPem
 import DetailJadwalVerifikator from "../views/verifikator/DetailJadwalPemeliharaan";
 
 import DashboardAuditor from "../views/auditor/dashboard";
-import AuditorAset from "../views/auditor/KelolaAset";
+import HasilAudit from "../views/auditor/HasilAudit";
 import LaporanAsetAuditor from "../views/auditor/LaporanAset";
-import RisikoAuditor from "../views/auditor/Risiko";
 import LaporanRisikoAuditor from "../views/auditor/LaporanRisiko";
 import DetailAsetAuditor from "../views/auditor/DetailAset";
 import DetailRisikoAuditor from "../views/auditor/DetailRisiko";
+import AuditTrail from "../views/auditor/AuditTrail";
+import LaporanPenghapusan from "../views/auditor/LaporanPenghapusan";
+import LaporanSDM from "../views/auditor/LaporanSDM";
+import LaporanReview from "../views/auditor/LaporanReview";
+import LaporanPemeliharaan from "../views/auditor/LaporanPemeliharaan";
+import DetailLaporanPenghapusan from "../views/auditor/DetailPenghapusan";
+import DetailSdmAuditor from "../views/auditor/detailSDM";
 
 import Callback from "../sso/callback";
 import LogoutSSO from "../sso/logout";
@@ -66,6 +72,16 @@ import TambahAdmin from "../views/admin/Aset/Tambah";
 import DaftarRisikoAdmin from "../views/admin/Risiko/DaftarRisiko";
 import DashboardRisikoAdmin from "../views/admin/Risiko/Dashboard";
 import VerifikasiAsetAdminPage from "../views/admin/Aset/VerifikasiAset";
+import DataSumberDayaManusia from "../views/admin/SDM/DataSumberDayaManusia";
+import LaporanSdmAdmin from "../views/admin/SDM/LaporanSDM";
+import LaporanAudit from "../views/admin/Audit/LaporanAudit";
+import NotifikasiAdmin from "../views/admin/NotifikasiAdmin";
+import EditSDM from "../views/admin/SDM/EditSDM";
+import DetailSDM from "../views/admin/SDM/DetailSDM";
+import DetailLaporanSDM from "../views/admin/SDM/DetailLaporanSDM";
+import TambahPengguna from "../views/admin/TambahPengguna";
+import HasilAuditAdmin from "../views/admin/Audit/HasilAuditAdmin";
+
 
 export default function AppRoutes() {
   return (
@@ -154,22 +170,50 @@ export default function AppRoutes() {
         {/* Route AUDITOR */}
         <Route element={<ProtectedRouteAuditor />}>
           <Route path="/dashboard-auditor" element={<DashboardAuditor />} />
-          <Route path="/aset-auditor" element={<AuditorAset />} />
+          <Route path="/audit-auditor" element={<AuditTrail />} />
+          <Route path="/hasil-auditor" element={<HasilAudit />} />
+
+
           <Route
             path="/laporan/aset-auditor"
             element={<LaporanAsetAuditor />}
           />
-          <Route path="/risiko-auditor" element={<RisikoAuditor />} />
           <Route
             path="/laporan/risiko-auditor"
             element={<LaporanRisikoAuditor />}
           />
-          <Route path="/aset-auditor/detail" element={<DetailAsetAuditor />} />
+          <Route path="/laporan/aset-auditor/id" element={<DetailAsetAuditor />} />
           <Route
-            path="/risiko-auditor/detail"
+            path="/laporan/risiko-auditor/id"
             element={<DetailRisikoAuditor />}
           />
-          <Route path="/aset-auditor/detail" element={<DetailAsetAuditor />} />
+
+          <Route
+            path="/laporan/Penghapusan-auditor"
+            element={<LaporanPenghapusan />}
+          />
+          <Route
+            path="/laporan/Penghapusan-auditor/id"
+            element={<DetailLaporanPenghapusan />}
+          />
+
+          <Route
+            path="/laporan/Pemeliharaan-auditor"
+            element={<LaporanPemeliharaan />}
+          />
+          <Route
+            path="/laporan/sdm-auditor"
+            element={<LaporanSDM />}
+          />
+          <Route
+            path="/laporan/sdm-auditor/id"
+            element={<DetailSdmAuditor/>}
+          />
+          <Route
+            path="/laporan/riview-auditor"
+            element={<LaporanReview />}
+          />
+
           <Route
             path="/notifikasi-auditor"
             element={<NotificationsAuditor />}
@@ -181,22 +225,32 @@ export default function AppRoutes() {
         <Route path="/dashboard-admin" element={<DashboardAdmin/>} />
         <Route path="/editpengguna-admin" element={<EditPengguna/>}/>
         <Route path="/kelolapengguna-admin" element={<KelolaPengguna/>}/>
+        <Route path="/tambahpengguna-admin" element={<TambahPengguna/>}/>
+        <Route path="/hasilaudit-admin" element={<HasilAuditAdmin/>}/>
+        <Route path="/audit-admin" element={<AuditTrail />} />
 
         <Route path="/aset-admin" element={<AsetAdmin/>}/>
         <Route path="/aset-admin/id" element={<DetailAsetAdmin/>}/>
         <Route path="/Verikasi/aset-admin" element={<VerifikasiAsetAdminPage/>}/>
         <Route path="/aset-admin/tambah" element={<TambahAdmin />} />
-        <Route path="/laporan/aset-admin" element={<LaporanAset/>}/>
+        <Route path="/sdm/aset-admin" element={<DataSumberDayaManusia/>}/>
+        <Route path="/sdm/aset-admin/edit" element={<EditSDM/>}/>
+        <Route path="/sdm/aset-admin/id" element={<DetailSDM/>}/>
 
         <Route path="/risiko-admin" element={<DashboardRisikoAdmin/>}/>
-        <Route path="/laporan/risiko-admin" element={<LaporanRisiko/>}/>
         <Route path="/risiko-admin/daftar" element={<DaftarRisikoAdmin/>}/>
-        <Route path="/risiko-admin/:id" element={<DetailRisiko/>}/>
+        <Route path="/risiko-admin/id" element={<DetailRisiko/>}/>
         <Route path="/risiko-admin/tambah" element={<TambahMitigasi />} />
-
-        <Route path="/pemeliharaan-admin" element={<JadwalPemeliharaanVerifikator />}/>
-        <Route path="/laporan/pemeliharaan-admin" element={<PemeliharaanAdmin />}/>
         
+        <Route path="/laporan/aset-admin" element={<LaporanAset/>}/>
+        <Route path="/laporan/risiko-admin" element={<LaporanRisiko/>}/>
+        <Route path="/laporan/sdm-admin" element={<LaporanSdmAdmin/>}/>
+        <Route path="/laporan/sdm-admin/id" element={<DetailLaporanSDM/>}/>
+        <Route path="/laporan/audit-admin" element={<LaporanAudit/>}/>
+        <Route path="/laporan/pemeliharaan-admin" element={<PemeliharaanAdmin />}/>
+
+        <Route path="/notifikasi/notifikasi-admin" element={<NotifikasiAdmin/>}/>
+
         </Route>
       </Routes>
     </Router>

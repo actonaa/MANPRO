@@ -49,7 +49,7 @@ const parseYYYYMMDD = (str: string) => {
   return new Date(`${y}-${m}-${d}`);
 };
 
-export default function DataSumberDayaManusia() {
+export default function LaporanSdmAdmin() {
   // ===== STATE FILTER =====
   const [search, setSearch] = useState("");
   const [filterDinas, setFilterDinas] = useState("");
@@ -100,9 +100,12 @@ export default function DataSumberDayaManusia() {
   return (
     <>
       {/* ===== HEADER ===== */}
-      <h1 className="font-semibold text-[22px] mb-4 md:text-2xl lg:text-[28px]">
-        Data Sumber Daya Manusia
-      </h1>
+      <div className="mb-5">
+        <h1 className="font-semibold text-[22px] md:text-2xl lg:text-[28px]">
+          Laporan Data Sumber Daya Manusia
+        </h1>
+        <p className="text-sm text-gray-500 mt-1">Pantau seluruh data SDM yang tercatat</p>
+      </div>
 
       {/* ===== FILTER SECTION ===== */}
       <div className="bg-white rounded-xl shadow-sm p-4 mb-6">

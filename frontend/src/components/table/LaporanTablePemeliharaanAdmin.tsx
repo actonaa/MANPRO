@@ -52,7 +52,6 @@ export default function TablePemeliharaanAdmin({
     const matchStatus = status ? row.status === status : true;
     const matchTanggal = tanggal ? row.realisasi.includes(tanggal) : true;
 
-    // ⭐ FIX: filter dinas case-insensitive
     const matchDinas = dinas
       ? row.dinas.toLowerCase().trim() === dinas.toLowerCase().trim()
       : true;
@@ -77,7 +76,6 @@ export default function TablePemeliharaanAdmin({
     <>
       {/* 💻 DESKTOP TABLE */}
       <div className="hidden lg:block bg-white overflow-x-auto rounded-b-xl">
-        {/* ⚠️ UI ORIGINAL — TIDAK DIUBAH */}
         <table className="w-full text-sm text-left border-spacing-y-3">
           <thead className="text-gray-600 border-b border-gray-200">
             <tr>
@@ -88,7 +86,7 @@ export default function TablePemeliharaanAdmin({
               <th className="px-6 py-3">VENDOR</th>
               <th className="px-6 py-3">REALISASI</th>
               <th className="px-6 py-3">DINAS</th>
-              <th className="px-6 py-3">STATUS</th>
+              {/* ❌ STATUS DIHAPUS */}
               <th className="px-6 py-3 text-right">DETAIL</th>
             </tr>
           </thead>
@@ -107,7 +105,7 @@ export default function TablePemeliharaanAdmin({
                   <td className="px-6 py-5">{row.vendor}</td>
                   <td className="px-6 py-5">{row.realisasi}</td>
                   <td className="px-6 py-5">{row.dinas}</td>
-                  <td className="px-6 py-5">{row.status}</td>
+
                   <td className="px-6 py-5 text-right">
                     <a
                       href={`/detail/laporan`}
@@ -120,10 +118,7 @@ export default function TablePemeliharaanAdmin({
               ))
             ) : (
               <tr>
-                <td
-                  colSpan={9}
-                  className="text-center py-6 text-gray-400 italic"
-                >
+                <td colSpan={8} className="text-center py-6 text-gray-400 italic">
                   Tidak ada data yang cocok
                 </td>
               </tr>
@@ -134,7 +129,6 @@ export default function TablePemeliharaanAdmin({
 
       {/* 📱 MOBILE CARD VIEW */}
       <div className="block lg:hidden">
-        {/* ⚠️ UI ORIGINAL — TIDAK DIUBAH */}
         {filteredData.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {filteredData.map((row, idx) => (
@@ -167,20 +161,7 @@ export default function TablePemeliharaanAdmin({
                     <span>{row.dinas}</span>
                   </div>
 
-                  <div className="flex justify-between">
-                    <span className="font-medium">Status:</span>
-                    <span
-                      className={`${
-                        row.status === "Selesai"
-                          ? "text-green-600"
-                          : row.status === "Berlangsung"
-                          ? "text-blue-600"
-                          : "text-red-600"
-                      } font-semibold`}
-                    >
-                      {row.status}
-                    </span>
-                  </div>
+                  {/* ❌ STATUS DIHAPUS */}
 
                   <div className="flex justify-between">
                     <span className="font-medium">Biaya:</span>

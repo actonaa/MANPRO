@@ -1,26 +1,27 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { MessageCircleMore } from "lucide-react";
+import AuditorModal from "../auditor/AuditorModal"; // ⬅ ADD
+import type { RisikoItem as RisikoType } from "../auditor/AuditorModal"; // ⬅ TYPE IMPORT
 
 type Filters = {
   search: string;
   date: { start: string; end: string };
 };
 
-type RisikoItem = {
-  id: string;
+// RisikoItem override agar sesuai dengan modal
+type RisikoItem = RisikoType & {
   date: string;
-  title: string;
-  criteria: string;
-  category: string;
-  status: string;
-  entry_level: number;
   asset: { name: string; lokasi: string };
   department: { name: string };
 };
 
 export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
   const [data, setData] = useState<RisikoItem[]>([]);
+
+  // 🔥 STATE UNTUK MODAL
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedData, setSelectedData] = useState<RisikoItem | null>(null);
 
   useEffect(() => {
     setData([
@@ -34,6 +35,8 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
         entry_level: 20,
         asset: { name: "Laptop Kerja", lokasi: "Kantor Pusat" },
         department: { name: "DISKOMINFO" },
+        type: "TI",
+        priority: "A1",
       },
       {
         id: "RISK-002",
@@ -45,6 +48,8 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
         entry_level: 12,
         asset: { name: "CCTV Lobby", lokasi: "Lobby" },
         department: { name: "DISKOMINFO" },
+        type: "TI",
+        priority: "B1",
       },
       {
         id: "RISK-003",
@@ -56,10 +61,33 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
         entry_level: 6,
         asset: { name: "Meja", lokasi: "Ruang Rapat" },
         department: { name: "DISKOMINFO" },
+        type: "NON-TI",
+        priority: "C1",
       },
     ]);
   }, []);
 
+  // ==========================================
+  //    🔥 OPEN MODAL WITH DATA
+  // ==========================================
+  const openCommentModal = (item: RisikoItem) => {
+    setSelectedData(item);
+    setOpenModal(true);
+  };
+
+  // ==========================================
+  //    🔥 SUBMIT COMMENT HANDLER
+  // ==========================================
+  const handleSubmitComment = (comment: string) => {
+    console.log("Komentar auditor:", comment);
+    console.log("Untuk risiko:", selectedData);
+
+    alert(`Komentar terkirim:\n${comment}`);
+    setOpenModal(false);
+    setSelectedData(null);
+  };
+
+  // FILTER
   const filteredData = data.filter((item) => {
     const { search, date } = filters;
 
@@ -140,7 +168,7 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
 
                 <td className="py-5">
                   <Link
-                    to="/risiko-auditor/detail"
+                    to="/laporan/risiko-auditor/id"
                     className="text-blue-600 font-medium hover:underline"
                   >
                     Detail
@@ -148,7 +176,10 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
                 </td>
 
                 <td className="py-5">
-                  <button className="p-2 rounded-full hover:bg-gray-100">
+                  <button
+                    className="p-2 rounded-full hover:bg-gray-100"
+                    onClick={() => openCommentModal(item)} // 🔥 OPEN MODAL
+                  >
                     <MessageCircleMore className="w-5 h-5 text-gray-700" />
                   </button>
                 </td>
@@ -161,8 +192,14 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
       {/* MOBILE */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden">
         {filteredData.map((item) => (
-          <div className="border border-gray-300 rounded-xl p-4 shadow-sm bg-white relative">
-            <button className="absolute top-3 right-3 p-2 hover:bg-gray-100 rounded-full">
+          <div
+            key={item.id}
+            className="border border-gray-300 rounded-xl p-4 shadow-sm bg-white relative"
+          >
+            <button
+              className="absolute top-3 right-3 p-2 hover:bg-gray-100 rounded-full"
+              onClick={() => openCommentModal(item)} // 🔥 OPEN MODAL MOBILE
+            >
               <MessageCircleMore className="w-5 h-5 text-gray-800" />
             </button>
 
@@ -171,6 +208,7 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
             <h3 className="text-base font-semibold text-gray-900">
               {item.title}
             </h3>
+
             <p className="text-sm text-gray-500 mb-3">{item.asset.name}</p>
 
             <div className="text-sm text-gray-700 space-y-1">
@@ -206,7 +244,7 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
 
               <div className="flex justify-between items-center pt-2">
                 <Link
-                  to="/risiko-auditor/detail"
+                  to="/laporan/risiko-auditor/id"
                   className="text-blue-600 font-medium hover:underline text-sm"
                 >
                   Detail
@@ -228,6 +266,14 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
           </div>
         ))}
       </div>
+
+      {/* 🔥 AUDITOR MODAL */}
+      <AuditorModal
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+        onSubmit={handleSubmitComment}
+        data={selectedData}
+      />
     </div>
   );
 }

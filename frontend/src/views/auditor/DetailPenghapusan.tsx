@@ -19,7 +19,7 @@ export default function DetailLaporanPenghapusan() {
   };
 
   return (
-    <div className="p-4 md:p-6 lg:p-10">
+    <div className="">
       {/* Back + Breadcrumb */}
       <div className="flex items-center gap-2 mb-4">
         <button
