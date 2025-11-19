@@ -92,7 +92,7 @@ export default function TableAset({
       filtered = filtered.filter((item) =>
         [
           item.name,
-          item.serial_number,
+          item.id,
           item.lokasi,
           item.category?.name,
           item.status?.name,
@@ -257,7 +257,7 @@ export default function TableAset({
 
               {/* Serial number */}
               <p className="text-sm text-gray-500 mb-3 truncate">
-                {item.serial_number || "-"}
+                {item.id || "-"}
               </p>
 
               {/* Info grid */}
@@ -397,9 +397,7 @@ export default function TableAset({
                   key={item.id}
                   className="border-b border-b-[#ddd] hover:bg-gray-50"
                 >
-                  <td className="py-5 px-4 text-[#333]">
-                    {item.serial_number || "-"}
-                  </td>
+                  <td className="py-5 px-4 text-[#333]">{item.id || "-"}</td>
                   <td className="py-5 px-4 text-[#666]">{item.name}</td>
                   <td className="py-5 px-4 text-[#666]">
                     {item.category?.name || "-"}

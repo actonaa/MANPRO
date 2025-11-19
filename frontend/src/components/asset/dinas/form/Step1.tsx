@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { Upload, Search } from "lucide-react";
 
 export interface AsetFormData {
@@ -9,11 +9,11 @@ export interface AsetFormData {
   tanggalPerolehan: string;
   indukAset: string;
   lokasiAset: string;
-  penanggungJawab: string;
+  penanggungJawab: string; 
   kategoriAset: string;
   subKategori: string;
   kondisi: string;
-  masaPakai: string;
+  useful_life: string;
   nilaiAset: string;
   vendor: string;
   kategoriAsetNama: string;
@@ -23,9 +23,17 @@ interface Step1Props {
   formData: AsetFormData;
   setFormData: React.Dispatch<React.SetStateAction<AsetFormData>>;
   nextStep?: () => void;
+  setUploadedFiles?: React.Dispatch<React.SetStateAction<File[] | null>>;
+  uploadedFiles?: File[] | null;
 }
 
-export default function Step1({ formData, setFormData, nextStep }: Step1Props) {
+export default function Step1({
+  formData,
+  setFormData,
+  nextStep,
+  setUploadedFiles,
+  uploadedFiles,
+}: Step1Props) {
   const [categories, setCategories] = useState<any[]>([]);
   const [subcategories, setSubcategories] = useState<any[]>([]);
   const [allAssets, setAllAssets] = useState<any[]>([]);
@@ -42,6 +50,8 @@ export default function Step1({ formData, setFormData, nextStep }: Step1Props) {
     Ringan: "529392ea-6133-4243-8039-1e62f15c2066",
     Berat: "6e41ff82-91db-451d-88a5-1d93f9855060",
   };
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -384,8 +394,8 @@ export default function Step1({ formData, setFormData, nextStep }: Step1Props) {
         </label>
         <input
           type="text"
-          name="masaPakai"
-          value={formData.masaPakai}
+          name="useful_life"
+          value={formData.useful_life}
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-lg px-3 py-2"
         />
@@ -422,17 +432,39 @@ export default function Step1({ formData, setFormData, nextStep }: Step1Props) {
         <label className="block mb-2 text-sm font-medium text-gray-600">
           Unggah Bukti (Opsional)
         </label>
-        <div className="border-2 border-dashed rounded-lg p-10 text-center">
+
+        <div className="border-2 border-dashed rounded-lg p-10 text-center relative">
+          {/* Input file hidden */}
+          <input
+            type="file"
+            multiple
+            className="hidden"
+            ref={fileInputRef}
+            onChange={(e) =>
+              setUploadedFiles?.(Array.from(e.target.files || []))
+            }
+          />
+
+          {/* Button trigger */}
           <button
             type="button"
             className="inline-flex items-center gap-2 px-4 py-2 bg-white border rounded-lg"
+            onClick={() => fileInputRef.current?.click()}
           >
             <Upload className="w-5 h-5" />
             Unggah Dokumen
           </button>
+
           <p className="text-sm text-gray-500 mt-3">
             File ukuran kurang dari 1 MB
           </p>
+
+          {/* Optional: tampilkan nama file */}
+          {uploadedFiles && uploadedFiles.length > 0 && (
+            <div className="mt-2 text-sm text-gray-700">
+              {uploadedFiles.map((file) => file.name).join(", ")}
+            </div>
+          )}
         </div>
       </div>
 

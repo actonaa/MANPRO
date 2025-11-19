@@ -22,6 +22,7 @@ export default function Tambah() {
   const [showPopup, setShowPopup] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<File[] | null>(null);
 
   const LABELS_STEP1: Record<string, string> = {
     namaAset: "Nama Aset",
@@ -34,7 +35,7 @@ export default function Tambah() {
     kategoriAset: "Kategori Aset",
     subKategori: "Sub Kategori",
     kondisi: "Kondisi",
-    masaPakai: "Masa Pakai",
+    useful_life: "Masa Pakai",
     nilaiAset: "Nilai Aset",
     vendor: "Vendor",
   };
@@ -66,7 +67,7 @@ export default function Tambah() {
     kategoriAset: "",
     subKategori: "",
     kondisi: "",
-    masaPakai: "",
+    useful_life: "",
     nilaiAset: "",
     vendor: "",
     kategoriAsetNama: "",
@@ -98,8 +99,9 @@ export default function Tambah() {
       return;
     }
 
-    setIsLoading(true); // <-- START LOADING
+    setIsLoading(true);
 
+    // Base data
     const baseData = {
       name: formData.namaAset,
       merk_type: formData.merkTipe,
@@ -113,6 +115,8 @@ export default function Tambah() {
       condition_id: formData.kondisi || null,
       acquisition_value: Number(formData.nilaiAset),
       vendor: formData.vendor,
+      useful_life: formData.useful_life, // <-- JSON sesuai request
+      attachments: uploadedFiles || null, // <-- file upload disimpan di state uploadedFiles
     };
 
     const tiData = isTI
@@ -123,6 +127,7 @@ export default function Tambah() {
           deploy_date: formDataTI.tanggalDeployment || null,
           serial_number: formDataTI.serialNumber,
           hostname: formDataTI.hostname,
+          url: formDataTI.url, // <-- tetap di JSON
         }
       : {};
 
@@ -162,14 +167,12 @@ export default function Tambah() {
         name: result.name || formData.namaAset,
       });
 
-      console.log("POST RESULT:", result);
-
       handleShowPopup();
     } catch (error) {
       console.error("Error:", error);
       alert("Terjadi kesalahan saat mengirim data.");
     } finally {
-      setIsLoading(false); // <-- STOP LOADING
+      setIsLoading(false);
     }
   };
 
@@ -236,6 +239,8 @@ export default function Tambah() {
           <Step1
             formData={formData}
             setFormData={setFormData}
+            setUploadedFiles={setUploadedFiles}
+            uploadedFiles={uploadedFiles}
             nextStep={() => {
               if (formData.kategoriAset) nextStep();
             }}

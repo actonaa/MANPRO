@@ -13,6 +13,7 @@ interface InformasiUtamaProps {
   lokasi: string;
   tanggalPerolehan: string;
   kondisi: string;
+  indukAset?: string;
 
   // TI
   version?: string;
@@ -51,6 +52,7 @@ const InformasiUtama: React.FC<InformasiUtamaProps> = ({
   materialBahan,
   ukuranSpesifikasi,
   vendor,
+  indukAset,
 }) => {
   const isTI = kategori === "TI";
 
@@ -127,7 +129,10 @@ const InformasiUtama: React.FC<InformasiUtamaProps> = ({
             <p className="text-gray-600">{ipAddress || "-"}</p>
           </div>
 
-          <div></div>
+          <div>
+            <p className="font-semibold text-gray-900">Induk Aset</p>
+            <p className="text-gray-600">{indukAset || "-"}</p>
+          </div>
 
           {/* === BARIS 4 === */}
           <div>
