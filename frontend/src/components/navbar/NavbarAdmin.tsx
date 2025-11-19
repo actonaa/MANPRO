@@ -27,7 +27,8 @@ export default function NavbarAdmin() {
       icon: "/sidebar-icon/Aset.png",
       children: [
         { label: "Data Aset", to: "/aset-admin" },
-        { label: "Laporan Aset", to: "/laporan/aset-admin" },
+        { label: "Data SDM", to: "/laporan/aset-admin" },
+        { label: "Verifikasi Aset", to: "/Verikasi/aset-admin" },
       ],
     },
     {
@@ -35,7 +36,6 @@ export default function NavbarAdmin() {
       icon: "/sidebar-icon/Risk.png",
       children: [
         { label: "Data Risiko", to: "/risiko-admin" },
-        { label: "Laporan Risiko", to: "/laporan/risiko-admin" },
       ],
     },
     {
@@ -43,14 +43,16 @@ export default function NavbarAdmin() {
       icon: "/sidebar-icon/Maintenance.png",
       children: [
         { label: "Jadwal Pemeliharaan", to: "/pemeliharaan-admin" },
-        { label: "Laporan Pemeliharaan", to: "/laporan/pemeliharaan-admin" },
       ],
     },
     {
-      label: "Laporan Audit",
+      label: "Laporan",
       icon: "/sidebar-icon/Maintenance.png",
       children: [
-        { label: "Laporan Audit", to: "/laporan-admin" },
+        { label: "Laporan Aset", to: "/laporan/aset-admin" },
+        { label: "Laporan SDM", to: "/laporan/audit-admin" },
+        { label: "Laporan Risiko", to: "/laporan/risiko-admin" },
+        { label: "Laporan Pemeliharaan", to: "/laporan/pemeliharaan-admin" },
         { label: "Laporan Audit", to: "/laporan/audit-admin" },
       ],
     },

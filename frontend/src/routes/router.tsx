@@ -61,10 +61,11 @@ import KelolaPengguna from "../views/admin/KelolaPengguna";
 import AsetAdmin from "../views/admin/Aset/KelolaAset";
 import PemeliharaanAdmin from "../views/admin/Pemeliharaan/LaporanPemeliharaan";
 import { ProtectedRouteAdmin } from "./ProtectedAdmin";
-import DetailAsetAdmin from "../views/dinas/Aset/DetailAset";
+import DetailAsetAdmin from "../views/admin/Aset/DetailAset";
 import TambahAdmin from "../views/admin/Aset/Tambah";
 import DaftarRisikoAdmin from "../views/admin/Risiko/DaftarRisiko";
 import DashboardRisikoAdmin from "../views/admin/Risiko/Dashboard";
+import VerifikasiAsetAdminPage from "../views/admin/Aset/VerifikasiAset";
 
 export default function AppRoutes() {
   return (
@@ -182,7 +183,8 @@ export default function AppRoutes() {
         <Route path="/kelolapengguna-admin" element={<KelolaPengguna/>}/>
 
         <Route path="/aset-admin" element={<AsetAdmin/>}/>
-        <Route path="/aset-admin/:id" element={<DetailAsetAdmin/>}/>
+        <Route path="/aset-admin/id" element={<DetailAsetAdmin/>}/>
+        <Route path="/Verikasi/aset-admin" element={<VerifikasiAsetAdminPage/>}/>
         <Route path="/aset-admin/tambah" element={<TambahAdmin />} />
         <Route path="/laporan/aset-admin" element={<LaporanAset/>}/>
 

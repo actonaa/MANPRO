@@ -4,42 +4,47 @@ type TableRisikoProps = {
   searchTerm?: string;
   selectedStatus?: string;
   selectedKategori?: string;
+  selectedDinas?: string;
+  selectedLevel?: string;
 };
 
 type RisikoItem = {
   id: string;
   title: string;
   type: string;
-  criteria: string;
-  priority: string;
+  criteria: string; // Level
+  priority: string; // Kategori
   status: string;
   entry_level: number;
   asset: { name: string; lokasi: string };
-  department: { name: string };
+  department: { name: string }; // Dinas
 };
+
+const ITEMS_PER_PAGE = 5; // bisa disesuaikan
 
 export default function TableRisikoAdmin({
   searchTerm = "",
   selectedStatus = "",
   selectedKategori = "",
+  selectedDinas = "",
+  selectedLevel = "",
 }: TableRisikoProps) {
   const [data, setData] = useState<RisikoItem[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchRisiko = async () => {
       try {
         const token = localStorage.getItem("token");
-
         const res = await fetch("/api/risks", {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
-
         if (!res.ok) throw new Error("Gagal memuat data risiko");
-
         const json = await res.json();
         setData(json);
       } catch (error) {
@@ -84,6 +89,7 @@ export default function TableRisikoAdmin({
     }
   };
 
+  // Filter Data
   const filteredData = data.filter((item) => {
     const matchesSearch =
       item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -95,11 +101,47 @@ export default function TableRisikoAdmin({
       : true;
 
     const matchesKategori = selectedKategori
-      ? item.type.toLowerCase() === selectedKategori.toLowerCase()
+      ? item.priority.toLowerCase() === selectedKategori.toLowerCase()
       : true;
 
-    return matchesSearch && matchesStatus && matchesKategori;
+    const matchesDinas = selectedDinas
+      ? item.department?.name.toLowerCase() === selectedDinas.toLowerCase()
+      : true;
+
+    const matchesLevel = selectedLevel
+      ? item.criteria.toLowerCase() === selectedLevel.toLowerCase()
+      : true;
+
+    return (
+      matchesSearch &&
+      matchesStatus &&
+      matchesKategori &&
+      matchesDinas &&
+      matchesLevel
+    );
   });
+
+  // Pagination
+  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const paginatedData = filteredData.slice(startIndex, endIndex);
+
+  const getPageNumbers = () => {
+    const pages: number[] = [];
+    for (let i = 1; i <= totalPages; i++) {
+      if (
+        i === 1 ||
+        i === totalPages ||
+        (i >= currentPage - 1 && i <= currentPage + 1)
+      ) {
+        pages.push(i);
+      } else if (pages[pages.length - 1] !== -1) {
+        pages.push(-1); // untuk "..."
+      }
+    }
+    return pages;
+  };
 
   if (loading) {
     return <p className="text-center text-gray-500 py-6">Memuat data...</p>;
@@ -109,7 +151,7 @@ export default function TableRisikoAdmin({
     <div className="mt-5">
       {/* 💻 TABLE VIEW (Desktop) */}
       <div className="overflow-x-auto hidden md:block">
-        <table className="w-full min-w-[900px] text-[13px] text-center border-collapse">
+        <table className="w-full min-w-[1000px] text-[13px] text-center border-collapse">
           <thead className="text-[#666666] border-b border-[#ddd]">
             <tr>
               <th className="py-5 px-4 font-semibold">ID RISIKO</th>
@@ -120,13 +162,13 @@ export default function TableRisikoAdmin({
               <th className="py-5 px-4 font-semibold">STATUS</th>
               <th className="py-5 px-4 font-semibold">KATEGORI</th>
               <th className="py-5 px-4 font-semibold">SKOR</th>
+              <th className="py-5 px-4 font-semibold">DINAS</th>
               <th className="py-5 px-4 font-semibold"></th>
             </tr>
           </thead>
-
           <tbody>
-            {filteredData.length > 0 ? (
-              filteredData.map((item) => (
+            {paginatedData.length > 0 ? (
+              paginatedData.map((item) => (
                 <tr
                   key={item.id}
                   className="border-b border-b-[#ddd] hover:bg-gray-50 transition"
@@ -157,6 +199,9 @@ export default function TableRisikoAdmin({
                   </td>
                   <td className="py-5 px-4 text-[#666]">{item.priority}</td>
                   <td className="py-5 px-4 text-[#666]">{item.entry_level}</td>
+                  <td className="py-5 px-4 text-[#666]">
+                    {item.department?.name}
+                  </td>
                   <td className="py-5 px-4">
                     <a
                       href={`/risiko-admin/${item.id}`}
@@ -170,7 +215,7 @@ export default function TableRisikoAdmin({
             ) : (
               <tr>
                 <td
-                  colSpan={9}
+                  colSpan={10}
                   className="text-center py-6 text-gray-500 italic"
                 >
                   Tidak ada data yang cocok.
@@ -183,8 +228,8 @@ export default function TableRisikoAdmin({
 
       {/* 📱 CARD VIEW (Mobile) */}
       <div className="md:hidden space-y-4">
-        {filteredData.length > 0 ? (
-          filteredData.map((item) => (
+        {paginatedData.length > 0 ? (
+          paginatedData.map((item) => (
             <div
               key={item.id}
               className="border border-gray-200 rounded-xl shadow-sm p-4"
@@ -242,6 +287,10 @@ export default function TableRisikoAdmin({
                   <span className="text-gray-500">Skor</span>
                   <span className="text-gray-700">{item.entry_level}</span>
                 </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Dinas</span>
+                  <span className="text-gray-700">{item.department?.name}</span>
+                </div>
               </div>
             </div>
           ))
@@ -251,6 +300,75 @@ export default function TableRisikoAdmin({
           </p>
         )}
       </div>
+      {/* Pagination */}
+      {filteredData.length > ITEMS_PER_PAGE && (
+        <div className="mt-5 relative">
+          {/* Info jumlah data di kiri */}
+          <div className="text-sm text-gray-600 mb-5 md:mb-0 absolute left-0">
+            Menampilkan{" "}
+            <span className="font-semibold">
+              {filteredData.length === 0 ? 0 : startIndex + 1}
+            </span>
+            –
+            <span className="font-semibold">
+              {Math.min(endIndex, filteredData.length)}
+            </span>{" "}
+            dari <span className="font-semibold">{filteredData.length}</span>{" "}
+            data
+          </div>
+
+          {/* Tombol pagination di tengah */}
+          <div className="flex justify-center">
+            <div className="flex items-center gap-2 mb-5">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                disabled={currentPage === 1}
+                className={`px-2 text-lg ${
+                  currentPage === 1
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-gray-700 hover:text-blue-600"
+                }`}
+              >
+                ‹
+              </button>
+
+              {getPageNumbers().map((p, idx) =>
+                p === -1 ? (
+                  <span key={idx} className="px-2 text-gray-400">
+                    …
+                  </span>
+                ) : (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentPage(p)}
+                    className={`w-8 h-8 rounded-md flex items-center justify-center text-sm transition ${
+                      currentPage === p
+                        ? "bg-gray-200 text-black font-semibold"
+                        : "text-gray-700 hover:text-blue-600"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                )
+              )}
+
+              <button
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(p + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+                className={`px-2 text-lg ${
+                  currentPage === totalPages
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-gray-700 hover:text-blue-600"
+                }`}
+              >
+                ›
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

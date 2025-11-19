@@ -38,13 +38,19 @@ export default function PemeliharaanTrendCard() {
   );
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm w-full">
+    <div className="bg-white p-6 rounded-2xl shadow-sm w-full h-full">
       <h2 className="text-lg font-semibold text-gray-800 text-center mb-4">
         Tren Pemeliharaan{" "}
         <span className="block text-gray-500 text-sm">
           (Total Aset yang Dipelihara per-Bulan)
         </span>
       </h2>
+
+      {/* Legenda */}
+      <div className="flex justify-center items-center gap-2 mt-4 mb-5 text-gray-700">
+        <span className="w-4 h-4 bg-[#B197FF] rounded-full opacity-70"></span>
+        <span className="text-sm">Data Aset</span>
+      </div>
 
       {/* Grafik */}
       <div className="relative w-full h-72 border border-gray-200 rounded-lg bg-gradient-to-b from-white to-gray-50 overflow-visible">
@@ -114,12 +120,6 @@ export default function PemeliharaanTrendCard() {
             <span key={d.month}>{d.month}</span>
           ))}
         </div>
-      </div>
-
-      {/* Legenda */}
-      <div className="flex justify-center items-center gap-2 mt-4 text-gray-700">
-        <span className="w-4 h-4 bg-[#B197FF] rounded-full opacity-70"></span>
-        <span className="text-sm">Data Aset</span>
       </div>
     </div>
   );

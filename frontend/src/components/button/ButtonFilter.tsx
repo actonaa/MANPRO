@@ -49,7 +49,7 @@ export default function ButtonFilter({
           onClick={() => setIsOpen(!isOpen)}
           className="flex justify-between items-center w-full bg-white border border-gray-300 rounded-lg lg:rounded-[12px] px-4 py-3 text-gray-700 focus:ring-2 focus:ring-blue-400 transition"
         >
-          <span className="text-sm font-semibold text-[#6B7280]">
+          <span className="text-sm font-semi text-[#6B7280]">
             {selected || label}
           </span>
           <ChevronDown

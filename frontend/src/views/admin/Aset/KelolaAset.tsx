@@ -2,24 +2,57 @@ import FilterDate from "../../../components/filter/FilterDate";
 import ButtonFilter from "../../../components/button/ButtonFilter";
 import CardList from "../../../components/card/CardList";
 import TableAsetAdmin from "../../../components/table/TableAsetAdmin";
+import type { AsetItem } from "../../../components/table/TableAsetAdmin";
+import { Search } from "lucide-react";
+import { useState } from "react";
 
 export default function AsetAdmin() {
-  
-  const handleStatusChange = (val: string) => {
-    console.log("Status dipilih:", val);
-  };
+  const [search, setSearch] = useState("");
 
-  const handleKategoriChange = (val: string) => {
-    console.log("Kategori dipilih:", val);
-  };
+  // ====== DATA ASET (DI-PERBAIKI) ======
+  const dataAset = [
+    {
+      id: 1,
+      kode_aset: "AST - 001",
+      nama_aset: "CCTV Lobby",
+      kategori: "TI",
+      lokasi: "Kantor Pusat",
+      status_aset: "Aktif",
+      status_pengajuan: "Diterima",
+      tanggal_perolehan: "12 - 01 - 2025",
+      dinas: "DISPORA",
+    },
+    {
+      id: 2,
+      kode_aset: "AST - 002",
+      nama_aset: "Mobil Operasional",
+      kategori: "NON-TI",
+      lokasi: "Garasi",
+      status_aset: "Perbaikan",
+      status_pengajuan: "Menunggu",
+      tanggal_perolehan: "12 - 01 - 2025",
+      dinas: "DISPENDIK",
+    },
+    {
+      id: 3,
+      kode_aset: "AST - 003",
+      nama_aset: "Laptop Asus Zenbook",
+      kategori: "TI",
+      lokasi: "Ruang Server",
+      status_aset: "Tidak Aktif",
+      status_pengajuan: "Ditolak",
+      tanggal_perolehan: "12 - 01 - 2025",
+      dinas: "DISPORA",
+    },
+  ] as const satisfies AsetItem[];
 
-  const handleDinasChange = (val: string) => {
-    console.log("Dinas dipilih:", val);
-  };
+  // ===== FILTER HANDLER =====
+  const handleStatusChange = (val: string) => console.log("Status:", val);
+  const handleKategoriChange = (val: string) => console.log("Kategori:", val);
+  const handleDinasChange = (val: string) => console.log("Dinas:", val);
 
   return (
     <>
-      {/* ===== HEADER ===== */}
       <h1 className="font-semibold text-[22px] mb-4 md:text-2xl lg:text-[28px]">
         Kelola Aset
       </h1>
@@ -42,10 +75,21 @@ export default function AsetAdmin() {
 
       {/* ===== FILTER SECTION ===== */}
       <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
-        {/* MOBILE LAYOUT */}
+        {/* === SEARCH BAR (Mobile & Desktop) === */}
+        <div className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 w-[400px] mb-5">
+          <Search size={18} className="text-gray-500" />
+          <input
+            type="text"
+            placeholder="Cari nama aset / kode aset..."
+            className="w-full bg-transparent outline-none text-sm"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        {/* MOBILE */}
         <div className="grid grid-cols-2 gap-3 md:hidden">
-          {/* Dinas */}
-          <div className="flex flex-col">
+          <div>
             <p className="text-sm font-medium text-gray-600 mb-1">Dinas</p>
             <ButtonFilter
               label="Dinas"
@@ -58,14 +102,12 @@ export default function AsetAdmin() {
             />
           </div>
 
-          {/* Periode */}
-          <div className="flex flex-col">
+          <div>
             <p className="text-sm font-medium text-gray-600 mb-1">Periode</p>
             <FilterDate />
           </div>
 
-          {/* Kategori */}
-          <div className="flex flex-col">
+          <div>
             <p className="text-sm font-medium text-gray-600 mb-1">Kategori</p>
             <ButtonFilter
               label="Kategori"
@@ -74,8 +116,7 @@ export default function AsetAdmin() {
             />
           </div>
 
-          {/* Status */}
-          <div className="flex flex-col">
+          <div>
             <p className="text-sm font-medium text-gray-600 mb-1">Status</p>
             <ButtonFilter
               label="Status"
@@ -85,10 +126,9 @@ export default function AsetAdmin() {
           </div>
         </div>
 
-        {/* DESKTOP & TABLET LAYOUT */}
+        {/* DESKTOP */}
         <div className="hidden md:grid md:grid-cols-4 md:gap-4">
-          {/* Dinas */}
-          <div className="flex flex-col">
+          <div>
             <p className="text-sm font-medium text-gray-600 mb-1">Dinas</p>
             <ButtonFilter
               label="Dinas"
@@ -101,14 +141,12 @@ export default function AsetAdmin() {
             />
           </div>
 
-          {/* Periode */}
-          <div className="flex flex-col">
+          <div>
             <p className="text-sm font-medium text-gray-600 mb-1">Periode</p>
             <FilterDate />
           </div>
 
-          {/* Kategori */}
-          <div className="flex flex-col">
+          <div>
             <p className="text-sm font-medium text-gray-600 mb-1">Kategori</p>
             <ButtonFilter
               label="Kategori"
@@ -117,8 +155,7 @@ export default function AsetAdmin() {
             />
           </div>
 
-          {/* Status */}
-          <div className="flex flex-col">
+          <div>
             <p className="text-sm font-medium text-gray-600 mb-1">Status</p>
             <ButtonFilter
               label="Status"
@@ -129,9 +166,9 @@ export default function AsetAdmin() {
         </div>
       </div>
 
-      {/* Table tampil di semua ukuran layar */}
+      {/* ===== TABLE ===== */}
       <div className="rounded-xl md:rounded-none md:rounded-b-xl">
-        <TableAsetAdmin />
+        <TableAsetAdmin data={dataAset} />
       </div>
     </>
   );
