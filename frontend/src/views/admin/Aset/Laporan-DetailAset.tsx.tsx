@@ -2,15 +2,15 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Download } from "lucide-react";
-import ButtonText from "../../components/button/ButtonText";
-import InformasiUtama from "../../components/kelola-asset/dinas/InformasiUtama";
-import JadwalPemeliharaan from "../../components/kelola-asset/dinas/JadwalPemeliharaan";
-import KeterkaitanRisiko from "../../components/no-button-card/KeterkaitanRisiko-Laporan";
-import Lampiran from "../../components/kelola-asset/dinas/Lampiran";
-import RiwayatAktivitas from "../../components/kelola-asset/dinas/RiwayatAktivitas";
-import ScanBarcode from "../../components/kelola-asset/dinas/ScanBarcode";
-import SiklusHidup from "../../components/kelola-asset/dinas/SiklusHidup";
-import ExportModal from "../../components/dropdown/Export";
+import ButtonText from "../../../components/button/ButtonText";
+import InformasiUtama from "../../../components/kelola-asset/dinas/InformasiUtama";
+import JadwalPemeliharaan from "../../../components/kelola-asset/dinas/JadwalPemeliharaan";
+import KeterkaitanRisiko from "../../../components/no-button-card/KeterkaitanRisiko-Laporan";
+import Lampiran from "../../../components/kelola-asset/dinas/Lampiran";
+import RiwayatAktivitas from "../../../components/kelola-asset/dinas/RiwayatAktivitas";
+import ScanBarcode from "../../../components/kelola-asset/dinas/ScanBarcode";
+import SiklusHidup from "../../../components/kelola-asset/dinas/SiklusHidup";
+import ExportModal from "../../../components/dropdown/Export";
 
 export default function DetailAsetAdmin() {
   const { id } = useParams<{ id: string }>();

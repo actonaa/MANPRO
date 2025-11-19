@@ -1,9 +1,14 @@
 import { useState } from "react";
 import TabelLaporanAuditAdmin from "../../../components/table/TabelLaporanAuditAdmin";
-import DinasDropdown from "../../../components/asset/Admin/DinasDropdown";
-import PeriodDropdown from "../../../components/asset/dinas/PeriodDropdown";
-import ConditionDropdown from "../../../components/asset/dinas/ConditionDropdown";
-import StatusAuditDropdown from "../../../components/asset/Admin/StatusAudit"; // ✅ penamaan benar & konsisten
+
+import SearchBar from "../../../components/filter/Search";
+import FilterDinas from "../../../components/button/FilterDinas";
+import FilterPeran from "../../../components/button/FilterPeran";
+import FilterModul from "../../../components/button/FilterModul";
+import FilterDate from "../../../components/filter/FilterDate";
+
+import ExportModal from "../../../components/dropdown/Export";
+import { Download } from "lucide-react";
 
 const data = [
   {
@@ -54,67 +59,104 @@ const data = [
 ];
 
 export default function LaporanAudit() {
-  // ✅ State filter
+  const [search, setSearch] = useState("");
   const [dinas, setDinas] = useState("");
-  const [period, setPeriod] = useState("");
-  const [condition, setCondition] = useState("");
-  const [status, setStatus] = useState("");
+
+  const [periode, setPeriode] = useState<{ start: string; end: string }>({
+    start: "",
+    end: "",
+  });
+
+  const [peran, setPeran] = useState("");
+  const [modul, setModul] = useState("");
+
+  const [showExport, setShowExport] = useState(false);
+  const [hover, setHover] = useState(false);
 
   return (
     <div className="p-6 space-y-6">
-      {/* 🏷️ Judul Halaman */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-800">Laporan Audit</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Pantau semua aktivitas pengguna dan sistem.
-        </p>
+      {/* TITLE + EXPORT BUTTON */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">Laporan Audit</h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Pantau semua aktivitas pengguna dan sistem.
+          </p>
+        </div>
+
+        {/* === EXPORT BUTTON (DI LUAR CARD) === */}
+        <button
+          onClick={() => setShowExport(true)}
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          className={`flex items-center gap-2 py-2 px-4 rounded-md border text-sm transition
+            ${
+              hover
+                ? "bg-gray-100 border-gray-400 text-gray-800"
+                : "bg-white border-gray-300 text-gray-600"
+            }
+          `}
+        >
+          <Download
+            className={`w-4 h-4 ${hover ? "text-gray-800" : "text-gray-600"}`}
+          />
+          <span className={hover ? "text-gray-800" : "text-gray-600"}>
+            Export
+          </span>
+        </button>
       </div>
 
-      {/* 📊 Filter */}
-      <div className="bg-white shadow-md rounded-lg p-4 border border-gray-200">
+      {/* FILTER CARD */}
+      <div className="bg-white w-full rounded-xl shadow-sm border border-gray-200 p-4 space-y-4">
+        {/* SEARCH */}
+        <div className="md:w-1/3">
+          <SearchBar onChange={(v) => setSearch(v)} />
+        </div>
+
+        {/* FILTER GRID */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {/* 🏢 Dinas */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Dinas
-            </label>
-            <DinasDropdown onChange={setDinas} />
+            <p className="text-sm text-gray-600 mb-1">Dinas</p>
+            <FilterDinas onSelect={setDinas} />
           </div>
 
-          {/* 📅 Periode */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Periode
-            </label>
-            <PeriodDropdown onChange={setPeriod} />
+            <p className="text-sm text-gray-600 mb-1">Periode</p>
+            <FilterDate onSelect={(range) => setPeriode(range)} />
           </div>
 
-          {/* 🔧 Kategori */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Kategori
-            </label>
-            <ConditionDropdown onChange={setCondition} />
+            <p className="text-sm text-gray-600 mb-1">Peran</p>
+            <FilterPeran onSelect={setPeran} />
           </div>
 
-          {/* 📊 Status */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Status
-            </label>
-            <StatusAuditDropdown onChange={setStatus} />
+            <p className="text-sm text-gray-600 mb-1">Modul</p>
+            <FilterModul onSelect={setModul} />
           </div>
         </div>
       </div>
 
-      {/* 🧾 Tabel Laporan Audit */}
+      {/* TABLE */}
       <TabelLaporanAuditAdmin
         data={data}
+        search={search}
         dinas={dinas}
-        periode={period}
-        kategori={condition}
-        status={status}
+        periode={
+          periode.start && periode.end ? `${periode.start}_${periode.end}` : ""
+        }
+        kategori={peran}
+        status={modul}
       />
+
+      {/* EXPORT POPUP */}
+      {showExport && (
+        <ExportModal
+          isOpen={showExport}
+          onClose={() => setShowExport(false)}
+          onExport={() => console.log("Export Audit:", data)}
+        />
+      )}
     </div>
   );
 }

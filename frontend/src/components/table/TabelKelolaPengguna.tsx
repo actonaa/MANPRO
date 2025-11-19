@@ -15,17 +15,18 @@ interface KelolaPenggunaTableProps {
     dinas: string;
     peran: string;
     status: string;
+    search?: string; // ⭐ Tambah untuk search
   };
   onDelete?: (nama: string, email: string) => void;
   onView?: (user: Pengguna) => void;
-  onEdit?: (user: Pengguna) => void; // ✅ Tambahkan handler edit
+  onEdit?: (user: Pengguna) => void;
 }
 
 export default function KelolaPenggunaTable({
   filters,
   onDelete,
   onView,
-  onEdit, // ✅ Tambahkan destruktur di sini
+  onEdit,
 }: KelolaPenggunaTableProps) {
   const [data] = useState<Pengguna[]>([
     {
@@ -62,9 +63,17 @@ export default function KelolaPenggunaTable({
     },
   ]);
 
-  // 🔍 Filter data
+  // SEARCH + FILTER
   const filteredData = data.filter((item) => {
+    const s = filters?.search?.toLowerCase() || "";
+
+    const matchSearch =
+      item.nama.toLowerCase().includes(s) ||
+      item.email.toLowerCase().includes(s) ||
+      item.dinas.toLowerCase().includes(s);
+
     return (
+      matchSearch &&
       (!filters?.dinas || item.dinas === filters.dinas) &&
       (!filters?.peran || item.peran === filters.peran) &&
       (!filters?.status || item.status === filters.status)
@@ -143,7 +152,6 @@ export default function KelolaPenggunaTable({
                   {user.terakhirAktif}
                 </td>
                 <td className="py-3 px-4 text-center flex justify-center gap-3">
-                  {/* 👁️ Detail */}
                   <button
                     onClick={() => onView && onView(user)}
                     className="text-gray-400 hover:text-gray-600"
@@ -151,7 +159,6 @@ export default function KelolaPenggunaTable({
                     <Eye size={18} />
                   </button>
 
-                  {/* ✏️ Edit */}
                   <button
                     onClick={() => onEdit && onEdit(user)}
                     className="text-gray-400 hover:text-gray-600"
@@ -159,7 +166,6 @@ export default function KelolaPenggunaTable({
                     <Edit size={18} />
                   </button>
 
-                  {/* 🗑️ Hapus */}
                   <button
                     onClick={() => onDelete && onDelete(user.nama, user.email)}
                     className="text-red-500 hover:text-red-700"
