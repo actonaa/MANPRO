@@ -6,12 +6,13 @@ export default function CategoryDropdown({
   onChange: (v: string) => void;
 }) {
   const options = [
+    { value: "", label: "Semua" },
     { value: "TI", label: "TI" },
     { value: "Non-TI", label: "Non-TI" },
   ];
   return (
     <CustomDropdown
-      placeholder="Pilih Category"
+      placeholder="Pilih Kategori"
       options={options}
       onChange={onChange}
     />

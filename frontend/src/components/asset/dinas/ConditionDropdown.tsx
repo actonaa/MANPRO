@@ -6,6 +6,7 @@ export default function ConditionDropdown({
   onChange: (v: string) => void;
 }) {
   const options = [
+    { value: "", label: "Semua" },
     { value: "Baik", label: "Baik" },
     { value: "Rusak Ringan", label: "Rusak Ringan" },
     { value: "Rusak Berat", label: "Rusak Berat" },

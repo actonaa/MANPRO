@@ -1,15 +1,24 @@
 import { useState } from "react";
 import PeriodDropdown from "../../../components/asset/dinas/PeriodDropdown";
-import CategoryDropdown from "../../../components/asset/dinas/CategoryDropdown";
-import ConditionDropdown from "../../../components/asset/dinas/ConditionDropdown";
 import AssetTableSection from "../../../components/asset/dinas/AssetTableSection";
 import { Search } from "lucide-react";
+import ButtonFilter from "../../../components/button/ButtonFilter";
 
 export default function LaporanAset() {
   const [period, setPeriod] = useState("");
   const [category, setCategory] = useState("");
   const [condition, setCondition] = useState("");
   const [searchValue, setSearchValue] = useState("");
+
+  // handler untuk ButtonFilter kategori
+  const handleKategoriChange = (value: string) => {
+    setCategory(value === "Kategori" ? "" : value);
+  };
+
+  // handler untuk ButtonFilter kondisi
+  const handleConditionChange = (value: string) => {
+    setCondition(value === "Kondisi" ? "" : value);
+  };
 
   return (
     <div className="p-4 space-y-6">
@@ -50,7 +59,11 @@ export default function LaporanAset() {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Kategori
             </label>
-            <CategoryDropdown onChange={setCategory} />
+            <ButtonFilter
+              label="Kategori"
+              options={["Kategori", "TI", "Non-TI"]}
+              onSelect={handleKategoriChange}
+            />
           </div>
 
           {/* Kondisi */}
@@ -58,7 +71,11 @@ export default function LaporanAset() {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Kondisi
             </label>
-            <ConditionDropdown onChange={setCondition} />
+            <ButtonFilter
+              label="Kondisi"
+              options={["Kondisi", "Baik", "Rusak Ringan", "Rusak Berat"]}
+              onSelect={handleConditionChange}
+            />
           </div>
         </div>
       </div>

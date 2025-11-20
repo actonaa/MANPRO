@@ -12,6 +12,16 @@ type Asset = {
   dinas?: string;
 };
 
+interface ApiAsset {
+  id: string;
+  name: string;
+  category?: { name: string };
+  lokasi: string;
+  condition?: { name: string };
+  status?: { name: string };
+  acquisition_date: string;
+}
+
 const ITEMS_PER_PAGE = 5;
 
 const getConditionColor = (condition: string) => {
@@ -59,14 +69,13 @@ export default function AssetTableSection({
         setError(null);
         const token = localStorage.getItem("token");
 
-        const res = await axios.get(
+        const res = await axios.get<ApiAsset[]>(
           "https://asset-risk-management.vercel.app/api/assets",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        const mapped = res.data.map((item: any) => ({
+        // Sekarang TypeScript tahu res.data adalah ApiAsset[]
+        const mapped = res.data.map((item) => ({
           id: item.id,
           name: item.name,
           category: item.category?.name || "-",
@@ -88,16 +97,23 @@ export default function AssetTableSection({
     fetchAssets();
   }, []);
 
-  // Filter
+  const normalize = (str: string) => str?.toString().trim().toUpperCase();
+
   const filteredData = useMemo(() => {
     return assets.filter((item) => {
-      const matchPeriod = period ? item.date === period : true;
-      const matchCategory = category ? item.category === category : true;
-      const matchCondition = condition ? item.condition === condition : true;
+      const matchPeriod = period
+        ? normalize(item.date) === normalize(period)
+        : true;
+      const matchCategory = category
+        ? normalize(item.category) === normalize(category)
+        : true;
+      const matchCondition = condition
+        ? normalize(item.condition) === normalize(condition)
+        : true;
       const matchSearch = searchValue
-        ? item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-          item.id.toLowerCase().includes(searchValue.toLowerCase()) ||
-          item.category.toLowerCase().includes(searchValue.toLowerCase())
+        ? normalize(item.name).includes(normalize(searchValue)) ||
+          normalize(item.id).includes(normalize(searchValue)) ||
+          normalize(item.category).includes(normalize(searchValue))
         : true;
 
       return matchPeriod && matchCategory && matchCondition && matchSearch;
@@ -141,10 +157,70 @@ export default function AssetTableSection({
     return pages;
   };
 
-  if (loading)
+  if (loading) {
     return (
-      <p className="text-center py-10 text-gray-500">Memuat data aset...</p>
+      <div className="mt-5">
+        {/* Mobile & Tablet */}
+        <div className="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {Array.from({ length: ITEMS_PER_PAGE }).map((_, idx) => (
+            <div
+              key={idx}
+              className="bg-white rounded-xl shadow-sm p-4 flex flex-col animate-pulse"
+            >
+              <div className="h-4 bg-gray-300 rounded w-1/2 mb-2"></div>
+              <div className="h-3 bg-gray-300 rounded w-1/3 mb-3"></div>
+              <div className="flex flex-col gap-1">
+                <div className="h-3 bg-gray-300 rounded w-full"></div>
+                <div className="h-3 bg-gray-300 rounded w-full"></div>
+                <div className="h-3 bg-gray-300 rounded w-full"></div>
+                <div className="h-3 bg-gray-300 rounded w-full"></div>
+                <div className="h-3 bg-gray-300 rounded w-full"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop */}
+        <div className="hidden lg:block overflow-x-auto bg-white rounded-2xl">
+          <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
+            <thead className="text-[#666]">
+              <tr>
+                {[
+                  "ID ASET",
+                  "NAMA ASET",
+                  "KATEGORI",
+                  "LOKASI",
+                  "KONDISI",
+                  "STATUS",
+                  "TANGGAL",
+                  "DETAIL",
+                ].map((h, i) => (
+                  <th key={i} className="py-5 px-4 font-semibold">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: ITEMS_PER_PAGE }).map((_, idx) => (
+                <tr
+                  key={idx}
+                  className="border-b border-gray-200 animate-pulse"
+                >
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <td key={i} className="py-5 px-4">
+                      <div className="h-3 bg-gray-300 rounded w-full mx-auto"></div>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     );
+  }
+
   if (error) return <p className="text-center py-5 text-red-500">{error}</p>;
 
   return (
