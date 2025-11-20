@@ -17,6 +17,7 @@ import Step4Mobile from "/wizard/risikohp4.png";
 import Step1 from "../../../components/asset/dinas/risiko/Step1";
 import Step2 from "../../../components/asset/dinas/risiko/Step2";
 import Step3 from "../../../components/asset/dinas/risiko/Step3";
+import Step4 from "../../../components/asset/dinas/risiko/Step4";
 
 interface FormData {
   // Step 1
@@ -317,7 +318,7 @@ export default function RisikoWizard() {
   const handleSubmit = async () => {
     try {
       if (!asset_id) {
-        alert("Asset ID tidak ditemukan dari URL params!");
+        alert("Asset ID tidak ditemukan!");
         return;
       }
 
@@ -333,8 +334,8 @@ export default function RisikoWizard() {
           a.name?.toLowerCase() === (formData.areaDampak || "").toLowerCase()
       );
 
-      const payload: any = {
-        asset_id: asset_id,
+      const payload = {
+        asset_id,
         type: formData.tipe || "Aset",
         title: formData.namaRisiko,
         description: formData.deskripsiRisiko,
@@ -356,81 +357,57 @@ export default function RisikoWizard() {
         type_of_risk: formData.jenisRisiko || null,
         risk_category_id: foundCategory?.id || null,
         impact_area_id: foundImpact?.id || null,
-        // department_id: "d86665d8-dd84-4802-97f8-fcce5eb3bd67",
-        // treatments: [
-        //   {
-        //     strategy: formData.strategi || null,
-        //     action: formData.aksiMitigasi || null,
-        //     owner: formData.pemilik || null,
-        //     due_date: formData.targetWaktu || null,
-        //     estimated_cost: formData.perkiraanBiaya || null,
-        //     effectiveness: formData.efektivitas || null,
-        //     residual_level: formData.levelResidual || null,
-        //     residual_probability: formData.probabilitasResidual || null,
-        //     residual_impact: formData.dampakResidual || null,
-        //   },
-        // ],
       };
 
-      // ------ Tambah token Bearer ------
       const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Token tidak ditemukan, pastikan sudah login!");
-        setLoading(false);
-        return;
-      }
+      if (!token) throw new Error("Token tidak ditemukan!");
 
-      const formattedPayload: any = {
-        ...payload,
-        ...(payload.treatments && payload.treatments.length > 0
-          ? {
-              treatments: payload.treatments.map((t: any) => ({
-                ...t,
-                estimated_cost: Number(t.estimated_cost),
-                residual_level: Number(t.residual_level),
-                residual_probability: Number(t.residual_probability),
-                residual_impact: Number(t.residual_impact),
-              })),
-            }
-          : {}),
-      };
-
-      const res = await axios.post(
+      // POST ke /api/risks
+      const res1 = await axios.post(
         "https://asset-risk-management.vercel.app/api/risks",
-        formattedPayload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      console.log("Success:", res.data);
-      console.log("=== FINAL PAYLOAD ===");
-      console.log(JSON.stringify(payload, null, 2));
+      console.log("Risiko dasar berhasil ditambahkan:", res1.data);
+
+      // Jika ada step 3 (treatments)
+      if (formData.aksiMitigasi || formData.pemilik) {
+        const treatmentsPayload = {
+          ...payload,
+          treatments: [
+            {
+              action: formData.aksiMitigasi,
+              owner: formData.pemilik,
+              target_time: new Date(formData.targetWaktu).toISOString(),
+              estimated_cost: Number(formData.perkiraanBiaya),
+              effectiveness: formData.efektivitas,
+              residual_level: Number(formData.levelResidual),
+              residual_probability: Number(formData.probabilitasResidual),
+              residual_impact: Number(formData.dampakResidual),
+            },
+          ],
+        };
+
+        console.log("=== PAYLOAD TO /api/risks/with-treatments ===");
+        console.log(JSON.stringify(treatmentsPayload, null, 2));
+
+        const res2 = await axios.post(
+          "https://asset-risk-management.vercel.app/api/risks/with-treatments",
+          treatmentsPayload,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        console.log(
+          "Perencanaan risiko (treatments) berhasil ditambahkan:",
+          res2.data
+        );
+      }
+
       setShowPopup(true);
     } catch (err: any) {
-      console.error("Gagal submit:", err?.response ?? err);
-      console.log("=== POST ERROR ===");
-
-      if (err.config) {
-        console.log("Data yang dikirim:", err.config.data);
-        console.log("Headers:", err.config.headers);
-        console.log("URL:", err.config.url);
-        console.log("Method:", err.config.method);
-      }
-
-      if (err.response) {
-        console.log("Status Error:", err.response.status);
-        console.log("Response Error:", err.response.data);
-      }
-      const msg =
-        err?.response?.data?.message ||
-        err?.response?.data ||
-        err?.message ||
-        "Error saat submit";
-      alert(`Gagal submit risiko: ${msg}`);
+      console.error(err);
+      alert("Gagal submit risiko: " + (err.message || "Unknown error"));
     } finally {
       setLoading(false);
     }
@@ -476,259 +453,7 @@ export default function RisikoWizard() {
               <Step3 formData={formData} handleChange={handleChange} />
             )}
 
-            {step === 4 && (
-              <>
-                <h2 className="text-base font-semibold mb-6">
-                  Langkah 4 — Konfirmasi Data Risiko
-                </h2>
-
-                <div className="space-y-4">
-                  {/* Tipe */}
-                  <div>
-                    <label className="font-medium">Tipe</label>
-                    <input
-                      type="text"
-                      value={formData.tipe || ""}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Nama Risiko */}
-                  <div>
-                    <label className="font-medium">Nama Risiko</label>
-                    <input
-                      type="text"
-                      value={formData.namaRisiko}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Deskripsi Risiko */}
-                  <div>
-                    <label className="font-medium">Deskripsi Risiko</label>
-                    <textarea
-                      value={formData.deskripsiRisiko}
-                      disabled
-                      rows={3}
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Penyebab Risiko (Array) */}
-                  <div>
-                    <label className="font-medium">Penyebab Risiko</label>
-                    <input
-                      value={(formData.penyebabRisiko || [])
-                        .filter((p) => p.trim() !== "")
-                        .join(", ")}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Dampak Risiko (Array) */}
-                  <div>
-                    <label className="font-medium">Dampak Risiko</label>
-                    <input
-                      value={(formData.dampakRisiko || [])
-                        .filter((d) => d.trim() !== "")
-                        .join(", ")}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Kategori Risiko */}
-                  <div>
-                    <label className="font-medium">Kategori Risiko</label>
-                    <input
-                      type="text"
-                      value={formData.kategoriRisiko || ""}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Area Dampak */}
-                  <div>
-                    <label className="font-medium">Area Dampak</label>
-                    <input
-                      type="text"
-                      value={formData.areaDampak || ""}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Probabilitas */}
-                  <div>
-                    <label className="font-medium">Probabilitas</label>
-                    <input
-                      type="text"
-                      value={formData.probabilitas}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Dampak */}
-                  <div>
-                    <label className="font-medium">Dampak</label>
-                    <input
-                      type="text"
-                      value={formData.dampak}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Kriteria Dampak */}
-                  <div>
-                    <label className="font-medium">Kriteria Dampak</label>
-                    <input
-                      type="text"
-                      value={formData.kriteriaDampak}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Prioritas Risiko */}
-                  <div>
-                    <label className="font-medium">Prioritas Risiko</label>
-                    <input
-                      type="text"
-                      value={formData.prioritasRisiko}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Level Awal */}
-                  <div>
-                    <label className="font-medium">Level Awal</label>
-                    <input
-                      type="text"
-                      value={formData.levelAwal}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Jenis Risiko */}
-                  <div>
-                    <label className="font-medium">Jenis Risiko</label>
-                    <input
-                      type="text"
-                      value={formData.jenisRisiko || ""}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Strategi */}
-                  <div>
-                    <label className="font-medium">Strategi</label>
-                    <input
-                      type="text"
-                      value={formData.strategi}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Aksi Mitigasi */}
-                  <div>
-                    <label className="font-medium">Aksi Mitigasi</label>
-                    <input
-                      type="text"
-                      value={formData.aksiMitigasi}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Pemilik */}
-                  <div>
-                    <label className="font-medium">Pemilik</label>
-                    <input
-                      type="text"
-                      value={formData.pemilik}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Target Waktu */}
-                  <div>
-                    <label className="font-medium">Target Waktu</label>
-                    <input
-                      type="text"
-                      value={formData.targetWaktu}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Perkiraan Biaya */}
-                  <div>
-                    <label className="font-medium">Perkiraan Biaya</label>
-                    <input
-                      type="text"
-                      value={formData.perkiraanBiaya}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Probabilitas Residual */}
-                  <div>
-                    <label className="font-medium">Probabilitas Residual</label>
-                    <input
-                      type="text"
-                      value={formData.probabilitasResidual}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Dampak Residual */}
-                  <div>
-                    <label className="font-medium">Dampak Residual</label>
-                    <input
-                      type="text"
-                      value={formData.dampakResidual}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Level Residual */}
-                  <div>
-                    <label className="font-medium">Level Residual</label>
-                    <input
-                      type="text"
-                      value={formData.levelResidual}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-
-                  {/* Efektivitas */}
-                  <div>
-                    <label className="font-medium">Efektivitas</label>
-                    <input
-                      type="text"
-                      value={formData.efektivitas}
-                      disabled
-                      className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                    />
-                  </div>
-                </div>
-              </>
-            )}
+            {step === 4 && <Step4 formData={formData} />}
 
             {/* Tombol Navigasi */}
             <div className="flex justify-between mt-6">

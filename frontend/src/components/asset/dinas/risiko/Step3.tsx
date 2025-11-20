@@ -137,7 +137,7 @@ export default function Step3({ formData, handleChange }: Step3Props) {
           <div className="mb-4">
             <label className="font-medium">Perkiraan Biaya</label>
             <input
-              type="text"
+              type="number"
               name="perkiraanBiaya"
               placeholder="ex: 30000000"
               value={formData.perkiraanBiaya}
