@@ -164,9 +164,66 @@ export default function TableRisiko({
   const paginatedData = filteredData.slice(startIndex, endIndex);
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
 
+  // SKELETON COMPONENT
+  function SkeletonRow({ isDesktop }: { isDesktop?: boolean }) {
+    if (isDesktop) {
+      return (
+        <tr className="animate-pulse">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <td key={i} className="py-5 px-4">
+              <div className="h-4 bg-gray-200 rounded w-full"></div>
+            </td>
+          ))}
+        </tr>
+      );
+    } else {
+      return (
+        <div className="rounded-xl p-4 bg-white shadow-sm border border-gray-200 animate-pulse space-y-2">
+          <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-4 bg-gray-200 rounded w-full"></div>
+          <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+        </div>
+      );
+    }
+  }
+
+  // LOADING
   // LOADING
   if (loading)
-    return <p className="text-center text-gray-500 py-6">Memuat data...</p>;
+    return (
+      <div>
+        {/* MOBILE */}
+        <div className="lg:hidden mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <SkeletonRow key={i} />
+          ))}
+        </div>
+
+        {/* DESKTOP */}
+        <div className="hidden lg:block mt-5 md:mt-0">
+          <table className="w-full min-w-[950px] text-[13px] text-center border-collapse">
+            <thead className="text-[#666666] border-b border-[#ddd]">
+              <tr>
+                <th className="py-5 px-4 font-semibold">ID RISIKO</th>
+                <th className="py-5 px-4 font-semibold">NAMA ASET</th>
+                <th className="py-5 px-4 font-semibold">NAMA RISIKO</th>
+                <th className="py-5 px-4 font-semibold">KATEGORI</th>
+                <th className="py-5 px-4 font-semibold">LEVEL</th>
+                <th className="py-5 px-4 font-semibold">STATUS</th>
+                <th className="py-5 px-4 font-semibold">SKOR</th>
+                <th className="py-5 px-4 font-semibold"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <SkeletonRow key={i} isDesktop />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
 
   return (
     <div>

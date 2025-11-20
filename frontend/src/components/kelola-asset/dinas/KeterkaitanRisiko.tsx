@@ -10,7 +10,8 @@ interface ApiRiskItem {
 
 interface KeterkaitanRisikoProps {
   risiko: ApiRiskItem[];
-  approvalStatus: string; // ✅ baru
+  approvalStatus: string;
+  assetId: string; // ⬅️ Tambahkan ini
 }
 
 const getRiskColor = (criteria: string | null) => {
@@ -36,12 +37,12 @@ const translateCriteria = (criteria: string | null) => {
 const KeterkaitanRisiko: React.FC<KeterkaitanRisikoProps> = ({
   risiko,
   approvalStatus,
+  assetId, // ⬅️ terima props
 }) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md h-full border border-gray-200">
       <h2 className="font-semibold text-lg mb-4">Keterkaitan Risiko</h2>
 
-      {/* Jika tidak ada risiko dan bukan pending */}
       {approvalStatus !== "pending" && risiko.length === 0 && (
         <p className="text-sm text-red-700 bg-red-50 p-3 rounded border border-red-300">
           Tidak ada risiko terkait aset ini.
@@ -75,13 +76,12 @@ const KeterkaitanRisiko: React.FC<KeterkaitanRisikoProps> = ({
           );
         })}
 
-        {/* Tombol Tambah Risiko atau teks pending */}
         {approvalStatus === "pending" ? (
           <p className="text-sm text-yellow-700 bg-yellow-50 p-3 rounded border border-yellow-300">
             Menunggu persetujuan verifikator
           </p>
         ) : (
-          <a href="/risiko/tambah">
+          <a href={`/risiko/tambah/${assetId}`}>
             <ButtonImg
               title="Tambah Risiko"
               img="/kelola-asset/tambah-asset.png"

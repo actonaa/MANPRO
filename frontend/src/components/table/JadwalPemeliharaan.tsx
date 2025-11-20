@@ -1,45 +1,107 @@
+import { useEffect, useState } from "react";
+
 interface Props {
   selectedKategori?: string;
   selectedPrioritas?: string;
   searchQuery?: string;
 }
 
+interface MaintenanceItem {
+  id: string;
+  asset_id: string;
+  type: string;
+  scheduled_date: string;
+  completion_date: string | null;
+  vendor: string;
+  cost: number;
+  notes: string;
+  proof: string | null;
+  created_by: string | null;
+  asset?: {
+    name: string;
+    lokasi: string;
+  };
+  kategori?: string;
+  prioritas?: string;
+  risk_id?: string; // pastikan backend menyediakan risk_id
+}
+
 export default function TableJadwalPemeliharaan({
   selectedKategori,
   selectedPrioritas,
+  searchQuery,
 }: Props) {
-  const data = [
-    {
-      id: "AST - 001",
-      nama: "Laptop Kerja",
-      kategori: "Aset TI",
-      lokasi: "Kantor Pusat",
-      prioritas: "Rendah",
-      tanggal: "12 - 01 - 2025",
-      status: "Aktif",
-    },
-    {
-      id: "AST - 002",
-      nama: "CCTV Lobby",
-      kategori: "Aset TI",
-      lokasi: "Kantor Pusat",
-      prioritas: "Tinggi",
-      tanggal: "12 - 01 - 2025",
-    },
-    {
-      id: "AST - 003",
-      nama: "AC Ruangan",
-      kategori: "Aset Fasilitas",
-      lokasi: "Kantor Cabang",
-      prioritas: "Sedang",
-      tanggal: "14 - 02 - 2025",
-    },
-  ];
+  const [data, setData] = useState<MaintenanceItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token") || "";
+
+        // 1️⃣ Fetch maintenance
+        const res = await fetch(
+          "https://asset-risk-management.vercel.app/api/maintenance",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const maintenances: MaintenanceItem[] = await res.json();
+
+        // 2️⃣ Enrich data: kategori dari asset, prioritas dari risk
+        const enrichedData = await Promise.all(
+          maintenances.map(async (item) => {
+            // Ambil data asset
+            const assetRes = await fetch(
+              `https://asset-risk-management.vercel.app/api/assets/${item.asset_id}`,
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+            const assetData = await assetRes.json();
+            const kategori = assetData.category?.name || "Tidak ada";
+            const asset = {
+              name: assetData.name,
+              lokasi: assetData.lokasi,
+            };
+
+            // Ambil data prioritas dari risk_id (pastikan backend menyediakan risk_id)
+            let prioritas = "Rendah"; // default
+            if (item.risk_id) {
+              try {
+                const riskRes = await fetch(
+                  `https://asset-risk-management.vercel.app/api/risks/${item.risk_id}`,
+                  { headers: { Authorization: `Bearer ${token}` } }
+                );
+                const riskData = await riskRes.json();
+                prioritas = riskData.priority || riskData.criteria || "Rendah";
+              } catch (err) {
+                console.warn("Gagal fetch prioritas:", err);
+              }
+            }
+
+            return { ...item, asset, kategori, prioritas };
+          })
+        );
+
+        setData(enrichedData);
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const filteredData = data.filter(
     (item) =>
       (!selectedKategori || item.kategori === selectedKategori) &&
-      (!selectedPrioritas || item.prioritas === selectedPrioritas)
+      (!selectedPrioritas || item.prioritas === selectedPrioritas) &&
+      (!searchQuery ||
+        item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.asset?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.kategori?.toLowerCase().includes(searchQuery.toLowerCase()) ??
+          false))
   );
 
   const getBadgeColor = (prioritas: string) => {
@@ -55,9 +117,12 @@ export default function TableJadwalPemeliharaan({
     }
   };
 
+  if (loading)
+    return <p className="text-center py-10 text-gray-500">Memuat data...</p>;
+
   return (
     <div className="mt-5 bg-white md:mt-0">
-      {/* 💻 TABLE VIEW */}
+      {/* TABLE VIEW */}
       <div className="overflow-x-auto hidden lg:block">
         <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
           <thead className="text-[#666666]">
@@ -82,29 +147,29 @@ export default function TableJadwalPemeliharaan({
                     {item.id}
                   </td>
                   <td className="py-5 px-4 text-[#666] lg:text-[13px]">
-                    {item.nama}
+                    {item.asset?.name}
                   </td>
                   <td className="py-5 px-4 text-[#666] lg:text-[13px]">
                     {item.kategori}
                   </td>
                   <td className="py-5 px-4 text-[#666] lg:text-[13px]">
-                    {item.lokasi}
+                    {item.asset?.lokasi}
                   </td>
                   <td className="py-5 px-4">
                     <span
                       className={`px-5 md:px-7 py-2 rounded-[16px] text-[13px] font-normal ${getBadgeColor(
-                        item.prioritas
+                        item.prioritas || "Rendah"
                       )}`}
                     >
-                      {item.prioritas}
+                      {item.prioritas || "Rendah"}
                     </span>
                   </td>
                   <td className="py-5 px-4 text-[#666] lg:text-[13px]">
-                    {item.tanggal}
+                    {item.scheduled_date}
                   </td>
                   <td className="py-5 px-4">
                     <a
-                      href={`/pemeliharaan/detail`}
+                      href={`/pemeliharaan/${item.id}`}
                       className="text-[#0095E8] font-medium lg:text-[13px] hover:underline"
                     >
                       Detail
@@ -124,7 +189,6 @@ export default function TableJadwalPemeliharaan({
             )}
           </tbody>
         </table>
-
         <div className="mt-6 flex justify-between p-4">
           <p className="text-[13px] text-[#6B7280]">
             Menampilkan {filteredData.length} hasil
@@ -132,7 +196,7 @@ export default function TableJadwalPemeliharaan({
         </div>
       </div>
 
-      {/* 📱 CARD VIEW */}
+      {/* CARD VIEW */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden">
         {filteredData.length > 0 ? (
           filteredData.map((item, index) => (
@@ -143,14 +207,14 @@ export default function TableJadwalPemeliharaan({
               <div className="flex justify-between items-center mb-1">
                 <p className="text-sm text-gray-500">{item.id}</p>
                 <a
-                  href={`/pemeliharaan/detail`}
+                  href={`/pemeliharaan/detail/${item.id}`}
                   className="text-[#0095E8] text-sm font-medium hover:underline"
                 >
                   Detail
                 </a>
               </div>
               <h3 className="font-semibold border-b pb-2 border-gray-300 text-gray-800 text-[15px] mb-3">
-                {item.nama}
+                {item.asset?.name}
               </h3>
               <div className="text-sm text-gray-600 space-y-1">
                 <div className="flex justify-between">
@@ -159,21 +223,21 @@ export default function TableJadwalPemeliharaan({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Lokasi</span>
-                  <span className="text-gray-700">{item.lokasi}</span>
+                  <span className="text-gray-700">{item.asset?.lokasi}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-500">Prioritas</span>
                   <span
                     className={`px-3 py-[2px] text-xs rounded-full font-medium ${getBadgeColor(
-                      item.prioritas
+                      item.prioritas || "Rendah"
                     )}`}
                   >
-                    {item.prioritas}
+                    {item.prioritas || "Rendah"}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Jadwal</span>
-                  <span className="text-gray-700">{item.tanggal}</span>
+                  <span className="text-gray-700">{item.scheduled_date}</span>
                 </div>
               </div>
             </div>

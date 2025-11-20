@@ -362,6 +362,13 @@ export default function Tambah() {
             {/* Buttons */}
             <div className="flex justify-between mt-4">
               <button
+                type="button"
+                onClick={prevStep}
+                className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
+              >
+                Sebelumnya
+              </button>
+              <button
                 onClick={submitData}
                 disabled={isLoading}
                 className={`px-6 py-2 rounded-lg text-white ${

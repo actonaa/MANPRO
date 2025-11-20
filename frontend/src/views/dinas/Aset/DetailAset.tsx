@@ -292,6 +292,7 @@ export default function DetailAset() {
           <KeterkaitanRisiko
             risiko={risikoAset}
             approvalStatus={asset.approval_status}
+            assetId={asset.id}
           />
 
           <RiwayatAktivitas aktivitas={[]} />

@@ -86,12 +86,12 @@ export default function AppRoutes() {
           <Route path="/risiko" element={<DashboardRisiko />} />
           <Route path="/risiko/data" element={<DaftarRisiko />} />
           <Route path="/risiko/:id" element={<DetailRisiko />} />
-          <Route path="/risiko/tambah" element={<RisikoTambah />} />
+          <Route path="/risiko/tambah/:asset_id" element={<RisikoTambah />} />
           <Route path="/risiko/mitigasi" element={<TambahMitigasi />} />
           <Route path="/laporan/risiko" element={<LaporanRisiko />} />
           <Route path="/pemeliharaan" element={<JadwalPemeliharaan />} />
           <Route
-            path="/pemeliharaan/detail"
+            path="/pemeliharaan/:id"
             element={<DetailJadwalPemeliharaan />}
           />
           <Route path="/laporan/pemeliharaan" element={<Pemeliharaan />} />
@@ -110,7 +110,6 @@ export default function AppRoutes() {
           />
           <Route path="/aset-verifikator" element={<VerifikatorAset />} />
           <Route
-
             path="/laporan/aset-verifikator"
             element={<LaporanAsetVerifikator />}
           />
@@ -124,7 +123,6 @@ export default function AppRoutes() {
             element={<JadwalPemeliharaanVerifikator />}
           />
           <Route
-
             path="/pemeliharaan-verifikator"
             element={<LaporanPemeliharaanVerifikator />}
           />
@@ -174,27 +172,32 @@ export default function AppRoutes() {
             element={<NotificationsAuditor />}
           />
         </Route>
-        
+
         <Route element={<ProtectedRouteAdmin />}>
-        <Route path="*" element={<NotFound404 />} />
-        <Route path="/dashboard-admin" element={<DashboardAdmin/>} />
-        <Route path="/editpengguna-admin" element={<EditPengguna/>}/>
-        <Route path="/kelolapengguna-admin" element={<KelolaPengguna/>}/>
+          <Route path="*" element={<NotFound404 />} />
+          <Route path="/dashboard-admin" element={<DashboardAdmin />} />
+          <Route path="/editpengguna-admin" element={<EditPengguna />} />
+          <Route path="/kelolapengguna-admin" element={<KelolaPengguna />} />
 
-        <Route path="/aset-admin" element={<AsetAdmin/>}/>
-        <Route path="/aset-admin/:id" element={<DetailAsetAdmin/>}/>
-        <Route path="/aset-admin/tambah" element={<TambahAdmin />} />
-        <Route path="/laporan/aset-admin" element={<LaporanAset/>}/>
+          <Route path="/aset-admin" element={<AsetAdmin />} />
+          <Route path="/aset-admin/:id" element={<DetailAsetAdmin />} />
+          <Route path="/aset-admin/tambah" element={<TambahAdmin />} />
+          <Route path="/laporan/aset-admin" element={<LaporanAset />} />
 
-        <Route path="/risiko-admin" element={<DashboardRisikoAdmin/>}/>
-        <Route path="/laporan/risiko-admin" element={<LaporanRisiko/>}/>
-        <Route path="/risiko-admin/daftar" element={<DaftarRisikoAdmin/>}/>
-        <Route path="/risiko-admin/:id" element={<DetailRisiko/>}/>
-        <Route path="/risiko-admin/tambah" element={<TambahMitigasi />} />
+          <Route path="/risiko-admin" element={<DashboardRisikoAdmin />} />
+          <Route path="/laporan/risiko-admin" element={<LaporanRisiko />} />
+          <Route path="/risiko-admin/daftar" element={<DaftarRisikoAdmin />} />
+          <Route path="/risiko-admin/:id" element={<DetailRisiko />} />
+          <Route path="/risiko-admin/tambah" element={<TambahMitigasi />} />
 
-        <Route path="/pemeliharaan-admin" element={<JadwalPemeliharaanVerifikator />}/>
-        <Route path="/laporan/pemeliharaan-admin" element={<PemeliharaanAdmin />}/>
-        
+          <Route
+            path="/pemeliharaan-admin"
+            element={<JadwalPemeliharaanVerifikator />}
+          />
+          <Route
+            path="/laporan/pemeliharaan-admin"
+            element={<PemeliharaanAdmin />}
+          />
         </Route>
       </Routes>
     </Router>
