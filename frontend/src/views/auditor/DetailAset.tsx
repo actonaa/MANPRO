@@ -1,68 +1,124 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { Download } from "lucide-react";
+import ButtonText from "../../components/button/ButtonText";
 import InformasiUtama from "../../components/kelola-asset/dinas/InformasiUtama";
 import JadwalPemeliharaan from "../../components/kelola-asset/dinas/JadwalPemeliharaan";
-import KeterkaitanRisiko from "../../components/verifikator/KeterkaitanRisiko";
+import KeterkaitanRisiko from "../../components/no-button-card/KeterkaitanRisiko-Laporan";
 import Lampiran from "../../components/kelola-asset/dinas/Lampiran";
 import RiwayatAktivitas from "../../components/kelola-asset/dinas/RiwayatAktivitas";
 import ScanBarcode from "../../components/kelola-asset/dinas/ScanBarcode";
 import SiklusHidup from "../../components/kelola-asset/dinas/SiklusHidup";
+import ExportModal from "../../components/dropdown/Export";
 
-export default function DetailAset() {
+export default function DetailAsetAuditor() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const [asset, setAsset] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [showExportModal, setShowExportModal] = useState(false); // ✅ Modal state
 
-  // ✅ Data dummy
-  const asset = {
-    id: id || "AST-001",
-    name: "CCTV Lobby",
-    serial_number: "SN-098273",
-    updated_at: "2025-01-12",
-    merk_type: "Hikvision 2MP",
-    pic: "Dinas TI",
-    status: { name: "Aktif" as "Aktif" | "Perbaikan" | "Tidak Aktif" },
-    category: { name: "Infrastruktur" },
-    sub_category: { name: "Keamanan" },
-    acquisition_value: 3500000,
-    bmd_code: "BMD-12345",
-    lokasi: "Gedung Utama - Lantai 1",
-    acquisition_date: "2024-06-14",
-    condition: { name: "Baik" },
-    barcode: "/assets/barcode-sample.png",
-    hostname: "",
-    ip_address: "",
-    os: "",
-    version: "",
+  useEffect(() => {
+    const fetchAsset = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`/api/assets/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!res.ok)
+          throw new Error(`Gagal mengambil data aset (${res.status})`);
+
+        const data = await res.json();
+        setAsset(data);
+      } catch (err) {
+        console.error("❌ Gagal memuat data aset:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) fetchAsset();
+  }, [id]);
+
+  // ✅ Fungsi ketika export dipilih dari modal
+  const handleExport = (format: string) => {
+    alert(`Export data aset dalam format: ${format}`);
+    setShowExportModal(false);
   };
+
+  // 🦴 Skeleton saat loading
+  if (loading) {
+    return (
+      <div className="p-6 animate-pulse">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+          <div className="space-y-3">
+            <div className="h-6 bg-gray-200 rounded w-40" />
+            <div className="h-8 bg-gray-300 rounded w-64" />
+            <div className="h-4 bg-gray-200 rounded w-48" />
+          </div>
+          <div className="flex gap-3">
+            <div className="h-9 w-20 bg-gray-200 rounded-lg" />
+            <div className="h-9 w-20 bg-gray-300 rounded-lg" />
+            <div className="h-9 w-28 bg-gray-200 rounded-lg" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!asset) {
+    return (
+      <p className="text-red-500 p-6">
+        Gagal memuat data aset atau tidak ditemukan.
+      </p>
+    );
+  }
 
   return (
     <>
       <div className="pb-10">
         {/* 🔹 Header Atas */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-          {/* 🔙 Tombol Back + Info */}
-          <div className="flex items-start gap-3">
-            <ArrowLeft
-              className="w-5 h-5 text-gray-700 mt-1 cursor-pointer"
-              onClick={() => navigate(-1)}
-            />
-            <div>
-              <h1 className="text-lg md:text-2xl font-semibold text-gray-800">
-                Detail Aset
-              </h1>
-            </div>
+          <div>
+            <h1 className="text-lg md:text-xl font-semibold text-gray-800">
+              Kelola Aset / Detail Aset
+            </h1>
+            <p className="text-2xl md:text-3xl font-medium text-gray-700 mt-1">
+              {asset.name}
+            </p>
+            <p className="text-sm text-gray-500">
+              {asset.serial_number} • Terakhir diperbarui{" "}
+              {new Date(asset.updated_at).toLocaleDateString("id-ID")}
+            </p>
+          </div>
+
+          {/* 🔘 Tombol Aksi */}
+          <div className="flex flex-row items-center justify-center gap-3">
+            {/* 🆕 Tombol Ekspor buka modal */}
+            <a href="#" onClick={() => setShowExportModal(true)}>
+              <ButtonText
+                title="Ekspor"
+                iconLeft={<Download className="w-4 h-4 -mt-[1px]" />}
+                color="bg-white"
+                hoverColor="hover:bg-gray-100"
+                textColor="text-gray-700"
+                fontWeight="font-medium"
+              />
+            </a>
           </div>
         </div>
 
         {/* 🔹 Layout Utama Dua Kolom */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          {/* Kolom kiri */}
           <div className="flex flex-col gap-5">
             <InformasiUtama
               merk={asset.merk_type || "-"}
               penanggungJawab={asset.pic || "-"}
-              status={asset.status?.name || "Aktif"}
+              status={asset.status?.name || "-"}
               nomorSerial={asset.serial_number || "-"}
               kategori={asset.category?.name || "-"}
               subKategori={asset.sub_category?.name || "-"}
@@ -82,7 +138,6 @@ export default function DetailAset() {
               os={asset.os}
               version={asset.version}
             />
-
             <SiklusHidup
               siklus={[
                 { tahap: "Pengadaan", tanggal: asset.acquisition_date || "-" },
@@ -91,59 +146,26 @@ export default function DetailAset() {
             />
           </div>
 
-          {/* Kolom kanan */}
           <div className="flex flex-col gap-5">
-            <JadwalPemeliharaan
-              jadwal={[
-                {
-                  tanggal: "10-09-2025",
-                  kegiatan: "Pengecekan rutin kamera CCTV",
-                },
-                {
-                  tanggal: "15-10-2025",
-                  kegiatan: "Pembersihan dan kalibrasi alat",
-                },
-              ]}
-            />
-
-            <KeterkaitanRisiko
-              risiko={[
-                {
-                  kode: "RSK-001",
-                  deskripsi: "Kerusakan modul kamera",
-                  dampak: "Sedang",
-                },
-                {
-                  kode: "RSK-002",
-                  deskripsi: "Gangguan jaringan CCTV",
-                  dampak: "Tinggi",
-                },
-              ]}
-            />
-
-            <RiwayatAktivitas
-              aktivitas={[
-                {
-                  tanggal: "12-09-2025",
-                  deskripsi: "Pemeliharaan preventif dilakukan oleh teknisi A",
-                  status: "Selesai",
-                },
-                {
-                  tanggal: "20-09-2025",
-                  deskripsi: "Laporan kerusakan diterima dari user",
-                  status: "Dalam Proses",
-                },
-              ]}
-            />
+            <JadwalPemeliharaan jadwal={[]} />
+            <KeterkaitanRisiko risiko={[]} />
+            <RiwayatAktivitas aktivitas={[]} />
           </div>
         </div>
 
-        {/* 🔹 Lampiran & Barcode */}
+        {/* 🔹 Lampiran & Scan Barcode */}
         <div className="flex flex-col lg:flex-row gap-5 mt-6">
           <Lampiran lampiran={[]} />
           <ScanBarcode barcodeUrl={asset.barcode || ""} />
         </div>
       </div>
+
+      {/* 🧩 MODAL EKSPOR */}
+      <ExportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExport={handleExport}
+      />
     </>
   );
 }

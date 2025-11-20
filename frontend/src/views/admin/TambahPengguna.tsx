@@ -35,7 +35,7 @@ export default function EditPengguna() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header di luar card */}
-      <div className="flex items-start gap-3 px-6 md:px-10 mt-8">
+      <div className="flex items-start gap-3 px-6 md:px-2 mt-8">
         <button
           onClick={() => window.history.back()}
           className="text-gray-700 hover:text-gray-900 mt-1"
@@ -53,7 +53,7 @@ export default function EditPengguna() {
       </div>
 
       {/* Card form */}
-      <div className="bg-white border border-gray-100 shadow-sm rounded-2xl p-8 max-w-6xl mx-auto w-full mt-6">
+      <div className="bg-white border border-gray-100 shadow-sm rounded-2xl p-5 max-w-6xl mx-auto w-full mt-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Nama Pengguna */}
           <div>

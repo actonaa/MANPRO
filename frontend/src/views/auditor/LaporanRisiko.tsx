@@ -1,25 +1,18 @@
 import { useState } from "react";
 import RisikoTableSection from "../../components/table/TabelRisiko-Auditor";
-import ButtonFilter from "../../components/button/ButtonFilter";
 import FilterDate from "../../components/filter/FilterDate";
+import SearchBar from "../../components/filter/Search";
+import ExportModal from "../../components/dropdown/Export";
+import { Download } from "lucide-react";
 
 export default function LaporanRisiko() {
-  // ✅ State filter lengkap
   const [filters, setFilters] = useState({
-    kategori: "",
-    dinas: "",
     search: "",
-    level: "",
-    status: "",
     date: { start: "", end: "" },
   });
 
-  // 🔹 Update filter umum (dinas, level, status, kategori)
-  const handleFilterChange = (key: string, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-  };
+  const [isExportOpen, setIsExportOpen] = useState(false);
 
-  // 🔹 Tangani perubahan tanggal dari FilterDate
   const handleDateChange = (range: { start: string; end: string }) => {
     setFilters((prev) => ({ ...prev, date: range }));
   };
@@ -27,73 +20,57 @@ export default function LaporanRisiko() {
   return (
     <>
       <div className="space-y-6">
-        {/* 🏷️ Judul dan deskripsi halaman */}
+        {/* TITLE */}
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Laporan Risiko</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Pantau tingkat risiko, skor, dan status seluruh risiko aset dalam
-            satu tampilan.
+          <p className="text-sm text-gray-500">
+            Pantau tingkat risiko, skor, dan status seluruh risiko aset.
           </p>
         </div>
 
-        {/* 📊 Card filter */}
+        {/* FILTER CARD */}
         <div className="bg-white rounded-lg p-4 border border-gray-200">
-          <div className="flex flex-wrap gap-4 w-full">
-            {/* 🏛️ Dinas */}
-            <div className="flex flex-col flex-grow min-w-[220px]">
-              <label className="text-sm font-medium text-gray-700 mb-1">
-                Dinas
-              </label>
-              <ButtonFilter
-                label="Pilih Dinas"
-                options={[
-                  "Dinas Kesehatan",
-                  "Dinas Pendidikan",
-                  "Dinas Kebudayaan",
-                  "Dinas Perhubungan",
-                  "Dinas Lingkungan Hidup",
-                ]}
-                onSelect={(value) => handleFilterChange("dinas", value)}
+          <div className="flex flex-wrap items-center gap-4 w-full">
+            {/* SEARCH */}
+            <div className="flex-1">
+              <SearchBar
+                placeholder="Cari berdasarkan ID, Nama Aset, dll..."
+                onChange={(v) => setFilters((p) => ({ ...p, search: v }))}
               />
             </div>
 
-            {/* 📅 Periode */}
-            <div className="flex flex-col flex-grow min-w-[220px]">
-              <label className="text-sm font-medium text-gray-700 mb-1">
-                Periode
-              </label>
+            {/* DATE FILTER */}
+            <div className="w-full md:w-60">
               <FilterDate onSelect={handleDateChange} />
             </div>
 
-            {/* ⚙️ Level */}
-            <div className="flex flex-col flex-grow min-w-[220px]">
-              <label className="text-sm font-medium text-gray-700 mb-1">
-                Level
-              </label>
-              <ButtonFilter
-                label="Pilih level"
-                options={["Rendah", "Sedang", "Tinggi"]}
-                onSelect={(value) => handleFilterChange("level", value)}
-              />
-            </div>
-
-            {/* 📊 Status */}
-            <div className="flex flex-col flex-grow min-w-[220px]">
-              <label className="text-sm font-medium text-gray-700 mb-1">
-                Status
-              </label>
-              <ButtonFilter
-                label="Pilih status"
-                options={["Diterima", "Tertunda", "Ditolak"]}
-                onSelect={(value) => handleFilterChange("status", value)}
-              />
-            </div>
+            {/* EXPORT BUTTON (ICON + TEXT) */}
+            <button
+              onClick={() => setIsExportOpen(true)}
+              className="
+                         flex items-center gap-2 
+                         border border-gray-300 rounded-lg 
+                         px-4 py-2 
+                         hover:bg-gray-50
+                         whitespace-nowrap
+                       "
+            >
+              <Download className="w-4 h-4 text-gray-600" />
+              <span className="text-sm text-gray-700">Ekspor</span>
+            </button>
           </div>
         </div>
 
-        {/* 📋 Tabel risiko */}
+        {/* TABLE SECTION */}
         <RisikoTableSection filters={filters} />
       </div>
+
+      {/* EXPORT MODAL */}
+      <ExportModal
+        isOpen={isExportOpen}
+        onClose={() => setIsExportOpen(false)}
+        onExport={() => setIsExportOpen(false)}
+      />
     </>
   );
 }

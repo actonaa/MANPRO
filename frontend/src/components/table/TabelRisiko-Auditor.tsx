@@ -1,22 +1,17 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { MessageCircleMore } from "lucide-react";
+import AuditorModal from "../auditor/AuditorModal"; // ⬅ ADD
+import type { RisikoItem as RisikoType } from "../auditor/AuditorModal"; // ⬅ TYPE IMPORT
 
 type Filters = {
-  kategori: string;
-  status: string;
-  dinas: string;
-  date: { start: string; end: string };
   search: string;
+  date: { start: string; end: string };
 };
 
-type RisikoItem = {
-  id: string;
+// RisikoItem override agar sesuai dengan modal
+type RisikoItem = RisikoType & {
   date: string;
-  title: string;
-  criteria: string;
-  category: string;
-  status: string;
-  entry_level: number;
   asset: { name: string; lokasi: string };
   department: { name: string };
 };
@@ -24,65 +19,82 @@ type RisikoItem = {
 export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
   const [data, setData] = useState<RisikoItem[]>([]);
 
-  // 📊 Dummy data
+  // 🔥 STATE UNTUK MODAL
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedData, setSelectedData] = useState<RisikoItem | null>(null);
+
   useEffect(() => {
     setData([
       {
         id: "RISK-001",
         date: "2025-10-10",
-        title: "Gangguan Jaringan",
+        title: "Kebocoran data",
         criteria: "Tinggi",
-        category: "Aset TI",
+        category: "TI",
         status: "Diterima",
-        entry_level: 25,
-        asset: { name: "Server Utama", lokasi: "Data Center" },
-        department: { name: "Dinas Kominfo" },
+        entry_level: 20,
+        asset: { name: "Laptop Kerja", lokasi: "Kantor Pusat" },
+        department: { name: "DISKOMINFO" },
+        type: "TI",
+        priority: "A1",
       },
       {
         id: "RISK-002",
         date: "2025-10-20",
-        title: "Kehilangan Data",
+        title: "Gangguan Keamanan",
         criteria: "Sedang",
-        category: "Aset TI",
+        category: "TI",
         status: "Tertunda",
-        entry_level: 18,
-        asset: { name: "Database", lokasi: "Server Room" },
-        department: { name: "Dinas Kominfo" },
+        entry_level: 12,
+        asset: { name: "CCTV Lobby", lokasi: "Lobby" },
+        department: { name: "DISKOMINFO" },
+        type: "TI",
+        priority: "B1",
       },
       {
         id: "RISK-003",
-        date: "2025-09-25",
-        title: "Kerusakan Perangkat",
+        date: "2025-09-22",
+        title: "Permukaan Rusak",
         criteria: "Rendah",
-        category: "Aset Non TI",
+        category: "NON-TI",
         status: "Ditolak",
-        entry_level: 10,
-        asset: { name: "CCTV Lobby", lokasi: "Lobi Utama" },
-        department: { name: "Dinas Maintenance" },
+        entry_level: 6,
+        asset: { name: "Meja", lokasi: "Ruang Rapat" },
+        department: { name: "DISKOMINFO" },
+        type: "NON-TI",
+        priority: "C1",
       },
     ]);
   }, []);
 
-  // ✅ Filter logic
+  // ==========================================
+  //    🔥 OPEN MODAL WITH DATA
+  // ==========================================
+  const openCommentModal = (item: RisikoItem) => {
+    setSelectedData(item);
+    setOpenModal(true);
+  };
+
+  // ==========================================
+  //    🔥 SUBMIT COMMENT HANDLER
+  // ==========================================
+  const handleSubmitComment = (comment: string) => {
+    console.log("Komentar auditor:", comment);
+    console.log("Untuk risiko:", selectedData);
+
+    alert(`Komentar terkirim:\n${comment}`);
+    setOpenModal(false);
+    setSelectedData(null);
+  };
+
+  // FILTER
   const filteredData = data.filter((item) => {
-    const { kategori, status, dinas, date, search } = filters;
-
-    const matchKategori = kategori
-      ? item.category.toLowerCase() === kategori.toLowerCase()
-      : true;
-
-    const matchStatus = status
-      ? item.status.toLowerCase() === status.toLowerCase()
-      : true;
-
-    const matchDinas = dinas
-      ? item.department.name.toLowerCase().includes(dinas.toLowerCase())
-      : true;
+    const { search, date } = filters;
 
     const matchSearch = search
       ? item.id.toLowerCase().includes(search.toLowerCase()) ||
-        item.title.toLowerCase().includes(search.toLowerCase()) ||
-        item.asset.name.toLowerCase().includes(search.toLowerCase())
+        item.asset.name.toLowerCase().includes(search.toLowerCase()) ||
+        item.title.toLowerCase().includes(search.toLowerCase())
       : true;
 
     const matchDate =
@@ -91,41 +103,42 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
           new Date(item.date) <= new Date(date.end)
         : true;
 
-    return (
-      matchKategori && matchStatus && matchDinas && matchSearch && matchDate
-    );
+    return matchSearch && matchDate;
   });
 
   return (
-    <div className="md:pb-10 xl:bg-white xl:shadow-xl xl:p-5 xl:rounded-2xl">
-      {/* 💻 DESKTOP TABLE */}
-      <div className="hidden xl:block">
-        <table className="w-full min-w-[950px] text-[13px] text-center border-collapse">
-          <thead className="text-[#666666]">
+    <div>
+      {/* DESKTOP */}
+      <div className="hidden xl:block bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+        <table className="w-full min-w-[1050px] text-[13px] text-center border-collapse">
+          <thead className="text-[#666]">
             <tr>
-              <th className="py-5 px-4 font-semibold">TANGGAL</th>
-              <th className="py-5 px-4 font-semibold">ID RISIKO</th>
-              <th className="py-5 px-4 font-semibold">NAMA ASET</th>
-              <th className="py-5 px-4 font-semibold">NAMA RISIKO</th>
-              <th className="py-5 px-4 font-semibold">LEVEL</th>
-              <th className="py-5 px-4 font-semibold">STATUS</th>
-              <th className="py-5 px-4 font-semibold">KATEGORI</th>
-              <th className="py-5 px-4 font-semibold">SKOR</th>
-              <th className="py-5 px-4 font-semibold"></th>
+              <th className="py-5 px-4">DINAS</th>
+              <th className="py-5 px-4">ID RISIKO</th>
+              <th className="py-5 px-4">NAMA ASET</th>
+              <th className="py-5 px-4">NAMA RISIKO</th>
+              <th className="py-5 px-4">LEVEL</th>
+              <th className="py-5 px-4">SKOR</th>
+              <th className="py-5 px-4">KATEGORI</th>
+              <th className="py-5 px-4">STATUS</th>
+              <th className="py-5 px-4"></th>
+              <th className="py-5 px-4"></th>
             </tr>
           </thead>
+
           <tbody>
             {filteredData.map((item) => (
               <tr
                 key={item.id}
-                className="border-b border-b-[#ddd] hover:bg-gray-50 transition"
+                className="border-b border-[#e5e5e5] hover:bg-gray-50"
               >
-                <td className="py-5 px-4">{item.date}</td>
-                <td className="py-5 px-4">{item.id}</td>
-                <td className="py-5 px-4">{item.asset.name}</td>
-                <td className="py-5 px-4">{item.title}</td>
+                <td className="py-5">{item.department.name}</td>
+                <td className="py-5">{item.id}</td>
+                <td className="py-5">{item.asset.name}</td>
+                <td className="py-5">{item.title}</td>
+
                 <td
-                  className={`py-5 px-4 font-semibold ${
+                  className={`py-5 font-semibold ${
                     item.criteria === "Tinggi"
                       ? "text-red-500"
                       : item.criteria === "Sedang"
@@ -135,7 +148,11 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
                 >
                   {item.criteria}
                 </td>
-                <td className="py-5 px-4">
+
+                <td className="py-5">{item.entry_level}</td>
+                <td className="py-5">{item.category}</td>
+
+                <td className="py-5">
                   <span
                     className={`px-4 py-1 rounded-full text-xs font-medium ${
                       item.status === "Diterima"
@@ -148,16 +165,23 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
                     {item.status}
                   </span>
                 </td>
-                <td className="py-5 px-4">{item.category}</td>
-                <td className="py-5 px-4">{item.entry_level}</td>
-                <td className="py-5 px-4">
+
+                <td className="py-5">
                   <Link
-                    to={`/risiko-auditor/detail`}
+                    to="/laporan/risiko-auditor/id"
                     className="text-blue-600 font-medium hover:underline"
-                    title="Lihat Detail"
                   >
                     Detail
                   </Link>
+                </td>
+
+                <td className="py-5">
+                  <button
+                    className="p-2 rounded-full hover:bg-gray-100"
+                    onClick={() => openCommentModal(item)} // 🔥 OPEN MODAL
+                  >
+                    <MessageCircleMore className="w-5 h-5 text-gray-700" />
+                  </button>
                 </td>
               </tr>
             ))}
@@ -165,79 +189,91 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
         </table>
       </div>
 
-      {/* 📱 MOBILE CARD */}
+      {/* MOBILE */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden">
         {filteredData.map((item) => (
           <div
             key={item.id}
-            className="border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition bg-white"
+            className="border border-gray-300 rounded-xl p-4 shadow-sm bg-white relative"
           >
-            <div className="flex justify-between items-center mb-2">
-              <p className="text-sm text-gray-500">{item.date}</p>
-              <span
-                className={`px-3 py-1 text-xs rounded-full font-medium ${
-                  item.status === "Diterima"
-                    ? "bg-green-100 text-green-600"
-                    : item.status === "Tertunda"
-                    ? "bg-yellow-100 text-yellow-600"
-                    : "bg-red-100 text-red-600"
-                }`}
-              >
-                {item.status}
-              </span>
-            </div>
+            <button
+              className="absolute top-3 right-3 p-2 hover:bg-gray-100 rounded-full"
+              onClick={() => openCommentModal(item)} // 🔥 OPEN MODAL MOBILE
+            >
+              <MessageCircleMore className="w-5 h-5 text-gray-800" />
+            </button>
 
-            <h3 className="text-base font-semibold text-gray-800 mb-1">
+            <p className="text-sm text-gray-500 mb-1">{item.date}</p>
+
+            <h3 className="text-base font-semibold text-gray-900">
               {item.title}
             </h3>
+
             <p className="text-sm text-gray-500 mb-3">{item.asset.name}</p>
 
-            <div className="grid grid-cols-2 text-sm text-gray-600 gap-y-1">
-              <p>
-                <span className="font-medium text-gray-700">ID:</span> {item.id}
+            <div className="text-sm text-gray-700 space-y-1">
+              <p className="flex justify-between">
+                <span>ID Risiko</span>
+                <span>{item.id}</span>
               </p>
-              <p>
-                <span className="font-medium text-gray-700">Level:</span>{" "}
+
+              <p className="flex justify-between">
+                <span>Level</span>
                 <span
-                  className={`${
+                  className={
                     item.criteria === "Tinggi"
-                      ? "text-red-500"
+                      ? "text-red-500 font-semibold"
                       : item.criteria === "Sedang"
-                      ? "text-orange-500"
-                      : "text-green-500"
-                  } font-semibold`}
+                      ? "text-orange-500 font-semibold"
+                      : "text-green-500 font-semibold"
+                  }
                 >
                   {item.criteria}
                 </span>
               </p>
-              <p>
-                <span className="font-medium text-gray-700">Kategori:</span>{" "}
-                {item.category}
-              </p>
-              <p>
-                <span className="font-medium text-gray-700">Skor:</span>{" "}
-                {item.entry_level}
-              </p>
-            </div>
 
-            <div className="flex justify-end mt-4">
-              <Link
-                to={`/risiko-auditor/detail`}
-                className="text-blue-600 text-sm font-medium hover:underline"
-                title="Lihat Detail"
-              >
-                Detail
-              </Link>
+              <p className="flex justify-between">
+                <span>Kategori</span>
+                <span>{item.category}</span>
+              </p>
+
+              <p className="flex justify-between">
+                <span>Skor</span>
+                <span>{item.entry_level}</span>
+              </p>
+
+              <div className="flex justify-between items-center pt-2">
+                <Link
+                  to="/laporan/risiko-auditor/id"
+                  className="text-blue-600 font-medium hover:underline text-sm"
+                >
+                  Detail
+                </Link>
+
+                <span
+                  className={`px-3 py-1 text-xs rounded-full font-medium ${
+                    item.status === "Diterima"
+                      ? "bg-green-100 text-green-600"
+                      : item.status === "Tertunda"
+                      ? "bg-yellow-100 text-yellow-600"
+                      : "bg-red-100 text-red-600"
+                  }`}
+                >
+                  {item.status}
+                </span>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      {filteredData.length === 0 && (
-        <p className="text-center text-gray-500 py-6">
-          Tidak ada data yang cocok dengan filter.
-        </p>
-      )}
+      {/* 🔥 AUDITOR MODAL */}
+      <AuditorModal
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+        onSubmit={handleSubmitComment}
+        data={selectedData}
+      />
     </div>
   );
 }

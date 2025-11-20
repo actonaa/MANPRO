@@ -27,7 +27,8 @@ export default function NavbarAdmin() {
       icon: "/sidebar-icon/Aset.png",
       children: [
         { label: "Data Aset", to: "/aset-admin" },
-        { label: "Laporan Aset", to: "/laporan/aset-admin" },
+        { label: "Data SDM", to: "/sdm/aset-admin" },
+        { label: "Verifikasi Aset", to: "/Verikasi/aset-admin" },
       ],
     },
     {
@@ -35,34 +36,38 @@ export default function NavbarAdmin() {
       icon: "/sidebar-icon/Risk.png",
       children: [
         { label: "Data Risiko", to: "/risiko-admin" },
+      ],
+    },
+    {
+      label: "Laporan",
+      icon: "/sidebar-icon/Maintenance.png",
+      children: [
+        { label: "Laporan Aset", to: "/laporan/aset-admin" },
+        { label: "Laporan SDM", to: "/laporan/sdm-admin" },
         { label: "Laporan Risiko", to: "/laporan/risiko-admin" },
-      ],
-    },
-    {
-      label: "Pemeliharaan",
-      icon: "/sidebar-icon/Maintenance.png",
-      children: [
-        { label: "Jadwal Pemeliharaan", to: "/pemeliharaan-admin" },
         { label: "Laporan Pemeliharaan", to: "/laporan/pemeliharaan-admin" },
-      ],
-    },
-    {
-      label: "Laporan Audit",
-      icon: "/sidebar-icon/Maintenance.png",
-      children: [
-        { label: "Laporan Audit", to: "/laporan-admin" },
         { label: "Laporan Audit", to: "/laporan/audit-admin" },
       ],
     },
     {
       label: "Notifikasi",
       icon: "/sidebar-icon/Notif.png",
-      to: "/notifikasi",
+      to: "/notifikasi/notifikasi-admin",
     },
     {
       label: "Kelola Pengguna",
       icon: "/sidebar-icon/Notif.png",
       to: "/kelolapengguna-admin",
+    },
+    {
+      label: "Hasil Audit",
+      icon: "/sidebar-icon/Notif.png",
+      to: "/hasilaudit-admin",
+    },
+    {
+      label: "Audit Trail",
+      icon: "/sidebar-icon/Notif.png",
+      to: "/audit-admin",
     },
   ];
 

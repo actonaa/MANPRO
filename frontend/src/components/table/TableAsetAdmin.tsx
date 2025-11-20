@@ -1,365 +1,245 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare global {
-  interface Window {
-    XLSX: any;
-  }
-}
-
-import { useEffect, useState } from "react";
-import { Download, Upload, Plus } from "lucide-react";
-import ExportModal from "../form/Admin/Export";
-import ImportModal from "../form/Admin/Import";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Upload, Download } from "lucide-react";
+import ButtonImg from "../../components/button/ButtonImg";
 
-interface Asset {
-  id: string;
-  name: string;
-  serial_number: string;
+// Import modal
+import ExportModal from "../../components/form/Admin/Export"; 
+import ImportModal from "../../components/form/Admin/Import";
+
+
+export interface AsetItem {
+  id: number;
+  kode_aset: string;
+  nama_aset: string;
+  kategori: string;
   lokasi: string;
-  acquisition_date: string;
-  category?: { name: string };
-  status?: { name: string };
+  status_aset: "Aktif" | "Perbaikan" | "Tidak Aktif";
+  status_pengajuan: "Diterima" | "Menunggu" | "Ditolak";
+  tanggal_perolehan: string;
+  dinas: string;
 }
 
-export default function TableAsetAdmin() {
-  const [data, setData] = useState<Asset[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showExportModal, setShowExportModal] = useState(false);
-  const [showImportModal, setShowImportModal] = useState(false); // ✅ Tambahan penting
+interface TableAsetAdminProps {
+  data: AsetItem[];
+}
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setError("Token tidak ditemukan. Silakan login kembali.");
-          setLoading(false);
-          return;
-        }
-
-        const res = await fetch("/api/assets", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!res.ok) {
-          if (res.status === 401) {
-            throw new Error(
-              "Unauthorized — Token tidak valid atau kadaluarsa."
-            );
-          }
-          throw new Error(`Gagal mengambil data (${res.status})`);
-        }
-
-        const json = await res.json();
-        setData(json);
-      } catch (err: any) {
-        console.error("Gagal memuat data aset:", err);
-        setError(err.message || "Terjadi kesalahan.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getData();
-  }, []);
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Aktif":
-        return "bg-[#BBF7D0] text-[#166534] md:px-10 px-7";
-      case "Perbaikan":
-        return "bg-yellow-200 text-yellow-800";
-      case "Non-Aktif":
-      case "Tidak Aktif":
-        return "bg-red-200 text-red-800 md:px-5 md:text-nowrap";
-      default:
-        return "bg-gray-200 text-gray-800";
-    }
-  };
-
-  const handleExport = (format: string) => {
-    alert(`Export data dalam format: ${format}`);
-    setShowExportModal(false);
-  };
-
-  const handleImport = (file: File) => {
-    if (!file.name.endsWith(".csv") && !file.name.endsWith(".xlsx")) {
-      alert("Hanya file CSV atau Excel (.xlsx) yang didukung.");
-      return;
-    }
-
-    const reader = new FileReader();
-
-    if (file.name.endsWith(".csv")) {
-      reader.onload = (e) => {
-        const text = e.target?.result as string;
-        const rows = text.split("\n").map((row) => row.split(","));
-        const importedData = rows.slice(1).map((row, index) => ({
-          id: row[0] || String(index + 1),
-          name: row[1]?.replace(/"/g, "") || "-",
-          serial_number: row[2] || "-",
-          category: { name: row[3]?.replace(/"/g, "") || "-" },
-          lokasi: row[4]?.replace(/"/g, "") || "-",
-          status: { name: row[5]?.replace(/"/g, "") || "-" },
-          acquisition_date: row[6]?.replace(/"/g, "") || "-",
-        }));
-        setData(importedData);
-      };
-      reader.readAsText(file);
-    } else {
-      // Jika Excel (.xlsx)
-      reader.onload = (e) => {
-        const XLSX = window.XLSX;
-        if (!XLSX) {
-          alert("Library XLSX belum dimuat. Pastikan koneksi internet aktif.");
-          return;
-        }
-
-        const data = new Uint8Array(e.target?.result as ArrayBuffer);
-        const workbook = XLSX.read(data, { type: "array" });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(sheet);
-
-        const importedData = jsonData.map((row: any, index: number) => ({
-          id: row["ID"] || String(index + 1),
-          name: row["Nama"] || "-",
-          serial_number: row["Serial Number"] || "-",
-          category: { name: row["Kategori"] || "-" },
-          lokasi: row["Lokasi"] || "-",
-          status: { name: row["Status"] || "-" },
-          acquisition_date: row["Tanggal Perolehan"] || "-",
-        }));
-
-        setData(importedData);
-      };
-
-      reader.readAsArrayBuffer(file);
-    }
-  };
-
+export default function TableAsetAdmin({ data }: TableAsetAdminProps) {
   const navigate = useNavigate();
 
-  const HeaderSection = () => (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-6 pt-5 pb-2 bg-white rounded-t-2xl border-b border-gray-200 mt-6">
-      <h2 className="text-[16px] font-semibold text-gray-800">Data Aset</h2>
+  // STATE POPUP
+  const [openExport, setOpenExport] = useState(false);
+  const [openImport, setOpenImport] = useState(false);
 
-      <div className="flex flex-wrap items-center gap-2 mt-2 sm:mt-0">
-        <button
-          onClick={() => setShowExportModal(true)}
-          className="flex items-center gap-2 text-gray-700 border border-gray-300 bg-white hover:bg-gray-50 rounded-lg px-4 py-2 text-sm font-medium transition"
-        >
-          <Download className="w-4 h-4" />
-          Ekspor
-        </button>
+  const handleNavigate = () => {
+    navigate("/admin/aset/tambah");
+  };
 
-        <button
-          onClick={() => setShowImportModal(true)}
-          className="flex items-center gap-2 text-gray-700 border border-gray-300 bg-white hover:bg-gray-50 rounded-lg px-4 py-2 text-sm font-medium transition"
-        >
-          <Upload className="w-4 h-4" />
-          Impor
-        </button>
+  // Hasil export
+  const handleExport = (format: string) => {
+    console.log("Export format:", format);
+  };
 
-        <button
-          onClick={() => navigate("/aset-admin/tambah")}
-          className="flex items-center gap-2 text-white bg-[#0095E8] hover:bg-[#007ACC] rounded-lg px-4 py-2 text-sm font-medium transition"
-        >
-          <Plus className="w-4 h-4" />
-          Tambah Aset
-        </button>
-      </div>
-    </div>
-  );
+  // Hasil import
+  const handleImport = (file: File) => {
+    console.log("Imported file:", file);
+  };
 
   return (
-    <div className="lg:rounded-b-xl lg:bg-white mt-6 border border-gray-200 shadow-sm rounded-2xl">
-      <HeaderSection />
+    <div className="bg-white p-6 rounded-xl shadow-sm w-full">
+      {/* HEADER */}
+      <div className="flex justify-between border-b border-gray-300 py-4 items-center mb-4">
+        <h2 className="text-lg font-semibold">Data Aset</h2>
 
-      {loading ? (
-        <div className="bg-white rounded-b-2xl border-t border-gray-200 shadow-sm">
-          <div className="hidden lg:block overflow-x-auto bg-white">
-            <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
-              <thead className="text-[#666666]">
-                <tr>
-                  <th className="py-5 px-4 font-semibold">ID ASET</th>
-                  <th className="py-5 px-4 font-semibold">NAMA ASET</th>
-                  <th className="py-5 px-4 font-semibold">KATEGORI</th>
-                  <th className="py-5 px-4 font-semibold">LOKASI</th>
-                  <th className="py-5 px-4 font-semibold">STATUS</th>
-                  <th className="py-5 px-4 font-semibold">TANGGAL PEROLEHAN</th>
-                  <th className="py-5 px-4 font-semibold"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {[...Array(6)].map((_, i) => (
-                  <tr
-                    key={i}
-                    className="border-b border-b-[#ddd] animate-pulse"
-                  >
-                    {[...Array(7)].map((_, j) => (
-                      <td key={j} className="py-5 px-4">
-                        <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto" />
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="flex items-center gap-2">
+          {/* === BUTTON EXPORT === */}
+          <button
+            className="flex items-center gap-2 border border-gray-300 px-3 py-1.5 rounded-lg text-gray-600 hover:bg-gray-50"
+            onClick={() => setOpenExport(true)}
+          >
+            <Upload size={16} /> Ekspor
+          </button>
+
+          {/* === BUTTON IMPORT === */}
+          <button
+            className="flex items-center gap-2 border border-gray-300 px-3 py-1.5 rounded-lg text-gray-600 hover:bg-gray-50"
+            onClick={() => setOpenImport(true)}
+          >
+            <Download size={16} /> Impor
+          </button>
+
+          <ButtonImg
+            title="Tambah Aset"
+            img="/kelola-asset/tambah-asset.png"
+            color="#00a9ff"
+            hoverColor="#a0e9ff"
+            borderColor="#00a9ff"
+            textColor="white"
+            px="6"
+            fontWeight="font-medium"
+            onClick={handleNavigate}
+          />
         </div>
-      ) : error ? (
-        <p className="text-center py-5 text-red-500">{error}</p>
-      ) : (
-        <>
-          {/* MOBILE VIEW */}
-          <div className="grid grid-cols-1 md:grid-cols-2 md:gap-5 lg:hidden space-y-4 mt-5 md:mt-0">
-            {data.length > 0 ? (
-              data.map((item) => (
-                <div
-                  key={item.id}
-                  className="rounded-xl border border-gray-200 shadow-sm p-4 bg-white"
-                >
-                  <div className="flex justify-between items-center">
-                    <p className="text-sm text-gray-500 font-medium">
-                      {item.serial_number || "-"}
-                    </p>
-                    <a
-                      href={`/aset/${item.id}`}
-                      className="text-[#0095E8] font-medium text-sm hover:underline"
-                    >
-                      Detail
-                    </a>
-                  </div>
+      </div>
 
-                  <h2 className="text-base font-semibold text-gray-900 mt-1">
-                    {item.name}
-                  </h2>
+      {/* TABLE DESKTOP */}
+      <div className="hidden md:block overflow-x-auto">
+        <table className="w-full min-w-[950px] text-[13px] text-center border-collapse">
+          <thead className="text-[#666]">
+            <tr className="border-b-gray-300 border-b bg-gray-50">
+              <th className="py-5 px-4 font-semibold">ID ASET</th>
+              <th className="py-5 px-4 font-semibold">NAMA ASET</th>
+              <th className="py-5 px-4 font-semibold">KATEGORI</th>
+              <th className="py-5 px-4 font-semibold">LOKASI</th>
+              <th className="py-5 px-4 font-semibold">STATUS ASET</th>
+              <th className="py-5 px-4 font-semibold">STATUS PENGAJUAN</th>
+              <th className="py-5 px-4 font-semibold">TANGGAL PEROLEHAN</th>
+              <th className="py-5 px-4 font-semibold">DINAS</th>
+              <th className="py-5 px-4 font-semibold">AKSI</th>
+            </tr>
+          </thead>
 
-                  <hr className="my-3 border-gray-200" />
+          <tbody>
+            {data.map((item: AsetItem) => (
+              <tr
+                key={item.id}
+                className="border-b-gray-300 border-b hover:bg-gray-50 transition"
+              >
+                <td className="p-4 text-sm font-medium text-gray-700">
+                  {item.kode_aset}
+                </td>
 
-                  <div className="space-y-1 text-sm text-gray-700">
-                    <p className="flex justify-between">
-                      <p className="font-medium">Kategori </p>
-                      <p>{item.category?.name || "-"}</p>
-                    </p>
-                    <p className="flex justify-between">
-                      <p className="font-medium">Lokasi </p>
-                      <p>{item.lokasi || "-"}</p>
-                    </p>
-                    <p className="flex justify-between">
-                      <p className="font-medium">Status </p>
-                      <span
-                        className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                          item.status?.name || ""
-                        )}`}
-                      >
-                        <p>{item.status?.name || "-"}</p>
-                      </span>
-                    </p>
-                    <p className="flex justify-between">
-                      <p className="font-medium">Tanggal</p>
-                      <p>{item.acquisition_date || "-"}</p>
-                    </p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-center text-gray-500 italic">
-                Tidak ada data aset tersedia.
-              </p>
-            )}
-          </div>
+                <td className="p-4 text-sm text-gray-800">{item.nama_aset}</td>
+                <td className="p-4 text-sm text-gray-800">{item.kategori}</td>
+                <td className="p-4 text-sm text-gray-800">{item.lokasi}</td>
 
-          {/* DESKTOP VIEW */}
-          <div className="hidden lg:block overflow-x-auto mt-5 md:mt-0">
-            <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
-              <thead className="text-[#666666]">
-                <tr>
-                  <th className="py-5 px-4 font-semibold">ID ASET</th>
-                  <th className="py-5 px-4 font-semibold">NAMA ASET</th>
-                  <th className="py-5 px-4 font-semibold">KATEGORI</th>
-                  <th className="py-5 px-4 font-semibold">LOKASI</th>
-                  <th className="py-5 px-4 font-semibold">STATUS</th>
-                  <th className="py-5 px-4 font-semibold">TANGGAL PEROLEHAN</th>
-                  <th className="py-5 px-4 font-semibold"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.length > 0 ? (
-                  data.map((item) => (
-                    <tr
-                      key={item.id}
-                      className="border-b border-b-[#ddd] hover:bg-gray-50"
-                    >
-                      <td className="py-5 px-4 text-[#333] lg:text-[17px]">
-                        {item.serial_number || "-"}
-                      </td>
-                      <td className="py-5 px-4 text-[#666] lg:text-[17px]">
-                        {item.name}
-                      </td>
-                      <td className="py-5 px-4 text-[#666] lg:text-[17px]">
-                        {item.category?.name || "-"}
-                      </td>
-                      <td className="py-5 px-4 text-[#666] lg:text-[17px]">
-                        {item.lokasi || "-"}
-                      </td>
-                      <td className="py-5 px-4 text-[#666] lg:text-[17px]">
-                        <span
-                          className={`px-5 md:px-7 py-2 rounded-[16px] text-base font-normal ${getStatusColor(
-                            item.status?.name || ""
-                          )}`}
-                        >
-                          {item.status?.name || "-"}
-                        </span>
-                      </td>
-                      <td className="py-5 px-4 text-[#666] lg:text-[17px]">
-                        {item.acquisition_date || "-"}
-                      </td>
-                      <td className="py-5 px-4">
-                        <a
-                          href={`/aset/${item.id}`}
-                          className="text-[#0095E8] font-medium lg:text-[17px] cursor-pointer hover:underline"
-                        >
-                          detail
-                        </a>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={7}
-                      className="py-5 text-center text-gray-500 italic"
-                    >
-                      Tidak ada data aset tersedia.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                {/* STATUS ASET */}
+                <td className="p-4">
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-semi ${
+                      item.status_aset === "Aktif"
+                        ? "bg-green-100 text-green-700"
+                        : item.status_aset === "Perbaikan"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {item.status_aset}
+                  </span>
+                </td>
 
-            <div className="mt-6 flex justify-between p-4">
-              <p className="text-[13px] text-[#6B7280]">
-                Menampilkan {data.length} hasil
-              </p>
+                {/* STATUS PENGAJUAN */}
+                <td className="p-4">
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-semi ${
+                      item.status_pengajuan === "Diterima"
+                        ? "bg-green-100 text-green-700"
+                        : item.status_pengajuan === "Menunggu"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {item.status_pengajuan}
+                  </span>
+                </td>
+
+                <td className="p-4 text-sm text-gray-800">
+                  {item.tanggal_perolehan}
+                </td>
+
+                <td className="p-4 text-sm text-gray-800">{item.dinas}</td>
+
+                {/* DETAIL */}
+                <td className="p-4">
+                  <button
+                    onClick={() =>
+                      navigate(`/aset-admin/:id${item.id}`)
+                    }
+                    className="text-blue-600 hover:underline text-sm font-semi"
+                  >
+                    Detail
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* MOBILE CARD */}
+      <div className="md:hidden space-y-4 mt-4">
+        {data.map((item: AsetItem) => (
+          <div
+            key={item.id}
+            className="p-4 border rounded-xl shadow-sm bg-white"
+          >
+            <div className="font-semi text-gray-800 mb-1">
+              {item.nama_aset}
             </div>
-          </div>
-        </>
-      )}
+            <div className="text-sm text-gray-600 mb-2">{item.kode_aset}</div>
 
-      {/* MODALS */}
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <div className="text-gray-500">Kategori</div>
+              <div>{item.kategori}</div>
+
+              <div className="text-gray-500">Lokasi</div>
+              <div>{item.lokasi}</div>
+
+              <div className="text-gray-500">Status Aset</div>
+              <div>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-semi ${
+                    item.status_aset === "Aktif"
+                      ? "bg-green-100 text-green-700"
+                      : item.status_aset === "Perbaikan"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {item.status_aset}
+                </span>
+              </div>
+
+              <div className="text-gray-500">Status Pengajuan</div>
+              <div>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-semi ${
+                    item.status_pengajuan === "Diterima"
+                      ? "bg-green-100 text-green-700"
+                      : item.status_pengajuan === "Menunggu"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {item.status_pengajuan}
+                </span>
+              </div>
+            </div>
+
+            <button
+              onClick={() =>
+                navigate(`/aset-admin/:id${item.id}`)
+              }
+              className="mt-3 text-blue-600 font-semi text-sm"
+            >
+              Detail →
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* ===========================
+          MODAL EXPORT & IMPORT
+      ============================ */}
       <ExportModal
-        isOpen={showExportModal}
-        onClose={() => setShowExportModal(false)}
+        isOpen={openExport}
+        onClose={() => setOpenExport(false)}
         onExport={handleExport}
       />
+
       <ImportModal
-        isOpen={showImportModal}
-        onClose={() => setShowImportModal(false)}
+        isOpen={openImport}
+        onClose={() => setOpenImport(false)}
         onImport={handleImport}
       />
     </div>
