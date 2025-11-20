@@ -81,6 +81,7 @@ import DetailSDM from "../views/admin/SDM/DetailSDM";
 import DetailLaporanSDM from "../views/admin/SDM/DetailLaporanSDM";
 import TambahPengguna from "../views/admin/TambahPengguna";
 import HasilAuditAdmin from "../views/admin/Audit/HasilAuditAdmin";
+import VerifikasiPenghapusan from "../views/verifikator/VerifikasiPenghapusan";
 
 export default function AppRoutes() {
   return (
@@ -125,6 +126,7 @@ export default function AppRoutes() {
             element={<DashboardVerifikator />}
           />
           <Route path="/aset-verifikator" element={<VerifikatorAset />} />
+          <Route path="/aset-penghapusan" element={<VerifikasiPenghapusan />} />
           <Route
             path="/laporan/aset-verifikator"
             element={<LaporanAsetVerifikator />}
@@ -143,7 +145,7 @@ export default function AppRoutes() {
             element={<LaporanPemeliharaanVerifikator />}
           />
           <Route
-            path="/aset-verifikator/detail"
+            path="/aset-verifikator/:id"
             element={<DetailAsetVerifikator />}
           />
           <Route

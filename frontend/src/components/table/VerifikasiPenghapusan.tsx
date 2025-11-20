@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { Eye, CheckCircle, XCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import SetujuAsset from "../../components/form/verifikator/setujuAsset";
-import TolakAsset from "../../components/form/verifikator/tolakAsset";
+import SetujuPenghapusan from "../../components/form/verifikator/setujuPenghapusan";
+import TolakPenghapusan from "../../components/form/verifikator/TolakPenghapusan";
 
 type TableProps = {
   selectedkondisi?: string;
@@ -35,7 +35,7 @@ type ApiAsset = {
   status?: { name: string };
 };
 
-export default function VerifikasiAset({
+export default function VerifikasiPenghapusan({
   selectedkondisi = "",
   selectedDate = null,
 }: TableProps) {
@@ -63,7 +63,7 @@ export default function VerifikasiAset({
 
         // Filter hanya yang pending
         const pendingAssets = res.data.filter(
-          (item) => item.approval_status === "pending"
+          (item) => item.approval_status === "pending_delete"
         );
 
         const mappedData: AsetItem[] = pendingAssets.map((item) => ({
@@ -312,11 +312,17 @@ export default function VerifikasiAset({
       )}
 
       {openSetuju && selectedAset && (
-        <SetujuAsset aset={selectedAset} onClose={() => setOpenSetuju(false)} />
+        <SetujuPenghapusan
+          aset={selectedAset}
+          onClose={() => setOpenSetuju(false)}
+        />
       )}
 
       {openTolak && selectedAset && (
-        <TolakAsset aset={selectedAset} onClose={() => setOpenTolak(false)} />
+        <TolakPenghapusan
+          aset={selectedAset}
+          onClose={() => setOpenTolak(false)}
+        />
       )}
     </div>
   );

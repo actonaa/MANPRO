@@ -1,9 +1,9 @@
 import { useState } from "react";
 import FilterDate from "../../components/filter/FilterDate";
 import ButtonFilter from "../../components/button/ButtonFilter";
-import VerifikasiAset from "../../components/table/VerifikasiAset";
+import VerifikasiPenghapusann from "../../components/table/VerifikasiPenghapusan";
 
-export default function JadwalPemeliharaanVerifikator() {
+export default function VerifikasiPenghapusan() {
   const [selectedkondisi, setSelectedLevel] = useState("");
   const [selectedDate, setSelectedDate] = useState<{
     start: string;
@@ -19,7 +19,7 @@ export default function JadwalPemeliharaanVerifikator() {
     <>
       {/* Judul Halaman */}
       <h1 className="font-semibold text-sm mb-2 md:text-2xl lg:text-[28px]">
-        Verifikasi Inventarisasi Aset
+        Verifikasi Penghapusan Aset
       </h1>
       <p className="text-gray-500 text-sm mb-6">
         Kelola dan konfirmasi aset yang menunggu persetujuan anda.
@@ -51,7 +51,7 @@ export default function JadwalPemeliharaanVerifikator() {
       </div>
 
       {/* Tabel Verifikasi Aset */}
-      <VerifikasiAset
+      <VerifikasiPenghapusann
         selectedkondisi={selectedkondisi}
         selectedDate={selectedDate}
       />

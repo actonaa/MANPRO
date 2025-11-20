@@ -13,12 +13,15 @@ interface AsetItem {
   tanggal: string;
 }
 
-interface SetujuAssetProps {
+interface SetujuPenghapusanProps {
   aset: AsetItem;
   onClose: () => void;
 }
 
-const SetujuAsset: React.FC<SetujuAssetProps> = ({ aset, onClose }) => {
+const SetujuPenghapusan: React.FC<SetujuPenghapusanProps> = ({
+  aset,
+  onClose,
+}) => {
   const [openPopup, setOpenPopup] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -109,4 +112,4 @@ const SetujuAsset: React.FC<SetujuAssetProps> = ({ aset, onClose }) => {
   );
 };
 
-export default SetujuAsset;
+export default SetujuPenghapusan;

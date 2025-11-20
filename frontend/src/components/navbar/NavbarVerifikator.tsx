@@ -23,10 +23,11 @@ export default function NavbarVerifikator() {
       to: "/dashboard-verifikator",
     },
     {
-      label: "Kelola Aset",
+      label: "Verifikasi Aset",
       icon: "/sidebar-icon/Aset.png",
       children: [
-        { label: "Data Aset", to: "/aset-verifikator" },
+        { label: "Verifikasi Inventarisasi", to: "/aset-verifikator" },
+        { label: "Verifikasi Penghapusan", to: "/aset-penghapusan" },
         { label: "Laporan Aset", to: "/laporan/aset-verifikator" },
       ],
     },

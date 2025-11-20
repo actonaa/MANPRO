@@ -13,12 +13,15 @@ interface AsetItem {
   tanggal: string;
 }
 
-interface TolakAssetProps {
+interface TolakPenghapusanProps {
   aset: AsetItem;
   onClose: () => void;
 }
 
-const TolakAsset: React.FC<TolakAssetProps> = ({ aset, onClose }) => {
+const TolakPenghapusan: React.FC<TolakPenghapusanProps> = ({
+  aset,
+  onClose,
+}) => {
   const [alasan, setAlasan] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -119,4 +122,4 @@ const TolakAsset: React.FC<TolakAssetProps> = ({ aset, onClose }) => {
   );
 };
 
-export default TolakAsset;
+export default TolakPenghapusan;
