@@ -63,7 +63,7 @@ export default function KelolaRisiko() {
           <CardList title="Tindakan Mitigasi" value="11" />
         </div>
       </div>
-      <div className="flex flex-col md:flex-row mt-6 md:gap-6">
+      <div className="flex flex-col md:flex-row mt-6 md:gap-6 lg:gap-4">
         {/* 📊 Risiko Residual */}
         <div className="flex-1 rounded-2xl mb-6 md:mb-0">
           <RisikoResidual

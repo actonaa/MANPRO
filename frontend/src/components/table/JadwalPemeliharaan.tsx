@@ -22,7 +22,7 @@ interface MaintenanceItem {
     lokasi: string;
   };
   kategori?: string;
-  prioritas?: string;
+  prioritas?: string | null;
   risk_id?: string; // pastikan backend menyediakan risk_id
 }
 
@@ -51,20 +51,29 @@ export default function TableJadwalPemeliharaan({
         // 2️⃣ Enrich data: kategori dari asset, prioritas dari risk
         const enrichedData = await Promise.all(
           maintenances.map(async (item) => {
-            // Ambil data asset
-            const assetRes = await fetch(
-              `https://asset-risk-management.vercel.app/api/assets/${item.asset_id}`,
-              { headers: { Authorization: `Bearer ${token}` } }
-            );
-            const assetData = await assetRes.json();
-            const kategori = assetData.category?.name || "Tidak ada";
-            const asset = {
-              name: assetData.name,
-              lokasi: assetData.lokasi,
-            };
+            // default values in case fetch fails
+            let kategori = "Tidak ada";
+            let asset = { name: "-", lokasi: "-" };
+            let prioritas: string | null = null;
+
+            // Ambil data asset (with try/catch to avoid failing all)
+            try {
+              const assetRes = await fetch(
+                `https://asset-risk-management.vercel.app/api/assets/${item.asset_id}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+              );
+              // asset endpoint mungkin mengembalikan object langsung
+              const assetData = await assetRes.json();
+              kategori = assetData?.category?.name ?? "Tidak ada";
+              asset = {
+                name: assetData?.name ?? "-",
+                lokasi: assetData?.lokasi ?? "-",
+              };
+            } catch (err) {
+              console.warn("Gagal fetch asset:", err);
+            }
 
             // Ambil data prioritas dari risk_id (pastikan backend menyediakan risk_id)
-            let prioritas = "Rendah"; // default
             if (item.risk_id) {
               try {
                 const riskRes = await fetch(
@@ -72,10 +81,14 @@ export default function TableJadwalPemeliharaan({
                   { headers: { Authorization: `Bearer ${token}` } }
                 );
                 const riskData = await riskRes.json();
-                prioritas = riskData.priority || riskData.criteria || "Rendah";
+                // some APIs use .priority, others .criteria; if both null -> tetap null
+                prioritas = riskData?.priority ?? riskData?.criteria ?? null;
               } catch (err) {
                 console.warn("Gagal fetch prioritas:", err);
               }
+            } else {
+              // jika backend tidak mengirim risk_id, coba cari di list risks (opsional)
+              // biarkan prioritas tetap null
             }
 
             return { ...item, asset, kategori, prioritas };
@@ -104,7 +117,10 @@ export default function TableJadwalPemeliharaan({
           false))
   );
 
-  const getBadgeColor = (prioritas: string) => {
+  // accept undefined | null | string
+  const getBadgeColor = (prioritas?: string | null) => {
+    if (!prioritas) return "bg-gray-100 text-gray-600";
+
     switch (prioritas) {
       case "Tinggi":
         return "bg-red-100 text-red-600";
@@ -118,7 +134,95 @@ export default function TableJadwalPemeliharaan({
   };
 
   if (loading)
-    return <p className="text-center py-10 text-gray-500">Memuat data...</p>;
+    return (
+      <div className="mt-5 bg-white md:mt-0 animate-pulse">
+        {/* TABLE SKELETON */}
+        <div className="overflow-x-auto hidden lg:block">
+          <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
+            <thead>
+              <tr>
+                {Array.from({ length: 7 }).map((_, i) => (
+                  <th key={i} className="py-5 px-4">
+                    <div className="h-4 bg-gray-200 rounded w-24 mx-auto"></div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+
+            <tbody>
+              {Array.from({ length: 6 }).map((_, idx) => (
+                <tr key={idx} className="border-b border-b-gray-200">
+                  {/* id */}
+                  <td className="py-5">
+                    <div className="h-4 bg-gray-200 rounded w-20 mx-auto"></div>
+                  </td>
+                  {/* nama aset */}
+                  <td className="py-5">
+                    <div className="h-4 bg-gray-200 rounded w-28 mx-auto"></div>
+                  </td>
+                  {/* kategori */}
+                  <td className="py-5">
+                    <div className="h-4 bg-gray-200 rounded w-20 mx-auto"></div>
+                  </td>
+                  {/* lokasi */}
+                  <td className="py-5">
+                    <div className="h-4 bg-gray-200 rounded w-24 mx-auto"></div>
+                  </td>
+                  {/* prioritas badge */}
+                  <td className="py-5">
+                    <div className="h-6 bg-gray-200 rounded-full w-24 mx-auto"></div>
+                  </td>
+                  {/* jadwal */}
+                  <td className="py-5">
+                    <div className="h-4 bg-gray-200 rounded w-24 mx-auto"></div>
+                  </td>
+                  {/* detail link */}
+                  <td className="py-5">
+                    <div className="h-4 bg-gray-200 rounded w-16 mx-auto"></div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* CARD SKELETON (mobile) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden mt-4">
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <div
+              key={idx}
+              className="border border-gray-200 rounded-xl shadow-sm p-4 bg-white"
+            >
+              <div className="flex justify-between mb-2">
+                <div className="h-4 w-20 bg-gray-200 rounded"></div>
+                <div className="h-4 w-14 bg-gray-200 rounded"></div>
+              </div>
+
+              <div className="h-5 w-40 bg-gray-200 rounded mb-3"></div>
+
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <div className="h-4 w-20 bg-gray-200 rounded"></div>
+                  <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                </div>
+                <div className="flex justify-between">
+                  <div className="h-4 w-20 bg-gray-200 rounded"></div>
+                  <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="h-4 w-20 bg-gray-200 rounded"></div>
+                  <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+                </div>
+                <div className="flex justify-between">
+                  <div className="h-4 w-16 bg-gray-200 rounded"></div>
+                  <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
 
   return (
     <div className="mt-5 bg-white md:mt-0">
@@ -158,10 +262,10 @@ export default function TableJadwalPemeliharaan({
                   <td className="py-5 px-4">
                     <span
                       className={`px-5 md:px-7 py-2 rounded-[16px] text-[13px] font-normal ${getBadgeColor(
-                        item.prioritas || "Rendah"
+                        item.prioritas
                       )}`}
                     >
-                      {item.prioritas || "Rendah"}
+                      {item.prioritas ?? "Tidak ada"}
                     </span>
                   </td>
                   <td className="py-5 px-4 text-[#666] lg:text-[13px]">
@@ -229,10 +333,10 @@ export default function TableJadwalPemeliharaan({
                   <span className="text-gray-500">Prioritas</span>
                   <span
                     className={`px-3 py-[2px] text-xs rounded-full font-medium ${getBadgeColor(
-                      item.prioritas || "Rendah"
+                      item.prioritas
                     )}`}
                   >
-                    {item.prioritas || "Rendah"}
+                    {item.prioritas ?? "Tidak ada"}
                   </span>
                 </div>
                 <div className="flex justify-between">

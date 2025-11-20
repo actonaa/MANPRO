@@ -25,24 +25,24 @@ export default function NavbarDinas() {
     {
       label: "Kelola Aset",
       icon: "/sidebar-icon/Aset.png",
-      children: [
-        { label: "Data Aset", to: "/aset" },
-        { label: "Laporan Aset", to: "/laporan/aset" },
-      ],
+      children: [{ label: "Data Aset", to: "/aset" }],
     },
     {
       label: "Kelola Risiko",
       icon: "/sidebar-icon/Risk.png",
-      children: [
-        { label: "Data Risiko", to: "/risiko" },
-        { label: "Laporan Risiko", to: "/laporan/risiko" },
-      ],
+      children: [{ label: "Data Risiko", to: "/risiko" }],
     },
     {
       label: "Pemeliharaan",
       icon: "/sidebar-icon/Maintenance.png",
+      children: [{ label: "Jadwal Pemeliharaan", to: "/pemeliharaan" }],
+    },
+    {
+      label: "Laporan",
+      icon: "/sidebar-icon/Report.png",
       children: [
-        { label: "Jadwal Pemeliharaan", to: "/pemeliharaan" },
+        { label: "Laporan Aset", to: "/laporan/aset" },
+        { label: "Laporan Risiko", to: "/laporan/risiko" },
         { label: "Laporan Pemeliharaan", to: "/laporan/pemeliharaan" },
       ],
     },

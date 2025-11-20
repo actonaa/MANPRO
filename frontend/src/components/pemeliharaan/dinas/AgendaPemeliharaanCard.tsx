@@ -2,7 +2,7 @@ import { Upload } from "lucide-react";
 
 export default function AgendaPemeliharaanCard() {
   return (
-    <div className="bg-white rounded-xl border border-gray-100">
+    <div className="bg-white rounded-xl border border-gray-100 p-5">
       <h2 className="text-lg font-semibold pt-5 mb-5 text-gray-800">
         Agenda Pemeliharaan
       </h2>
@@ -18,7 +18,7 @@ export default function AgendaPemeliharaanCard() {
             <select className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800">
               <option value="" disabled selected>
                 Pilih jenis pemeliharaan
-              </option> 
+              </option>
               <option value="rutin">Rutin</option>
               <option value="insidental">Insidental</option>
             </select>
@@ -37,7 +37,9 @@ export default function AgendaPemeliharaanCard() {
 
           {/* Biaya */}
           <div className="flex flex-col">
-            <label className="block mb-2 text-gray-600 font-medium">Biaya</label>
+            <label className="block mb-2 text-gray-600 font-medium">
+              Biaya
+            </label>
             <input
               type="text"
               placeholder="Rp 0"

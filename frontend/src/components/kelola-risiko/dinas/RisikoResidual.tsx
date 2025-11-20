@@ -33,7 +33,7 @@ const RisikoResidual: React.FC<RisikoResidualProps> = ({
   const strokeLength = (nilaiTertinggi / (rendah + sedang + tinggi)) * 125;
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-5 flex flex-col justify-between w-full h-full gap-6 md:w-100 lg:gap-0">
+    <div className="bg-white rounded-xl shadow-lg p-5 flex flex-col justify-between w-full h-full gap-6 md:w-100 lg:gap-0 2xl:w-full">
       {/* 🔹 Judul */}
       <div className="flex flex-col lg:text-left">
         <h2 className="text-lg font-semibold text-[#131313] mb-4 lg:text-center lg:text-[22px] lg:mt-15">

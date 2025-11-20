@@ -48,11 +48,7 @@ export default function InfoPemeliharaan({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100">
-      <h2 className="text-base font-semibold text-gray-900 mb-4">
-        Informasi Pemeliharaan
-      </h2>
-
+    <div className="bg-white rounded-xl border border-gray-100 p-5">
       {/* Grid: mobile = 3 kolom */}
       <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-y-4 gap-x-6 text-sm">
         {/* ID Jadwal */}
