@@ -48,8 +48,10 @@ export default function DetailAset() {
         });
         const dataRisk = await resRisk.json();
         const filteredRisks = dataRisk.filter(
-          (r: any) => r.asset_id === dataAsset.id
+          (r: any) =>
+            r.asset_id === dataAsset.id && r.approval_status === "approved"
         );
+
         setRisikoAset(filteredRisks);
 
         // 🔹 Fetch MAINTENANCE

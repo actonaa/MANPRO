@@ -69,7 +69,7 @@ export default function VerifikasiAset({
         const mappedData: AsetItem[] = pendingAssets.map((item) => ({
           id: item.id,
           nama: item.name || "-",
-          kategori: item.sub_category?.name || item.category?.name || "-",
+          kategori: item.category?.name || "-",
           lokasi: item.lokasi || "-",
           kondisi: item.condition?.name?.toUpperCase() || "-",
           tanggal: item.acquisition_date || item.deploy_date || "-",

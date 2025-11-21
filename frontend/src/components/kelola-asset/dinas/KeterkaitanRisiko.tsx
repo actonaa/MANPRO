@@ -11,7 +11,7 @@ interface ApiRiskItem {
 interface KeterkaitanRisikoProps {
   risiko: ApiRiskItem[];
   approvalStatus: string;
-  assetId: string; // ⬅️ Tambahkan ini
+  assetId: string;
 }
 
 const getRiskColor = (criteria: string | null) => {
@@ -50,8 +50,8 @@ const KeterkaitanRisiko: React.FC<KeterkaitanRisikoProps> = ({
       )}
 
       <ul className="space-y-3">
-        {risiko.map((r, index) => {
-          const kode = `RSK-${String(index + 1).padStart(3, "0")}`;
+        {risiko.map((r) => {
+          const kode = r.id; // ← langsung pakai ID API
           return (
             <li
               key={r.id}

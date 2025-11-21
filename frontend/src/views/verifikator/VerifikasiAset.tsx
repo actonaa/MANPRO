@@ -1,9 +1,9 @@
 import { useState } from "react";
 import FilterDate from "../../components/filter/FilterDate";
 import ButtonFilter from "../../components/button/ButtonFilter";
-import VerifikasiAset from "../../components/table/VerifikasiAset";
+import VerifikasiAsett from "../../components/table/VerifikasiAset";
 
-export default function JadwalPemeliharaanVerifikator() {
+export default function VerifikasiAset() {
   const [selectedkondisi, setSelectedLevel] = useState("");
   const [selectedDate, setSelectedDate] = useState<{
     start: string;
@@ -51,7 +51,7 @@ export default function JadwalPemeliharaanVerifikator() {
       </div>
 
       {/* Tabel Verifikasi Aset */}
-      <VerifikasiAset
+      <VerifikasiAsett
         selectedkondisi={selectedkondisi}
         selectedDate={selectedDate}
       />

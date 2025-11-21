@@ -28,22 +28,24 @@ export default function NavbarVerifikator() {
       children: [
         { label: "Verifikasi Inventarisasi", to: "/aset-verifikator" },
         { label: "Verifikasi Penghapusan", to: "/aset-penghapusan" },
-        { label: "Laporan Aset", to: "/laporan/aset-verifikator" },
       ],
     },
     {
-      label: "Kelola Risiko",
+      label: "Verifikasi Risiko",
       icon: "/sidebar-icon/Risk.png",
-      children: [
-        { label: "Data Risiko", to: "/risiko-verifikator" },
-        { label: "Laporan Risiko", to: "/laporan/risiko-verifikator" },
-      ],
+      children: [{ label: "Verifikasi Risiko", to: "/risiko-verifikator" }],
     },
     {
       label: "Pemeliharaan",
       icon: "/sidebar-icon/Maintenance.png",
+      children: [{ label: "Jadwal Pemeliharaan", to: "/jadwal-verifikator" }],
+    },
+    {
+      label: "Laporan",
+      icon: "/sidebar-icon/Laporan.png",
       children: [
-        { label: "Jadwal Pemeliharaan", to: "/jadwal-verifikator" },
+        { label: "Laporan Aset", to: "/laporan/aset-verifikator" },
+        { label: "Laporan Risiko", to: "/laporan/risiko-verifikator" },
         { label: "Laporan Pemeliharaan", to: "/pemeliharaan-verifikator" },
       ],
     },
@@ -137,7 +139,7 @@ export default function NavbarVerifikator() {
 
               if (item.children) {
                 return (
-                  <div key={item.label}>
+                  <div key={item.label} className="whitespace-nowrap">
                     <button
                       onClick={() => toggleDropdown(item.label)}
                       className={`group w-full flex items-center justify-between gap-3 p-4 rounded-xl transition duration-200 text-left ${
