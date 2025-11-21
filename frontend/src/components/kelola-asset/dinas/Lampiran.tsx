@@ -10,16 +10,24 @@ interface LampiranProps {
 }
 
 const Lampiran: React.FC<LampiranProps> = ({ lampiran }) => {
-  const wajibLampiran = ["Invoice.pdf", "FotoAset.jpg", "Garansi.pdf"];
+  // daftar lampiran wajib
+  const wajibLampiran = [
+    { nama: "Invoice.pdf", ext: "pdf" },
+    { nama: "FotoAset.jpg", ext: "jpg" },
+    { nama: "Garansi.pdf", ext: "pdf" },
+  ];
 
-  const finalLampiran = wajibLampiran.map((nama) => {
-    const existing = lampiran.find((l) => l.nama === nama);
-    return (
-      existing || {
-        nama,
-        url: "#",
-      }
-    );
+  // lakukan kecocokan berdasarkan EXTENSI
+  const finalLampiran = wajibLampiran.map((item) => {
+    const found = lampiran.find((l) => {
+      const ext = l.nama.split(".").pop()?.toLowerCase();
+      return (
+        ext === item.ext ||
+        (item.ext === "jpg" && ["png", "jpeg", "jpg"].includes(ext || ""))
+      );
+    });
+
+    return found || { nama: item.nama, url: "#" };
   });
 
   const getFileIcon = (nama: string) => {

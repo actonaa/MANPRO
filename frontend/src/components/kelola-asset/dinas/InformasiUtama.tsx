@@ -192,10 +192,6 @@ const InformasiUtama: React.FC<InformasiUtamaProps> = ({
           </div>
 
           {/* === BARIS 2 === */}
-          <div>
-            <p className="font-semibold text-gray-900">Nomor Serial</p>
-            <p className="text-gray-600">{nomorSerial}</p>
-          </div>
 
           <div>
             <p className="font-semibold text-gray-900">Kategori</p>

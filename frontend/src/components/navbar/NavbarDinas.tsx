@@ -25,7 +25,10 @@ export default function NavbarDinas() {
     {
       label: "Kelola Aset",
       icon: "/sidebar-icon/Aset.png",
-      children: [{ label: "Data Aset", to: "/aset" }],
+      children: [
+        { label: "Data Aset", to: "/aset" },
+        { label: "Data SDM", to: "/sdm" },
+      ],
     },
     {
       label: "Kelola Risiko",

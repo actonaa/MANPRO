@@ -20,6 +20,7 @@ export default function DetailAset() {
   const [jadwalPemeliharaan, setJadwalPemeliharaan] = useState<
     { tanggal: string; kegiatan: string }[]
   >([]);
+  const [lampiran, setLampiran] = useState<any[]>([]);
 
   // bagian useEffect
   useEffect(() => {
@@ -38,6 +39,18 @@ export default function DetailAset() {
           throw new Error(`Gagal mengambil data aset (${resAsset.status})`);
         const dataAsset = await resAsset.json();
         setAsset(dataAsset);
+
+        // 🔹 Format Lampiran
+        const lampiranFormatted = dataAsset.attachments
+          ? [
+              {
+                nama: dataAsset.attachments.split("/").pop() || "Lampiran",
+                url: dataAsset.attachments,
+              },
+            ]
+          : [];
+
+        setLampiran(lampiranFormatted);
 
         // 🔹 Fetch RISKS
         const resRisk = await fetch(`/api/risks`, {
@@ -304,7 +317,7 @@ export default function DetailAset() {
       {/* LAMPIRAN & BARCODE */}
       <div className="flex flex-col lg:flex-row gap-5 mt-6">
         <div className="flex-1">
-          <Lampiran lampiran={[]} />
+          <Lampiran lampiran={lampiran} />
         </div>
         <div className="flex-1">
           <ScanBarcode barcodeUrl={asset.barcode_qr_url || ""} />

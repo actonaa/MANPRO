@@ -101,57 +101,50 @@ export default function Tambah() {
 
     setIsLoading(true);
 
-    // Base data
-    const baseData = {
-      name: formData.namaAset,
-      merk_type: formData.merkTipe,
-      bmd_code: formData.kodeBMD,
-      acquisition_date: formData.tanggalPerolehan || null,
-      parent_id: formData.indukAset || null,
-      lokasi: formData.lokasiAset,
-      pic: formData.penanggungJawab,
-      category_id: formData.kategoriAset,
-      sub_category_id: formData.subKategori,
-      condition_id: formData.kondisi || null,
-      acquisition_value: Number(formData.nilaiAset),
-      vendor: formData.vendor,
-      useful_life: formData.useful_life, // <-- JSON sesuai request
-      attachments: uploadedFiles || null, // <-- file upload disimpan di state uploadedFiles
-    };
-
-    const tiData = isTI
-      ? {
-          ip_address: formDataTI.ipAddress,
-          os: formDataTI.os,
-          version: formDataTI.version,
-          deploy_date: formDataTI.tanggalDeployment || null,
-          serial_number: formDataTI.serialNumber,
-          hostname: formDataTI.hostname,
-          url: formDataTI.url, // <-- tetap di JSON
-        }
-      : {};
-
-    const nonTiData = !isTI
-      ? {
-          material: formDataNonTI.material,
-          specification: formDataNonTI.ukuran,
-        }
-      : {};
-
-    const finalData = {
-      ...baseData,
-      ...tiData,
-      ...nonTiData,
-    };
-
     try {
+      const formDataSend = new FormData();
+
+      // === FIELD STEP 1 ===
+      formDataSend.append("name", formData.namaAset);
+      formDataSend.append("merk_type", formData.merkTipe);
+      formDataSend.append("bmd_code", formData.kodeBMD);
+      formDataSend.append("acquisition_date", formData.tanggalPerolehan || "");
+      formDataSend.append("parent_id", formData.indukAset || "");
+      formDataSend.append("lokasi", formData.lokasiAset);
+      formDataSend.append("pic", formData.penanggungJawab);
+      formDataSend.append("category_id", formData.kategoriAset);
+      formDataSend.append("sub_category_id", formData.subKategori);
+      formDataSend.append("condition_id", formData.kondisi || "");
+      formDataSend.append("acquisition_value", String(formData.nilaiAset));
+      formDataSend.append("vendor", formData.vendor);
+      formDataSend.append("useful_life", formData.useful_life);
+
+      // === FILE (TANPA BASE64) ===
+      if (uploadedFiles && uploadedFiles.length > 0) {
+        formDataSend.append("file", uploadedFiles[0]);
+      }
+
+      // === DATA TI / NON TI ===
+      if (isTI) {
+        formDataSend.append("ip_address", formDataTI.ipAddress);
+        formDataSend.append("os", formDataTI.os);
+        formDataSend.append("version", formDataTI.version);
+        formDataSend.append("deploy_date", formDataTI.tanggalDeployment || "");
+        formDataSend.append("serial_number", formDataTI.serialNumber);
+        formDataSend.append("hostname", formDataTI.hostname);
+        formDataSend.append("url", formDataTI.url);
+      } else {
+        formDataSend.append("material", formDataNonTI.material);
+        formDataSend.append("specification", formDataNonTI.ukuran);
+      }
+
+      // === KIRIM KE BACKEND ===
       const response = await fetch("/api/assets", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(finalData),
+        body: formDataSend,
       });
 
       const result = await response.json();
@@ -164,12 +157,12 @@ export default function Tambah() {
 
       setSavedAsset({
         id: result.id,
-        name: result.name || formData.namaAset,
+        name: result.name,
       });
 
       handleShowPopup();
     } catch (error) {
-      console.error("Error:", error);
+      console.error(error);
       alert("Terjadi kesalahan saat mengirim data.");
     } finally {
       setIsLoading(false);

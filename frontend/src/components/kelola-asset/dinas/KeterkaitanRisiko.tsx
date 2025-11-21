@@ -44,7 +44,7 @@ const KeterkaitanRisiko: React.FC<KeterkaitanRisikoProps> = ({
       <h2 className="font-semibold text-lg mb-4">Keterkaitan Risiko</h2>
 
       {approvalStatus !== "pending" && risiko.length === 0 && (
-        <p className="text-sm text-red-700 bg-red-50 p-3 rounded border border-red-300">
+        <p className="text-sm text-red-700 bg-red-50 p-3 rounded border border-red-300 mb-5">
           Tidak ada risiko terkait aset ini.
         </p>
       )}
