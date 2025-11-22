@@ -1,16 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import { CircleHelp } from "lucide-react";
 
 interface KonfirmasiPersetujuanRisikoProps {
   namaRisiko: string;
   asetTerkait: string;
   onCancel?: () => void;
-  onConfirm?: () => void;
+  onConfirm?: () => Promise<void>;
+  loading?: boolean;
 }
 
 const KonfirmasiPersetujuanRisiko: React.FC<
   KonfirmasiPersetujuanRisikoProps
 > = ({ namaRisiko, asetTerkait, onCancel, onConfirm }) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleConfirm = async () => {
+    if (!onConfirm) return;
+    setLoading(true); // mulai loading
+    try {
+      await onConfirm(); // panggil fungsi parent
+    } finally {
+      setLoading(false); // selesai loading
+    }
+  };
+
   return (
     <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 w-[90%] sm:max-w-md mx-auto text-center">
       {/* Icon */}
@@ -53,15 +66,17 @@ const KonfirmasiPersetujuanRisiko: React.FC<
       <div className="flex flex-col sm:flex-row justify-center gap-3">
         <button
           onClick={onCancel}
-          className="w-full sm:w-auto px-4 py-2 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 transition text-sm sm:text-base"
+          disabled={loading}
+          className="w-full sm:w-auto px-4 py-2 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 transition text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Batal
         </button>
         <button
-          onClick={onConfirm}
-          className="w-full sm:w-auto px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition text-sm sm:text-base"
+          onClick={handleConfirm}
+          disabled={loading}
+          className="w-full sm:w-auto px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Setuju & Aktifkan
+          {loading ? "Memproses..." : "Setuju & Aktifkan"}
         </button>
       </div>
     </div>

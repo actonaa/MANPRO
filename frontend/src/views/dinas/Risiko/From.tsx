@@ -212,8 +212,10 @@ export default function RisikoWizard() {
             "https://asset-risk-management.vercel.app/api/risk-categories"
           ),
         ]);
-        setImpactAreas(impactRes.data || []);
-        setRiskCategories(categoryRes.data || []);
+        setImpactAreas(Array.isArray(impactRes.data) ? impactRes.data : []);
+        setRiskCategories(
+          Array.isArray(categoryRes.data) ? categoryRes.data : []
+        );
       } catch (err) {
         console.error("Gagal fetch dropdown:", err);
       }
@@ -334,74 +336,86 @@ export default function RisikoWizard() {
           a.name?.toLowerCase() === (formData.areaDampak || "").toLowerCase()
       );
 
-      const payload = {
-        asset_id,
-        type: formData.tipe || "Aset",
-        title: formData.namaRisiko,
-        description: formData.deskripsiRisiko,
-        cause: (formData.penyebabRisiko || [])
-          .filter((p) => p.trim() !== "")
-          .join(", "),
-        impact: (formData.dampakRisiko || [])
-          .filter((d) => d.trim() !== "")
-          .join(", "),
-        scenario_id: null,
-        probability: Number(formData.probabilitas) || 1,
-        impact_score: Number(formData.dampak) || 1,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        criteria: formData.kriteriaDampak,
-        entry_level: Number(formData.levelAwal) || null,
-        priority: formData.prioritasRisiko || null,
-        status: "planned",
-        type_of_risk: formData.jenisRisiko || null,
-        risk_category_id: foundCategory?.id || null,
-        impact_area_id: foundImpact?.id || null,
-      };
+      // CEK APAKAH STEP 3 ADA ISINYA → treatment mode
+      const hasTreatment =
+        formData.aksiMitigasi?.trim() !== "" ||
+        formData.pemilik?.trim() !== "" ||
+        formData.strategi?.trim() !== "";
 
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token tidak ditemukan!");
 
-      // POST ke /api/risks
-      const res1 = await axios.post(
-        "https://asset-risk-management.vercel.app/api/risks",
-        payload,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      if (!hasTreatment) {
+        // ============================================
+        //   MODE 1 → INSERT RISK TANPA TREATMENT
+        // ============================================
+        const payloadRiskOnly = {
+          asset_id,
+          type: formData.tipe || "Aset",
+          title: formData.namaRisiko,
+          description: formData.deskripsiRisiko,
+          cause: formData.penyebabRisiko.join(", "),
+          impact: formData.dampakRisiko.join(", "),
+          scenario_id: null,
+          probability: Number(formData.probabilitas),
+          impact_score: Number(formData.dampak),
+          criteria: formData.kriteriaDampak,
+          entry_level: Number(formData.levelAwal),
+          priority: formData.prioritasRisiko,
+          type_of_risk: formData.jenisRisiko,
+          risk_category_id: foundCategory?.id || null,
+          impact_area_id: foundImpact?.id || null,
+        };
 
-      console.log("Risiko dasar berhasil ditambahkan:", res1.data);
+        await axios.post(
+          "https://asset-risk-management.vercel.app/api/risks",
+          payloadRiskOnly,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
-      // Jika ada step 3 (treatments)
-      if (formData.aksiMitigasi || formData.pemilik) {
-        const treatmentsPayload = {
-          ...payload,
+        console.log("INSERT Risk Only (tanpa treatment)");
+      } else {
+        // ============================================
+        //   MODE 2 → INSERT RISK + TREATMENT
+        // ============================================
+        const payloadWithTreatment = {
+          risk: {
+            asset_id,
+            type: formData.tipe,
+            title: formData.namaRisiko,
+            description: formData.deskripsiRisiko,
+            cause: formData.penyebabRisiko.join(", "),
+            impact: formData.dampakRisiko.join(", "),
+            probability: Number(formData.probabilitas),
+            impact_score: Number(formData.dampak),
+            criteria: formData.kriteriaDampak,
+            priority: formData.prioritasRisiko,
+            risk_category_id: foundCategory?.id || null,
+            impact_area_id: foundImpact?.id || null,
+          },
           treatments: [
             {
+              strategy: formData.strategi,
               action: formData.aksiMitigasi,
-              owner: formData.pemilik,
-              target_time: new Date(formData.targetWaktu).toISOString(),
-              estimated_cost: Number(formData.perkiraanBiaya),
+              action_owner: formData.pemilik,
+              target_date: new Date(formData.targetWaktu)
+                .toISOString()
+                .split("T")[0],
+              cost: Number(formData.perkiraanBiaya),
               effectiveness: formData.efektivitas,
-              residual_level: Number(formData.levelResidual),
-              residual_probability: Number(formData.probabilitasResidual),
-              residual_impact: Number(formData.dampakResidual),
+              new_probability: Number(formData.probabilitasResidual),
+              new_impact_score: Number(formData.dampakResidual),
             },
           ],
         };
 
-        console.log("=== PAYLOAD TO /api/risks/with-treatments ===");
-        console.log(JSON.stringify(treatmentsPayload, null, 2));
-
-        const res2 = await axios.post(
+        await axios.post(
           "https://asset-risk-management.vercel.app/api/risks/with-treatments",
-          treatmentsPayload,
+          payloadWithTreatment,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        console.log(
-          "Perencanaan risiko (treatments) berhasil ditambahkan:",
-          res2.data
-        );
+        console.log("INSERT Risk + Treatment");
       }
 
       setShowPopup(true);

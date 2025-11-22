@@ -11,19 +11,19 @@ export default function Step4({ formData }: Step4Props) {
       <input
         value={(values || []).filter((v) => v.trim() !== "").join(", ")}
         disabled
-        className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
+        className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100"
       />
     </div>
   );
 
-  const renderField = (label: string, value: string | number | undefined) => (
+  const renderField = (label: string, value: any) => (
     <div>
       <label className="font-medium">{label}</label>
       <input
         type="text"
         value={value ?? ""}
         disabled
-        className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-700 cursor-not-allowed"
+        className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100"
       />
     </div>
   );
@@ -48,15 +48,17 @@ export default function Step4({ formData }: Step4Props) {
         {renderField("Prioritas Risiko", formData.prioritasRisiko)}
         {renderField("Level Awal", formData.levelAwal)}
         {renderField("Jenis Risiko", formData.jenisRisiko)}
-        {renderField("Strategi", formData.strategi)}
-        {renderField("Aksi Mitigasi", formData.aksiMitigasi)}
-        {renderField("Pemilik", formData.pemilik)}
-        {renderField("Target Waktu", formData.targetWaktu)}
-        {renderField("Perkiraan Biaya", formData.perkiraanBiaya)}
-        {renderField("Probabilitas Residual", formData.probabilitasResidual)}
-        {renderField("Dampak Residual", formData.dampakResidual)}
-        {renderField("Level Residual", formData.levelResidual)}
-        {renderField("Efektivitas", formData.efektivitas)}
+
+        {/* Treatment */}
+        {renderField("Strategy", formData.strategi)}
+        {renderField("Action", formData.aksiMitigasi)}
+        {renderField("Action Owner", formData.pemilik)}
+        {renderField("Target Date", formData.targetWaktu)}
+        {renderField("Cost", formData.perkiraanBiaya)}
+        {renderField("New Probability", formData.probabilitasResidual)}
+        {renderField("New Impact Score", formData.dampakResidual)}
+        {renderField("Residual Level", formData.levelResidual)}
+        {renderField("Effectiveness", formData.efektivitas)}
       </div>
     </div>
   );

@@ -41,6 +41,7 @@ export default function TableRisiko({
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [approveLoading, setApproveLoading] = useState(false);
 
   useEffect(() => {
     const fetchRisks = async () => {
@@ -104,13 +105,14 @@ export default function TableRisiko({
 
   const confirmApprove = async () => {
     if (!selectedRisiko) return;
+    setApproveLoading(true);
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
 
       await axios.patch(
         `https://asset-risk-management.vercel.app/api/risks/${selectedRisiko.id}/verify`,
-        { approval_status: "verified" },
+        { approval_status: "approved" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       console.log("✅ Risiko disetujui:", selectedRisiko);
@@ -122,6 +124,8 @@ export default function TableRisiko({
       setSelectedRisiko(null);
     } catch (error) {
       console.error("Gagal menyetujui risiko:", error);
+    } finally {
+      setApproveLoading(false);
     }
   };
 
@@ -323,6 +327,7 @@ export default function TableRisiko({
             asetTerkait={selectedRisiko.asset?.name || "-"}
             onCancel={() => setShowApproveModal(false)}
             onConfirm={confirmApprove}
+            loading={approveLoading} // <-- tambahkan prop loading
           />
         </div>
       )}

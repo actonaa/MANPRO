@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { CircleHelp } from "lucide-react";
-import PopupJadwalPemeliharaan from "../verifikator/JadwalPemeliharaan";
+import PopupJadwalPemeliharaan from "./JadwalPemeliharaan";
 import axios from "axios";
 
 interface AsetItem {
@@ -28,9 +29,13 @@ const SetujuAsset: React.FC<SetujuAssetProps> = ({ aset, onClose }) => {
     setOpenPopup(true);
   };
 
-  const handleSubmitJadwal = async (tanggal: string) => {
+  const handleSubmitJadwal = async (
+    tanggal: string,
+    setPopupLoading: (state: boolean) => void
+  ) => {
     try {
       setLoading(true);
+      setPopupLoading(true);
 
       // 1️⃣ PATCH approval status
       await axios.patch(
@@ -42,18 +47,28 @@ const SetujuAsset: React.FC<SetujuAssetProps> = ({ aset, onClose }) => {
       // 2️⃣ POST jadwal pemeliharaan
       await axios.post(
         `https://asset-risk-management.vercel.app/api/maintenance/${aset.id}`,
-        { schedule_date: tanggal },
+        { scheduled_date: tanggal },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       alert("✅ Aset disetujui dan jadwal pemeliharaan berhasil ditambahkan.");
       setOpenPopup(false);
       onClose();
-    } catch (error) {
-      console.error("Error approve asset / schedule:", error);
-      alert("❌ Terjadi kesalahan saat menyetujui aset.");
+
+      // refresh halaman
+      window.location.reload();
+    } catch (error: any) {
+      console.error(
+        "Error approve asset / schedule:",
+        error.response?.data || error.message
+      );
+      alert(
+        "❌ Terjadi kesalahan saat menyetujui aset: " +
+          (error.response?.data?.message || error.message)
+      );
     } finally {
       setLoading(false);
+      setPopupLoading(false);
     }
   };
 

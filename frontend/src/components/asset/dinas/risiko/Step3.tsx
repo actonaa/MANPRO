@@ -7,7 +7,6 @@ interface Step3Props {
 }
 
 export default function Step3({ formData, handleChange }: Step3Props) {
-  // apakah strategi Accept
   const isAccept = formData.strategi === "Accept";
 
   // hitung level residual otomatis
@@ -21,10 +20,7 @@ export default function Step3({ formData, handleChange }: Step3Props) {
 
     if (formData.levelResidual !== hasil.toString()) {
       handleChange({
-        target: {
-          name: "levelResidual",
-          value: hasil.toString(),
-        },
+        target: { name: "levelResidual", value: hasil.toString() },
       } as any);
     }
   }, [
@@ -34,25 +30,20 @@ export default function Step3({ formData, handleChange }: Step3Props) {
     handleChange,
   ]);
 
-  // otomatis menentukan efektivitas berdasarkan level residual
+  // otomatis menentukan efektivitas
   useEffect(() => {
     const level = Number(formData.levelResidual);
-
     if (!level) return;
 
     let efektivitasValue = "";
 
-    if (level >= 1 && level <= 6) efektivitasValue = "Rendah";
-    else if (level >= 7 && level <= 14) efektivitasValue = "Sedang";
-    else if (level >= 15 && level <= 25) efektivitasValue = "Tinggi";
+    if (level <= 6) efektivitasValue = "Rendah";
+    else if (level <= 14) efektivitasValue = "Sedang";
+    else efektivitasValue = "Tinggi";
 
-    // update hanya jika berubah
     if (formData.efektivitas !== efektivitasValue) {
       handleChange({
-        target: {
-          name: "efektivitas",
-          value: efektivitasValue,
-        },
+        target: { name: "efektivitas", value: efektivitasValue },
       } as any);
     }
   }, [formData.levelResidual, formData.efektivitas, handleChange]);
@@ -64,16 +55,16 @@ export default function Step3({ formData, handleChange }: Step3Props) {
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Kolom Kiri */}
+        {/* Kiri */}
         <div>
-          {/* Strategi (TIDAK DISABLED) */}
+          {/* Strategi */}
           <div className="mb-4">
-            <label className="font-medium">Strategi</label>
+            <label className="font-medium">Strategy</label>
             <select
               name="strategi"
               value={formData.strategi}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+              className="w-full border rounded-lg px-3 py-2 mt-1"
             >
               <option value="" disabled hidden>
                 Pilih Strategi
@@ -86,9 +77,9 @@ export default function Step3({ formData, handleChange }: Step3Props) {
             </select>
           </div>
 
-          {/* Disabled jika Accept */}
+          {/* Aksi Mitigasi */}
           <div className="mb-4">
-            <label className="font-medium">Aksi Mitigasi</label>
+            <label className="font-medium">Action (Mitigation)</label>
             <input
               type="text"
               name="aksiMitigasi"
@@ -96,46 +87,49 @@ export default function Step3({ formData, handleChange }: Step3Props) {
               value={formData.aksiMitigasi}
               onChange={handleChange}
               disabled={isAccept}
-              className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
+              className={`w-full border rounded-lg px-3 py-2 mt-1 ${
                 isAccept ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
             />
           </div>
 
+          {/* Action Owner */}
           <div className="mb-4">
-            <label className="font-medium">Pemilik</label>
+            <label className="font-medium">Action Owner</label>
             <input
               type="text"
               name="pemilik"
-              placeholder="Masukkan nama pemilik risiko"
+              placeholder="Masukkan nama action owner"
               value={formData.pemilik}
               onChange={handleChange}
               disabled={isAccept}
-              className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
+              className={`w-full border rounded-lg px-3 py-2 mt-1 ${
                 isAccept ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
             />
           </div>
 
+          {/* Target Date */}
           <div className="mb-4">
-            <label className="font-medium">Target Waktu</label>
+            <label className="font-medium">Target Date</label>
             <input
               type="date"
               name="targetWaktu"
               value={formData.targetWaktu}
               onChange={handleChange}
               disabled={isAccept}
-              className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
+              className={`w-full border rounded-lg px-3 py-2 mt-1 ${
                 isAccept ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
             />
           </div>
         </div>
 
-        {/* Kolom Kanan */}
+        {/* Kanan */}
         <div>
+          {/* Cost */}
           <div className="mb-4">
-            <label className="font-medium">Perkiraan Biaya</label>
+            <label className="font-medium">Cost</label>
             <input
               type="number"
               name="perkiraanBiaya"
@@ -143,20 +137,21 @@ export default function Step3({ formData, handleChange }: Step3Props) {
               value={formData.perkiraanBiaya}
               onChange={handleChange}
               disabled={isAccept}
-              className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
+              className={`w-full border rounded-lg px-3 py-2 mt-1 ${
                 isAccept ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
             />
           </div>
 
+          {/* Residual Probability */}
           <div className="mb-4">
-            <label className="font-medium">Probabilitas Residual</label>
+            <label className="font-medium">New Probability</label>
             <select
               name="probabilitasResidual"
               value={formData.probabilitasResidual}
               onChange={handleChange}
               disabled={isAccept}
-              className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
+              className={`w-full border rounded-lg px-3 py-2 mt-1 ${
                 isAccept ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
             >
@@ -171,14 +166,15 @@ export default function Step3({ formData, handleChange }: Step3Props) {
             </select>
           </div>
 
+          {/* Residual Impact */}
           <div className="mb-4">
-            <label className="font-medium">Dampak Residual</label>
+            <label className="font-medium">New Impact Score</label>
             <select
               name="dampakResidual"
               value={formData.dampakResidual}
               onChange={handleChange}
               disabled={isAccept}
-              className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
+              className={`w-full border rounded-lg px-3 py-2 mt-1 ${
                 isAccept ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
             >
@@ -193,25 +189,27 @@ export default function Step3({ formData, handleChange }: Step3Props) {
             </select>
           </div>
 
+          {/* Efektivitas */}
           <div className="mb-4">
-            <label className="font-medium">Efektivitas</label>
+            <label className="font-medium">Effectiveness</label>
             <input
               type="text"
               name="efektivitas"
               value={formData.efektivitas}
               disabled
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 bg-gray-100 cursor-not-allowed"
+              className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100"
             />
           </div>
 
+          {/* Level Residual */}
           <div className="mb-4">
-            <label className="font-medium">Level Residual</label>
+            <label className="font-medium">Residual Level</label>
             <input
               type="text"
               name="levelResidual"
               value={formData.levelResidual}
               disabled
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-600 cursor-not-allowed"
+              className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100"
             />
           </div>
         </div>
