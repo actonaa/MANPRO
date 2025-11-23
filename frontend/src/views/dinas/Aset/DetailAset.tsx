@@ -10,6 +10,8 @@ import Lampiran from "../../../components/kelola-asset/dinas/Lampiran";
 import RiwayatAktivitas from "../../../components/kelola-asset/dinas/RiwayatAktivitas";
 import ScanBarcode from "../../../components/kelola-asset/dinas/ScanBarcode";
 import SiklusHidup from "../../../components/kelola-asset/dinas/SiklusHidup";
+import HapusAsetTahap1 from "../../../components/kelola-asset/dinas/HapusAsetTahap1";
+import HapusAsetTahap2 from "../../../components/kelola-asset/dinas/HapusAsetTahap2";
 
 export default function DetailAset() {
   const { id } = useParams<{ id: string }>();
@@ -21,6 +23,9 @@ export default function DetailAset() {
     { tanggal: string; kegiatan: string }[]
   >([]);
   const [lampiran, setLampiran] = useState<any[]>([]);
+  const [tahap1, setTahap1] = useState(false);
+  const [tahap2, setTahap2] = useState(false);
+  const [deleteReason, setDeleteReason] = useState("");
 
   // bagian useEffect
   useEffect(() => {
@@ -94,6 +99,35 @@ export default function DetailAset() {
 
     if (id) fetchAll();
   }, [id]);
+  const handleDeleteAset = async () => {
+    if (!deleteReason.trim()) {
+      alert("Alasan penghapusan wajib diisi pada Tahap 1.");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`/api/assets/${asset.id}/request-delete`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ reason: deleteReason }),
+      });
+
+      if (!res.ok) throw new Error("Gagal mengajukan penghapusan aset");
+
+      alert("Pengajuan hapus aset berhasil dikirim.");
+
+      setTahap2(false);
+      // window.location.reload(); // jika mau reload
+    } catch (err) {
+      console.error(err);
+      alert("Terjadi kesalahan saat menghapus aset.");
+    }
+  };
 
   // =======================
   // LOADING
@@ -243,7 +277,6 @@ export default function DetailAset() {
               fontWeight="font-medium"
             />
           </a>
-
           <a href={`/aset/tambah?id=${asset.id}`}>
             <ButtonText
               title="Ubah"
@@ -253,17 +286,42 @@ export default function DetailAset() {
               fontWeight="font-medium"
             />
           </a>
-
-          <button>
-            <ButtonText
-              title="Hapus Aset"
-              color="bg-[#FECACA]"
-              hoverColor="hover:bg-[#FCA5A5]"
-              textColor="text-[#991B1B]"
-              fontWeight="font-medium"
-            />
+          <button
+            onClick={() => setTahap1(true)}
+            className="bg-red-500 py-3 px-5 text-white rounded-[12px]"
+          >
+            Hapus Aset
           </button>
+          ;
         </div>
+        <HapusAsetTahap1
+          open={tahap1}
+          onClose={() => setTahap1(false)}
+          onNext={() => {
+            setTahap1(false);
+            setTahap2(true);
+          }}
+          setReason={setDeleteReason} // ⬅⬅ TAMBAHKAN INI
+          assetName={asset.name}
+          kategori={asset.category?.name}
+          merk={asset.tipe}
+          subKategori={asset.sub_category?.name}
+          serial={asset.serial_number}
+          lokasi={asset.lokasi}
+          tglPerolehan={asset.tgl_perolehan}
+          penanggungJawab={asset.penanggung_jawab}
+          kondisi={asset.kondisi}
+          biaya={asset.biaya}
+          kodeBMD={asset.bmd_code}
+          namaDinas={asset.nama_dinas}
+        />
+
+        <HapusAsetTahap2
+          open={tahap2}
+          onClose={() => setTahap2(false)}
+          onConfirm={handleDeleteAset}
+          assetName={asset.name}
+        />
       </div>
 
       {/* TWO COLUMN LAYOUT */}

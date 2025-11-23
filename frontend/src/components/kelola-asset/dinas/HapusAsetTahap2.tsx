@@ -1,0 +1,52 @@
+import React from "react";
+import { X } from "lucide-react";
+
+interface HapusAsetTahap2Props {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  assetName: string;
+}
+
+const HapusAsetTahap2: React.FC<HapusAsetTahap2Props> = ({
+  open,
+  onClose,
+  onConfirm,
+  assetName,
+}) => {
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex justify-center items-center px-4">
+      <div className="bg-white w-[360px] rounded-xl shadow-md p-5 pb-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Hapus {assetName}</h2>
+          <button onClick={onClose}>
+            <X size={20} />
+          </button>
+        </div>
+
+        <p className="text-center text-gray-700 mb-5">
+          Apakah anda yakin ingin menghapus aset <br />
+          <span className="font-semibold">“{assetName}”</span> ?
+        </p>
+
+        <button
+          onClick={onConfirm}
+          className="w-full bg-red-600 text-white py-2 rounded-lg font-medium mb-2"
+        >
+          Ya
+        </button>
+
+        <button
+          onClick={onClose}
+          className="w-full border py-2 rounded-lg font-medium"
+        >
+          Tidak
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default HapusAsetTahap2;
