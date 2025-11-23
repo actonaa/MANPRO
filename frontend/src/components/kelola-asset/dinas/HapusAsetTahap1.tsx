@@ -56,7 +56,7 @@ const HapusAsetTahap1: React.FC<HapusAsetTahap1Props> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex justify-center items-center px-4">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex justify-center items-center px-4">
       <div className="bg-white w-[400px] rounded-xl shadow-md p-5">
         {/* Header */}
         <div className="flex justify-between items-center mb-3">

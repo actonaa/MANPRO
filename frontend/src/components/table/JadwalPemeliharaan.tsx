@@ -23,7 +23,7 @@ interface MaintenanceItem {
   };
   kategori?: string;
   prioritas?: string | null;
-  risk_id?: string; // pastikan backend menyediakan risk_id
+  risk_id?: string;
 }
 
 export default function TableJadwalPemeliharaan({
@@ -34,46 +34,47 @@ export default function TableJadwalPemeliharaan({
   const [data, setData] = useState<MaintenanceItem[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // ------------------------------
+  // PAGINATION
+  // ------------------------------
+  const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // ------------------------------
+  // FETCH DATA
+  // ------------------------------
   useEffect(() => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token") || "";
 
-        // 1️⃣ Fetch maintenance
         const res = await fetch(
           "https://asset-risk-management.vercel.app/api/maintenance",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         const maintenances: MaintenanceItem[] = await res.json();
 
-        // 2️⃣ Enrich data: kategori dari asset, prioritas dari risk
         const enrichedData = await Promise.all(
           maintenances.map(async (item) => {
-            // default values in case fetch fails
             let kategori = "Tidak ada";
             let asset = { name: "-", lokasi: "-" };
             let prioritas: string | null = null;
 
-            // Ambil data asset (with try/catch to avoid failing all)
             try {
               const assetRes = await fetch(
                 `https://asset-risk-management.vercel.app/api/assets/${item.asset_id}`,
                 { headers: { Authorization: `Bearer ${token}` } }
               );
-              // asset endpoint mungkin mengembalikan object langsung
               const assetData = await assetRes.json();
               kategori = assetData?.category?.name ?? "Tidak ada";
               asset = {
                 name: assetData?.name ?? "-",
                 lokasi: assetData?.lokasi ?? "-",
               };
-            } catch (err) {
-              console.warn("Gagal fetch asset:", err);
+            } catch (error) {
+              console.error("Terjadi kesalahan:", error);
             }
 
-            // Ambil data prioritas dari risk_id (pastikan backend menyediakan risk_id)
             if (item.risk_id) {
               try {
                 const riskRes = await fetch(
@@ -81,14 +82,10 @@ export default function TableJadwalPemeliharaan({
                   { headers: { Authorization: `Bearer ${token}` } }
                 );
                 const riskData = await riskRes.json();
-                // some APIs use .priority, others .criteria; if both null -> tetap null
                 prioritas = riskData?.priority ?? riskData?.criteria ?? null;
-              } catch (err) {
-                console.warn("Gagal fetch prioritas:", err);
+              } catch (error) {
+                console.error("Terjadi kesalahan:", error);
               }
-            } else {
-              // jika backend tidak mengirim risk_id, coba cari di list risks (opsional)
-              // biarkan prioritas tetap null
             }
 
             return { ...item, asset, kategori, prioritas };
@@ -106,6 +103,9 @@ export default function TableJadwalPemeliharaan({
     fetchData();
   }, []);
 
+  // ------------------------------
+  // FILTERING
+  // ------------------------------
   const filteredData = data.filter(
     (item) =>
       (!selectedKategori || item.kategori === selectedKategori) &&
@@ -117,10 +117,26 @@ export default function TableJadwalPemeliharaan({
           false))
   );
 
-  // accept undefined | null | string
+  // ------------------------------
+  // PAGINATION CALC
+  // ------------------------------
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Reset page jika filter berubah tetapi page > totalPages
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(1);
+  }, [currentPage, filteredData.length, totalPages]);
+
+  // ------------------------------
+  // BADGE COLORS
+  // ------------------------------
   const getBadgeColor = (prioritas?: string | null) => {
     if (!prioritas) return "bg-gray-100 text-gray-600";
-
     switch (prioritas) {
       case "Tinggi":
         return "bg-red-100 text-red-600";
@@ -133,97 +149,14 @@ export default function TableJadwalPemeliharaan({
     }
   };
 
-  if (loading)
-    return (
-      <div className="mt-5 bg-white md:mt-0 animate-pulse">
-        {/* TABLE SKELETON */}
-        <div className="overflow-x-auto hidden lg:block">
-          <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
-            <thead>
-              <tr>
-                {Array.from({ length: 7 }).map((_, i) => (
-                  <th key={i} className="py-5 px-4">
-                    <div className="h-4 bg-gray-200 rounded w-24 mx-auto"></div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
+  // ------------------------------
+  // LOADING SKELETON
+  // ------------------------------
+  if (loading) return <div className="text-center py-10">Loading...</div>;
 
-            <tbody>
-              {Array.from({ length: 6 }).map((_, idx) => (
-                <tr key={idx} className="border-b border-b-gray-200">
-                  {/* id */}
-                  <td className="py-5">
-                    <div className="h-4 bg-gray-200 rounded w-20 mx-auto"></div>
-                  </td>
-                  {/* nama aset */}
-                  <td className="py-5">
-                    <div className="h-4 bg-gray-200 rounded w-28 mx-auto"></div>
-                  </td>
-                  {/* kategori */}
-                  <td className="py-5">
-                    <div className="h-4 bg-gray-200 rounded w-20 mx-auto"></div>
-                  </td>
-                  {/* lokasi */}
-                  <td className="py-5">
-                    <div className="h-4 bg-gray-200 rounded w-24 mx-auto"></div>
-                  </td>
-                  {/* prioritas badge */}
-                  <td className="py-5">
-                    <div className="h-6 bg-gray-200 rounded-full w-24 mx-auto"></div>
-                  </td>
-                  {/* jadwal */}
-                  <td className="py-5">
-                    <div className="h-4 bg-gray-200 rounded w-24 mx-auto"></div>
-                  </td>
-                  {/* detail link */}
-                  <td className="py-5">
-                    <div className="h-4 bg-gray-200 rounded w-16 mx-auto"></div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* CARD SKELETON (mobile) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden mt-4">
-          {Array.from({ length: 4 }).map((_, idx) => (
-            <div
-              key={idx}
-              className="border border-gray-200 rounded-xl shadow-sm p-4 bg-white"
-            >
-              <div className="flex justify-between mb-2">
-                <div className="h-4 w-20 bg-gray-200 rounded"></div>
-                <div className="h-4 w-14 bg-gray-200 rounded"></div>
-              </div>
-
-              <div className="h-5 w-40 bg-gray-200 rounded mb-3"></div>
-
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <div className="h-4 w-20 bg-gray-200 rounded"></div>
-                  <div className="h-4 w-24 bg-gray-200 rounded"></div>
-                </div>
-                <div className="flex justify-between">
-                  <div className="h-4 w-20 bg-gray-200 rounded"></div>
-                  <div className="h-4 w-24 bg-gray-200 rounded"></div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <div className="h-4 w-20 bg-gray-200 rounded"></div>
-                  <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
-                </div>
-                <div className="flex justify-between">
-                  <div className="h-4 w-16 bg-gray-200 rounded"></div>
-                  <div className="h-4 w-24 bg-gray-200 rounded"></div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-
+  // ------------------------------
+  // RENDER
+  // ------------------------------
   return (
     <div className="mt-5 bg-white md:mt-0">
       {/* TABLE VIEW */}
@@ -240,41 +173,32 @@ export default function TableJadwalPemeliharaan({
               <th className="py-5 px-4 font-semibold"></th>
             </tr>
           </thead>
+
           <tbody>
-            {filteredData.length > 0 ? (
-              filteredData.map((item, index) => (
+            {paginatedData.length > 0 ? (
+              paginatedData.map((item, index) => (
                 <tr
                   key={index}
                   className="border-b border-b-[#ddd] hover:bg-gray-50"
                 >
-                  <td className="py-5 px-4 text-[#333] lg:text-[13px]">
-                    {item.id}
-                  </td>
-                  <td className="py-5 px-4 text-[#666] lg:text-[13px]">
-                    {item.asset?.name}
-                  </td>
-                  <td className="py-5 px-4 text-[#666] lg:text-[13px]">
-                    {item.kategori}
-                  </td>
-                  <td className="py-5 px-4 text-[#666] lg:text-[13px]">
-                    {item.asset?.lokasi}
-                  </td>
+                  <td className="py-5 px-4">{item.id}</td>
+                  <td className="py-5 px-4">{item.asset?.name}</td>
+                  <td className="py-5 px-4">{item.kategori}</td>
+                  <td className="py-5 px-4">{item.asset?.lokasi}</td>
                   <td className="py-5 px-4">
                     <span
-                      className={`px-5 md:px-7 py-2 rounded-[16px] text-[13px] font-normal ${getBadgeColor(
+                      className={`px-5 py-2 rounded-[16px] text-[13px] ${getBadgeColor(
                         item.prioritas
                       )}`}
                     >
                       {item.prioritas ?? "Tidak ada"}
                     </span>
                   </td>
-                  <td className="py-5 px-4 text-[#666] lg:text-[13px]">
-                    {item.scheduled_date}
-                  </td>
+                  <td className="py-5 px-4">{item.scheduled_date}</td>
                   <td className="py-5 px-4">
                     <a
                       href={`/pemeliharaan/${item.id}`}
-                      className="text-[#0095E8] font-medium lg:text-[13px] hover:underline"
+                      className="text-[#0095E8] font-medium hover:underline"
                     >
                       Detail
                     </a>
@@ -293,46 +217,85 @@ export default function TableJadwalPemeliharaan({
             )}
           </tbody>
         </table>
-        <div className="mt-6 flex justify-between p-4">
+
+        {/* PAGINATION */}
+        <div className="mt-6 flex flex-col md:flex-row md:justify-between items-center gap-4 p-4">
           <p className="text-[13px] text-[#6B7280]">
-            Menampilkan {filteredData.length} hasil
+            Menampilkan {(currentPage - 1) * itemsPerPage + 1} -
+            {` ${Math.min(currentPage * itemsPerPage, filteredData.length)}`}{" "}
+            dari {filteredData.length} hasil
           </p>
+
+          <div className="flex items-center gap-2">
+            {/* Prev */}
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-2 py-1 text-gray-600 disabled:text-gray-300"
+            >
+              ‹
+            </button>
+
+            {/* Number buttons */}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-1 rounded-lg ${
+                  currentPage === page
+                    ? "bg-gray-200 font-semibold"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+
+            {/* Next */}
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="px-2 py-1 text-gray-600 disabled:text-gray-300"
+            >
+              ›
+            </button>
+          </div>
+
+          <div></div>
         </div>
       </div>
 
-      {/* CARD VIEW */}
+      {/* MOBILE CARD VIEW */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden">
-        {filteredData.length > 0 ? (
-          filteredData.map((item, index) => (
-            <div
-              key={index}
-              className="border border-gray-200 rounded-xl shadow-sm p-4 bg-white"
-            >
+        {paginatedData.length > 0 ? (
+          paginatedData.map((item, index) => (
+            <div key={index} className="border p-4 rounded-xl shadow-sm">
               <div className="flex justify-between items-center mb-1">
-                <p className="text-sm text-gray-500">{item.id}</p>
+                <p className="text-sm">{item.id}</p>
                 <a
-                  href={`/pemeliharaan/detail/${item.id}`}
-                  className="text-[#0095E8] text-sm font-medium hover:underline"
+                  href={`/pemeliharaan/${item.id}`}
+                  className="text-blue-500 text-sm font-medium hover:underline"
                 >
                   Detail
                 </a>
               </div>
-              <h3 className="font-semibold border-b pb-2 border-gray-300 text-gray-800 text-[15px] mb-3">
+              <h3 className="font-semibold border-b pb-2 mb-3">
                 {item.asset?.name}
               </h3>
-              <div className="text-sm text-gray-600 space-y-1">
+
+              <div className="text-sm space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Kategori</span>
-                  <span className="text-gray-700">{item.kategori}</span>
+                  <span>Kategori</span>
+                  <span>{item.kategori}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Lokasi</span>
-                  <span className="text-gray-700">{item.asset?.lokasi}</span>
+                  <span>Lokasi</span>
+                  <span>{item.asset?.lokasi}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-500">Prioritas</span>
+                  <span>Prioritas</span>
                   <span
-                    className={`px-3 py-[2px] text-xs rounded-full font-medium ${getBadgeColor(
+                    className={`px-3 py-[2px] text-xs rounded-full ${getBadgeColor(
                       item.prioritas
                     )}`}
                   >
@@ -340,8 +303,8 @@ export default function TableJadwalPemeliharaan({
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Jadwal</span>
-                  <span className="text-gray-700">{item.scheduled_date}</span>
+                  <span>Jadwal</span>
+                  <span>{item.scheduled_date}</span>
                 </div>
               </div>
             </div>
@@ -351,6 +314,39 @@ export default function TableJadwalPemeliharaan({
             Tidak ada jadwal pemeliharaan tersedia.
           </p>
         )}
+      </div>
+
+      {/* PAGINATION MOBILE */}
+      <div className="mt-6 flex justify-center items-center gap-2 lg:hidden">
+        <button
+          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+          disabled={currentPage === 1}
+          className="px-3 py-1 text-gray-600 disabled:text-gray-300"
+        >
+          ‹
+        </button>
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`px-3 py-1 rounded-lg ${
+              currentPage === page
+                ? "bg-gray-200 font-semibold"
+                : "text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+
+        <button
+          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 text-gray-600 disabled:text-gray-300"
+        >
+          ›
+        </button>
       </div>
     </div>
   );

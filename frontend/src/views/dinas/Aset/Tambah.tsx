@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle, X } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import Step1, {
   type AsetFormData,
 } from "../../../components/asset/dinas/form/Step1";
@@ -393,14 +393,6 @@ export default function Tambah() {
             }`}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Tombol Close */}
-            <button
-              onClick={handleClosePopup}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <X className="w-6 h-6" />
-            </button>
-
             {/* Icon Success */}
             <div className="flex justify-center mb-6">
               <div className="bg-blue-50 rounded-full p-4">

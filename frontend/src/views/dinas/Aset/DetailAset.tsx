@@ -10,6 +10,7 @@ import Lampiran from "../../../components/kelola-asset/dinas/Lampiran";
 import RiwayatAktivitas from "../../../components/kelola-asset/dinas/RiwayatAktivitas";
 import ScanBarcode from "../../../components/kelola-asset/dinas/ScanBarcode";
 import SiklusHidup from "../../../components/kelola-asset/dinas/SiklusHidup";
+
 import HapusAsetTahap1 from "../../../components/kelola-asset/dinas/HapusAsetTahap1";
 import HapusAsetTahap2 from "../../../components/kelola-asset/dinas/HapusAsetTahap2";
 
@@ -27,69 +28,55 @@ export default function DetailAset() {
   const [tahap2, setTahap2] = useState(false);
   const [deleteReason, setDeleteReason] = useState("");
 
-  // bagian useEffect
+  // ===============================
+  // FETCH DATA
+  // ===============================
   useEffect(() => {
     const fetchAll = async () => {
       try {
         const token = localStorage.getItem("token");
 
-        // 🔹 Fetch ASSET
         const resAsset = await fetch(`/api/assets/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-        if (!resAsset.ok)
-          throw new Error(`Gagal mengambil data aset (${resAsset.status})`);
         const dataAsset = await resAsset.json();
         setAsset(dataAsset);
 
-        // 🔹 Format Lampiran
-        const lampiranFormatted = dataAsset.attachments
-          ? [
-              {
-                nama: dataAsset.attachments.split("/").pop() || "Lampiran",
-                url: dataAsset.attachments,
-              },
-            ]
-          : [];
-
-        setLampiran(lampiranFormatted);
-
-        // 🔹 Fetch RISKS
-        const resRisk = await fetch(`/api/risks`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        const dataRisk = await resRisk.json();
-        const filteredRisks = dataRisk.filter(
-          (r: any) =>
-            r.asset_id === dataAsset.id && r.approval_status === "approved"
+        setLampiran(
+          dataAsset.attachments
+            ? [
+                {
+                  nama: dataAsset.attachments.split("/").pop() || "Lampiran",
+                  url: dataAsset.attachments,
+                },
+              ]
+            : []
         );
 
-        setRisikoAset(filteredRisks);
+        const resRisk = await fetch(`/api/risks`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const dataRisk = await resRisk.json();
+        setRisikoAset(
+          dataRisk.filter(
+            (r: any) =>
+              r.asset_id === dataAsset.id && r.approval_status === "approved"
+          )
+        );
 
-        // 🔹 Fetch MAINTENANCE
         const resMaintenance = await fetch(`/api/maintenance`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         const dataMaintenance = await resMaintenance.json();
 
-        // Filter berdasarkan asset_id
-        const filteredMaintenance = dataMaintenance
-          .filter((m: any) => m.asset_id === dataAsset.id)
-          .map((m: any) => ({
-            tanggal: m.scheduled_date,
-            kegiatan: m.notes || "-",
-          }));
-
-        setJadwalPemeliharaan(filteredMaintenance);
+        setJadwalPemeliharaan(
+          dataMaintenance
+            .filter((m: any) => m.asset_id === dataAsset.id)
+            .map((m: any) => ({
+              tanggal: m.scheduled_date,
+              kegiatan: m.notes || "-",
+            }))
+        );
       } catch (err) {
         console.error("❌ Error:", err);
       } finally {
@@ -99,6 +86,10 @@ export default function DetailAset() {
 
     if (id) fetchAll();
   }, [id]);
+
+  // ======================================
+  // HANDLE DELETE REQUEST
+  // ======================================
   const handleDeleteAset = async () => {
     if (!deleteReason.trim()) {
       alert("Alasan penghapusan wajib diisi pada Tahap 1.");
@@ -120,86 +111,38 @@ export default function DetailAset() {
       if (!res.ok) throw new Error("Gagal mengajukan penghapusan aset");
 
       alert("Pengajuan hapus aset berhasil dikirim.");
-
       setTahap2(false);
-      // window.location.reload(); // jika mau reload
     } catch (err) {
       console.error(err);
       alert("Terjadi kesalahan saat menghapus aset.");
     }
   };
 
-  // =======================
-  // LOADING
-  // =======================
+  // ======================================
+  // LOGIC: tidak boleh ubah & hapus
+  // ======================================
+  const tidakBolehEdit =
+    asset?.status?.name === "Akan Dihapus" ||
+    asset?.status?.name === "Proses Penghapusan";
+
+  // ===============================
+  // LOADING SKELETON
+  // ===============================
   if (loading) {
     return (
       <div className="pb-10 p-6 animate-pulse">
-        {/* HEADER */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-          <div className="flex-1">
-            <div className="h-6 bg-gray-200 rounded w-40 mb-2" />
-            <div className="h-8 bg-gray-300 rounded w-64 mb-2" />
-            <div className="h-4 bg-gray-200 rounded w-48" />
-          </div>
-          <div className="flex flex-row items-center justify-center gap-3 mt-4 md:mt-0">
-            <div className="h-8 w-20 bg-gray-200 rounded" />
-            <div className="h-8 w-20 bg-gray-200 rounded" />
-            <div className="h-8 w-28 bg-gray-200 rounded" />
-          </div>
-        </div>
-
-        {/* TWO COLUMN LAYOUT */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          {/* LEFT COLUMN */}
-          <div className="flex flex-col gap-5">
-            {/* Informasi Utama */}
-            <div className="space-y-2">
-              <div className="h-6 bg-gray-200 rounded w-3/4" />
-              <div className="h-6 bg-gray-200 rounded w-1/2" />
-              <div className="h-4 bg-gray-200 rounded w-1/3" />
-            </div>
-
-            {/* Siklus Hidup */}
-            <div className="space-y-2">
-              <div className="h-6 bg-gray-200 rounded w-1/2" />
-              <div className="h-4 bg-gray-200 rounded w-2/3" />
-            </div>
-          </div>
-
-          {/* RIGHT COLUMN */}
-          <div className="flex flex-col gap-5">
-            {/* Jadwal Pemeliharaan */}
-            <div className="h-24 bg-gray-200 rounded" />
-
-            {/* Risiko */}
-            <div className="h-32 bg-gray-200 rounded" />
-
-            {/* Riwayat Aktivitas */}
-            <div className="h-24 bg-gray-200 rounded" />
-          </div>
-        </div>
-
-        {/* LAMPIRAN & BARCODE */}
-        <div className="flex flex-col lg:flex-row gap-5 mt-6">
-          <div className="flex-1 h-48 bg-gray-200 rounded" />
-          <div className="flex-1 h-48 bg-gray-200 rounded" />
-        </div>
+        <div className="h-6 bg-gray-200 rounded w-40 mb-2" />
+        <div className="h-8 bg-gray-300 rounded w-64 mb-2" />
+        <div className="h-4 bg-gray-200 rounded w-48" />
       </div>
     );
   }
 
-  if (!asset) {
-    return (
-      <p className="text-red-500 p-6">
-        Gagal memuat data aset atau tidak ditemukan.
-      </p>
-    );
-  }
+  if (!asset) return <p className="text-red-500 p-6">Aset tidak ditemukan.</p>;
 
-  // =======================
-  // ADDITIONAL INFO (TI / Non-TI)
-  // =======================
+  // ===============================
+  // TI / NON TI
+  // ===============================
   const isTI = asset.category?.name === "TI";
 
   const additionalInfo = isTI
@@ -237,9 +180,9 @@ export default function DetailAset() {
       ? formatTanggal(jadwalPemeliharaan[0].tanggal)
       : "Belum tersedia";
 
-  // =======================
+  // ===============================
   // RENDER
-  // =======================
+  // ===============================
   return (
     <div className="pb-10">
       {/* HEADER */}
@@ -268,63 +211,45 @@ export default function DetailAset() {
 
         {/* ACTION BUTTONS */}
         <div className="flex flex-row items-center justify-center gap-3">
-          <a href="/insiden">
-            <ButtonText
-              title="Insiden"
-              color="bg-white"
-              hoverColor="hover:bg-gray-100"
-              textColor="text-gray-700"
-              fontWeight="font-medium"
-            />
-          </a>
-          <a href={`/aset/tambah?id=${asset.id}`}>
-            <ButtonText
-              title="Ubah"
-              color="bg-[#BFDEFF]"
-              hoverColor="hover:bg-[#A5D4FF]"
-              textColor="text-[#007BFF]"
-              fontWeight="font-medium"
-            />
-          </a>
-          <button
-            onClick={() => setTahap1(true)}
-            className="bg-red-500 py-3 px-5 text-white rounded-[12px]"
-          >
-            Hapus Aset
-          </button>
-          ;
-        </div>
-        <HapusAsetTahap1
-          open={tahap1}
-          onClose={() => setTahap1(false)}
-          onNext={() => {
-            setTahap1(false);
-            setTahap2(true);
-          }}
-          setReason={setDeleteReason} // ⬅⬅ TAMBAHKAN INI
-          assetName={asset.name}
-          kategori={asset.category?.name}
-          merk={asset.tipe}
-          subKategori={asset.sub_category?.name}
-          serial={asset.serial_number}
-          lokasi={asset.lokasi}
-          tglPerolehan={asset.tgl_perolehan}
-          penanggungJawab={asset.penanggung_jawab}
-          kondisi={asset.kondisi}
-          biaya={asset.biaya}
-          kodeBMD={asset.bmd_code}
-          namaDinas={asset.nama_dinas}
-        />
+          {/* TOMBOL INSIDEN Tidak muncul jika aset akan dihapus */}
+          {!tidakBolehEdit && (
+            <a href="/insiden">
+              <ButtonText
+                title="Insiden"
+                color="bg-white"
+                hoverColor="hover:bg-gray-100"
+                textColor="text-gray-700"
+                fontWeight="font-medium"
+              />
+            </a>
+          )}
 
-        <HapusAsetTahap2
-          open={tahap2}
-          onClose={() => setTahap2(false)}
-          onConfirm={handleDeleteAset}
-          assetName={asset.name}
-        />
+          {/* TOMBOL UBAH Tidak muncul jika aset akan dihapus */}
+          {!tidakBolehEdit && (
+            <a href={`/aset/tambah?id=${asset.id}`}>
+              <ButtonText
+                title="Ubah"
+                color="bg-[#BFDEFF]"
+                hoverColor="hover:bg-[#A5D4FF]"
+                textColor="text-[#007BFF]"
+                fontWeight="font-medium"
+              />
+            </a>
+          )}
+
+          {/* TOMBOL HAPUS Tidak muncul jika aset akan dihapus */}
+          {!tidakBolehEdit && (
+            <button
+              onClick={() => setTahap1(true)}
+              className="bg-red-500 py-3 px-5 text-white rounded-[12px]"
+            >
+              Hapus Aset
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* TWO COLUMN LAYOUT */}
+      {/* TWO COLUMN */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div className="flex flex-col gap-5">
           <InformasiUtama
@@ -360,14 +285,11 @@ export default function DetailAset() {
 
         <div className="flex flex-col gap-5">
           <JadwalPemeliharaan jadwal={jadwalPemeliharaan} />
-
-          {/* 🔥 Risiko hasil filter */}
           <KeterkaitanRisiko
             risiko={risikoAset}
             approvalStatus={asset.approval_status}
             assetId={asset.id}
           />
-
           <RiwayatAktivitas aktivitas={[]} />
         </div>
       </div>
@@ -381,6 +303,39 @@ export default function DetailAset() {
           <ScanBarcode barcodeUrl={asset.barcode_qr_url || ""} />
         </div>
       </div>
+
+      {/* ================================ */}
+      {/* POPUP Tahap 1 & Tahap 2 DIPINDAHKAN */}
+      {/* ================================ */}
+
+      <HapusAsetTahap1
+        open={tahap1}
+        onClose={() => setTahap1(false)}
+        onNext={() => {
+          setTahap1(false);
+          setTahap2(true);
+        }}
+        setReason={setDeleteReason}
+        assetName={asset.name}
+        kategori={asset.category?.name}
+        merk={asset.tipe}
+        subKategori={asset.sub_category?.name}
+        serial={asset.serial_number}
+        lokasi={asset.lokasi}
+        tglPerolehan={asset.tgl_perolehan}
+        penanggungJawab={asset.penanggung_jawab}
+        kondisi={asset.kondisi}
+        biaya={asset.biaya}
+        kodeBMD={asset.bmd_code}
+        namaDinas={asset.nama_dinas}
+      />
+
+      <HapusAsetTahap2
+        open={tahap2}
+        onClose={() => setTahap2(false)}
+        onConfirm={handleDeleteAset}
+        assetName={asset.name}
+      />
     </div>
   );
 }
