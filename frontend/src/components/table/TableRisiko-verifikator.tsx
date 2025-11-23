@@ -43,6 +43,10 @@ export default function TableRisiko({
   const [loading, setLoading] = useState(true);
   const [approveLoading, setApproveLoading] = useState(false);
 
+  // PAGINATION
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // jumlah item per halaman
+
   useEffect(() => {
     const fetchRisks = async () => {
       setLoading(true);
@@ -76,7 +80,7 @@ export default function TableRisiko({
       } catch (error) {
         console.error("Gagal fetch risiko:", error);
       } finally {
-        setLoading(false); // <-- penting
+        setLoading(false);
       }
     };
 
@@ -92,6 +96,15 @@ export default function TableRisiko({
       : true;
     return matchesLevel && matchesDate;
   });
+
+  // Pagination Logic
+  const totalItems = filteredData.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  const paginatedData = filteredData.slice(startIndex, endIndex);
 
   const handleApproveClick = (item: RisikoItem) => {
     setSelectedRisiko(item);
@@ -115,11 +128,8 @@ export default function TableRisiko({
         { approval_status: "approved" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log("✅ Risiko disetujui:", selectedRisiko);
 
-      // Update local state agar langsung hilang dari tabel
       setData((prev) => prev.filter((r) => r.id !== selectedRisiko.id));
-
       setShowApproveModal(false);
       setSelectedRisiko(null);
     } catch (error) {
@@ -129,15 +139,36 @@ export default function TableRisiko({
     }
   };
 
-  const confirmReject = () => {
-    console.log("❌ Risiko ditolak:", selectedRisiko);
-    setShowRejectModal(false);
-    setSelectedRisiko(null);
+  const confirmReject = async (notes: string) => {
+    if (!selectedRisiko) return;
+    setApproveLoading(true);
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      await axios.patch(
+        `https://asset-risk-management.vercel.app/api/risks/${selectedRisiko.id}/verify`,
+        {
+          approval_status: "rejected",
+          revision_notes: notes,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setData((prev) => prev.filter((r) => r.id !== selectedRisiko.id));
+      setShowRejectModal(false);
+      setSelectedRisiko(null);
+    } catch (error) {
+      console.error("Gagal menolak risiko:", error);
+    } finally {
+      setApproveLoading(false);
+    }
   };
 
   return (
     <div className="md:pb-10 lg:bg-white lg:shadow-xl lg:p-5 lg:rounded-2xl relative">
-      {/* Tabel Desktop */}
+      {/* TABEL DESKTOP */}
       <div className="hidden lg:block">
         <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
           <thead className="text-[#666666]">
@@ -153,7 +184,7 @@ export default function TableRisiko({
             </tr>
           </thead>
           <tbody>
-            {filteredData.map((item) => (
+            {paginatedData.map((item) => (
               <tr
                 key={item.id}
                 className="border-b border-b-[#ddd] hover:bg-gray-50 transition"
@@ -179,21 +210,18 @@ export default function TableRisiko({
                   <a
                     href="/risiko-verifikator/detail"
                     className="hover:text-blue-600"
-                    title="Lihat Detail"
                   >
                     <Eye size={18} />
                   </a>
                   <button
                     onClick={() => handleApproveClick(item)}
                     className="hover:text-green-600"
-                    title="Setujui Risiko"
                   >
                     <CheckCircle size={18} />
                   </button>
                   <button
                     onClick={() => handleRejectClick(item)}
                     className="hover:text-red-600"
-                    title="Tolak Risiko"
                   >
                     <XCircle size={18} />
                   </button>
@@ -204,12 +232,12 @@ export default function TableRisiko({
         </table>
       </div>
 
-      {/* Mobile Card */}
+      {/* MOBILE CARD */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden">
-        {filteredData.map((item) => (
+        {paginatedData.map((item) => (
           <div
             key={item.id}
-            className="border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition bg-white"
+            className="border border-gray-200 rounded-xl p-4 shadow-sm"
           >
             <p className="text-sm text-gray-500 mb-2">{item.date}</p>
             <h3 className="text-base font-semibold text-gray-800 mb-1">
@@ -218,12 +246,13 @@ export default function TableRisiko({
             <p className="text-sm text-gray-500 mb-3">
               {item.asset?.name || "-"}
             </p>
+
             <div className="grid grid-cols-2 text-sm text-gray-600 gap-y-1">
               <p>
-                <span className="font-medium text-gray-700">ID:</span> {item.id}
+                <span className="font-medium">ID:</span> {item.id}
               </p>
               <p>
-                <span className="font-medium text-gray-700">Level:</span>{" "}
+                <span className="font-medium">Level:</span>{" "}
                 <span
                   className={`${
                     item.criteria === "High"
@@ -237,35 +266,30 @@ export default function TableRisiko({
                 </span>
               </p>
               <p>
-                <span className="font-medium text-gray-700">
-                  Kategori Risk:
-                </span>{" "}
+                <span className="font-medium">Kategori Risk:</span>{" "}
                 {item.category}
               </p>
               <p>
-                <span className="font-medium text-gray-700">Skor:</span>{" "}
-                {item.entry_level}
+                <span className="font-medium">Skor:</span> {item.entry_level}
               </p>
             </div>
+
             <div className="flex justify-end gap-3 mt-4 text-gray-500">
               <a
                 href="/risiko-verifikator/detail"
                 className="hover:text-blue-600"
-                title="Lihat Detail"
               >
                 <Eye size={18} />
               </a>
               <button
                 onClick={() => handleApproveClick(item)}
                 className="hover:text-green-600"
-                title="Setujui Risiko"
               >
                 <CheckCircle size={18} />
               </button>
               <button
                 onClick={() => handleRejectClick(item)}
                 className="hover:text-red-600"
-                title="Tolak Risiko"
               >
                 <XCircle size={18} />
               </button>
@@ -274,9 +298,9 @@ export default function TableRisiko({
         ))}
       </div>
 
+      {/* LOADING SKELETON */}
       {loading && (
         <div className="w-full mt-4">
-          {/* Skeleton Desktop */}
           <div className="hidden lg:block">
             {[...Array(5)].map((_, i) => (
               <div
@@ -290,7 +314,6 @@ export default function TableRisiko({
             ))}
           </div>
 
-          {/* Skeleton Mobile */}
           <div className="lg:hidden grid grid-cols-1 gap-4">
             {[...Array(4)].map((_, i) => (
               <div
@@ -319,7 +342,7 @@ export default function TableRisiko({
         </div>
       )}
 
-      {/* Popup */}
+      {/* POPUP */}
       {showApproveModal && selectedRisiko && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <RisikoSetuju
@@ -327,10 +350,11 @@ export default function TableRisiko({
             asetTerkait={selectedRisiko.asset?.name || "-"}
             onCancel={() => setShowApproveModal(false)}
             onConfirm={confirmApprove}
-            loading={approveLoading} // <-- tambahkan prop loading
+            loading={approveLoading}
           />
         </div>
       )}
+
       {showRejectModal && selectedRisiko && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <RisikoTolak
@@ -341,6 +365,84 @@ export default function TableRisiko({
           />
         </div>
       )}
+
+      {/* XYZ + PAGINATION */}
+      <div className="mt-6 text-sm text-gray-600 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        {/* XYZ Info */}
+        <p className="text-center lg:text-left">
+          Menampilkan {totalItems === 0 ? 0 : startIndex + 1} dari {totalItems}{" "}
+          hasil
+        </p>
+
+        {/* Pagination */}
+        <div className="flex justify-center items-center gap-2">
+          {/* Prev */}
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-2 py-1 disabled:text-gray-300"
+          >
+            &lt;
+          </button>
+
+          {/* Page Numbers with Ellipsis */}
+          {(() => {
+            const pages: (number | string)[] = [];
+
+            if (totalPages <= 5) {
+              // Show all if <= 5 pages
+              for (let i = 1; i <= totalPages; i++) pages.push(i);
+            } else {
+              // Always show 1
+              pages.push(1);
+
+              // Show dots if currentPage is far from 2
+              if (currentPage > 3) pages.push("...");
+
+              // Show middle window
+              const start = Math.max(2, currentPage - 1);
+              const end = Math.min(totalPages - 1, currentPage + 1);
+              for (let i = start; i <= end; i++) pages.push(i);
+
+              // Trailing dots
+              if (currentPage < totalPages - 2) pages.push("...");
+
+              // Always show last page
+              pages.push(totalPages);
+            }
+
+            return pages.map((page, idx) =>
+              typeof page === "string" ? (
+                <span key={idx} className="px-2">
+                  ...
+                </span>
+              ) : (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`px-3 py-1 rounded-md ${
+                    currentPage === page
+                      ? "bg-gray-200 font-semibold"
+                      : "hover:bg-gray-100"
+                  }`}
+                >
+                  {page}
+                </button>
+              )
+            );
+          })()}
+
+          {/* Next */}
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="px-2 py-1 disabled:text-gray-300"
+          >
+            &gt;
+          </button>
+        </div>
+        <div></div>
+      </div>
     </div>
   );
 }
