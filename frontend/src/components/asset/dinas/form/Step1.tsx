@@ -46,6 +46,9 @@ export default function Step1({
   const [showDropdownPJ, setShowDropdownPJ] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const indukRef = useRef<HTMLDivElement>(null);
+  const pjRef = useRef<HTMLDivElement>(null);
+
   const token = localStorage.getItem("token");
 
   const CONDITIONS = {
@@ -131,6 +134,25 @@ export default function Step1({
     fetchHR();
   }, [token]);
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        indukRef.current &&
+        !indukRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+      if (pjRef.current && !pjRef.current.contains(event.target as Node)) {
+        setShowDropdownPJ(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const filteredHR = allHR.filter((h) =>
     h.name?.toLowerCase().includes(searchPJ.toLowerCase())
   );
@@ -157,9 +179,12 @@ export default function Step1({
     (sub) => sub.category_id === formData.kategoriAset
   );
 
-  const filteredAssets = allAssets.filter((a) =>
-    a.name?.toLowerCase().includes(searchInduk.toLowerCase())
-  );
+  const filteredAssets = allAssets
+    .filter((a) => {
+      const statusName = a.status?.name;
+      return statusName === "Aktif" || statusName === "Pemeliharaan";
+    })
+    .filter((a) => a.name?.toLowerCase().includes(searchInduk.toLowerCase()));
 
   const requiredFields: (keyof AsetFormData)[] = [
     "namaAset",
@@ -257,6 +282,7 @@ export default function Step1({
           name="tanggalPerolehan"
           value={formData.tanggalPerolehan || ""}
           onChange={handleChange}
+          onFocus={(e) => e.target.showPicker && e.target.showPicker()}
           className="w-full border border-gray-300 rounded-lg px-3 py-2"
           required
         />
@@ -269,7 +295,7 @@ export default function Step1({
       <div>
         <label className="block text-sm font-medium mb-1">Induk Aset</label>
 
-        <div className="relative">
+        <div className="relative" ref={indukRef}>
           <button
             type="button"
             onClick={() => setShowDropdown((prev) => !prev)}
@@ -363,7 +389,7 @@ export default function Step1({
           Penanggung Jawab
         </label>
 
-        <div className="relative">
+        <div className="relative" ref={pjRef}>
           <button
             type="button"
             onClick={() => setShowDropdownPJ((prev) => !prev)}

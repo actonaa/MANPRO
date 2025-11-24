@@ -63,9 +63,25 @@ export default function Step1({
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
         >
-          <option value="">Pilih Tipe Risiko</option>
           <option value="Aset">Aset</option>
           <option value="Skenario">Skenario</option>
+        </select>
+      </div>
+
+      {/* Jenis Risiko */}
+      <div className="mb-6">
+        <label className="font-medium">Jenis Risiko</label>
+        <select
+          name="jenisRisiko"
+          value={formData.jenisRisiko}
+          onChange={handleChange}
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 text-gray-700"
+        >
+          <option value="" disabled hidden>
+            Pilih Jenis Risiko
+          </option>
+          <option value="Negatif">Negatif</option>
+          <option value="Positif">Positif</option>
         </select>
       </div>
 

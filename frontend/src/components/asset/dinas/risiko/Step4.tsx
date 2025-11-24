@@ -51,14 +51,14 @@ export default function Step4({ formData }: Step4Props) {
 
         {/* Treatment */}
         {renderField("Strategy", formData.strategi)}
-        {renderField("Action", formData.aksiMitigasi)}
-        {renderField("Action Owner", formData.pemilik)}
-        {renderField("Target Date", formData.targetWaktu)}
-        {renderField("Cost", formData.perkiraanBiaya)}
-        {renderField("New Probability", formData.probabilitasResidual)}
-        {renderField("New Impact Score", formData.dampakResidual)}
-        {renderField("Residual Level", formData.levelResidual)}
-        {renderField("Effectiveness", formData.efektivitas)}
+        {renderField("Aksi", formData.aksiMitigasi)}
+        {renderField("Pemilik Risiko", formData.pemilik)}
+        {renderField("Target Waktu", formData.targetWaktu)}
+        {renderField("Biaya", formData.perkiraanBiaya)}
+        {renderField("Probabilitas", formData.probabilitasResidual)}
+        {renderField("Dampak", formData.dampakResidual)}
+        {renderField("Level Residual", formData.levelResidual)}
+        {renderField("Efektifitas", formData.efektivitas)}
       </div>
     </div>
   );

@@ -80,19 +80,6 @@ export default function Step2({ formData, handleChange }: Step2Props) {
             />
           </div>
 
-          {/* Jenis Risiko */}
-          <div className="mb-6">
-            <label className="font-medium">Jenis Risiko</label>
-            <input
-              type="text"
-              name="jenisRisiko"
-              placeholder="Jenis Risiko"
-              value={formData.jenisRisiko}
-              readOnly
-              className="w-full bg-gray-100 cursor-not-allowed border border-gray-300 rounded-lg px-3 py-2 mt-1"
-            />
-          </div>
-
           {/* Kriteria */}
           <div className="mb-4">
             <label className="font-medium">Kriteria</label>

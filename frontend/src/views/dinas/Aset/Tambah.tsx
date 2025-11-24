@@ -421,7 +421,10 @@ export default function Tambah() {
             </button>
 
             <button
-              onClick={() => navigate("/aset/tambah")}
+              onClick={() => {
+                navigate("/aset/tambah", { replace: true });
+                window.location.reload();
+              }}
               className="w-full text-blue-600 py-3.5 rounded-lg font-medium hover:bg-blue-50 mt-3"
             >
               Tambah Aset Lain

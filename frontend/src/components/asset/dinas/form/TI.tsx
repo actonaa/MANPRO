@@ -32,24 +32,28 @@ export default function StepTI({
 
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6 space-y-5">
-      <h2 className="text-lg font-semibold mb-2">Unggah dokumen</h2>
+      <h2 className="text-lg font-semibold mb-2">Step 2 - Informasi Aset TI</h2>
 
       {/* IP Address */}
       <div>
-        <label className="block text-sm font-medium mb-1">IP Address</label>
+        <label className="block text-sm font-medium mb-1">
+          IP Address (Opsional)
+        </label>
         <input
           type="text"
           name="ipAddress"
           value={formData.ipAddress}
           onChange={handleChange}
-          placeholder="Masukkan IP Address"
+          placeholder="Masukkan IP Address (192.xxx.xx.xxx)"
           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
       </div>
 
       {/* Hostname */}
       <div>
-        <label className="block text-sm font-medium mb-1">Hostname</label>
+        <label className="block text-sm font-medium mb-1">
+          Hostname (Opsional)
+        </label>
         <input
           type="text"
           name="hostname"
@@ -62,7 +66,7 @@ export default function StepTI({
 
       {/* OS */}
       <div>
-        <label className="block text-sm font-medium mb-1">OS</label>
+        <label className="block text-sm font-medium mb-1">OS (Opsional)</label>
         <input
           type="text"
           name="os"
@@ -75,7 +79,9 @@ export default function StepTI({
 
       {/* Version */}
       <div>
-        <label className="block text-sm font-medium mb-1">Version</label>
+        <label className="block text-sm font-medium mb-1">
+          Version (Opsional)
+        </label>
         <input
           type="text"
           name="version"
@@ -89,26 +95,27 @@ export default function StepTI({
       {/* Tanggal Deployment */}
       <div>
         <label className="block text-sm font-medium mb-1">
-          Tanggal Deployment
+          Tanggal Deployment (Opsional)
         </label>
         <input
           type="date"
           name="tanggalDeployment"
           value={formData.tanggalDeployment}
           onChange={handleChange}
+          onFocus={(e) => e.target.showPicker && e.target.showPicker()}
           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
       </div>
 
       {/* URL */}
       <div>
-        <label className="block text-sm font-medium mb-1">URL</label>
+        <label className="block text-sm font-medium mb-1">URL (Opsional)</label>
         <input
           type="text"
           name="url"
           value={formData.url}
           onChange={handleChange}
-          placeholder="Masukkan URL"
+          placeholder="Masukkan URL (example.com)"
           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
       </div>
@@ -116,7 +123,7 @@ export default function StepTI({
       {/* Serial Number Aset */}
       <div>
         <label className="block text-sm font-medium mb-1">
-          Serial Number Aset
+          Serial Number Aset (Opsional)
         </label>
         <input
           type="text"

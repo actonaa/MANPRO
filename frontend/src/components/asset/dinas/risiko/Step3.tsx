@@ -7,9 +7,11 @@ interface Step3Props {
 }
 
 export default function Step3({ formData, handleChange }: Step3Props) {
-  const isAccept = formData.strategi === "Accept";
+  const isPenerimaan = formData.strategi === "Penerimaan Risiko";
 
-  // hitung level residual otomatis
+  // ==============================
+  //  HITUNG LEVEL RESIDUAL OTOMATIS
+  // ==============================
   useEffect(() => {
     const p = Number(formData.probabilitasResidual);
     const d = Number(formData.dampakResidual);
@@ -30,7 +32,9 @@ export default function Step3({ formData, handleChange }: Step3Props) {
     handleChange,
   ]);
 
-  // otomatis menentukan efektivitas
+  // ==============================
+  //  HITUNG EFEKTIVITAS OTOMATIS
+  // ==============================
   useEffect(() => {
     const level = Number(formData.levelResidual);
     if (!level) return;
@@ -48,6 +52,25 @@ export default function Step3({ formData, handleChange }: Step3Props) {
     }
   }, [formData.levelResidual, formData.efektivitas, handleChange]);
 
+  // ==============================
+  //  STRATEGI BARU (POSITIF & NEGATIF)
+  // ==============================
+  const strategiNegatif = [
+    "Eskalasi Risiko",
+    "Mitigasi Risiko",
+    "Transfer Risiko",
+    "Penghindaran Risiko",
+    "Penerimaan Risiko",
+  ];
+
+  const strategiPositif = [
+    "Eskalasi Risiko",
+    "Eksploitasi Risiko",
+    "Peningkatan Risiko",
+    "Pembagian Risiko",
+    "Penerimaan Risiko",
+  ];
+
   return (
     <>
       <h2 className="text-base font-semibold mb-6">
@@ -55,108 +78,121 @@ export default function Step3({ formData, handleChange }: Step3Props) {
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Kiri */}
+        {/* ===================== */}
+        {/*     BAGIAN KIRI       */}
+        {/* ===================== */}
         <div>
-          {/* Strategi */}
-          <div className="mb-4">
-            <label className="font-medium">Strategy</label>
+          {/* STRATEGI RISIKO */}
+          <div className="mb-6">
+            <label className="font-medium">Strategi Risiko</label>
             <select
               name="strategi"
               value={formData.strategi}
               onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 mt-1"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
             >
               <option value="" disabled hidden>
-                Pilih Strategi
+                Pilih Strategi Risiko
               </option>
-              {["Avoid", "Reduce", "Transfer", "Accept"].map((v) => (
-                <option key={v} value={v}>
-                  {v}
-                </option>
-              ))}
+
+              {formData.jenisRisiko === "Negatif" &&
+                strategiNegatif.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+
+              {formData.jenisRisiko === "Positif" &&
+                strategiPositif.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
             </select>
           </div>
 
-          {/* Aksi Mitigasi */}
+          {/* AKSI MITIGASI */}
           <div className="mb-4">
-            <label className="font-medium">Action (Mitigation)</label>
+            <label className="font-medium">Aksi</label>
             <input
               type="text"
               name="aksiMitigasi"
               placeholder="Masukkan tindakan mitigasi"
               value={formData.aksiMitigasi}
               onChange={handleChange}
-              disabled={isAccept}
-              className={`w-full border rounded-lg px-3 py-2 mt-1 ${
-                isAccept ? "bg-gray-100 cursor-not-allowed" : ""
+              disabled={isPenerimaan}
+              className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
+                isPenerimaan ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
             />
           </div>
 
-          {/* Action Owner */}
+          {/* PEMILIK */}
           <div className="mb-4">
-            <label className="font-medium">Action Owner</label>
+            <label className="font-medium">Pemilik Risiko</label>
             <input
               type="text"
               name="pemilik"
-              placeholder="Masukkan nama action owner"
+              placeholder="Masukkan nama pemilik risiko"
               value={formData.pemilik}
               onChange={handleChange}
-              disabled={isAccept}
-              className={`w-full border rounded-lg px-3 py-2 mt-1 ${
-                isAccept ? "bg-gray-100 cursor-not-allowed" : ""
+              disabled={isPenerimaan}
+              className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
+                isPenerimaan ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
             />
           </div>
 
-          {/* Target Date */}
+          {/* TARGET WAKTU */}
           <div className="mb-4">
-            <label className="font-medium">Target Date</label>
+            <label className="font-medium">Target Waktu</label>
             <input
               type="date"
               name="targetWaktu"
               value={formData.targetWaktu}
               onChange={handleChange}
-              disabled={isAccept}
-              className={`w-full border rounded-lg px-3 py-2 mt-1 ${
-                isAccept ? "bg-gray-100 cursor-not-allowed" : ""
+              disabled={isPenerimaan}
+              className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
+                isPenerimaan ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
             />
           </div>
         </div>
 
-        {/* Kanan */}
+        {/* ===================== */}
+        {/*     BAGIAN KANAN      */}
+        {/* ===================== */}
         <div>
-          {/* Cost */}
+          {/* BIAYA */}
           <div className="mb-4">
-            <label className="font-medium">Cost</label>
+            <label className="font-medium">Biaya</label>
             <input
               type="number"
               name="perkiraanBiaya"
-              placeholder="ex: 30000000"
+              placeholder="Contoh: 30000000"
               value={formData.perkiraanBiaya}
               onChange={handleChange}
-              disabled={isAccept}
-              className={`w-full border rounded-lg px-3 py-2 mt-1 ${
-                isAccept ? "bg-gray-100 cursor-not-allowed" : ""
+              disabled={isPenerimaan}
+              className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
+                isPenerimaan ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
             />
           </div>
 
-          {/* Residual Probability */}
+          {/* PROBABILITAS RESIDUAL */}
           <div className="mb-4">
-            <label className="font-medium">New Probability</label>
+            <label className="font-medium">Probabilitas Residual</label>
             <select
               name="probabilitasResidual"
               value={formData.probabilitasResidual}
               onChange={handleChange}
-              disabled={isAccept}
-              className={`w-full border rounded-lg px-3 py-2 mt-1 ${
-                isAccept ? "bg-gray-100 cursor-not-allowed" : ""
+              disabled={isPenerimaan}
+              className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
+                isPenerimaan ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
             >
               <option value="" disabled hidden>
-                Tentukan Level Probabilitas
+                Pilih Probabilitas
               </option>
               {[1, 2, 3, 4, 5].map((v) => (
                 <option key={v} value={v}>
@@ -166,20 +202,20 @@ export default function Step3({ formData, handleChange }: Step3Props) {
             </select>
           </div>
 
-          {/* Residual Impact */}
+          {/* DAMPAK RESIDUAL */}
           <div className="mb-4">
-            <label className="font-medium">New Impact Score</label>
+            <label className="font-medium">Dampak Residual</label>
             <select
               name="dampakResidual"
               value={formData.dampakResidual}
               onChange={handleChange}
-              disabled={isAccept}
-              className={`w-full border rounded-lg px-3 py-2 mt-1 ${
-                isAccept ? "bg-gray-100 cursor-not-allowed" : ""
+              disabled={isPenerimaan}
+              className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
+                isPenerimaan ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
             >
               <option value="" disabled hidden>
-                Tentukan Level Dampak
+                Pilih Dampak
               </option>
               {[1, 2, 3, 4, 5].map((v) => (
                 <option key={v} value={v}>
@@ -189,27 +225,27 @@ export default function Step3({ formData, handleChange }: Step3Props) {
             </select>
           </div>
 
-          {/* Efektivitas */}
+          {/* EFEKTIVITAS */}
           <div className="mb-4">
-            <label className="font-medium">Effectiveness</label>
+            <label className="font-medium">Efektivitas</label>
             <input
               type="text"
               name="efektivitas"
               value={formData.efektivitas}
               disabled
-              className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 bg-gray-100"
             />
           </div>
 
-          {/* Level Residual */}
+          {/* LEVEL RESIDUAL */}
           <div className="mb-4">
-            <label className="font-medium">Residual Level</label>
+            <label className="font-medium">Level Residual</label>
             <input
               type="text"
               name="levelResidual"
               value={formData.levelResidual}
               disabled
-              className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 bg-gray-100"
             />
           </div>
         </div>
