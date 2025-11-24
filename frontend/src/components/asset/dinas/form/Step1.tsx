@@ -9,7 +9,7 @@ export interface AsetFormData {
   tanggalPerolehan: string;
   indukAset: string;
   lokasiAset: string;
-  penanggungJawab: string; 
+  penanggungJawab: string;
   kategoriAset: string;
   subKategori: string;
   kondisi: string;
@@ -38,13 +38,16 @@ export default function Step1({
   const [subcategories, setSubcategories] = useState<any[]>([]);
   const [allAssets, setAllAssets] = useState<any[]>([]);
 
-  // Search induk aset
   const [searchInduk, setSearchInduk] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
+  const [allHR, setAllHR] = useState<any[]>([]);
+  const [searchPJ, setSearchPJ] = useState("");
+  const [showDropdownPJ, setShowDropdownPJ] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   const token = localStorage.getItem("token");
 
-  // === FIX: UUID KONDISI ===
   const CONDITIONS = {
     Baik: "fb67aff5-8a84-4ffd-bdf6-a1f25d7b6270",
     Ringan: "529392ea-6133-4243-8039-1e62f15c2066",
@@ -97,37 +100,95 @@ export default function Step1({
     fetchAssets();
   }, [token]);
 
-  // Input handler
+  useEffect(() => {
+    async function fetchHR() {
+      try {
+        const res = await fetch(
+          "https://sso-user-management.vercel.app/api/hr",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        const data = await res.json();
+        const hrList = data.data || [];
+
+        // Ambil dept user dari localStorage
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        const userDept = user.department || "";
+
+        // Filter berdasarkan department user login
+        const filtered = hrList.filter(
+          (hr: any) => hr.department?.toLowerCase() === userDept.toLowerCase()
+        );
+
+        setAllHR(filtered);
+      } catch (error) {
+        console.error("Gagal fetch HR:", error);
+      }
+    }
+
+    fetchHR();
+  }, [token]);
+
+  const filteredHR = allHR.filter((h) =>
+    h.name?.toLowerCase().includes(searchPJ.toLowerCase())
+  );
+
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-  };
 
-  const setKondisi = (label: "Baik" | "Ringan" | "Berat") => {
-    setFormData((prev) => ({
-      ...prev,
-      kondisi: CONDITIONS[label],
-    }));
+    // validasi langsung
+    if (!value || value.trim() === "") {
+      setErrors((prev) => ({ ...prev, [name]: "Field ini wajib diisi" }));
+    } else {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
   };
 
   const filteredSubcategories = subcategories.filter(
     (sub) => sub.category_id === formData.kategoriAset
   );
 
-  const isBaik = formData.kondisi === CONDITIONS.Baik;
-  const isRingan = formData.kondisi === CONDITIONS.Ringan;
-  const isBerat = formData.kondisi === CONDITIONS.Berat;
-  const isRusak = isRingan || isBerat || formData.kondisi === "";
-
-  // Filter induk aset
   const filteredAssets = allAssets.filter((a) =>
     a.name?.toLowerCase().includes(searchInduk.toLowerCase())
   );
+
+  const requiredFields: (keyof AsetFormData)[] = [
+    "namaAset",
+    "merkTipe",
+    "kodeBMD",
+    "tanggalPerolehan",
+    "indukAset",
+    "lokasiAset",
+    "penanggungJawab",
+    "kategoriAset",
+    "subKategori",
+    "kondisi",
+    "useful_life",
+  ];
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    requiredFields.forEach((field) => {
+      const value = formData[field];
+
+      if (!value || value.toString().trim() === "") {
+        newErrors[field] = "Field ini wajib diisi";
+      }
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6 space-y-5">
@@ -135,16 +196,21 @@ export default function Step1({
         Step 1 - Informasi Umum Aset
       </h2>
 
-      {/* NAMA ASET */}
+      {/* Nama Aset */}
       <div>
         <label className="block text-sm font-medium mb-1">Nama Aset</label>
         <input
           type="text"
           name="namaAset"
-          value={formData.namaAset}
+          placeholder="Masukkan nama aset"
+          value={formData.namaAset || ""}
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          required
         />
+        {errors.namaAset && (
+          <p className="text-sm text-red-500 mt-1">{errors.namaAset}</p>
+        )}
       </div>
 
       {/* Merk */}
@@ -153,10 +219,15 @@ export default function Step1({
         <input
           type="text"
           name="merkTipe"
-          value={formData.merkTipe}
+          placeholder="Masukkan merk atau tipe aset"
+          value={formData.merkTipe || ""}
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          required
         />
+        {errors.merkTipe && (
+          <p className="text-sm text-red-500 mt-1">{errors.merkTipe}</p>
+        )}
       </div>
 
       {/* Kode BMD */}
@@ -165,10 +236,15 @@ export default function Step1({
         <input
           type="text"
           name="kodeBMD"
-          value={formData.kodeBMD}
+          placeholder="Masukkan kode BMD"
+          value={formData.kodeBMD || ""}
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          required
         />
+        {errors.kodeBMD && (
+          <p className="text-sm text-red-500 mt-1">{errors.kodeBMD}</p>
+        )}
       </div>
 
       {/* Tanggal */}
@@ -179,13 +255,17 @@ export default function Step1({
         <input
           type="date"
           name="tanggalPerolehan"
-          value={formData.tanggalPerolehan}
+          value={formData.tanggalPerolehan || ""}
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          required
         />
+        {errors.tanggalPerolehan && (
+          <p className="text-sm text-red-500 mt-1">{errors.tanggalPerolehan}</p>
+        )}
       </div>
 
-      {/* ======================= INDUK ASET CUSTOM DROPDOWN ======================= */}
+      {/* Induk Aset */}
       <div>
         <label className="block text-sm font-medium mb-1">Induk Aset</label>
 
@@ -198,10 +278,9 @@ export default function Step1({
             <span>
               {formData.indukAset
                 ? allAssets.find((a) => a.id === formData.indukAset)?.name
-                : "Pilih Induk Aset"}
+                : "Pilih induk aset"}
             </span>
 
-            {/* Panah Bawah */}
             <svg
               className={`w-4 h-4 transition-transform ${
                 showDropdown ? "rotate-180" : "rotate-0"
@@ -221,7 +300,6 @@ export default function Step1({
 
           {showDropdown && (
             <div className="absolute z-20 w-full bg-white border border-gray-300 rounded-lg mt-1 max-h-56 overflow-hidden shadow-lg">
-              {/* Search */}
               <div className="flex items-center border-b border-b-gray-300 p-2">
                 <Search className="w-4 h-4 text-gray-400 mr-2" />
                 <input
@@ -230,10 +308,10 @@ export default function Step1({
                   value={searchInduk}
                   onChange={(e) => setSearchInduk(e.target.value)}
                   className="w-full outline-none py-1"
+                  required
                 />
               </div>
 
-              {/* List */}
               <div className="max-h-48 overflow-y-auto">
                 {filteredAssets.length === 0 && (
                   <div className="p-2 text-sm text-gray-500">
@@ -257,6 +335,9 @@ export default function Step1({
             </div>
           )}
         </div>
+        {errors.indukAset && (
+          <p className="text-sm text-red-500 mt-1">{errors.indukAset}</p>
+        )}
       </div>
 
       {/* Lokasi */}
@@ -265,10 +346,15 @@ export default function Step1({
         <input
           type="text"
           name="lokasiAset"
-          value={formData.lokasiAset}
+          placeholder="Masukkan lokasi aset"
+          value={formData.lokasiAset || ""}
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          required
         />
+        {errors.lokasiAset && (
+          <p className="text-sm text-red-500 mt-1">{errors.lokasiAset}</p>
+        )}
       </div>
 
       {/* Penanggung Jawab */}
@@ -276,13 +362,75 @@ export default function Step1({
         <label className="block text-sm font-medium mb-1">
           Penanggung Jawab
         </label>
-        <input
-          type="text"
-          name="penanggungJawab"
-          value={formData.penanggungJawab}
-          onChange={handleChange}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2"
-        />
+
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setShowDropdownPJ((prev) => !prev)}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-left bg-white flex justify-between items-center"
+          >
+            <span>{formData.penanggungJawab || "Pilih penanggung jawab"}</span>
+
+            <svg
+              className={`w-4 h-4 transition-transform ${
+                showDropdownPJ ? "rotate-180" : "rotate-0"
+              }`}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+
+          {showDropdownPJ && (
+            <div className="absolute z-20 w-full bg-white border border-gray-300 rounded-lg mt-1 max-h-56 overflow-hidden shadow-lg">
+              <div className="flex items-center border-b border-b-gray-300 p-2">
+                <Search className="w-4 h-4 text-gray-400 mr-2" />
+                <input
+                  type="text"
+                  placeholder="Cari penanggung jawab..."
+                  value={searchPJ}
+                  onChange={(e) => setSearchPJ(e.target.value)}
+                  className="w-full outline-none py-1"
+                  required
+                />
+              </div>
+
+              <div className="max-h-48 overflow-y-auto">
+                {filteredHR.length === 0 && (
+                  <div className="p-2 text-sm text-gray-500">
+                    Tidak ditemukan
+                  </div>
+                )}
+
+                {filteredHR.map((hr) => (
+                  <div
+                    key={hr.hr_id}
+                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        penanggungJawab: hr.name,
+                      }));
+                      setShowDropdownPJ(false);
+                    }}
+                  >
+                    {hr.name}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        {errors.penanggungJawab && (
+          <p className="text-sm text-red-500 mt-1">{errors.penanggungJawab}</p>
+        )}
       </div>
 
       {/* Kategori */}
@@ -290,7 +438,7 @@ export default function Step1({
         <label className="block text-sm font-medium mb-1">Kategori Aset</label>
         <select
           name="kategoriAset"
-          value={formData.kategoriAset}
+          value={formData.kategoriAset || ""}
           onChange={(e) => {
             const selectedId = e.target.value;
             const selectedText = e.target.options[e.target.selectedIndex].text;
@@ -303,33 +451,41 @@ export default function Step1({
             }));
           }}
           className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          required
         >
-          <option value="">-- Pilih Kategori --</option>
+          <option value="">Pilih kategori aset</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.id}>
               {cat.name}
             </option>
           ))}
         </select>
+        {errors.kategoriAset && (
+          <p className="text-sm text-red-500 mt-1">{errors.kategoriAset}</p>
+        )}
       </div>
 
-      {/* SubKategori */}
+      {/* Subkategori */}
       <div>
         <label className="block text-sm font-medium mb-1">Sub Kategori</label>
         <select
           name="subKategori"
-          value={formData.subKategori}
+          value={formData.subKategori || ""}
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-lg px-3 py-2"
           disabled={!formData.kategoriAset}
+          required
         >
-          <option value="">Pilih Sub Kategori</option>
+          <option value="">Pilih sub kategori</option>
           {filteredSubcategories.map((sub) => (
             <option key={sub.id} value={sub.id}>
               {sub.name}
             </option>
           ))}
         </select>
+        {errors.subKategori && (
+          <p className="text-sm text-red-500 mt-1">{errors.subKategori}</p>
+        )}
       </div>
 
       {/* Kondisi */}
@@ -339,47 +495,80 @@ export default function Step1({
         </label>
 
         <div className="grid grid-cols-2 gap-4">
+          {/* Kolom Kiri — Baik & Rusak */}
           <div className="space-y-2 border p-3 rounded-lg">
+            {/* Baik */}
             <label className="flex items-center gap-2">
               <input
                 type="radio"
-                checked={isBaik}
-                onChange={() => setKondisi("Baik")}
+                checked={formData.kondisi === CONDITIONS.Baik}
+                onChange={() =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    kondisi: CONDITIONS.Baik, // UUID Baik
+                  }))
+                }
               />
               Baik
             </label>
 
+            {/* Pilih Rusak */}
             <label className="flex items-center gap-2">
               <input
                 type="radio"
-                checked={isRusak}
+                checked={
+                  formData.kondisi === CONDITIONS.Ringan ||
+                  formData.kondisi === CONDITIONS.Berat
+                }
                 onChange={() =>
-                  setFormData((prev) => ({ ...prev, kondisi: "" }))
+                  // Default ke "Ringan" saat user klik "Rusak"
+                  setFormData((prev) => ({
+                    ...prev,
+                    kondisi: CONDITIONS.Ringan, // UUID Rusak Ringan
+                  }))
                 }
               />
               Rusak
             </label>
           </div>
 
+          {/* Kolom Kanan — Pilih Ringan / Berat */}
           <div
             className={`space-y-2 border p-3 rounded-lg ${
-              !isRusak ? "opacity-50 pointer-events-none" : ""
+              !(
+                formData.kondisi === CONDITIONS.Ringan ||
+                formData.kondisi === CONDITIONS.Berat
+              )
+                ? "opacity-50 pointer-events-none"
+                : ""
             }`}
           >
+            {/* Rusak Ringan */}
             <label className="flex items-center gap-2">
               <input
                 type="radio"
-                checked={isRingan}
-                onChange={() => setKondisi("Ringan")}
+                checked={formData.kondisi === CONDITIONS.Ringan}
+                onChange={() =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    kondisi: CONDITIONS.Ringan, // UUID Rusak Ringan
+                  }))
+                }
               />
               Ringan
             </label>
 
+            {/* Rusak Berat */}
             <label className="flex items-center gap-2">
               <input
                 type="radio"
-                checked={isBerat}
-                onChange={() => setKondisi("Berat")}
+                checked={formData.kondisi === CONDITIONS.Berat}
+                onChange={() =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    kondisi: CONDITIONS.Berat, // UUID Rusak Berat
+                  }))
+                }
               />
               Berat
             </label>
@@ -389,39 +578,47 @@ export default function Step1({
 
       {/* Masa Pakai */}
       <div>
-        <label className="block text-sm font-medium mb-1 mt-4">
-          Masa Pakai
-        </label>
+        <label className="block text-sm font-medium mb-1">Masa Pakai</label>
         <input
           type="text"
           name="useful_life"
-          value={formData.useful_life}
+          placeholder="Masukkan masa pakai aset (hari/bulan/tahun)"
+          value={formData.useful_life || ""}
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          required
         />
+        {errors.useful_life && (
+          <p className="text-sm text-red-500 mt-1">{errors.useful_life}</p>
+        )}
       </div>
 
       {/* Nilai Aset */}
       <div>
-        <label className="block text-sm font-medium mb-1 mt-4">
+        <label className="block text-sm font-medium mb-1">
           Nilai Aset (Opsional)
         </label>
         <input
           type="number"
           name="nilaiAset"
-          value={formData.nilaiAset}
+          min={0}
+          placeholder="Masukkan nilai aset: contoh 1000000"
+          value={formData.nilaiAset || ""}
           onChange={handleChange}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </div>
 
       {/* Vendor */}
       <div>
-        <label className="block text-sm font-medium mb-1 mt-4">Vendor</label>
+        <label className="block text-sm font-medium mb-1">
+          Vendor (Opsional)
+        </label>
         <input
           type="text"
           name="vendor"
-          value={formData.vendor}
+          placeholder="Masukkan vendor aset"
+          value={formData.vendor || ""}
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-lg px-3 py-2"
         />
@@ -434,7 +631,6 @@ export default function Step1({
         </label>
 
         <div className="border-2 border-dashed rounded-lg p-10 text-center relative">
-          {/* Input file hidden */}
           <input
             type="file"
             multiple
@@ -445,7 +641,6 @@ export default function Step1({
             }
           />
 
-          {/* Button trigger */}
           <button
             type="button"
             className="inline-flex items-center gap-2 px-4 py-2 bg-white border rounded-lg"
@@ -459,7 +654,6 @@ export default function Step1({
             File ukuran kurang dari 1 MB
           </p>
 
-          {/* Optional: tampilkan nama file */}
           {uploadedFiles && uploadedFiles.length > 0 && (
             <div className="mt-2 text-sm text-gray-700">
               {uploadedFiles.map((file) => file.name).join(", ")}
@@ -470,7 +664,16 @@ export default function Step1({
 
       <div className="flex justify-end">
         <button
-          onClick={nextStep}
+          onClick={() => {
+            setFormData((prev) => ({
+              ...prev,
+              nilaiAset: prev.nilaiAset?.trim() === "" ? "0" : prev.nilaiAset,
+            }));
+
+            if (validateForm()) {
+              nextStep?.();
+            }
+          }}
           className="px-6 py-2 bg-blue-600 text-white rounded-lg"
         >
           Selanjutnya

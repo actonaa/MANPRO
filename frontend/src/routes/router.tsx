@@ -106,11 +106,11 @@ export default function AppRoutes() {
           <Route path="/risiko/data" element={<DaftarRisiko />} />
           <Route path="/risiko/:id" element={<DetailRisiko />} />
           <Route path="/risiko/tambah/:asset_id" element={<RisikoTambah />} />
-          <Route path="/risiko/mitigasi" element={<TambahMitigasi />} />
+          <Route path="/risiko/mitigasi/:riskId" element={<TambahMitigasi />} />
           <Route path="/laporan/risiko" element={<LaporanRisiko />} />
           <Route path="/pemeliharaan" element={<JadwalPemeliharaan />} />
           <Route
-            path="/pemeliharaan/:id"
+            path="/pemeliharaan/:asset_id"
             element={<DetailJadwalPemeliharaan />}
           />
           <Route path="/laporan/pemeliharaan" element={<Pemeliharaan />} />

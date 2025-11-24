@@ -152,7 +152,57 @@ export default function TableJadwalPemeliharaan({
   // ------------------------------
   // LOADING SKELETON
   // ------------------------------
-  if (loading) return <div className="text-center py-10">Loading...</div>;
+  if (loading)
+    return (
+      <div className="mt-5 bg-white md:mt-0 space-y-4">
+        {/* TABLE SKELETON */}
+        <div className="overflow-x-auto hidden lg:block">
+          <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
+            <thead>
+              <tr>
+                {Array.from({ length: 7 }).map((_, idx) => (
+                  <th key={idx} className="py-5 px-4 font-semibold">
+                    <div className="h-4 bg-gray-200 rounded w-20 mx-auto animate-pulse"></div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: 10 }).map((_, idx) => (
+                <tr key={idx} className="border-b border-b-[#ddd]">
+                  {Array.from({ length: 7 }).map((_, i) => (
+                    <td key={i} className="py-5 px-4">
+                      <div className="h-4 bg-gray-200 rounded w-full animate-pulse"></div>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* MOBILE CARD SKELETON */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden">
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <div
+              key={idx}
+              className="border p-4 rounded-xl shadow-sm space-y-3"
+            >
+              <div className="h-4 bg-gray-200 rounded w-1/4 animate-pulse"></div>
+              <div className="h-6 bg-gray-200 rounded w-1/2 animate-pulse"></div>
+              <div className="space-y-2">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-4 bg-gray-200 rounded w-full animate-pulse"
+                  ></div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
 
   // ------------------------------
   // RENDER
@@ -197,7 +247,7 @@ export default function TableJadwalPemeliharaan({
                   <td className="py-5 px-4">{item.scheduled_date}</td>
                   <td className="py-5 px-4">
                     <a
-                      href={`/pemeliharaan/${item.id}`}
+                      href={`/pemeliharaan/${item.asset_id}`}
                       className="text-[#0095E8] font-medium hover:underline"
                     >
                       Detail
@@ -273,7 +323,7 @@ export default function TableJadwalPemeliharaan({
               <div className="flex justify-between items-center mb-1">
                 <p className="text-sm">{item.id}</p>
                 <a
-                  href={`/pemeliharaan/${item.id}`}
+                  href={`/pemeliharaan/${item.asset_id}`}
                   className="text-blue-500 text-sm font-medium hover:underline"
                 >
                   Detail

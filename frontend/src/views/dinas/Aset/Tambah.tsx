@@ -66,7 +66,7 @@ export default function Tambah() {
     penanggungJawab: "",
     kategoriAset: "",
     subKategori: "",
-    kondisi: "",
+    kondisi: "fb67aff5-8a84-4ffd-bdf6-a1f25d7b6270",
     useful_life: "",
     nilaiAset: "",
     vendor: "",

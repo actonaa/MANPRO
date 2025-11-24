@@ -83,7 +83,7 @@ export default function RisikoPage() {
 
       {/* ---------------- Konten ---------------- */}
       <div className="mt-5">
-        <div className="bg-white rounded-2xl space-y-6 p-4">
+        <div className=" rounded-2xl space-y-6 p-4">
           {/* ===============================
               DETAIL RISIKO
           ================================== */}
@@ -109,7 +109,7 @@ export default function RisikoPage() {
                 Aktivitas / Mitigasi
           ================================== */}
           <RiwayatAktivitasCard aktivitasList={data.aktivitas ?? []} />
-          <RencanaMitigasiCard mitigasiList={data.mitigasi ?? []} />
+          <RencanaMitigasiCard riskId={data.id} />
         </div>
       </div>
     </>

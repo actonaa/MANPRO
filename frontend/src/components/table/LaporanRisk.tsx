@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect } from "react";
+
 type Risiko = {
   id: string;
   namaAset: string;
@@ -8,39 +11,6 @@ type Risiko = {
   status: string;
   date: string;
 };
-
-const data: Risiko[] = [
-  {
-    id: "RISK - 001",
-    namaAset: "Laptop Kerja",
-    namaRisiko: "Kebocoran data",
-    level: "Tinggi",
-    skor: 20,
-    kategori: "IT",
-    status: "Aktif",
-    date: "2025-01-12",
-  },
-  {
-    id: "RISK - 002",
-    namaAset: "CCTV Lobby",
-    namaRisiko: "Gangguan Keamanan",
-    level: "Sedang",
-    skor: 12,
-    kategori: "IT",
-    status: "Perbaikan",
-    date: "2025-01-15",
-  },
-  {
-    id: "RISK - 003",
-    namaAset: "Meja",
-    namaRisiko: "Permukaan Rusak",
-    level: "Rendah",
-    skor: 6,
-    kategori: "NON-IT",
-    status: "Tidak Aktif",
-    date: "2025-01-12",
-  },
-];
 
 const getLevelColor = (level: string) => {
   if (level === "Tinggi") return "text-red-500 font-semibold";
@@ -68,6 +38,56 @@ export default function TableRisiko({
   level?: string;
   status?: string;
 }) {
+  const [data, setData] = useState<Risiko[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRisks = async () => {
+      try {
+        const token = localStorage.getItem("token"); // ambil token dari localStorage
+        const res = await fetch(
+          "https://asset-risk-management.vercel.app/api/risks",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const apiData = await res.json();
+
+        // Map response API ke tipe Risiko
+        const mappedData: Risiko[] = apiData.map((item: any) => ({
+          id: item.id,
+          namaAset: item.asset_info?.name || "Unknown",
+          namaRisiko: item.title || item.description || "No title",
+          level:
+            item.criteria === "High"
+              ? "Tinggi"
+              : item.criteria === "Medium"
+              ? "Sedang"
+              : "Rendah",
+          skor: item.entry_level || 0,
+          kategori: item.risk_category?.name || "Unknown",
+          status:
+            item.status === "planned"
+              ? "Perbaikan"
+              : item.status === "approved"
+              ? "Aktif"
+              : "Tidak Aktif",
+          date: item.created_at ? item.created_at.split("T")[0] : "",
+        }));
+
+        setData(mappedData);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching risks:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchRisks();
+  }, []);
+
   const filteredData = data.filter((item) => {
     const matchPeriod = period ? item.date === period : true;
     const matchLevel = level ? item.level === level : true;
@@ -75,9 +95,14 @@ export default function TableRisiko({
     return matchPeriod && matchLevel && matchStatus;
   });
 
+  if (loading)
+    return (
+      <p className="text-center text-gray-500 py-4">Loading data risiko...</p>
+    );
+
   return (
     <div className="rounded-2xl p-2 border border-gray-100">
-      {/* 💻 TABLE VIEW — Desktop md ke atas */}
+      {/* TABLE VIEW */}
       <div className="hidden md:block rounded-xl bg-white">
         <table className="min-w-full text-sm text-center text-gray-600">
           <thead>
@@ -121,7 +146,10 @@ export default function TableRisiko({
               ))
             ) : (
               <tr>
-                <td colSpan={8} className="text-center py-4 text-gray-400 italic">
+                <td
+                  colSpan={8}
+                  className="text-center py-4 text-gray-400 italic"
+                >
                   Tidak ada data yang sesuai dengan filter.
                 </td>
               </tr>
@@ -130,7 +158,7 @@ export default function TableRisiko({
         </table>
       </div>
 
-      {/* 📱 CARD VIEW — Mobile 1 kolom, Tablet 2 kolom */}
+      {/* CARD VIEW */}
       <div className="md:hidden space-y-4">
         {filteredData.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -160,7 +188,9 @@ export default function TableRisiko({
                   </p>
                   <p className="text-right">
                     <span className="font-medium text-gray-700">Level:</span>{" "}
-                    <span className={getLevelColor(item.level)}>{item.level}</span>
+                    <span className={getLevelColor(item.level)}>
+                      {item.level}
+                    </span>
                   </p>
                   <p>
                     <span className="font-medium text-gray-700">Skor:</span>{" "}
@@ -173,7 +203,9 @@ export default function TableRisiko({
                 </div>
 
                 <div className="mt-3 flex justify-between items-center">
-                  <span className={getStatusStyle(item.status)}>{item.status}</span>
+                  <span className={getStatusStyle(item.status)}>
+                    {item.status}
+                  </span>
                   <span className="text-xs text-gray-500">
                     {item.date.split("-").reverse().join("-")}
                   </span>

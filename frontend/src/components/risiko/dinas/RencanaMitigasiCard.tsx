@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate } from "react-router-dom";
 import ButtonImg from "../../button/ButtonImg";
 import { useAuth } from "../../../routes/ProtectedRouteBase";
+import { useEffect, useState } from "react";
 
 type Mitigasi = {
   aksi: string;
@@ -16,34 +18,34 @@ type Mitigasi = {
 };
 
 type RencanaMitigasiCardProps = {
-  mitigasiList?: Mitigasi[];
+  riskId: string; // riskId dari parent
 };
 
 export default function RencanaMitigasiCard({
-  mitigasiList = [],
+  riskId,
 }: RencanaMitigasiCardProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [mitigasiList, setMitigasiList] = useState<Mitigasi[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const handleNavigate = () => {
     if (!user) return;
 
     switch (user.role) {
       case "teknisi":
-        navigate("/aset/tambah");
+        navigate(`/risiko/mitigasi/${riskId}`);
         break;
       case "admin_diskominfo":
         navigate("/risiko-admin/tambah");
         break;
       default:
-        // role lain tidak bisa menambah
         break;
     }
   };
 
-  // Menentukan apakah tombol "Tambah Aksi" ditampilkan
-  const canAdd =
-    user?.role === "teknisi" || user?.role === "admin_diskominfo";
+  const canAdd = user?.role === "teknisi" || user?.role === "admin_diskominfo";
 
   const getStatusColor = (status: string) => {
     if (status.toLowerCase().includes("selesai"))
@@ -55,9 +57,48 @@ export default function RencanaMitigasiCard({
     return "bg-gray-100 text-gray-600";
   };
 
+  // ====================
+  // Fetch mitigasi dari API
+  // ====================
+  useEffect(() => {
+    const fetchMitigasi = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch(`/api/risk-treatments/${riskId}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) throw new Error("Gagal memuat rencana mitigasi");
+
+        const data = await res.json();
+        setMitigasiList(data);
+      } catch (err: any) {
+        console.error(err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (riskId) fetchMitigasi();
+  }, [riskId]);
+
+  if (loading)
+    return (
+      <p className="text-gray-500 py-4 text-center">
+        Memuat rencana mitigasi...
+      </p>
+    );
+
+  if (error) return <p className="text-red-500 py-4 text-center">{error}</p>;
+
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6 overflow-x-auto">
-      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
         <h2 className="text-lg font-bold text-gray-800 mb-2 md:mb-0">
           Rencana Mitigasi
@@ -80,7 +121,6 @@ export default function RencanaMitigasiCard({
         )}
       </div>
 
-      {/* Tabel Mitigasi */}
       {mitigasiList.length > 0 ? (
         <table className="w-full text-sm text-left border-collapse">
           <thead className="border-b text-gray-600">

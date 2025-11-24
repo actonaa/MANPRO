@@ -22,7 +22,7 @@ interface ApiAsset {
   acquisition_date: string;
 }
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
 const getConditionColor = (condition: string) => {
   if (condition.toUpperCase() === "BAIK") return "text-green-600 font-semibold";
