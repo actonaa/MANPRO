@@ -151,6 +151,7 @@ export default function Step3({ formData, handleChange }: Step3Props) {
               name="targetWaktu"
               value={formData.targetWaktu}
               onChange={handleChange}
+              onFocus={(e) => e.target.showPicker && e.target.showPicker()}
               disabled={isPenerimaan}
               className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
                 isPenerimaan ? "bg-gray-100 cursor-not-allowed" : ""

@@ -66,17 +66,35 @@ export default function RencanaMitigasiCard({
       try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch(`/api/risk-treatments/${riskId}`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(
+          `https://asset-risk-management.vercel.app/api/risk-treatments?risk_id=${riskId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!res.ok) throw new Error("Gagal memuat rencana mitigasi");
 
         const data = await res.json();
-        setMitigasiList(data);
+
+        // 🔥 MAP API → UI MODEL
+        const mapped = data.map((item: any) => ({
+          aksi: item.action,
+          status: item.status,
+          targetTanggal: item.target_date,
+          strategi: item.strategy,
+          biaya: item.cost,
+          pemilik: item.action_owner,
+          efektivitas: item.effectiveness,
+          nilaiProbabilitas: item.new_probability,
+          nilaiDampak: item.new_impact_score,
+          nilaiResidual: item.residual_level,
+        }));
+
+        setMitigasiList(mapped);
       } catch (err: any) {
         console.error(err);
         setError(err.message);
@@ -90,9 +108,43 @@ export default function RencanaMitigasiCard({
 
   if (loading)
     return (
-      <p className="text-gray-500 py-4 text-center">
-        Memuat rencana mitigasi...
-      </p>
+      <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6 animate-pulse">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+          <div className="h-6 w-40 bg-gray-200 rounded"></div>
+          <div className="h-8 w-32 bg-gray-200 rounded mt-2 md:mt-0"></div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left border-collapse">
+            <thead className="border-b border-b-gray-200">
+              <tr>
+                {Array(10)
+                  .fill(null)
+                  .map((_, i) => (
+                    <th key={i} className="py-2">
+                      <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                    </th>
+                  ))}
+              </tr>
+            </thead>
+            <tbody>
+              {Array(4)
+                .fill(null)
+                .map((_, row) => (
+                  <tr key={row} className="border-b border-b-gray-200">
+                    {Array(10)
+                      .fill(null)
+                      .map((_, col) => (
+                        <td key={col} className="py-3">
+                          <div className="h-4 w-full bg-gray-200 rounded"></div>
+                        </td>
+                      ))}
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     );
 
   if (error) return <p className="text-red-500 py-4 text-center">{error}</p>;
@@ -101,7 +153,7 @@ export default function RencanaMitigasiCard({
     <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6 overflow-x-auto">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
         <h2 className="text-lg font-bold text-gray-800 mb-2 md:mb-0">
-          Rencana Mitigasi
+          Aksi Penanganan
         </h2>
 
         {canAdd && (
@@ -123,7 +175,7 @@ export default function RencanaMitigasiCard({
 
       {mitigasiList.length > 0 ? (
         <table className="w-full text-sm text-left border-collapse">
-          <thead className="border-b text-gray-600">
+          <thead className="text-gray-600">
             <tr>
               <th className="py-2 font-bold">Aksi</th>
               <th className="py-2 font-bold">Status</th>
@@ -139,9 +191,12 @@ export default function RencanaMitigasiCard({
           </thead>
           <tbody>
             {mitigasiList.map((item) => (
-              <tr key={item.aksi + item.targetTanggal} className="border-b">
-                <td className="py-2 text-gray-800 font-medium">{item.aksi}</td>
-                <td className="py-2">
+              <tr
+                key={item.aksi + item.targetTanggal}
+                className="border-b border-b-gray-200"
+              >
+                <td className="py-6 text-gray-800 font-medium">{item.aksi}</td>
+                <td className="py-6">
                   <span
                     className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
                       item.status
@@ -150,26 +205,26 @@ export default function RencanaMitigasiCard({
                     {item.status}
                   </span>
                 </td>
-                <td className="py-2 font-medium text-gray-800">
+                <td className="py-6 font-medium text-gray-800">
                   {item.targetTanggal}
                 </td>
-                <td className="py-2 font-medium text-gray-800">
+                <td className="py-6 font-medium text-gray-800">
                   {item.strategi}
                 </td>
-                <td className="py-2 font-medium text-gray-800">{item.biaya}</td>
-                <td className="py-2 font-medium text-gray-800">
+                <td className="py-6 font-medium text-gray-800">{item.biaya}</td>
+                <td className="py-6 font-medium text-gray-800">
                   {item.pemilik}
                 </td>
-                <td className="py-2 font-medium text-gray-800">
+                <td className="py-6 font-medium text-gray-800">
                   {item.efektivitas}
                 </td>
-                <td className="py-2 font-medium text-gray-800 text-center">
+                <td className="py-6 font-medium text-gray-800 ">
                   {item.nilaiProbabilitas}
                 </td>
-                <td className="py-2 font-medium text-gray-800 text-center">
+                <td className="py-6 font-medium text-gray-800 ">
                   {item.nilaiDampak}
                 </td>
-                <td className="py-2 font-medium text-gray-800 text-center">
+                <td className="py-6 font-medium text-gray-800 ">
                   {item.nilaiResidual}
                 </td>
               </tr>

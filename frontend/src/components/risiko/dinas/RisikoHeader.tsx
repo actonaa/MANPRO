@@ -20,6 +20,15 @@ export default function RisikoHeader({
     return "bg-gray-200 text-gray-600";
   };
 
+  const getStatusColor = (s: string) => {
+    const st = s.toLowerCase();
+    if (st === "approved") return " text-[#58DA28]"; // hijau
+    if (st === "pending") return " text-[#FFBB4D]"; // kuning
+    if (st === "planned") return " text-[#FFBB4D]"; // kuning
+    if (st === "rejected") return " text-[#FF2D2D]"; // merah
+    return "bg-gray-200 text-gray-600";
+  };
+
   // 🧠 Konversi status API → teks tampil
   const formatStatus = (s: string) => {
     switch (s.toLowerCase()) {
@@ -55,13 +64,19 @@ export default function RisikoHeader({
       <div className="flex items-center gap-3 mt-2">
         <p className="text-sm flex items-center gap-2">
           <span className="text-gray-400 font-semibold">STATUS :</span>
-          <span className="text-gray-800 font-semibold">
+
+          <span
+            className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
+              status
+            )}`}
+          >
             {formatStatus(status)}
           </span>
 
           {/* ➖ Garis pemisah vertikal */}
           <span className="w-[1px] h-4 bg-black mx-2"></span>
 
+          {/* 🎨 Badge level risiko */}
           <span
             className={`px-3 py-1 rounded-full text-sm font-semibold ${getLevelColor(
               criteria
