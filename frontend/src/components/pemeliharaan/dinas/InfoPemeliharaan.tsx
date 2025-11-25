@@ -22,11 +22,14 @@ export default function InfoPemeliharaan({
   // 🔹 Warna untuk prioritas
   const getPrioritasColor = (value: string) => {
     switch (value) {
-      case "Tinggi":
+      case "tinggi":
+      case "High":
         return "bg-red-100 text-red-700";
       case "Sedang":
+      case "Medium":
         return "bg-yellow-100 text-yellow-700";
       case "Rendah":
+      case "Low":
         return "bg-green-100 text-green-700";
       default:
         return "bg-gray-100 text-gray-700";
@@ -36,9 +39,10 @@ export default function InfoPemeliharaan({
   // 🔹 Warna untuk status
   const getStatusColor = (value: string) => {
     switch (value) {
-      case "Mendatang":
-        return "bg-blue-100 text-blue-700";
+      case "Pemeliharaan":
       case "Aktif":
+        return "bg-yellow-100 text-yellow-700";
+      case "Selesai":
         return "bg-green-100 text-green-700";
       case "Perbaikan":
         return "bg-orange-100 text-orange-700";
@@ -71,7 +75,7 @@ export default function InfoPemeliharaan({
 
         {/* Kategori */}
         <div>
-          <div className="text-gray-500 text-xs mb-1">Kategori</div>
+          <div className="text-gray-500 text-xs mb-1">Nama Risiko</div>
           <div className="font-medium text-gray-900">{kategori}</div>
         </div>
 

@@ -1,132 +1,41 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import AgendaPemeliharaanCard from "../../../components/pemeliharaan/dinas/AgendaPemeliharaanCard";
 import InfoPemeliharaan from "../../../components/pemeliharaan/dinas/InfoPemeliharaan";
 
 export default function LaptopKerjaDetail() {
-  const { asset_id } = useParams();
+  const { id: maintenance_id } = useParams();
 
   const [maintenance, setMaintenance] = useState<any>(null);
-  const [assetDetail, setAssetDetail] = useState<any>(null);
-  const [prioritas, setPrioritas] = useState<string>("Tidak ada");
-  const [kategori, setKategori] = useState<string>("-");
   const [loading, setLoading] = useState(true);
 
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    console.log("🚀 useEffect triggered | asset_id =", asset_id);
-    fetchAll();
+    fetchMaintenance();
   }, []);
-
-  // ==============================
-  // FETCH ALL
-  // ==============================
-  const fetchAll = async () => {
-    try {
-      await Promise.all([fetchMaintenance(), fetchAssets(), fetchRisks()]);
-
-      setLoading(false);
-    } catch (error) {
-      console.error("❌ ERROR FETCH ALL:", error);
-      setLoading(false);
-    }
-  };
 
   // ==============================
   // 1️⃣ FETCH MAINTENANCE DETAIL
   // ==============================
   const fetchMaintenance = async () => {
     try {
-      console.log("🔄 Fetching maintenance...");
-
       const res = await fetch(
-        `https://asset-risk-management.vercel.app/api/maintenance/${asset_id}`,
+        `https://asset-risk-management.vercel.app/api/maintenance/${maintenance_id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const json = await res.json();
-      console.log("📦 Maintenance JSON:", json);
-
       const selected = Array.isArray(json) ? json[0] : json;
 
-      console.log("📌 Selected Maintenance:", selected);
-
       setMaintenance(selected);
+      setLoading(false);
     } catch (error) {
       console.error("❌ Error fetchMaintenance:", error);
-    }
-  };
-
-  // ==============================
-  // 2️⃣ FETCH ASSET DETAIL
-  // (sesuai struktur JSON yang kamu kirim)
-  // ==============================
-  const fetchAssets = async () => {
-    try {
-      console.log("🔄 Fetching assets list...");
-
-      const res = await fetch(
-        `https://asset-risk-management.vercel.app/api/assets`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      const json = await res.json();
-
-      console.log("📦 Asset JSON LIST:", json);
-
-      if (!Array.isArray(json)) {
-        console.error("❌ Asset API tidak mengembalikan array:", json);
-        return;
-      }
-
-      // Cari asset by ID
-      const selected = json.find(
-        (item: any) => String(item.id) === String(asset_id)
-      );
-
-      console.log("📌 Selected Asset Detail:", selected);
-
-      if (!selected) {
-        console.warn("⚠ Asset tidak ditemukan untuk ID:", asset_id);
-      }
-
-      setAssetDetail(selected);
-
-      // Ambil kategori dari nested object → sesuai JSON kamu
-      setKategori(selected?.category?.name ?? "-");
-    } catch (error) {
-      console.error("❌ Error fetchAssets:", error);
-    }
-  };
-
-  // ==============================
-  // 3️⃣ FETCH RISK BY asset_id
-  // ==============================
-  const fetchRisks = async () => {
-    try {
-      console.log("🔄 Fetching risks...");
-
-      const res = await fetch(
-        `https://asset-risk-management.vercel.app/api/risks`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      const json = await res.json();
-
-      console.log("📦 Risk JSON LIST:", json);
-
-      const risk = json.find(
-        (r: any) => String(r.asset_id) === String(asset_id)
-      );
-
-      console.log("📌 Selected Risk:", risk);
-
-      setPrioritas(risk?.priority ?? "Tidak ada");
-    } catch (error) {
-      console.error("❌ Error fetchRisks:", error);
+      setLoading(false);
     }
   };
 
@@ -139,14 +48,9 @@ export default function LaptopKerjaDetail() {
     const today = new Date().toISOString().split("T")[0];
     const scheduled = maintenance.scheduled_date.split("T")[0];
 
-    console.log("📆 Today:", today, "| Scheduled:", scheduled);
-
     return today === scheduled;
   };
 
-  // ==============================
-  // LOADING
-  // ==============================
   if (loading)
     return (
       <div className="animate-pulse">
@@ -158,9 +62,15 @@ export default function LaptopKerjaDetail() {
       </div>
     );
 
+  const asset = maintenance?.asset;
+
   // ==============================
-  // UI
+  //  🟦 KATEGORI DIGANTI NAMA RISIKO
   // ==============================
+  const kategori = asset?.risk?.[0]?.title ?? "Tidak ada";
+
+  const prioritas = maintenance?.priority ?? "Tidak ada";
+
   return (
     <>
       <div className="text-sm text-gray-600 mb-4">
@@ -169,22 +79,28 @@ export default function LaptopKerjaDetail() {
       </div>
 
       <h1 className="text-3xl font-bold text-gray-900 mb-8">
-        {assetDetail?.name ?? "Nama Aset Tidak Ditemukan"}
+        {asset?.name ?? "Nama Aset Tidak Ditemukan"}
       </h1>
 
+      {/* ===========================
+          INFO PEMELIHARAAN
+      ============================ */}
       <div className="mb-5">
         <InfoPemeliharaan
           idJadwal={maintenance?.id}
           idAset={maintenance?.asset_id}
-          namaAset={assetDetail?.name}
+          namaAset={asset?.name}
           kategori={kategori}
-          lokasi={assetDetail?.lokasi}
+          lokasi={asset?.lokasi}
           prioritas={prioritas}
           tanggal={maintenance?.scheduled_date}
-          status={maintenance?.completion_date ? "Selesai" : "Mendatang"}
+          status={maintenance?.completion_date ? "Selesai" : "Pemeliharaan"}
         />
       </div>
 
+      {/* ===========================
+          DETAIL MAINTENANCE
+      ============================ */}
       {(maintenance?.type || maintenance?.vendor || maintenance?.notes) && (
         <div className="bg-white rounded-xl mb-5 border border-gray-100 p-5">
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 gap-6">
@@ -220,6 +136,9 @@ export default function LaptopKerjaDetail() {
         </div>
       )}
 
+      {/* ===========================
+          HARI-H ONLY
+      ============================ */}
       {isHariH() && <AgendaPemeliharaanCard />}
     </>
   );
