@@ -16,7 +16,7 @@ type RisikoItem = {
   criteria: string;
   category: string;
   entry_level: number;
-  asset?: { name: string | null; lokasi: string | null };
+  asset?: { id: string | null; name: string | null; lokasi: string | null };
   department?: { name: string | null };
 };
 
@@ -71,7 +71,11 @@ export default function TableRisiko({
           category: r.risk_category?.name || "-",
           entry_level: r.entry_level,
           asset: r.asset_info
-            ? { name: r.asset_info.name, lokasi: null }
+            ? {
+                id: r.asset_info.id,
+                name: r.asset_info.name,
+                lokasi: null,
+              }
             : undefined,
           department: r.department ? { name: r.department.name } : undefined,
         }));
@@ -346,6 +350,7 @@ export default function TableRisiko({
       {showApproveModal && selectedRisiko && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <RisikoSetuju
+            asetId={selectedRisiko.asset?.id || ""}
             namaRisiko={selectedRisiko.title}
             asetTerkait={selectedRisiko.asset?.name || "-"}
             onCancel={() => setShowApproveModal(false)}

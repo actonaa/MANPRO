@@ -5,7 +5,8 @@ interface PopupJadwalPemeliharaanProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (
-    tanggal: string,
+    scheduled_date: string,
+    priority: string,
     setPopupLoading: (state: boolean) => void
   ) => void;
 }
@@ -16,6 +17,7 @@ const PopupJadwalPemeliharaan: React.FC<PopupJadwalPemeliharaanProps> = ({
   onSubmit,
 }) => {
   const [tanggal, setTanggal] = useState("");
+  const [priority, setPriority] = useState(""); // kosong, user harus pilih
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -23,7 +25,8 @@ const PopupJadwalPemeliharaan: React.FC<PopupJadwalPemeliharaanProps> = ({
 
   const handleSubmit = () => {
     if (!tanggal) return alert("Harap pilih tanggal terlebih dahulu!");
-    onSubmit(tanggal, setLoading);
+    if (!priority) return alert("Harap pilih prioritas terlebih dahulu!");
+    onSubmit(tanggal, priority, setLoading);
   };
 
   return (
@@ -33,11 +36,11 @@ const PopupJadwalPemeliharaan: React.FC<PopupJadwalPemeliharaanProps> = ({
           Tambahkan Jadwal Pemeliharaan
         </h2>
 
-        <div className="text-left mb-8">
+        {/* Input Tanggal */}
+        <div className="text-left mb-4">
           <label className="text-sm font-medium text-gray-600 mb-1 block">
             Atur Jadwal
           </label>
-
           <div className="relative">
             <input
               ref={inputRef}
@@ -53,6 +56,26 @@ const PopupJadwalPemeliharaan: React.FC<PopupJadwalPemeliharaanProps> = ({
           </div>
         </div>
 
+        {/* Dropdown Priority */}
+        <div className="text-left mb-8">
+          <label className="text-sm font-medium text-gray-600 mb-1 block">
+            Prioritas
+          </label>
+          <select
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          >
+            <option value="" disabled>
+              Pilih Prioritas
+            </option>
+            <option value="tinggi">Tinggi</option>
+            <option value="sedang">Sedang</option>
+            <option value="rendah">Rendah</option>
+          </select>
+        </div>
+
+        {/* Buttons */}
         <div className="flex justify-between mt-4">
           <button
             onClick={onClose}

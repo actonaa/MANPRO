@@ -36,6 +36,7 @@ export default function Step4({ formData }: Step4Props) {
 
       <div className="space-y-4">
         {renderField("Tipe", formData.tipe)}
+        {renderField("Jenis Risiko", formData.jenisRisiko)}
         {renderField("Nama Risiko", formData.namaRisiko)}
         {renderField("Deskripsi Risiko", formData.deskripsiRisiko)}
         {renderArrayField("Penyebab Risiko", formData.penyebabRisiko)}
@@ -47,7 +48,6 @@ export default function Step4({ formData }: Step4Props) {
         {renderField("Kriteria Dampak", formData.kriteriaDampak)}
         {renderField("Prioritas Risiko", formData.prioritasRisiko)}
         {renderField("Level Awal", formData.levelAwal)}
-        {renderField("Jenis Risiko", formData.jenisRisiko)}
 
         {/* Treatment */}
         {renderField("Strategy", formData.strategi)}
