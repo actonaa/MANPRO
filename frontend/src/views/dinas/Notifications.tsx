@@ -2,8 +2,8 @@
 import { useState, useEffect } from "react";
 import FilterTabs from "../../components/Notifikasi/dinas/FilterTabs";
 import NotifikasiList from "../../components/Notifikasi/dinas/NotifikasiList";
-import SearchBar from "../../components/Notifikasi/dinas/SearchBar";
 import axios from "axios";
+import SearchNotif from "../../components/Notifikasi/dinas/SearchNotif";
 
 interface NotificationResponse {
   id: string;
@@ -172,7 +172,7 @@ export default function NotifikasiPage() {
           </h1>
 
           <div className="w-full md:w-1/3">
-            <SearchBar onSearch={(val) => setSearchQuery(val)} />
+            <SearchNotif onSearch={(val) => setSearchQuery(val)} />
           </div>
         </div>
 
