@@ -8,6 +8,7 @@ import {
   Square,
 } from "lucide-react";
 import NotifikasiItem from "./NotifikasiItem";
+import axios from "axios";
 
 export default function NotifikasiList({ data }: { data: any[] }) {
   // local copy supaya bisa diupdate (mark read / delete) tanpa API
@@ -22,6 +23,37 @@ export default function NotifikasiList({ data }: { data: any[] }) {
   );
 
   const anySelected = selectedIds.size > 0;
+
+  const apiMarkOneAsRead = async (id: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.patch(
+        `https://asset-risk-management.vercel.app/api/notifications/${id}/read`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+    } catch (err) {
+      console.error("Gagal patch satu notif:", err);
+    }
+  };
+
+  // API: Tandai semua notif
+  const apiMarkAllAsRead = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.patch(
+        "https://asset-risk-management.vercel.app/api/notifications/read-all",
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+    } catch (err) {
+      console.error("Gagal patch semua notif:", err);
+    }
+  };
 
   // handlers
   const handleToggleSelect = (id: string) => {
@@ -51,7 +83,9 @@ export default function NotifikasiList({ data }: { data: any[] }) {
     }, 600);
   };
 
-  const markAllAsRead = () => {
+  const markAllAsRead = async () => {
+    await apiMarkAllAsRead();
+
     setNotifs((prev) => prev.map((n) => ({ ...n, is_read: true })));
     setSelectedIds(new Set());
   };
@@ -77,10 +111,13 @@ export default function NotifikasiList({ data }: { data: any[] }) {
     });
   };
 
-  const markOneAsRead = (id: string) => {
+  const markOneAsRead = async (id: string) => {
+    await apiMarkOneAsRead(id);
+
     setNotifs((prev) =>
       prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
     );
+
     setSelectedIds((prev) => {
       const s = new Set(prev);
       s.delete(id);
