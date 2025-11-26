@@ -4,46 +4,58 @@ import { CircleHelp } from "lucide-react";
 import PopupJadwalPemeliharaan from "./JadwalPemeliharaan";
 import axios from "axios";
 
-interface KonfirmasiPersetujuanRisikoProps {
+interface RisikoSetujuProps {
   namaRisiko: string;
   asetTerkait: string;
   asetId: string;
   onCancel?: () => void;
-  onConfirm?: () => Promise<void>;
+  onConfirm?: () => Promise<void>; // ACC risiko
   loading?: boolean;
 }
 
-const KonfirmasiPersetujuanRisiko: React.FC<
-  KonfirmasiPersetujuanRisikoProps
-> = ({ namaRisiko, asetTerkait, asetId, onCancel }) => {
-  const [loading, setLoading] = useState(false);
+const RisikoSetuju: React.FC<RisikoSetujuProps> = ({
+  namaRisiko,
+  asetTerkait,
+  asetId,
+  onCancel,
+  onConfirm,
+  loading = false,
+}) => {
   const [openPopup, setOpenPopup] = useState(false);
+  const [localLoading, setLocalLoading] = useState(false);
 
   const token = localStorage.getItem("token");
 
-  // Saat klik setuju, buka popup
+  // Sekarang tombol ini hanya membuka popup
   const handleConfirmClick = () => {
     setOpenPopup(true);
   };
 
-  // Submit dari popup jadwal
+  // 1. Simpan jadwal
+  // 2. Setelah berhasil → ACC risiko dengan onConfirm()
   const handleSubmitJadwal = async (
     scheduled_date: string,
     priority: string,
     setPopupLoading: (state: boolean) => void
   ) => {
     try {
-      setLoading(true);
+      setLocalLoading(true);
       setPopupLoading(true);
+
+      // SIMPAN JADWAL
       await axios.post(
         `https://asset-risk-management.vercel.app/api/maintenance/${asetId}`,
         { scheduled_date, priority },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert("✅ Jadwal pemeliharaan berhasil ditambahkan.");
-      setOpenPopup(false);
-      onCancel?.(); // tutup modal utama
 
+      // ACC RISIKO SETELAH JADWAL BERHASIL
+      if (onConfirm) await onConfirm();
+
+      alert("Risiko disetujui dan jadwal pemeliharaan berhasil ditambahkan.");
+
+      setOpenPopup(false);
+      onCancel?.();
       window.location.reload();
     } catch (error: any) {
       console.error(
@@ -51,32 +63,29 @@ const KonfirmasiPersetujuanRisiko: React.FC<
         error.response?.data || error.message
       );
       alert(
-        "❌ Terjadi kesalahan saat menambahkan jadwal: " +
+        "Terjadi kesalahan saat submit jadwal: " +
           (error.response?.data?.message || error.message)
       );
     } finally {
-      setLoading(false);
+      setLocalLoading(false);
       setPopupLoading(false);
     }
   };
 
   return (
     <>
-      <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 w-[90%] sm:max-w-md mx-auto text-center">
+      {/* MODAL KONFIRMASI */}
+      <div className="bg-white rounded-2xl shadow-lg p-6 w-[90%] sm:max-w-md mx-auto text-center">
         <div className="flex justify-center mb-3">
           <div className="bg-blue-100 p-3 rounded-full">
-            <CircleHelp className="text-blue-500 w-6 h-6 sm:w-7 sm:h-7" />
+            <CircleHelp className="text-blue-500 w-7 h-7" />
           </div>
         </div>
 
-        <h2 className="text-base sm:text-lg font-semibold text-gray-800">
-          Konfirmasi Persetujuan Risiko
-        </h2>
-        <p className="text-gray-600 text-xs sm:text-sm mt-1">
-          Risiko ini akan disetujui.
-        </p>
+        <h2 className="text-lg font-semibold">Konfirmasi Persetujuan Risiko</h2>
+        <p className="text-gray-600 text-sm mt-1">Risiko ini akan disetujui.</p>
 
-        <div className="text-left text-xs sm:text-sm mt-4 space-y-2 border-t border-gray-200 pt-3">
+        <div className="text-left text-sm mt-4 space-y-2 border-t border-gray-200 pt-3">
           <div className="flex justify-between">
             <p className="text-gray-500">Nama Risiko</p>
             <p className="font-semibold text-gray-800 text-right max-w-[50%] break-words">
@@ -91,29 +100,30 @@ const KonfirmasiPersetujuanRisiko: React.FC<
           </div>
         </div>
 
-        <p className="font-medium text-gray-700 mt-4 mb-4 text-sm sm:text-base">
+        <p className="font-medium text-gray-700 mt-4 mb-4">
           Apakah anda yakin?
         </p>
 
-        <div className="flex flex-col sm:flex-row justify-center gap-3">
+        <div className="flex gap-3 flex-col sm:flex-row justify-center">
           <button
             onClick={onCancel}
-            disabled={loading}
-            className="w-full sm:w-auto px-4 py-2 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 transition text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={loading || localLoading}
+            className="w-full sm:w-auto px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md text-sm disabled:opacity-50"
           >
             Batal
           </button>
+
           <button
             onClick={handleConfirmClick}
-            disabled={loading}
-            className="w-full sm:w-auto px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={loading || localLoading}
+            className="w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm disabled:opacity-50"
           >
-            {loading ? "Memproses..." : "Setuju & Atur Jadwal"}
+            {loading || localLoading ? "Memproses..." : "Setuju & Atur Jadwal"}
           </button>
         </div>
       </div>
 
-      {/* Popup Jadwal */}
+      {/* POPUP */}
       <PopupJadwalPemeliharaan
         open={openPopup}
         onClose={() => setOpenPopup(false)}
@@ -123,4 +133,4 @@ const KonfirmasiPersetujuanRisiko: React.FC<
   );
 };
 
-export default KonfirmasiPersetujuanRisiko;
+export default RisikoSetuju;

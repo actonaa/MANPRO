@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 
 interface Props {
@@ -56,7 +57,12 @@ export default function TableJadwalPemeliharaan({
         // mapping risk
         const cleanedData = maintenanceData.map((item) => ({
           ...item,
-          risk: item.asset?.risk?.[0]?.title ?? "Tidak ada",
+
+          // pilih risk yang terkait treatment (lebih akurat)
+          risk:
+            item.asset?.risk?.find((r: any) => r?.risk_treatment?.length > 0)
+              ?.title ?? "Tidak ada",
+
           prioritas: item.priority ?? null,
         }));
 

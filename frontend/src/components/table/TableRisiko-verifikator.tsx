@@ -45,7 +45,7 @@ export default function TableRisiko({
 
   // PAGINATION
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10; // jumlah item per halaman
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const fetchRisks = async () => {
@@ -302,7 +302,7 @@ export default function TableRisiko({
         ))}
       </div>
 
-      {/* LOADING SKELETON */}
+      {/* LOADING */}
       {loading && (
         <div className="w-full mt-4">
           <div className="hidden lg:block">
@@ -371,17 +371,14 @@ export default function TableRisiko({
         </div>
       )}
 
-      {/* XYZ + PAGINATION */}
+      {/* PAGINATION */}
       <div className="mt-6 text-sm text-gray-600 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        {/* XYZ Info */}
         <p className="text-center lg:text-left">
           Menampilkan {totalItems === 0 ? 0 : startIndex + 1} dari {totalItems}{" "}
           hasil
         </p>
 
-        {/* Pagination */}
         <div className="flex justify-center items-center gap-2">
-          {/* Prev */}
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             disabled={currentPage === 1}
@@ -390,45 +387,38 @@ export default function TableRisiko({
             &lt;
           </button>
 
-          {/* Page Numbers with Ellipsis */}
           {(() => {
             const pages: (number | string)[] = [];
 
             if (totalPages <= 5) {
-              // Show all if <= 5 pages
               for (let i = 1; i <= totalPages; i++) pages.push(i);
             } else {
-              // Always show 1
               pages.push(1);
 
-              // Show dots if currentPage is far from 2
               if (currentPage > 3) pages.push("...");
 
-              // Show middle window
               const start = Math.max(2, currentPage - 1);
               const end = Math.min(totalPages - 1, currentPage + 1);
               for (let i = start; i <= end; i++) pages.push(i);
 
-              // Trailing dots
               if (currentPage < totalPages - 2) pages.push("...");
 
-              // Always show last page
               pages.push(totalPages);
             }
 
             return pages.map((page, idx) =>
               typeof page === "string" ? (
-                <span key={idx} className="px-2">
+                <span key={idx} className="px-2 py-1">
                   ...
                 </span>
               ) : (
                 <button
-                  key={page}
+                  key={idx}
                   onClick={() => setCurrentPage(page)}
-                  className={`px-3 py-1 rounded-md ${
+                  className={`px-3 py-1 rounded ${
                     currentPage === page
-                      ? "bg-gray-200 font-semibold"
-                      : "hover:bg-gray-100"
+                      ? "bg-blue-600 text-white"
+                      : "hover:bg-gray-200"
                   }`}
                 >
                   {page}
@@ -437,7 +427,6 @@ export default function TableRisiko({
             );
           })()}
 
-          {/* Next */}
           <button
             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
             disabled={currentPage === totalPages}
@@ -446,7 +435,6 @@ export default function TableRisiko({
             &gt;
           </button>
         </div>
-        <div></div>
       </div>
     </div>
   );

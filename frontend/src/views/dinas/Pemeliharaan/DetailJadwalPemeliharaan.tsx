@@ -42,13 +42,17 @@ export default function LaptopKerjaDetail() {
   // ==============================
   // CEK HARI H
   // ==============================
-  const isHariH = () => {
+  const shouldShowAgenda = () => {
     if (!maintenance?.scheduled_date) return false;
+
+    // Jangan tampilkan jika sudah selesai
+    if (maintenance?.completion_date) return false;
 
     const today = new Date().toISOString().split("T")[0];
     const scheduled = maintenance.scheduled_date.split("T")[0];
 
-    return today === scheduled;
+    // Hari H dan setelahnya
+    return today >= scheduled;
   };
 
   if (loading)
@@ -101,9 +105,14 @@ export default function LaptopKerjaDetail() {
       {/* ===========================
           DETAIL MAINTENANCE
       ============================ */}
-      {(maintenance?.type || maintenance?.vendor || maintenance?.notes) && (
+      {(maintenance?.type ||
+        maintenance?.vendor ||
+        maintenance?.notes ||
+        maintenance?.cost ||
+        maintenance?.completion_date) && (
         <div className="bg-white rounded-xl mb-5 border border-gray-100 p-5">
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Tipe Pemeliharaan */}
             {maintenance?.type && (
               <div>
                 <div className="text-sm text-gray-600 mb-1">
@@ -115,8 +124,9 @@ export default function LaptopKerjaDetail() {
               </div>
             )}
 
+            {/* Deskripsi */}
             {maintenance?.notes && (
-              <div className="md:col-span-2">
+              <div>
                 <div className="text-sm text-gray-600 mb-1">Deskripsi</div>
                 <div className="text-base text-gray-900">
                   {maintenance.notes}
@@ -124,11 +134,36 @@ export default function LaptopKerjaDetail() {
               </div>
             )}
 
+            {/* Biaya */}
+            {maintenance?.cost && (
+              <div>
+                <div className="text-sm text-gray-600 mb-1">Biaya</div>
+                <div className="text-base font-semibold text-gray-900">
+                  Rp {maintenance.cost.toLocaleString("id-ID")}
+                </div>
+              </div>
+            )}
+
+            {/* Vendor */}
             {maintenance?.vendor && (
               <div>
                 <div className="text-sm text-gray-600 mb-1">Vendor</div>
                 <div className="text-base font-semibold text-gray-900">
                   {maintenance.vendor}
+                </div>
+              </div>
+            )}
+
+            {/* Tanggal Selesai */}
+            {maintenance?.completion_date && (
+              <div>
+                <div className="text-sm text-gray-600 mb-1">
+                  Tanggal Selesai
+                </div>
+                <div className="text-base font-semibold text-gray-900">
+                  {new Date(maintenance.completion_date).toLocaleDateString(
+                    "id-ID"
+                  )}
                 </div>
               </div>
             )}
@@ -139,7 +174,9 @@ export default function LaptopKerjaDetail() {
       {/* ===========================
           HARI-H ONLY
       ============================ */}
-      {isHariH() && <AgendaPemeliharaanCard />}
+      {shouldShowAgenda() && (
+        <AgendaPemeliharaanCard maintenanceId={maintenance?.id} />
+      )}
     </>
   );
 }

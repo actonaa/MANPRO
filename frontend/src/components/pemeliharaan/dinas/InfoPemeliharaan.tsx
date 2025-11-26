@@ -28,7 +28,7 @@ export default function InfoPemeliharaan({
       case "Sedang":
       case "Medium":
         return "bg-yellow-100 text-yellow-700";
-      case "Rendah":
+      case "rendah":
       case "Low":
         return "bg-green-100 text-green-700";
       default:
