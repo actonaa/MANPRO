@@ -130,10 +130,75 @@ export default function DetailAset() {
   // ===============================
   if (loading) {
     return (
-      <div className="pb-10 p-6 animate-pulse">
-        <div className="h-6 bg-gray-200 rounded w-40 mb-2" />
-        <div className="h-8 bg-gray-300 rounded w-64 mb-2" />
-        <div className="h-4 bg-gray-200 rounded w-48" />
+      <div className="pb-10 p-6 animate-pulse space-y-8">
+        {/* HEADER */}
+        <div>
+          <div className="h-6 w-40 bg-gray-300 rounded mb-2" />
+          <div className="h-8 w-64 bg-gray-300 rounded mb-2" />
+          <div className="h-4 w-48 bg-gray-200 rounded" />
+        </div>
+
+        {/* GRID 2 KOLOM */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* KOLOM KIRI */}
+          <div className="space-y-5">
+            {/* Informasi Utama Card */}
+            <div className="border border-gray-200 rounded-xl p-5 space-y-3">
+              <div className="h-5 w-32 bg-gray-300 rounded" />
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="h-4 w-full bg-gray-200 rounded" />
+              ))}
+            </div>
+
+            {/* Siklus Hidup */}
+            <div className="border border-gray-200 rounded-xl p-5 space-y-4">
+              <div className="h-5 w-36 bg-gray-300 rounded" />
+              <div className="h-4 w-3/4 bg-gray-200 rounded" />
+              <div className="h-4 w-1/2 bg-gray-200 rounded" />
+            </div>
+          </div>
+
+          {/* KOLOM KANAN */}
+          <div className="space-y-5">
+            {/* Jadwal Pemeliharaan */}
+            <div className="border border-gray-200 rounded-xl p-5 space-y-3">
+              <div className="h-5 w-40 bg-gray-300 rounded" />
+              {[1, 2].map((i) => (
+                <div key={i} className="h-4 w-full bg-gray-200 rounded" />
+              ))}
+            </div>
+
+            {/* Keterkaitan Risiko */}
+            <div className="border border-gray-200 rounded-xl p-5 space-y-3">
+              <div className="h-5 w-32 bg-gray-300 rounded" />
+              {[1, 2].map((i) => (
+                <div key={i} className="h-4 w-full bg-gray-200 rounded" />
+              ))}
+            </div>
+
+            {/* Riwayat Aktivitas */}
+            <div className="border border-gray-200 rounded-xl p-5 space-y-4">
+              <div className="h-5 w-36 bg-gray-300 rounded" />
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-4 w-full bg-gray-200 rounded" />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* LAMPIRAN & BARCODE */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Lampiran */}
+          <div className="border border-gray-200 rounded-xl p-5 space-y-3">
+            <div className="h-5 w-32 bg-gray-300 rounded" />
+            <div className="h-4 w-56 bg-gray-200 rounded" />
+          </div>
+
+          {/* Barcode */}
+          <div className="border border-gray-200 rounded-xl p-5 flex justify-center">
+            <div className="h-40 w-40 bg-gray-200 rounded-lg" />
+          </div>
+        </div>
       </div>
     );
   }

@@ -20,7 +20,7 @@ export default function Tambah() {
   } | null>(null);
   const [step, setStep] = useState(1);
   const [showPopup, setShowPopup] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
+  const [isClosing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[] | null>(null);
 
@@ -109,7 +109,6 @@ export default function Tambah() {
       formDataSend.append("merk_type", formData.merkTipe);
       formDataSend.append("bmd_code", formData.kodeBMD);
       formDataSend.append("acquisition_date", formData.tanggalPerolehan || "");
-      formDataSend.append("parent_id", formData.indukAset || "");
       formDataSend.append("lokasi", formData.lokasiAset);
       formDataSend.append("pic", formData.penanggungJawab);
       formDataSend.append("category_id", formData.kategoriAset);
@@ -118,6 +117,10 @@ export default function Tambah() {
       formDataSend.append("acquisition_value", String(formData.nilaiAset));
       formDataSend.append("vendor", formData.vendor);
       formDataSend.append("useful_life", formData.useful_life);
+
+      if (formData.indukAset && formData.indukAset.trim() !== "") {
+        formDataSend.append("parent_id", formData.indukAset);
+      }
 
       // === FILE (TANPA BASE64) ===
       if (uploadedFiles && uploadedFiles.length > 0) {
@@ -205,14 +208,6 @@ export default function Tambah() {
   const handleShowPopup = () => {
     setShowPopup(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleClosePopup = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setShowPopup(false);
-      setIsClosing(false);
-    }, 300);
   };
 
   return (
@@ -383,7 +378,6 @@ export default function Tambah() {
           className={`fixed inset-0 flex items-center justify-center p-4 z-50 transition-all duration-300 ${
             isClosing ? "opacity-0" : "opacity-100"
           }`}
-          onClick={handleClosePopup}
         >
           <div className="absolute inset-0 bg-black/20"></div>
 

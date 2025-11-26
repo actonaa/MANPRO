@@ -3,19 +3,26 @@ import { useState } from "react";
 interface Tab {
   id: string;
   label: string;
-  count: number;
+}
+
+interface Counts {
+  semua: number;
+  aset: number;
+  risiko: number;
+  belum: number;
 }
 
 interface FilterTabsProps {
+  counts: Counts;
   onTabChange: (tabId: string) => void;
 }
 
-export default function FilterTabs({ onTabChange }: FilterTabsProps) {
+export default function FilterTabs({ counts, onTabChange }: FilterTabsProps) {
   const tabs: Tab[] = [
-    { id: "semua", label: "Semua", count: 20 },
-    { id: "aset", label: "Aset", count: 10 },
-    { id: "risiko", label: "Risiko", count: 17 },
-    { id: "belum", label: "Belum Dibaca", count: 5 },
+    { id: "semua", label: "Semua" },
+    { id: "aset", label: "Aset" },
+    { id: "risiko", label: "Risiko" },
+    { id: "belum", label: "Belum Dibaca" },
   ];
 
   const [activeTab, setActiveTab] = useState("semua");
@@ -37,7 +44,6 @@ export default function FilterTabs({ onTabChange }: FilterTabsProps) {
               : "text-gray-500 hover:text-blue-600 pb-2"
           }`}
         >
-          {/* 📊 Angka notif: tetap muncul */}
           <span
             className={`text-sm ${
               activeTab === tab.id
@@ -45,10 +51,9 @@ export default function FilterTabs({ onTabChange }: FilterTabsProps) {
                 : "text-gray-500 font-medium"
             }`}
           >
-            {tab.count}
+            {counts[tab.id as keyof Counts]}
           </span>
 
-          {/* 📁 Label tab */}
           {tab.label}
         </button>
       ))}

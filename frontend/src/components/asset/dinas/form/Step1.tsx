@@ -191,7 +191,6 @@ export default function Step1({
     "merkTipe",
     "kodeBMD",
     "tanggalPerolehan",
-    "indukAset",
     "lokasiAset",
     "penanggungJawab",
     "kategoriAset",
@@ -293,7 +292,9 @@ export default function Step1({
 
       {/* Induk Aset */}
       <div>
-        <label className="block text-sm font-medium mb-1">Induk Aset</label>
+        <label className="block text-sm font-medium mb-1">
+          Induk Aset (Opsional)
+        </label>
 
         <div className="relative" ref={indukRef}>
           <button
@@ -361,9 +362,6 @@ export default function Step1({
             </div>
           )}
         </div>
-        {errors.indukAset && (
-          <p className="text-sm text-red-500 mt-1">{errors.indukAset}</p>
-        )}
       </div>
 
       {/* Lokasi */}
@@ -628,7 +626,7 @@ export default function Step1({
           type="number"
           name="nilaiAset"
           min={0}
-          placeholder="Masukkan nilai aset: contoh 1000000"
+          placeholder="Cth: 1000000"
           value={formData.nilaiAset || ""}
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-lg px-3 py-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
