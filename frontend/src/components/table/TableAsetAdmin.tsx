@@ -1,49 +1,84 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Upload, Download } from "lucide-react";
 import ButtonImg from "../../components/button/ButtonImg";
 
-// Import modal
-import ExportModal from "../../components/form/Admin/Export"; 
+import ExportModal from "../../components/form/Admin/Export";
 import ImportModal from "../../components/form/Admin/Import";
-
+import { useState } from "react";
 
 export interface AsetItem {
-  id: number;
+  id: string;
   kode_aset: string;
   nama_aset: string;
   kategori: string;
   lokasi: string;
-  status_aset: "Aktif" | "Perbaikan" | "Tidak Aktif";
-  status_pengajuan: "Diterima" | "Menunggu" | "Ditolak";
+  status_aset: string;
+  status_pengajuan: string;
   tanggal_perolehan: string;
   dinas: string;
 }
 
-interface TableAsetAdminProps {
+export default function TableAsetAdmin({
+  data,
+  loading,
+}: {
   data: AsetItem[];
-}
-
-export default function TableAsetAdmin({ data }: TableAsetAdminProps) {
+  loading: boolean;
+}) {
   const navigate = useNavigate();
 
-  // STATE POPUP
   const [openExport, setOpenExport] = useState(false);
   const [openImport, setOpenImport] = useState(false);
 
-  const handleNavigate = () => {
-    navigate("/admin/aset/tambah");
+  // PAGINATION
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+
+  const totalData = data.length;
+  const totalPages = Math.ceil(totalData / pageSize);
+
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, totalData);
+
+  const currentData = data.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
   };
 
-  // Hasil export
-  const handleExport = (format: string) => {
-    console.log("Export format:", format);
+  // Generate minimal pagination numbers
+  const generatePageNumbers = () => {
+    const pages: (number | string)[] = [];
+
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+
+      if (currentPage > 3) pages.push("...");
+
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+
+      for (let i = start; i <= end; i++) pages.push(i);
+
+      if (currentPage < totalPages - 2) pages.push("...");
+
+      pages.push(totalPages);
+    }
+
+    return pages;
   };
 
-  // Hasil import
-  const handleImport = (file: File) => {
-    console.log("Imported file:", file);
-  };
+  if (loading) {
+    return (
+      <div className="p-6 text-center">
+        <p>Memuat data aset...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm w-full">
@@ -52,7 +87,6 @@ export default function TableAsetAdmin({ data }: TableAsetAdminProps) {
         <h2 className="text-lg font-semibold">Data Aset</h2>
 
         <div className="flex items-center gap-2">
-          {/* === BUTTON EXPORT === */}
           <button
             className="flex items-center gap-2 border border-gray-300 px-3 py-1.5 rounded-lg text-gray-600 hover:bg-gray-50"
             onClick={() => setOpenExport(true)}
@@ -60,7 +94,6 @@ export default function TableAsetAdmin({ data }: TableAsetAdminProps) {
             <Upload size={16} /> Ekspor
           </button>
 
-          {/* === BUTTON IMPORT === */}
           <button
             className="flex items-center gap-2 border border-gray-300 px-3 py-1.5 rounded-lg text-gray-600 hover:bg-gray-50"
             onClick={() => setOpenImport(true)}
@@ -77,46 +110,46 @@ export default function TableAsetAdmin({ data }: TableAsetAdminProps) {
             textColor="white"
             px="6"
             fontWeight="font-medium"
-            onClick={handleNavigate}
+            onClick={() => navigate("/admin/aset/tambah")}
           />
         </div>
       </div>
 
-      {/* TABLE DESKTOP */}
-      <div className="hidden md:block overflow-x-auto">
-        <table className="w-full min-w-[950px] text-[13px] text-center border-collapse">
-          <thead className="text-[#666]">
-            <tr className="border-b-gray-300 border-b bg-gray-50">
-              <th className="py-5 px-4 font-semibold">ID ASET</th>
-              <th className="py-5 px-4 font-semibold">NAMA ASET</th>
-              <th className="py-5 px-4 font-semibold">KATEGORI</th>
-              <th className="py-5 px-4 font-semibold">LOKASI</th>
-              <th className="py-5 px-4 font-semibold">STATUS ASET</th>
-              <th className="py-5 px-4 font-semibold">STATUS PENGAJUAN</th>
-              <th className="py-5 px-4 font-semibold">TANGGAL PEROLEHAN</th>
-              <th className="py-5 px-4 font-semibold">DINAS</th>
-              <th className="py-5 px-4 font-semibold">AKSI</th>
+      {/* TABLE */}
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[950px] text-sm text-center">
+          <thead className="bg-gray-50 text-gray-600">
+            <tr>
+              <th className="py-7">ID ASET</th>
+              <th>Nama Aset</th>
+              <th className="pr-2">Kategori</th>
+              <th>Lokasi</th>
+              <th>Status</th>
+              <th>
+                Status <br /> Pengajuan
+              </th>
+              <th>
+                Tanggal <br /> Perolehan
+              </th>
+              <th>Dinas</th>
+              <th>Aksi</th>
             </tr>
           </thead>
 
           <tbody>
-            {data.map((item: AsetItem) => (
+            {currentData.map((item) => (
               <tr
                 key={item.id}
-                className="border-b-gray-300 border-b hover:bg-gray-50 transition"
+                className="border-b border-gray-300 hover:bg-gray-50 transition"
               >
-                <td className="p-4 text-sm font-medium text-gray-700">
-                  {item.kode_aset}
-                </td>
+                <td className="py-4">{item.id}</td>
+                <td>{item.nama_aset}</td>
+                <td>{item.kategori}</td>
+                <td>{item.lokasi}</td>
 
-                <td className="p-4 text-sm text-gray-800">{item.nama_aset}</td>
-                <td className="p-4 text-sm text-gray-800">{item.kategori}</td>
-                <td className="p-4 text-sm text-gray-800">{item.lokasi}</td>
-
-                {/* STATUS ASET */}
-                <td className="p-4">
+                <td>
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-semi ${
+                    className={`px-3 py-1 rounded-full text-xs ${
                       item.status_aset === "Aktif"
                         ? "bg-green-100 text-green-700"
                         : item.status_aset === "Perbaikan"
@@ -128,10 +161,9 @@ export default function TableAsetAdmin({ data }: TableAsetAdminProps) {
                   </span>
                 </td>
 
-                {/* STATUS PENGAJUAN */}
-                <td className="p-4">
+                <td>
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-semi ${
+                    className={`px-3 py-1 rounded-full text-xs ${
                       item.status_pengajuan === "Diterima"
                         ? "bg-green-100 text-green-700"
                         : item.status_pengajuan === "Menunggu"
@@ -143,19 +175,13 @@ export default function TableAsetAdmin({ data }: TableAsetAdminProps) {
                   </span>
                 </td>
 
-                <td className="p-4 text-sm text-gray-800">
-                  {item.tanggal_perolehan}
-                </td>
+                <td>{item.tanggal_perolehan}</td>
+                <td>{item.dinas}</td>
 
-                <td className="p-4 text-sm text-gray-800">{item.dinas}</td>
-
-                {/* DETAIL */}
-                <td className="p-4">
+                <td>
                   <button
-                    onClick={() =>
-                      navigate(`/aset-admin/:id${item.id}`)
-                    }
-                    className="text-blue-600 hover:underline text-sm font-semi"
+                    onClick={() => navigate(`/aset-admin/${item.id}`)}
+                    className="text-blue-600 hover:underline"
                   >
                     Detail
                   </button>
@@ -166,81 +192,74 @@ export default function TableAsetAdmin({ data }: TableAsetAdminProps) {
         </table>
       </div>
 
-      {/* MOBILE CARD */}
-      <div className="md:hidden space-y-4 mt-4">
-        {data.map((item: AsetItem) => (
-          <div
-            key={item.id}
-            className="p-4 border rounded-xl shadow-sm bg-white"
+      {/* FOOTER PAGINATION */}
+      <div className="flex justify-between items-center mt-6">
+        {/* Menampilkan data */}
+        <p className="text-sm text-gray-600">
+          Menampilkan <strong>{startIndex + 1}</strong>–
+          <strong>{endIndex}</strong> dari <strong>{totalData}</strong> hasil
+        </p>
+
+        {/* Pagination di tengah */}
+        <div className="flex items-center gap-2 mx-auto">
+          {/* Prev */}
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`px-3 py-1 rounded-lg ${
+              currentPage === 1
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-gray-100"
+            }`}
           >
-            <div className="font-semi text-gray-800 mb-1">
-              {item.nama_aset}
-            </div>
-            <div className="text-sm text-gray-600 mb-2">{item.kode_aset}</div>
+            <span className="text-lg">{"<"}</span>
+          </button>
 
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <div className="text-gray-500">Kategori</div>
-              <div>{item.kategori}</div>
-
-              <div className="text-gray-500">Lokasi</div>
-              <div>{item.lokasi}</div>
-
-              <div className="text-gray-500">Status Aset</div>
-              <div>
-                <span
-                  className={`px-2 py-1 rounded-full text-xs font-semi ${
-                    item.status_aset === "Aktif"
-                      ? "bg-green-100 text-green-700"
-                      : item.status_aset === "Perbaikan"
-                      ? "bg-yellow-100 text-yellow-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
-                  {item.status_aset}
-                </span>
-              </div>
-
-              <div className="text-gray-500">Status Pengajuan</div>
-              <div>
-                <span
-                  className={`px-2 py-1 rounded-full text-xs font-semi ${
-                    item.status_pengajuan === "Diterima"
-                      ? "bg-green-100 text-green-700"
-                      : item.status_pengajuan === "Menunggu"
-                      ? "bg-yellow-100 text-yellow-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
-                  {item.status_pengajuan}
-                </span>
-              </div>
-            </div>
-
+          {/* Nomor halaman + ellipsis */}
+          {generatePageNumbers().map((p, i) => (
             <button
-              onClick={() =>
-                navigate(`/aset-admin/:id${item.id}`)
-              }
-              className="mt-3 text-blue-600 font-semi text-sm"
+              key={i}
+              onClick={() => typeof p === "number" && handlePageChange(p)}
+              className={`px-3 py-1 rounded-lg text-sm
+          ${
+            p === currentPage
+              ? "bg-blue-600 text-white border-blue-600"
+              : "hover:bg-gray-100"
+          }
+          ${p === "..." ? "cursor-default border-none text-gray-500" : ""}
+        `}
+              disabled={p === "..."}
             >
-              Detail →
+              {p}
             </button>
-          </div>
-        ))}
+          ))}
+
+          {/* Next */}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`px-3 py-1  rounded-lg ${
+              currentPage === totalPages
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-gray-100"
+            }`}
+          >
+            <span className="text-lg">{">"}</span>
+          </button>
+        </div>
       </div>
 
-      {/* ===========================
-          MODAL EXPORT & IMPORT
-      ============================ */}
+      {/* MODAL */}
       <ExportModal
         isOpen={openExport}
         onClose={() => setOpenExport(false)}
-        onExport={handleExport}
+        onExport={(format) => console.log(format)}
       />
 
       <ImportModal
         isOpen={openImport}
         onClose={() => setOpenImport(false)}
-        onImport={handleImport}
+        onImport={(file) => console.log(file)}
       />
     </div>
   );
