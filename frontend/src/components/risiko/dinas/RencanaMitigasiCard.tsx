@@ -38,7 +38,7 @@ export default function RencanaMitigasiCard({
         navigate(`/risiko/mitigasi/${riskId}`);
         break;
       case "admin_diskominfo":
-        navigate("/risiko-admin/tambah");
+        navigate(`/risiko-admin/tambah-mitigasi/${riskId}`);
         break;
       default:
         break;

@@ -1,5 +1,6 @@
 import type { MouseEventHandler, ReactNode  } from "react"; // ✅ perbaiki baris ini
 
+
 type ButtonTextProps = {
   title: string;
   onClick?: MouseEventHandler<HTMLButtonElement>;
@@ -17,12 +18,14 @@ export default function ButtonText({
   hoverColor = "hover:bg-gray-200",
   textColor = "text-gray-700",
   fontWeight = "font-medium",
+  iconLeft,
 }: ButtonTextProps) {
   return (
     <button
       onClick={onClick}
-      className={`w-full md:flex md:items-center md:justify-center md:w-40 ${color} ${hoverColor} ${textColor} ${fontWeight} py-3 px-5 md:text-nowrap rounded-xl shadow-sm transition duration-200`}
+      className={`w-full md:flex md:items-center md:justify-center md:w-40 ${color} ${hoverColor} ${textColor} ${fontWeight} py-2 px-5 md:text-nowrap rounded-xl shadow-sm transition duration-200`}
     >
+       {iconLeft && <span>{iconLeft}</span>}
       <span>{title}</span>
     </button>
   );

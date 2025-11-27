@@ -40,7 +40,7 @@ export default function NavbarAdmin() {
     },
     {
       label: "Laporan",
-      icon: "/sidebar-icon/Maintenance.png",
+      icon: "/sidebar-icon/Laporan.png",
       children: [
         { label: "Laporan Aset", to: "/laporan/aset-admin" },
         { label: "Laporan SDM", to: "/laporan/sdm-admin" },
@@ -56,17 +56,17 @@ export default function NavbarAdmin() {
     },
     {
       label: "Kelola Pengguna",
-      icon: "/sidebar-icon/Notif.png",
+      icon: "/sidebar-icon/Kelola Pengguna.png",
       to: "/kelolapengguna-admin",
     },
     {
       label: "Hasil Audit",
-      icon: "/sidebar-icon/Notif.png",
+      icon: "/sidebar-icon/Hasil Audit.png",
       to: "/hasilaudit-admin",
     },
     {
       label: "Audit Trail",
-      icon: "/sidebar-icon/Notif.png",
+      icon: "/sidebar-icon/Audit Trail.png",
       to: "/audit-admin",
     },
   ];

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Download } from "lucide-react";
+import { Upload } from "lucide-react";
 import ButtonText from "../../../components/button/ButtonText";
 import InformasiUtama from "../../../components/kelola-asset/dinas/InformasiUtama";
 import JadwalPemeliharaan from "../../../components/kelola-asset/dinas/JadwalPemeliharaan";
@@ -102,7 +102,7 @@ export default function DetailAsetAdmin() {
             <a href="#" onClick={() => setShowExportModal(true)}>
               <ButtonText
                 title="Ekspor"
-                iconLeft={<Download className="w-4 h-4 -mt-[1px]" />}
+                iconLeft={<Upload className="w-4 h-4 mr-2 -mt-[1px]" />}
                 color="bg-white"
                 hoverColor="hover:bg-gray-100"
                 textColor="text-gray-700"
@@ -178,7 +178,11 @@ export default function DetailAsetAdmin() {
 
           <div className="flex flex-col gap-5">
             <JadwalPemeliharaan jadwal={[]} />
-            <KeterkaitanRisiko risiko={[]} />
+            <KeterkaitanRisiko
+              risiko={asset.risiko || []}
+              approvalStatus={asset.approval_status}
+              assetId={asset.id}
+            />
             <RiwayatAktivitas aktivitas={[]} />
           </div>
         </div>

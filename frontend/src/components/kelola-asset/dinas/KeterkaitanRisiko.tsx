@@ -37,7 +37,7 @@ const translateCriteria = (criteria: string | null) => {
 const KeterkaitanRisiko: React.FC<KeterkaitanRisikoProps> = ({
   risiko,
   approvalStatus,
-  assetId, // ⬅️ terima props
+  assetId,
 }) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md h-full border border-gray-200">
@@ -81,7 +81,7 @@ const KeterkaitanRisiko: React.FC<KeterkaitanRisikoProps> = ({
             Menunggu persetujuan verifikator
           </p>
         ) : (
-          <a href={`/risiko/tambah/${assetId}`}>
+          <a href={`/aset-admin/tambah-risiko/${assetId}`}>
             <ButtonImg
               title="Tambah Risiko"
               img="/kelola-asset/tambah-asset.png"
