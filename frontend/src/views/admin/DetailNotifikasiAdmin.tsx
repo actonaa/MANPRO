@@ -1,5 +1,6 @@
 import AlertStatus from "../../components/asset/Admin/AlertStatus";
 import { Link } from "react-router-dom";
+import RencanaMitigasiCard from "../../components/risiko/dinas/RencanaMitigasiCard";
 
 export default function DetailNotifikasiAset() {
   const dummy = {
@@ -87,6 +88,10 @@ export default function DetailNotifikasiAset() {
           }
           date="2025-01-12"
         />
+      </div>
+      {/* RENCANA MITIGASI CARD */}
+      <div className="mt-6">
+        <RencanaMitigasiCard riskId="123" />
       </div>
     </div>
   );

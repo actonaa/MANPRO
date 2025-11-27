@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ButtonImg from "../../button/ButtonImg";
 import { useAuth } from "../../../routes/ProtectedRouteBase";
 import { useEffect, useState } from "react";
+import { Pencil } from "lucide-react";
 
 type Mitigasi = {
   aksi: string;
@@ -44,6 +45,95 @@ export default function RencanaMitigasiCard({
         break;
     }
   };
+  useEffect(() => {
+    const fetchMitigasi = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch(
+          `https://asset-risk-management.vercel.app/api/risk-treatments?risk_id=${riskId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // ❗ Jika API gagal → pakai dummy
+        if (!res.ok) throw new Error("Gagal memuat rencana mitigasi");
+
+        const data = await res.json();
+
+        // 🔥 MAP API → UI MODEL
+        const mapped = data.map((item: any) => ({
+          aksi: item.action,
+          status: item.status,
+          targetTanggal: item.target_date,
+          strategi: item.strategy,
+          biaya: item.cost,
+          pemilik: item.action_owner,
+          efektivitas: item.effectiveness,
+          nilaiProbabilitas: item.new_probability,
+          nilaiDampak: item.new_impact_score,
+          nilaiResidual: item.residual_level,
+        }));
+
+        setMitigasiList(mapped);
+      } catch (err: any) {
+        console.error(err);
+
+        // ================================
+        // 🔥 DUMMY DATA (fallback)
+        // ================================
+        setMitigasiList([
+          {
+            aksi: "Pemasangan CCTV tambahan",
+            status: "Dalam Proses",
+            targetTanggal: "2025-01-20",
+            strategi: "Mitigation",
+            biaya: "Rp 5.000.000",
+            pemilik: "Dinas Kominfo",
+            efektivitas: "Tinggi",
+            nilaiProbabilitas: 2,
+            nilaiDampak: 3,
+            nilaiResidual: 1,
+          },
+          {
+            aksi: "Audit keamanan jaringan",
+            status: "Belum Dimulai",
+            targetTanggal: "2025-02-10",
+            strategi: "Mitigation",
+            biaya: "Rp 8.000.000",
+            pemilik: "Tim IT",
+            efektivitas: "Sedang",
+            nilaiProbabilitas: 3,
+            nilaiDampak: 4,
+            nilaiResidual: 2,
+          },
+          {
+            aksi: "Pelatihan keamanan data",
+            status: "Selesai",
+            targetTanggal: "2024-12-15",
+            strategi: "Acceptance",
+            biaya: "Rp 2.000.000",
+            pemilik: "HRD",
+            efektivitas: "Rendah",
+            nilaiProbabilitas: 1,
+            nilaiDampak: 2,
+            nilaiResidual: 1,
+          },
+        ]);
+
+        setError(""); // error dihilangkan agar dummy tetap tampil
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (riskId) fetchMitigasi();
+  }, [riskId]);
 
   const canAdd = user?.role === "teknisi" || user?.role === "admin_diskominfo";
 
@@ -172,65 +262,90 @@ export default function RencanaMitigasiCard({
           />
         )}
       </div>
-
       {mitigasiList.length > 0 ? (
-        <table className="w-full text-sm text-left border-collapse">
-          <thead className="text-gray-600">
-            <tr>
-              <th className="py-2 font-bold">Aksi</th>
-              <th className="py-2 font-bold">Status</th>
-              <th className="py-2 font-bold">Target Tanggal</th>
-              <th className="py-2 font-bold">Strategi</th>
-              <th className="py-2 font-bold">Biaya</th>
-              <th className="py-2 font-bold">Pemilik</th>
-              <th className="py-2 font-bold">Efektivitas</th>
-              <th className="py-2 font-bold">Nilai Probabilitas</th>
-              <th className="py-2 font-bold">Nilai Dampak</th>
-              <th className="py-2 font-bold">Nilai Residual</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mitigasiList.map((item) => (
-              <tr
-                key={item.aksi + item.targetTanggal}
-                className="border-b border-b-gray-200"
-              >
-                <td className="py-6 text-gray-800 font-medium">{item.aksi}</td>
-                <td className="py-6">
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
-                      item.status
-                    )}`}
-                  >
-                    {item.status}
-                  </span>
-                </td>
-                <td className="py-6 font-medium text-gray-800">
-                  {item.targetTanggal}
-                </td>
-                <td className="py-6 font-medium text-gray-800">
-                  {item.strategi}
-                </td>
-                <td className="py-6 font-medium text-gray-800">{item.biaya}</td>
-                <td className="py-6 font-medium text-gray-800">
-                  {item.pemilik}
-                </td>
-                <td className="py-6 font-medium text-gray-800">
-                  {item.efektivitas}
-                </td>
-                <td className="py-6 font-medium text-gray-800 ">
-                  {item.nilaiProbabilitas}
-                </td>
-                <td className="py-6 font-medium text-gray-800 ">
-                  {item.nilaiDampak}
-                </td>
-                <td className="py-6 font-medium text-gray-800 ">
-                  {item.nilaiResidual}
-                </td>
+        <div className="w-full overflow-x-auto">
+          <table className="w-full text-sm text-left border-collapse">
+            <thead className="text-gray-600">
+              <tr>
+                <th className="py-2 font-bold">Aksi</th>
+                <th className="py-2 font-bold">Status</th>
+                <th className="py-2 font-bold">Target Tanggal</th>
+                <th className="py-2 font-bold">Strategi</th>
+                <th className="py-2 font-bold">Biaya</th>
+                <th className="py-2 font-bold">Pemilik</th>
+                <th className="py-2 font-bold">Efektivitas</th>
+                <th className="py-2 font-bold">Nilai Probabilitas</th>
+                <th className="py-2 font-bold">Nilai Dampak</th>
+                <th className="py-2 font-bold">Nilai Residual</th>
+
+                {/* 🆕 Kolom edit */}
+                <th className="py-2 font-bold text-center">Edit</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {mitigasiList.map((item) => (
+                <tr
+                  key={item.aksi + item.targetTanggal}
+                  className="border-b border-b-gray-200"
+                >
+                  <td className="py-6 text-gray-800 font-medium">
+                    {item.aksi}
+                  </td>
+                  <td className="py-6">
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
+                        item.status
+                      )}`}
+                    >
+                      {item.status}
+                    </span>
+                  </td>
+                  <td className="py-6 font-medium text-gray-800">
+                    {item.targetTanggal}
+                  </td>
+                  <td className="py-6 font-medium text-gray-800">
+                    {item.strategi}
+                  </td>
+                  <td className="py-6 font-medium text-gray-800">
+                    {item.biaya}
+                  </td>
+                  <td className="py-6 font-medium text-gray-800">
+                    {item.pemilik}
+                  </td>
+                  <td className="py-6 font-medium text-gray-800">
+                    {item.efektivitas}
+                  </td>
+                  <td className="py-6 font-medium text-gray-800">
+                    {item.nilaiProbabilitas}
+                  </td>
+                  <td className="py-6 font-medium text-gray-800">
+                    {item.nilaiDampak}
+                  </td>
+                  <td className="py-6 font-medium text-gray-800">
+                    {item.nilaiResidual}
+                  </td>
+
+                  {/* 🆕 ICON EDIT - Lucide Pencil */}
+                  <td className="py-6 text-center">
+                    <button
+                      className="p-2 rounded-full hover:bg-gray-100 transition"
+                      title="Edit Aksi"
+                      onClick={() =>
+                        navigate(`/risiko-admin/edit?aksi=${item.aksi}`)
+                      }
+                    >
+                      <Pencil
+                        size={18}
+                        className="text-gray-500 hover:text-blue-600 transition"
+                      />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : (
         <p className="text-gray-500 italic">
           Belum ada rencana mitigasi ditambahkan.

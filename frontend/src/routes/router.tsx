@@ -87,7 +87,7 @@ import DataSDM from "../views/dinas/Aset/DataSDM";
 import LaporanAsetAdmin from "../views/admin/Aset/LaporanAset";
 import LaporanRisikoAdmin from "../views/admin/Risiko/LaporanRisiko";
 import DetailNotifikasiAdmin from "../views/admin/DetailNotifikasiAdmin";
-
+import EditMitigasi from "../views/admin/Risiko/EditMitigasi";
 export default function AppRoutes() {
   return (
     <Router>
@@ -245,6 +245,7 @@ export default function AppRoutes() {
           <Route path="/risiko-admin/daftar" element={<DaftarRisikoAdmin />} />
           <Route path="/risiko-admin/id" element={<DetailRisiko />} />
           <Route path="/risiko-admin/tambah" element={<TambahMitigasi />} />
+          <Route path="/risiko-admin/edit" element={<EditMitigasi />} />
 
           <Route path="/laporan/aset-admin" element={<LaporanAsetAdmin />} />
           <Route
@@ -263,7 +264,10 @@ export default function AppRoutes() {
             path="/notifikasi/notifikasi-admin"
             element={<NotifikasiAdmin />}
           />
-          <Route path="/notifikasi/detailnotifikasi-admin" element={<DetailNotifikasiAdmin />} />
+          <Route
+            path="/notifikasi/detailnotifikasi-admin"
+            element={<DetailNotifikasiAdmin />}
+          />
         </Route>
       </Routes>
     </Router>
