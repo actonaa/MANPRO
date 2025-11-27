@@ -11,16 +11,16 @@ type TableRisikoProps = {
 type RisikoItem = {
   id: string;
   title: string;
-  type: string;
-  criteria: string; // Level
-  priority: string; // Kategori
+  type_of_risk: string;
+  criteria: string;
   status: string;
   entry_level: number;
-  asset: { name: string; lokasi: string };
-  department: { name: string }; // Dinas
+  asset_info: { name: string | null };
+  risk_category: { name: string | null } | null;
+  department: { name: string | null } | null;
 };
 
-const ITEMS_PER_PAGE = 5; // bisa disesuaikan
+const ITEMS_PER_PAGE = 10;
 
 export default function TableRisikoAdmin({
   searchTerm = "",
@@ -31,22 +31,41 @@ export default function TableRisikoAdmin({
 }: TableRisikoProps) {
   const [data, setData] = useState<RisikoItem[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchRisiko = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("/api/risks", {
+        const res = await fetch("https://asset-risk-management.vercel.app/api/risks", {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
+
         if (!res.ok) throw new Error("Gagal memuat data risiko");
         const json = await res.json();
-        setData(json);
+
+        const mapped: RisikoItem[] = json.map((item: any) => ({
+          id: item.id,
+          title: item.title,
+          type_of_risk: item.type_of_risk,
+          criteria: item.criteria,
+          status: item.status,
+          entry_level: item.entry_level,
+          asset_info: {
+            name: item.asset_info?.name || "Tidak ada aset",
+          },
+          risk_category: {
+            name: item.risk_category?.name || "-",
+          },
+          department: {
+            name: item.department?.name || "-",
+          },
+        }));
+
+        setData(mapped);
       } catch (error) {
         console.error(error);
       } finally {
@@ -58,155 +77,108 @@ export default function TableRisikoAdmin({
   }, []);
 
   const getLevelColor = (level: string) => {
-    switch (level) {
-      case "High":
-      case "Tinggi":
-        return "bg-red-100 text-red-600";
-      case "Medium":
-      case "Sedang":
-        return "bg-yellow-100 text-yellow-600";
-      case "Low":
-      case "Rendah":
-        return "bg-green-100 text-green-600";
-      default:
-        return "bg-gray-100 text-gray-600";
-    }
+    if (level === "High") return "bg-red-100 text-red-600";
+    if (level === "Medium") return "bg-yellow-100 text-yellow-600";
+    if (level === "Low") return "bg-green-100 text-green-600";
+    return "bg-gray-100 text-gray-600";
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case "new":
-      case "Dalam Proses":
-        return "bg-blue-100 text-blue-600";
-      case "approved":
-      case "Diterima":
-        return "bg-green-100 text-green-600";
-      case "rejected":
-      case "Ditolak":
-        return "bg-gray-300 text-gray-900";
-      default:
-        return "bg-gray-100 text-gray-600";
-    }
+    if (status === "approved") return "bg-green-100 text-green-600";
+    if (status === "planned") return "bg-yellow-100 text-yellow-600";
+    if (status === "rejected") return "bg-gray-300 text-gray-900";
+    return "bg-gray-100 text-gray-600";
   };
 
-  // Filter Data
   const filteredData = data.filter((item) => {
-    const matchesSearch =
-      item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.asset?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.department?.name.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesStatus = selectedStatus
-      ? item.status.toLowerCase() === selectedStatus.toLowerCase()
-      : true;
-
-    const matchesKategori = selectedKategori
-      ? item.priority.toLowerCase() === selectedKategori.toLowerCase()
-      : true;
-
-    const matchesDinas = selectedDinas
-      ? item.department?.name.toLowerCase() === selectedDinas.toLowerCase()
-      : true;
-
-    const matchesLevel = selectedLevel
-      ? item.criteria.toLowerCase() === selectedLevel.toLowerCase()
-      : true;
-
+    const s = searchTerm.toLowerCase();
     return (
-      matchesSearch &&
-      matchesStatus &&
-      matchesKategori &&
-      matchesDinas &&
-      matchesLevel
+      (item.title.toLowerCase().includes(s) ||
+        item.asset_info?.name?.toLowerCase().includes(s)) &&
+      (!selectedStatus || item.status.toLowerCase() === selectedStatus.toLowerCase()) &&
+      (!selectedKategori ||
+        item.risk_category?.name?.toLowerCase() === selectedKategori.toLowerCase()) &&
+      (!selectedDinas ||
+        item.department?.name?.toLowerCase() === selectedDinas.toLowerCase()) &&
+      (!selectedLevel ||
+        item.criteria?.toLowerCase() === selectedLevel.toLowerCase())
     );
   });
 
-  // Pagination
-  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+  const totalItems = filteredData.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
   const paginatedData = filteredData.slice(startIndex, endIndex);
 
   const getPageNumbers = () => {
     const pages: number[] = [];
     for (let i = 1; i <= totalPages; i++) {
-      if (
-        i === 1 ||
-        i === totalPages ||
-        (i >= currentPage - 1 && i <= currentPage + 1)
-      ) {
+      if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
         pages.push(i);
       } else if (pages[pages.length - 1] !== -1) {
-        pages.push(-1); // untuk "..."
+        pages.push(-1);
       }
     }
     return pages;
   };
 
-  if (loading) {
-    return <p className="text-center text-gray-500 py-6">Memuat data...</p>;
-  }
+  if (loading) return <p className="text-center text-gray-500 py-6">Memuat data...</p>;
 
   return (
     <div className="mt-5">
-      {/* 💻 TABLE VIEW (Desktop) */}
+      {/* Table */}
       <div className="overflow-x-auto hidden md:block">
-        <table className="w-full min-w-[1000px] text-[13px] text-center border-collapse">
-          <thead className="text-[#666666] border-b border-[#ddd]">
-            <tr>
-              <th className="py-5 px-4 font-semibold">ID RISIKO</th>
-              <th className="py-5 px-4 font-semibold">NAMA ASET</th>
-              <th className="py-5 px-4 font-semibold">NAMA RISIKO</th>
-              <th className="py-5 px-4 font-semibold">TIPE</th>
-              <th className="py-5 px-4 font-semibold">LEVEL</th>
-              <th className="py-5 px-4 font-semibold">STATUS</th>
-              <th className="py-5 px-4 font-semibold">KATEGORI</th>
-              <th className="py-5 px-4 font-semibold">SKOR</th>
-              <th className="py-5 px-4 font-semibold">DINAS</th>
-              <th className="py-5 px-4 font-semibold"></th>
+        <table className="w-full min-w-[1000px] text-[13px] text-center">
+          <thead>
+            <tr className="text-[#666] border-b border-[#ddd]">
+              <th className="py-5">ID RISIKO</th>
+              <th className="py-5">NAMA ASET</th>
+              <th className="py-5">NAMA RISIKO</th>
+              <th className="py-5">TIPE</th>
+              <th className="py-5">LEVEL</th>
+              <th className="py-5">STATUS</th>
+              <th className="py-5">KATEGORI</th>
+              <th className="py-5">SKOR</th>
+              <th className="py-5">DINAS</th>
+              <th></th>
             </tr>
           </thead>
+
           <tbody>
-            {paginatedData.length > 0 ? (
+            {paginatedData.length ? (
               paginatedData.map((item) => (
-                <tr
-                  key={item.id}
-                  className="border-b border-b-[#ddd] hover:bg-gray-50 transition"
-                >
-                  <td className="py-5 px-4 text-[#333] font-semibold">
-                    {item.id.slice(0, 8).toUpperCase()}
-                  </td>
-                  <td className="py-5 px-4 text-[#666]">{item.asset?.name}</td>
-                  <td className="py-5 px-4 text-[#666]">{item.title}</td>
-                  <td className="py-5 px-4 text-[#666]">{item.type}</td>
-                  <td className="py-5 px-4">
-                    <span
-                      className={`px-5 py-2 rounded-[16px] text-sm font-medium ${getLevelColor(
-                        item.criteria
-                      )}`}
-                    >
+                <tr key={item.id} className="border-b border-b-gray-300 hover:bg-gray-50">
+                  <td className="py-5 text-[#333] font-semibold">{item.id}</td>
+
+                  <td className="py-5 text-[#666]">{item.asset_info?.name}</td>
+
+                  <td className="py-5 text-[#666]">{item.title}</td>
+
+                  <td className="py-5 text-[#666]">{item.type_of_risk}</td>
+
+                  <td className="py-5">
+                    <span className={`px-4 py-1 rounded-full ${getLevelColor(item.criteria)}`}>
                       {item.criteria}
                     </span>
                   </td>
-                  <td className="py-5 px-4">
-                    <span
-                      className={`px-5 py-2 rounded-[16px] text-sm font-medium ${getStatusColor(
-                        item.status
-                      )}`}
-                    >
+
+                  <td className="py-4">
+                    <span className={`px-4 py-1 rounded-full ${getStatusColor(item.status)}`}>
                       {item.status}
                     </span>
                   </td>
-                  <td className="py-5 px-4 text-[#666]">{item.priority}</td>
-                  <td className="py-5 px-4 text-[#666]">{item.entry_level}</td>
-                  <td className="py-5 px-4 text-[#666]">
-                    {item.department?.name}
+
+                  <td className="py-4 text-[#666]">
+                    {item.risk_category?.name}
                   </td>
-                  <td className="py-5 px-4">
-                    <a
-                      href={`/risiko-admin/${item.id}`}
-                      className="text-[#0095E8] font-medium hover:underline"
-                    >
+
+                  <td className="py-4 text-[#666]">{item.entry_level}</td>
+
+                  <td className="py-4 text-[#666]">{item.department?.name}</td>
+
+                  <td>
+                    <a href={`/risiko-admin/${item.id}`} className="text-[#0095E8] hover:underline">
                       Detail
                     </a>
                   </td>
@@ -214,11 +186,8 @@ export default function TableRisikoAdmin({
               ))
             ) : (
               <tr>
-                <td
-                  colSpan={10}
-                  className="text-center py-6 text-gray-500 italic"
-                >
-                  Tidak ada data yang cocok.
+                <td colSpan={10} className="py-6 text-gray-500 italic">
+                  Tidak ada data
                 </td>
               </tr>
             )}
@@ -226,142 +195,43 @@ export default function TableRisikoAdmin({
         </table>
       </div>
 
-      {/* 📱 CARD VIEW (Mobile) */}
-      <div className="md:hidden space-y-4">
-        {paginatedData.length > 0 ? (
-          paginatedData.map((item) => (
-            <div
-              key={item.id}
-              className="border border-gray-200 rounded-xl shadow-sm p-4"
-            >
-              <div className="flex justify-between items-center mb-1">
-                <p className="text-sm text-gray-500">
-                  {item.id.slice(0, 8).toUpperCase()}
-                </p>
-                <a
-                  href={`/risiko-admin/${item.id}`}
-                  className="text-[#0095E8] text-sm font-medium hover:underline"
-                >
-                  Detail
-                </a>
-              </div>
-
-              <h3 className="font-semibold border-b pb-2 border-gray-300 text-gray-800 text-[15px] mb-3">
-                {item.title}
-              </h3>
-
-              <div className="text-sm text-gray-600 space-y-1">
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Aset</span>
-                  <span className="text-gray-700">{item.asset?.name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Tipe</span>
-                  <span className="text-gray-700">{item.type}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-500">Level</span>
-                  <span
-                    className={`px-3 py-[2px] text-xs rounded-full font-medium ${getLevelColor(
-                      item.criteria
-                    )}`}
-                  >
-                    {item.criteria}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-500">Status</span>
-                  <span
-                    className={`px-3 py-[2px] text-xs rounded-full font-medium ${getStatusColor(
-                      item.status
-                    )}`}
-                  >
-                    {item.status}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Kategori</span>
-                  <span className="text-gray-700">{item.priority}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Skor</span>
-                  <span className="text-gray-700">{item.entry_level}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Dinas</span>
-                  <span className="text-gray-700">{item.department?.name}</span>
-                </div>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="text-center text-gray-500 italic">
-            Tidak ada data yang cocok.
-          </p>
-        )}
-      </div>
       {/* Pagination */}
-      {filteredData.length > ITEMS_PER_PAGE && (
-        <div className="mt-5 relative">
-          {/* Info jumlah data di kiri */}
-          <div className="text-sm text-gray-600 mb-5 md:mb-0 absolute left-0">
-            Menampilkan{" "}
-            <span className="font-semibold">
-              {filteredData.length === 0 ? 0 : startIndex + 1}
-            </span>
-            –
-            <span className="font-semibold">
-              {Math.min(endIndex, filteredData.length)}
-            </span>{" "}
-            dari <span className="font-semibold">{filteredData.length}</span>{" "}
-            data
-          </div>
+      {totalItems > ITEMS_PER_PAGE && (
+        <div className="mt-5 p-2 relative">
+          <p className="absolute left-2 text-sm text-gray-600 font-medium">
+            Menampilkan {startIndex + 1} – {endIndex} dari {totalItems} Data
+          </p>
 
-          {/* Tombol pagination di tengah */}
           <div className="flex justify-center">
-            <div className="flex items-center gap-2 mb-5">
+            <div className="flex items-center gap-3">
               <button
-                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                 disabled={currentPage === 1}
-                className={`px-2 text-lg ${
-                  currentPage === 1
-                    ? "text-gray-400 cursor-not-allowed"
-                    : "text-gray-700 hover:text-blue-600"
-                }`}
+                onClick={() => setCurrentPage((p) => p - 1)}
+                className="px-2 disabled:text-gray-400 text-lg hover:text-blue-600"
               >
                 ‹
               </button>
 
-              {getPageNumbers().map((p, idx) =>
-                p === -1 ? (
-                  <span key={idx} className="px-2 text-gray-400">
-                    …
-                  </span>
+              {getPageNumbers().map((num, idx) =>
+                num === -1 ? (
+                  <span key={idx} className="px-2">…</span>
                 ) : (
                   <button
                     key={idx}
-                    onClick={() => setCurrentPage(p)}
+                    onClick={() => setCurrentPage(num)}
                     className={`w-8 h-8 rounded-md flex items-center justify-center text-sm transition ${
-                      currentPage === p
-                        ? "bg-gray-200 text-black font-semibold"
-                        : "text-gray-700 hover:text-blue-600"
+                      currentPage === num ? "bg-gray-200 font-semibold" : "hover:text-blue-600"
                     }`}
                   >
-                    {p}
+                    {num}
                   </button>
                 )
               )}
 
               <button
-                onClick={() =>
-                  setCurrentPage((p) => Math.min(p + 1, totalPages))
-                }
                 disabled={currentPage === totalPages}
-                className={`px-2 text-lg ${
-                  currentPage === totalPages
-                    ? "text-gray-400 cursor-not-allowed"
-                    : "text-gray-700 hover:text-blue-600"
-                }`}
+                onClick={() => setCurrentPage((p) => p + 1)}
+                className="px-2 disabled:text-gray-400 text-lg hover:text-blue-600"
               >
                 ›
               </button>

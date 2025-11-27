@@ -61,6 +61,7 @@ import { ProtectedRouteAuditor } from "./ProtectedRouteAuditor";
 
 import NotFound404 from "../views/Error/NotFound";
 import Tambah from "../views/dinas/Aset/Tambah";
+
 import DashboardAdmin from "../views/admin/dashboard";
 import EditPengguna from "../views/admin/EditPengguna";
 import KelolaPengguna from "../views/admin/KelolaPengguna";
@@ -81,6 +82,8 @@ import DetailSDM from "../views/admin/SDM/DetailSDM";
 import DetailLaporanSDM from "../views/admin/SDM/DetailLaporanSDM";
 import TambahPengguna from "../views/admin/TambahPengguna";
 import HasilAuditAdmin from "../views/admin/Audit/HasilAuditAdmin";
+import LaporanAsetAdmin from "../views/admin/Aset/LaporanAset"
+import LaporanRisikoAdmin from "../views/admin/Risiko/LaporanRisiko"
 
 export default function AppRoutes() {
   return (
@@ -238,8 +241,8 @@ export default function AppRoutes() {
           <Route path="/risiko-admin/id" element={<DetailRisiko />} />
           <Route path="/risiko-admin/tambah" element={<TambahMitigasi />} />
 
-          <Route path="/laporan/aset-admin" element={<LaporanAset />} />
-          <Route path="/laporan/risiko-admin" element={<LaporanRisiko />} />
+          <Route path="/laporan/aset-admin" element={<LaporanAsetAdmin />} />
+          <Route path="/laporan/risiko-admin" element={<LaporanRisikoAdmin />} />
           <Route path="/laporan/sdm-admin" element={<LaporanSdmAdmin />} />
           <Route path="/laporan/sdm-admin/id" element={<DetailLaporanSDM />} />
           <Route path="/laporan/audit-admin" element={<LaporanAudit />} />

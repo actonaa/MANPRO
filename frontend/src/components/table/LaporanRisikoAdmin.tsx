@@ -1,9 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import ExportModal from "../../components/dropdown/Export";
 import { Upload } from "lucide-react";
 
-type Risiko = {
+type RisikoItem = {
   id: string;
   namaAset: string;
   namaRisiko: string;
@@ -12,133 +12,142 @@ type Risiko = {
   kategori: string;
   status: string;
   date: string;
-  dinas?: string;
+  dinas: string | null;
 };
 
-const data: Risiko[] = [
-  {
-    id: "RISK - 001",
-    namaAset: "Laptop Kerja",
-    namaRisiko: "Kebocoran data",
-    level: "Tinggi",
-    skor: 20,
-    kategori: "IT",
-    status: "Aktif",
-    date: "2025-01-12",
-    dinas: "Diskominfo",
-  },
-  {
-    id: "RISK - 002",
-    namaAset: "CCTV Lobby",
-    namaRisiko: "Gangguan Keamanan",
-    level: "Sedang",
-    skor: 12,
-    kategori: "IT",
-    status: "Perbaikan",
-    date: "2025-01-15",
-    dinas: "Dinas Pendidikan",
-  },
-  {
-    id: "RISK - 003",
-    namaAset: "Meja",
-    namaRisiko: "Permukaan Rusak",
-    level: "Rendah",
-    skor: 6,
-    kategori: "NON-IT",
-    status: "Tidak Aktif",
-    date: "2025-01-12",
-    dinas: "Pariwisata",
-  },
-];
-
 const getLevelColor = (level: string) => {
-  if (level === "Tinggi") return "text-red-500 font-semibold";
-  if (level === "Sedang") return "text-orange-500 font-semibold";
-  if (level === "Rendah") return "text-green-500 font-semibold";
+  if (level === "High") return "text-red-500 font-semibold";
+  if (level === "Medium") return "text-orange-500 font-semibold";
+  if (level === "Low") return "text-green-500 font-semibold";
   return "text-gray-600";
 };
 
 const getStatusStyle = (status: string) => {
-  if (status === "Aktif")
+  if (status === "approved")
     return "bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium";
-  if (status === "Perbaikan")
+  if (status === "planned")
     return "bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-medium";
-  if (status === "Tidak Aktif")
+  if (status === "rejected")
     return "bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-medium";
   return "text-gray-600";
 };
 
-export default function RisikoTableSection({
-  search,
-  dinas,
-  period,
-  level,
-  status,
-}: any) {
+export default function RisikoTableSection({ search, dinas, period, level, status }: any) {
   const [isExportOpen, setIsExportOpen] = useState(false);
+  const [data, setData] = useState<RisikoItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    const fetchRisks = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch("https://asset-risk-management.vercel.app/api/risks", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const json = await res.json();
+
+        if (!Array.isArray(json)) return setData([]);
+
+        const mapped: RisikoItem[] = json.map((item: any) => ({
+          id: item.id,
+          namaAset: item.asset_info?.name || "Tidak ada aset",
+          namaRisiko: item.title,
+          level: item.criteria,
+          skor: item.entry_level,
+          kategori: item.risk_category?.name || "-",
+          status: item.status,
+          date: item.created_at,
+          dinas: item.department?.name || null,
+        }));
+
+        setData(mapped);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRisks();
+  }, []);
 
   const filteredData = useMemo(() => {
+    setCurrentPage(1); // reset saat filter berubah
+
     return data.filter((item) => {
       const itemDate = new Date(item.date);
 
-      // SEARCH
       const matchSearch = search
         ? item.namaAset.toLowerCase().includes(search.toLowerCase()) ||
           item.namaRisiko.toLowerCase().includes(search.toLowerCase()) ||
           item.id.toLowerCase().includes(search.toLowerCase())
         : true;
 
-      // DINAS — FIX LOWERCASE MATCH
-      const matchDinas = dinas
-        ? item.dinas?.toLowerCase() === dinas.toLowerCase()
-        : true;
+      const matchDinas = dinas ? item.dinas?.toLowerCase() === dinas.toLowerCase() : true;
 
-      // PERIODE RANGE
       const matchPeriod = period
         ? itemDate >= new Date(period.start) && itemDate <= new Date(period.end)
         : true;
 
-      // LEVEL — FIX CASE SENSITIVE ISSUE
-      const matchLevel = level
-        ? item.level.toLowerCase() === level.toLowerCase()
-        : true;
+      const matchLevel = level ? item.level.toLowerCase() === level.toLowerCase() : true;
 
-      // STATUS — FIX CASE SENSITIVE ISSUE
-      const matchStatus = status
-        ? item.status.toLowerCase() === status.toLowerCase()
-        : true;
+      const matchStatus = status ? item.status.toLowerCase() === status.toLowerCase() : true;
 
-      return (
-        matchSearch && matchDinas && matchPeriod && matchLevel && matchStatus
-      );
+      return matchSearch && matchDinas && matchPeriod && matchLevel && matchStatus;
     });
-  }, [search, dinas, period, level, status]);
+  }, [search, dinas, period, level, status, data]);
+
+  const totalItems = filteredData.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+
+  const displayedData = filteredData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const startIdx = (currentPage - 1) * itemsPerPage + 1;
+  const endIdx = Math.min(currentPage * itemsPerPage, totalItems);
+
+  // 🔹 Fungsi styling nomer halaman seperti Capt contoh mu
+  const getPageNumbers = () => {
+    const pages = [];
+
+    if (totalPages <= 3) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (currentPage > 1) pages.push(currentPage - 1);
+      pages.push(currentPage);
+      if (currentPage < totalPages) pages.push(currentPage + 1);
+    }
+
+    return pages;
+  };
+
+  if (loading)
+    return <p className="text-center py-6 text-gray-600 font-medium">Memuat data risiko...</p>;
 
   return (
     <div className="rounded-2xl p-2 border border-gray-100">
-      {/* 📱 EXPORT MOBILE */}
-      <div className="md:hidden mb-3">
-        <button
-          onClick={() => setIsExportOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E2E8F0] rounded-xl text-sm text-gray-700 shadow-sm"
-        >
-          <Upload className="w-4 h-4" />
-          Export
-        </button>
-      </div>
-
-      {/* 💻 DESKTOP TABLE */}
       <div className="hidden md:block rounded-xl bg-white">
+
+        {/* Export Button */}
         <div className="flex mb-3 p-4">
           <button
             onClick={() => setIsExportOpen(true)}
             className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-50"
           >
-            <Upload className="w-4 h-4" />
-            Export
+            <Upload className="w-4 h-4" /> Export
           </button>
         </div>
 
+        {/* Table */}
         <div className="overflow-x-auto w-full">
           <table className="min-w-[1000px] w-full text-sm text-center text-gray-600">
             <thead>
@@ -154,118 +163,81 @@ export default function RisikoTableSection({
                 <th className="py-5 px-4 font-semibold"></th>
               </tr>
             </thead>
-
             <tbody>
-              {filteredData.length > 0 ? (
-                filteredData.map((item, i) => (
+              {displayedData.length ? (
+                displayedData.map((item, i) => (
                   <tr key={i} className="hover:bg-gray-50 transition">
                     <td className="py-5 px-4 font-semibold">{item.id}</td>
                     <td className="py-5 px-4">{item.namaAset}</td>
                     <td className="py-5 px-4">{item.namaRisiko}</td>
-                    <td className={`py-5 px-4 ${getLevelColor(item.level)}`}>
-                      {item.level}
-                    </td>
+                    <td className={`py-5 px-4 ${getLevelColor(item.level)}`}>{item.level}</td>
                     <td className="py-5 px-4">{item.skor}</td>
                     <td className="py-5 px-4">{item.kategori}</td>
                     <td className="py-5 px-4">
-                      <span className={getStatusStyle(item.status)}>
-                        {item.status}
-                      </span>
+                      <span className={getStatusStyle(item.status)}>{item.status}</span>
                     </td>
-                    <td className="py-5 px-4">{item.dinas}</td>
+                    <td className="py-5 px-4">{item.dinas || "-"}</td>
 
                     <td className="py-5 px-4">
-                      <a
-                        href={`/risiko/${item.id}`}
-                        className="text-blue-500 font-medium hover:underline"
-                      >
+                      <a href={`/risiko/${item.id}`} className="text-blue-500 hover:underline font-medium">
                         Detail
                       </a>
                     </td>
                   </tr>
                 ))
               ) : (
-                <tr>
-                  <td
-                    colSpan={9}
-                    className="text-center py-4 text-gray-400 italic"
-                  >
-                    Tidak ada data yang sesuai dengan filter.
-                  </td>
-                </tr>
+                <tr><td colSpan={9} className="py-4 text-gray-400 italic">Tidak ada data</td></tr>
               )}
             </tbody>
           </table>
         </div>
-      </div>
 
-      {/* 📱 CARD */}
-      <div className="md:hidden space-y-4 mt-2">
-        {filteredData.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {filteredData.map((item, i) => (
-              <div
-                key={i}
-                className="border bg-white border-gray-200 rounded-xl shadow-sm p-4"
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <p className="text-xs text-gray-500 font-medium">{item.id}</p>
-                  <a
-                    href={`/risiko/${item.id}`}
-                    className="text-[#0095E8] text-sm font-medium hover:underline"
+        {/* Pagination Fix */}
+        {totalItems > itemsPerPage && (
+          <div className="mt-5 p-2 relative">
+
+            {/* Info Data */}
+            <p className="absolute left-2 text-sm text-gray-600 font-medium">
+              Menampilkan {startIdx} – {endIdx} dari {totalItems} Data
+            </p>
+
+            {/* Navigasi */}
+            <div className="flex justify-center">
+              <div className="flex items-center gap-3">
+
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((p) => p - 1)}
+                  className="px-2 disabled:text-gray-400 text-lg hover:text-blue-600"
+                >
+                  ‹
+                </button>
+
+                {getPageNumbers().map((num, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentPage(num)}
+                    className={`w-8 h-8 rounded-md flex items-center justify-center text-sm transition ${
+                      currentPage === num ? "bg-gray-200 font-semibold" : "hover:text-blue-600"
+                    }`}
                   >
-                    Detail
-                  </a>
-                </div>
+                    {num}
+                  </button>
+                ))}
 
-                <h3 className="font-semibold border-b pb-2 text-gray-800 text-[15px] mb-3">
-                  {item.namaAset}
-                </h3>
-
-                <div className="grid grid-cols-2 gap-y-1 text-sm text-gray-600">
-                  <p>
-                    <span className="font-medium">Risiko:</span>{" "}
-                    {item.namaRisiko}
-                  </p>
-                  <p className="text-right">
-                    <span className="font-medium">Level:</span>{" "}
-                    <span className={getLevelColor(item.level)}>
-                      {item.level}
-                    </span>
-                  </p>
-
-                  <p>
-                    <span className="font-medium">Skor:</span> {item.skor}
-                  </p>
-                  <p className="text-right">
-                    <span className="font-medium">Kategori:</span>{" "}
-                    {item.kategori}
-                  </p>
-                </div>
-
-                <div className="mt-2 text-sm text-gray-700">
-                  <span className="font-medium">Dinas:</span> {item.dinas}
-                </div>
-
-                <div className="mt-3 flex justify-between items-center">
-                  <span className={getStatusStyle(item.status)}>
-                    {item.status}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {item.date.split("-").reverse().join("-")}
-                  </span>
-                </div>
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                  className="px-2 disabled:text-gray-400 text-lg hover:text-blue-600"
+                >
+                  ›
+                </button>
               </div>
-            ))}
+            </div>
           </div>
-        ) : (
-          <p className="text-center text-gray-500 italic">
-            Tidak ada data yang sesuai dengan filter.
-          </p>
         )}
       </div>
 
-      {/* EXPORT MODAL */}
       <ExportModal
         isOpen={isExportOpen}
         onClose={() => setIsExportOpen(false)}
