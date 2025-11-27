@@ -8,6 +8,7 @@ interface RisikoSetujuProps {
   namaRisiko: string;
   asetTerkait: string;
   asetId: string;
+  riskId: string;
   onCancel?: () => void;
   onConfirm?: () => Promise<void>; // ACC risiko
   loading?: boolean;
@@ -17,6 +18,7 @@ const RisikoSetuju: React.FC<RisikoSetujuProps> = ({
   namaRisiko,
   asetTerkait,
   asetId,
+  riskId,
   onCancel,
   onConfirm,
   loading = false,
@@ -42,18 +44,21 @@ const RisikoSetuju: React.FC<RisikoSetujuProps> = ({
       setLocalLoading(true);
       setPopupLoading(true);
 
-      // SIMPAN JADWAL
+      // SIMPAN JADWAL + RISK ID
       await axios.post(
         `https://asset-risk-management.vercel.app/api/maintenance/${asetId}`,
-        { scheduled_date, priority },
+        {
+          risk_id: riskId,
+          scheduled_date,
+          priority,
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // ACC RISIKO SETELAH JADWAL BERHASIL
+      // ACC RISIKO
       if (onConfirm) await onConfirm();
 
-      alert("Risiko disetujui dan jadwal pemeliharaan berhasil ditambahkan.");
-
+      alert("Risiko disetujui dan jadwal pemeliharaan disimpan.");
       setOpenPopup(false);
       onCancel?.();
       window.location.reload();
