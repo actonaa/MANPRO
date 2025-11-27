@@ -119,7 +119,47 @@ export default function TableJadwalPemeliharaan({
 
   // UI
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="mt-5 bg-white md:mt-0">
+        <div className="overflow-x-auto hidden lg:block">
+          <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
+            <thead>
+              <tr>
+                {[
+                  "ID ASET",
+                  "NAMA ASET",
+                  "RISIKO",
+                  "LOKASI",
+                  "PRIORITAS",
+                  "JADWAL",
+                  "",
+                ].map((h) => (
+                  <th key={h} className="py-5 px-4">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+
+            <tbody>
+              {Array.from({ length: 8 }).map((_, i) => (
+                <tr
+                  key={i}
+                  className="border-b border-b-gray-200 animate-pulse"
+                >
+                  {/* 7 kolom skeleton */}
+                  {Array.from({ length: 7 }).map((__, j) => (
+                    <td key={j} className="py-5 px-4">
+                      <div className="h-4 bg-gray-200 rounded w-full"></div>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
   }
 
   return (

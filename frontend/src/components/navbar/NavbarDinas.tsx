@@ -58,7 +58,7 @@ export default function NavbarDinas() {
       icon: "/sidebar-icon/Aset.png",
       children: [
         { label: "Data Aset", to: "/aset" },
-        { label: "Data Scenario", to: "/sdm" },
+        { label: "Data Skenario", to: "/skenario" },
       ],
     },
     {
