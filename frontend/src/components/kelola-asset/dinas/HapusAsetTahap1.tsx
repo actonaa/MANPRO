@@ -11,7 +11,6 @@ interface HapusAsetTahap1Props {
   kategori: string;
   merk: string;
   subKategori: string;
-  serial: string;
   lokasi: string;
   tglPerolehan: string;
   penanggungJawab: string;
@@ -30,7 +29,6 @@ const HapusAsetTahap1: React.FC<HapusAsetTahap1Props> = ({
   kategori,
   merk,
   subKategori,
-  serial,
   lokasi,
   tglPerolehan,
   penanggungJawab,
@@ -88,11 +86,6 @@ const HapusAsetTahap1: React.FC<HapusAsetTahap1Props> = ({
           <div>
             <p className="text-gray-500">Sub Kategori</p>
             <p className="font-medium">{subKategori}</p>
-          </div>
-
-          <div>
-            <p className="text-gray-500">Serial Number Aset</p>
-            <p className="font-medium">{serial}</p>
           </div>
 
           <div>

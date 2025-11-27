@@ -1,7 +1,7 @@
 import React from "react";
 
 interface StatusBadgeProps {
-  status: "Aktif" | "Perbaikan" | "Tidak Aktif";
+  status: "Aktif" | "Perbaikan" | "Akan Dihapus" | "Tidak Aktif";
 }
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
@@ -9,6 +9,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
     switch (status) {
       case "Aktif":
         return "bg-green-200 text-green-800";
+      case "Akan Dihapus":
       case "Perbaikan":
         return "bg-yellow-200 text-yellow-800";
       case "Tidak Aktif":

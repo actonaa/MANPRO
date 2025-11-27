@@ -8,8 +8,8 @@ interface Props {
 }
 
 interface MaintenanceItem {
-  id: string;
-  asset_id: string;
+  id: string; // id maintenance
+  asset_id: string; // id aset
   type: string | null;
   scheduled_date: string;
   completion_date: string | null;
@@ -18,14 +18,21 @@ interface MaintenanceItem {
   notes: string | null;
   proof: string | null;
   status: string;
-  priority: string | null;
+  priority: string | null; // PRIORITAS DIAMBIL DARI SINI
+
   asset?: {
     name: string;
     lokasi: string;
-    risk: { title: string }[];
   };
-  risk?: string; // ← ganti kategori menjadi risk
-  prioritas?: string | null;
+
+  risk?: {
+    title: string;
+    priority: string;
+    risk_treatment: any[];
+  };
+
+  kategori?: string; // risk title
+  prioritas?: string | null; // dari maintenance
 }
 
 export default function TableJadwalPemeliharaan({
@@ -39,9 +46,7 @@ export default function TableJadwalPemeliharaan({
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
-  // ------------------------------
   // FETCH DATA
-  // ------------------------------
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -54,19 +59,17 @@ export default function TableJadwalPemeliharaan({
 
         const maintenanceData: MaintenanceItem[] = await res.json();
 
-        // mapping risk
-        const cleanedData = maintenanceData.map((item) => ({
+        const cleaned = maintenanceData.map((item) => ({
           ...item,
 
-          // pilih risk yang terkait treatment (lebih akurat)
-          risk:
-            item.asset?.risk?.find((r: any) => r?.risk_treatment?.length > 0)
-              ?.title ?? "Tidak ada",
+          // Risiko dari risk.title
+          kategori: item.risk?.title ?? "Tidak ada",
 
-          prioritas: item.priority ?? null,
+          // Prioritas diambil dari maintenance langsung
+          prioritas: item.priority ?? "Tidak ada",
         }));
 
-        setData(cleanedData);
+        setData(cleaned);
         setLoading(false);
       } catch (err) {
         console.error(err);
@@ -77,21 +80,17 @@ export default function TableJadwalPemeliharaan({
     fetchData();
   }, []);
 
-  // ------------------------------
-  // FILTERING
-  // ------------------------------
+  // FILTER
   const filteredData = data.filter(
     (item) =>
-      (!selectedKategori || item.risk === selectedKategori) &&
+      (!selectedKategori || item.kategori === selectedKategori) &&
       (!selectedPrioritas || item.prioritas === selectedPrioritas) &&
       (!searchQuery ||
-        item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.asset_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.asset?.name.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  // ------------------------------
-  // PAGINATION CALC
-  // ------------------------------
+  // PAGINATION
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
   const paginatedData = filteredData.slice(
@@ -103,9 +102,7 @@ export default function TableJadwalPemeliharaan({
     if (currentPage > totalPages) setCurrentPage(1);
   }, [currentPage, filteredData.length, totalPages]);
 
-  // ------------------------------
-  // BADGE COLORS
-  // ------------------------------
+  // BADGE
   const getBadgeColor = (prioritas?: string | null) => {
     if (!prioritas) return "bg-gray-100 text-gray-600";
     switch (prioritas.toLowerCase()) {
@@ -120,32 +117,11 @@ export default function TableJadwalPemeliharaan({
     }
   };
 
-  // ------------------------------
-  // LOADING SKELETON
-  // ------------------------------
+  // UI
   if (loading) {
-    return (
-      <div className="mt-5 bg-white md:mt-0 space-y-4">
-        <div className="overflow-x-auto hidden lg:block">
-          <table className="w-full min-w-[800px] text-[13px] text-center border-collapse">
-            <thead>
-              <tr>
-                {Array.from({ length: 7 }).map((_, idx) => (
-                  <th key={idx} className="py-5 px-4 font-semibold">
-                    <div className="h-4 bg-gray-200 rounded w-20 mx-auto animate-pulse"></div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-          </table>
-        </div>
-      </div>
-    );
+    return <div>Loading...</div>;
   }
 
-  // ------------------------------
-  // RENDER
-  // ------------------------------
   return (
     <div className="mt-5 bg-white md:mt-0">
       <div className="overflow-x-auto hidden lg:block">
@@ -169,23 +145,28 @@ export default function TableJadwalPemeliharaan({
                   key={item.id}
                   className="border-b border-b-gray-200 hover:bg-gray-50"
                 >
-                  <td className="py-5 px-4">{item.id}</td>
+                  {/* MENAMPILKAN ID ASET BUKAN ID MAINTENANCE */}
+                  <td className="py-5 px-4">{item.asset_id}</td>
+
                   <td className="py-5 px-4">{item.asset?.name ?? "-"}</td>
-                  <td className="py-5 px-4">{item.risk}</td>
+                  <td className="py-5 px-4">{item.kategori}</td>
                   <td className="py-5 px-4">{item.asset?.lokasi ?? "-"}</td>
+
                   <td className="py-5 px-4">
                     <span
                       className={`px-5 py-2 rounded-[16px] ${getBadgeColor(
                         item.prioritas
                       )}`}
                     >
-                      {item.prioritas ?? "Tidak ada"}
+                      {item.prioritas}
                     </span>
                   </td>
+
                   <td className="py-5 px-4">{item.scheduled_date}</td>
+
                   <td className="py-5 px-4">
                     <a
-                      href={`/pemeliharaan/${item.id}`}
+                      href={`/pemeliharaan/${item.id}`} // tetap gunakan ID maintenance
                       className="text-[#0095E8] hover:underline"
                     >
                       Detail

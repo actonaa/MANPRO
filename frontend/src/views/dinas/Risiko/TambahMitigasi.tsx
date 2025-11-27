@@ -130,6 +130,8 @@ export default function TambahMitigasi() {
     }
   };
 
+  const disableInputs = strategi === "" || strategi === "Penerimaan Risiko";
+
   useEffect(() => {
     if (!probabilitas || !dampak) {
       setLevelResidual("");
@@ -172,7 +174,7 @@ export default function TambahMitigasi() {
             <img
               src="/kelola-risiko/heatmap-risiko.png"
               alt="Heatmap Risiko"
-              className="max-w-full rounded-lg border shadow-sm"
+              className="max-w-full rounded-lg shadow-sm"
             />
           </div>
 
@@ -214,7 +216,12 @@ export default function TambahMitigasi() {
                 placeholder="Cth: downtime > 2 jam..."
                 value={aksiMitigasi}
                 onChange={(e) => setAksiMitigasi(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg p-2 text-sm resize-none"
+                disabled={disableInputs}
+                className={`w-full border border-gray-300 rounded-lg px-3 py-2 text-sm appearance-none ${
+                  disableInputs
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : ""
+                }`}
                 rows={3}
               />
             </div>
@@ -228,7 +235,12 @@ export default function TambahMitigasi() {
                 <select
                   value={probabilitas}
                   onChange={(e) => setProbabilitas(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm appearance-none"
+                  disabled={disableInputs}
+                  className={`w-full border border-gray-300 rounded-lg px-3 py-2 text-sm appearance-none ${
+                    disableInputs
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : ""
+                  }`}
                 >
                   <option value="" disabled hidden>
                     Turunkan Level Probabilitas
@@ -250,7 +262,12 @@ export default function TambahMitigasi() {
                 <select
                   value={dampak}
                   onChange={(e) => setDampak(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm appearance-none"
+                  disabled={disableInputs}
+                  className={`w-full border border-gray-300 rounded-lg px-3 py-2 text-sm appearance-none ${
+                    disableInputs
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : ""
+                  }`}
                 >
                   <option value="" disabled hidden>
                     Turunkan Level Dampak
@@ -263,7 +280,7 @@ export default function TambahMitigasi() {
               </div>
             </div>
 
-            {/* Level Residual */}
+            {/* Level Residual (read only tetap) */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Level Residual
@@ -276,7 +293,7 @@ export default function TambahMitigasi() {
               />
             </div>
 
-            {/* Efektivitas */}
+            {/* Efektivitas (read only tetap) */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Efektivitas
@@ -298,7 +315,12 @@ export default function TambahMitigasi() {
                 type="text"
                 value={pemilik}
                 onChange={(e) => setPemilik(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                disabled={disableInputs}
+                className={`w-full border border-gray-300 rounded-lg px-3 py-2 text-sm ${
+                  disableInputs
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : ""
+                }`}
                 placeholder="Masukkan nama pemilik"
               />
             </div>
@@ -312,7 +334,12 @@ export default function TambahMitigasi() {
                 type="text"
                 value={biaya}
                 onChange={(e) => setBiaya(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                disabled={disableInputs}
+                className={`w-full border border-gray-300 rounded-lg px-3 py-2 text-sm ${
+                  disableInputs
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : ""
+                }`}
                 placeholder="Cth: 20000"
               />
             </div>
@@ -326,8 +353,13 @@ export default function TambahMitigasi() {
                 type="date"
                 value={targetWaktu}
                 onChange={(e) => setTargetWaktu(e.target.value)}
+                disabled={disableInputs}
                 onFocus={(e) => e.target.showPicker && e.target.showPicker()}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                className={`w-full border border-gray-300 rounded-lg px-3 py-2 text-sm ${
+                  disableInputs
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : ""
+                }`}
               />
             </div>
           </div>

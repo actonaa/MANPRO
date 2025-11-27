@@ -383,16 +383,15 @@ export default function DetailAset() {
         setReason={setDeleteReason}
         assetName={asset.name}
         kategori={asset.category?.name}
-        merk={asset.tipe}
+        merk={asset.merk_type}
         subKategori={asset.sub_category?.name}
-        serial={asset.serial_number}
         lokasi={asset.lokasi}
-        tglPerolehan={asset.tgl_perolehan}
-        penanggungJawab={asset.penanggung_jawab}
-        kondisi={asset.kondisi}
-        biaya={asset.biaya}
+        tglPerolehan={asset.acquisition_date}
+        penanggungJawab={asset.pic}
+        kondisi={asset.condition?.name}
+        biaya={asset.acquisition_value}
         kodeBMD={asset.bmd_code}
-        namaDinas={asset.nama_dinas}
+        namaDinas={asset.department?.name}
       />
 
       <HapusAsetTahap2

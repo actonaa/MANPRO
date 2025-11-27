@@ -2,7 +2,7 @@ interface InfoProps {
   idJadwal: string;
   idAset: string;
   namaAset: string;
-  kategori: string;
+  namaRisiko: string;
   lokasi: string;
   prioritas: string;
   tanggal: string;
@@ -13,7 +13,7 @@ export default function InfoPemeliharaan({
   idJadwal,
   idAset,
   namaAset,
-  kategori,
+  namaRisiko,
   lokasi,
   prioritas,
   tanggal,
@@ -73,10 +73,10 @@ export default function InfoPemeliharaan({
           <div className="font-medium text-gray-900">{namaAset}</div>
         </div>
 
-        {/* Kategori */}
+        {/* Nama Risiko */}
         <div>
           <div className="text-gray-500 text-xs mb-1">Nama Risiko</div>
-          <div className="font-medium text-gray-900">{kategori}</div>
+          <div className="font-medium text-gray-900">{namaRisiko}</div>
         </div>
 
         {/* Lokasi */}

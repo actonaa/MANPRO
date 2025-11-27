@@ -71,7 +71,7 @@ export default function LaptopKerjaDetail() {
   // ==============================
   //  🟦 KATEGORI DIGANTI NAMA RISIKO
   // ==============================
-  const kategori = asset?.risk?.[0]?.title ?? "Tidak ada";
+  const namaRisiko = maintenance?.risk?.title ?? "Tidak ada";
 
   const prioritas = maintenance?.priority ?? "Tidak ada";
 
@@ -94,7 +94,7 @@ export default function LaptopKerjaDetail() {
           idJadwal={maintenance?.id}
           idAset={maintenance?.asset_id}
           namaAset={asset?.name}
-          kategori={kategori}
+          namaRisiko={namaRisiko}
           lokasi={asset?.lokasi}
           prioritas={prioritas}
           tanggal={maintenance?.scheduled_date}

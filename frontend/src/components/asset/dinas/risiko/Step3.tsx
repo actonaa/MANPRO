@@ -7,7 +7,8 @@ interface Step3Props {
 }
 
 export default function Step3({ formData, handleChange }: Step3Props) {
-  const isPenerimaan = formData.strategi === "Penerimaan Risiko";
+  const isPenerimaan =
+    formData.strategi === "Penerimaan Risiko" || formData.strategi === "";
 
   // ==============================
   //  HITUNG LEVEL RESIDUAL OTOMATIS
