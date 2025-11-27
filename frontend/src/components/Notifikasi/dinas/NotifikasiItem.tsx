@@ -41,7 +41,7 @@ export default function NotifikasiItem({
           {notif.kategori}
         </p>
 
-        <p className="text-gray-600 text-sm truncate">{notif.pesan}</p>
+        <p className="text-gray-600 text-sm truncate ml-10">{notif.pesan}</p>
       </div>
 
       {/* Waktu (hilang saat hover) */}

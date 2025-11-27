@@ -9,6 +9,7 @@ interface Counts {
   semua: number;
   aset: number;
   risiko: number;
+  maintenance: number;
   belum: number;
 }
 
@@ -22,6 +23,7 @@ export default function FilterTabs({ counts, onTabChange }: FilterTabsProps) {
     { id: "semua", label: "Semua" },
     { id: "aset", label: "Aset" },
     { id: "risiko", label: "Risiko" },
+    { id: "maintenance", label: "Pemeliharaan" },
     { id: "belum", label: "Belum Dibaca" },
   ];
 
@@ -47,7 +49,7 @@ export default function FilterTabs({ counts, onTabChange }: FilterTabsProps) {
           <span
             className={`text-sm ${
               activeTab === tab.id
-                ? "px-2 py-[2px] rounded-full bg-[#FF2D2D] text-white font-bold"
+                ? "px-2 py-[2px] rounded-full bg-blue-500 text-white font-bold"
                 : "text-gray-500 font-medium"
             }`}
           >

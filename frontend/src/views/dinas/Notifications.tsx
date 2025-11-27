@@ -80,8 +80,8 @@ export default function NotifikasiPage() {
       minute: "2-digit",
     });
 
-    if (isToday) return timeOnly; // Hari ini → HH:MM
-    if (isYesterday) return `Kemarin, ${timeOnly}`; // Kemarin → Kemarin, HH:MM
+    if (isToday) return timeOnly;
+    if (isYesterday) return `Kemarin, ${timeOnly}`;
 
     return date.toLocaleString("id-ID", {
       day: "2-digit",
@@ -92,17 +92,24 @@ export default function NotifikasiPage() {
     });
   };
 
+  // === HITUNG COUNTER ===
   const counts = {
     semua: allData.length,
     aset: allData.filter((d) => d.kategori.toLowerCase() === "asset").length,
-    risiko: allData.filter((d) => d.kategori.toLowerCase() === "risiko").length,
+    risiko: allData.filter((d) => d.kategori.toLowerCase() === "risk").length,
+    maintenance: allData.filter(
+      (d) => d.kategori.toLowerCase() === "maintenance"
+    ).length,
     belum: allData.filter((d) => !d.is_read).length,
   };
 
+  // === FILTER DATA ===
   let filteredData = allData.filter((item) => {
     if (activeTab === "semua") return true;
     if (activeTab === "aset") return item.kategori.toLowerCase() === "asset";
-    if (activeTab === "risiko") return item.kategori.toLowerCase() === "risiko";
+    if (activeTab === "risiko") return item.kategori.toLowerCase() === "risk";
+    if (activeTab === "maintenance")
+      return item.kategori.toLowerCase() === "maintenance";
     if (activeTab === "belum") return item.is_read === false;
     return true;
   });

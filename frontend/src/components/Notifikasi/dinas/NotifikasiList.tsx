@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   RefreshCcw,
   MailCheck,
@@ -15,6 +15,12 @@ export default function NotifikasiList({ data }: { data: any[] }) {
   const [notifs, setNotifs] = useState<any[]>(() => data ?? []);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [refreshing, setRefreshing] = useState(false);
+
+  // 🔥 SINKRONISASI DATA SETIAP KALI FILTER TAB BERUBAH
+  useEffect(() => {
+    setNotifs(data);
+    setSelectedIds(new Set());
+  }, [data]);
 
   // derived
   const allSelected = useMemo(
@@ -39,7 +45,6 @@ export default function NotifikasiList({ data }: { data: any[] }) {
     }
   };
 
-  // API: Tandai semua notif
   const apiMarkAllAsRead = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -75,7 +80,7 @@ export default function NotifikasiList({ data }: { data: any[] }) {
 
   const handleRefresh = () => {
     setRefreshing(true);
-    // simple "fake refresh": reset local notifs from incoming prop `data`
+
     setTimeout(() => {
       setNotifs(data ?? []);
       setSelectedIds(new Set());
@@ -127,15 +132,12 @@ export default function NotifikasiList({ data }: { data: any[] }) {
 
   return (
     <div>
-      {/* CONTROLS HEADER (di atas list) */}
+      {/* CONTROLS HEADER */}
       <div className="flex items-center justify-between mb-4">
-        {/* left controls */}
         <div className="flex items-center gap-3">
-          {/* master checkbox */}
           <button
             onClick={handleSelectAllToggle}
             className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100 transition"
-            title={allSelected ? "Hapus filter" : "Pilih semua"}
           >
             {allSelected ? (
               <MinusSquare size={18} className="text-gray-600" />
@@ -147,7 +149,6 @@ export default function NotifikasiList({ data }: { data: any[] }) {
             </span>
           </button>
 
-          {/* Mark selected (aktif ketika ada selection) */}
           <button
             onClick={markSelectedAsRead}
             disabled={!anySelected}
@@ -156,33 +157,27 @@ export default function NotifikasiList({ data }: { data: any[] }) {
                 ? "hover:bg-green-50"
                 : "opacity-40 cursor-not-allowed"
             }`}
-            title="Tandai terpilih sudah dibaca"
           >
             <MailCheck size={16} className="text-green-600" />
             <span className="text-sm text-gray-700">Tandai terpilih</span>
           </button>
 
-          {/* Delete selected */}
           <button
             onClick={deleteSelected}
             disabled={!anySelected}
             className={`flex items-center gap-2 px-2 py-1 rounded transition ${
               anySelected ? "hover:bg-red-50" : "opacity-40 cursor-not-allowed"
             }`}
-            title="Hapus terpilih"
           >
             <Trash2 size={16} className="text-red-500" />
             <span className="text-sm text-gray-700">Hapus terpilih</span>
           </button>
         </div>
 
-        {/* right controls */}
         <div className="flex items-center gap-3">
-          {/* Refresh */}
           <button
             onClick={handleRefresh}
             className="p-2 rounded hover:bg-gray-100 transition"
-            title="Refresh"
           >
             <RefreshCcw
               size={18}
@@ -190,11 +185,9 @@ export default function NotifikasiList({ data }: { data: any[] }) {
             />
           </button>
 
-          {/* Tandai semua sudah dibaca */}
           <button
             onClick={markAllAsRead}
             className="p-2 rounded hover:bg-green-50 transition"
-            title="Tandai semua sudah dibaca"
           >
             <MailCheck size={18} className="text-green-600" />
           </button>
@@ -202,22 +195,20 @@ export default function NotifikasiList({ data }: { data: any[] }) {
       </div>
 
       {/* LIST */}
-      <div>
-        {notifs.length === 0 ? (
-          <p className="text-sm text-gray-500">Tidak ada notifikasi.</p>
-        ) : (
-          notifs.map((notif) => (
-            <NotifikasiItem
-              key={notif.id}
-              notif={notif}
-              selected={selectedIds.has(notif.id)}
-              onToggleSelect={() => handleToggleSelect(notif.id)}
-              onMarkRead={() => markOneAsRead(notif.id)}
-              onDelete={() => deleteOne(notif.id)}
-            />
-          ))
-        )}
-      </div>
+      {notifs.length === 0 ? (
+        <p className="text-sm text-gray-500">Tidak ada notifikasi.</p>
+      ) : (
+        notifs.map((notif) => (
+          <NotifikasiItem
+            key={notif.id}
+            notif={notif}
+            selected={selectedIds.has(notif.id)}
+            onToggleSelect={() => handleToggleSelect(notif.id)}
+            onMarkRead={() => markOneAsRead(notif.id)}
+            onDelete={() => deleteOne(notif.id)}
+          />
+        ))
+      )}
     </div>
   );
 }

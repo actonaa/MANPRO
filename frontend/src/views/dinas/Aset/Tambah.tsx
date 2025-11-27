@@ -108,7 +108,9 @@ export default function Tambah() {
       formDataSend.append("name", formData.namaAset);
       formDataSend.append("merk_type", formData.merkTipe);
       formDataSend.append("bmd_code", formData.kodeBMD);
-      formDataSend.append("acquisition_date", formData.tanggalPerolehan || "");
+      if (formData.tanggalPerolehan) {
+        formDataSend.append("acquisition_date", formData.tanggalPerolehan);
+      }
       formDataSend.append("lokasi", formData.lokasiAset);
       formDataSend.append("pic", formData.penanggungJawab);
       formDataSend.append("category_id", formData.kategoriAset);
@@ -129,13 +131,17 @@ export default function Tambah() {
 
       // === DATA TI / NON TI ===
       if (isTI) {
-        formDataSend.append("ip_address", formDataTI.ipAddress);
-        formDataSend.append("os", formDataTI.os);
-        formDataSend.append("version", formDataTI.version);
-        formDataSend.append("deploy_date", formDataTI.tanggalDeployment || "");
-        formDataSend.append("serial_number", formDataTI.serialNumber);
-        formDataSend.append("hostname", formDataTI.hostname);
-        formDataSend.append("url", formDataTI.url);
+        if (formDataTI.ipAddress) {
+          formDataSend.append("ip_address", formDataTI.ipAddress);
+        }
+        formDataSend.append("os", formDataTI.os || "");
+        formDataSend.append("version", formDataTI.version || "");
+        if (formDataTI.tanggalDeployment) {
+          formDataSend.append("deploy_date", formDataTI.tanggalDeployment);
+        }
+        formDataSend.append("serial_number", formDataTI.serialNumber || "");
+        formDataSend.append("hostname", formDataTI.hostname || "");
+        formDataSend.append("url", formDataTI.url || "");
       } else {
         formDataSend.append("material", formDataNonTI.material);
         formDataSend.append("specification", formDataNonTI.ukuran);
