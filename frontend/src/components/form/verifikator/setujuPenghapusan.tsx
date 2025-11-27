@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { CircleHelp } from "lucide-react";
-import PopupJadwalPemeliharaan from "../verifikator/JadwalPemeliharaan";
-import axios from "axios";
 
 interface AsetItem {
   id: string;
@@ -22,39 +20,42 @@ const SetujuPenghapusan: React.FC<SetujuPenghapusanProps> = ({
   aset,
   onClose,
 }) => {
-  const [openPopup, setOpenPopup] = useState(false);
+  const [, setOpenPopup] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token");
 
-  const handleConfirm = () => {
-    setOpenPopup(true);
-  };
+  const handleConfirm = async () => {
+    setLoading(true);
 
-  const handleSubmitJadwal = async (tanggal: string) => {
     try {
-      setLoading(true);
-
-      // 1️⃣ PATCH approval status
-      await axios.patch(
-        `https://asset-risk-management.vercel.app/api/assets/${aset.id}/verify`,
-        { approval_status: "approved" },
-        { headers: { Authorization: `Bearer ${token}` } }
+      const res = await fetch(
+        `https://asset-risk-management.vercel.app/api/assets/${aset.id}/verify-delete`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            action: "accept",
+          }),
+        }
       );
 
-      // 2️⃣ POST jadwal pemeliharaan
-      await axios.post(
-        `https://asset-risk-management.vercel.app/api/maintenance/${aset.id}`,
-        { schedule_date: tanggal },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Server error:", errorText);
+        alert("Gagal mengirim verifikasi!");
+        return;
+      }
 
-      alert("✅ Aset disetujui dan jadwal pemeliharaan berhasil ditambahkan.");
-      setOpenPopup(false);
+      setOpenPopup(true);
       onClose();
+      window.location.reload();
     } catch (error) {
-      console.error("Error approve asset / schedule:", error);
-      alert("❌ Terjadi kesalahan saat menyetujui aset.");
+      console.error("Error:", error);
+      alert("Terjadi kesalahan saat mengirim data!");
     } finally {
       setLoading(false);
     }
@@ -72,16 +73,16 @@ const SetujuPenghapusan: React.FC<SetujuPenghapusanProps> = ({
           </div>
 
           <h2 className="text-base sm:text-lg font-semibold text-gray-800">
-            Konfirmasi Persetujuan
+            Konfirmasi Persetujuan Penghapusan
           </h2>
           <p className="text-gray-600 text-sm mt-1">
-            Aset berikut akan disetujui. Silakan atur jadwal pemeliharaan.
+            Aset berikut akan disetujui penghapusan
           </p>
 
           <hr className="my-4 border-gray-300" />
 
           <p className="font-medium text-gray-700 mb-4">
-            Apakah Anda yakin ingin menyetujui aset ini?
+            Apakah Anda yakin menyetujui penghapusan aset ini?
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center gap-3">
@@ -95,19 +96,13 @@ const SetujuPenghapusan: React.FC<SetujuPenghapusanProps> = ({
             <button
               onClick={handleConfirm}
               className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition w-full sm:w-auto"
+              disabled={loading}
             >
-              {loading ? "Memproses..." : "Setuju & Atur Jadwal"}
+              {loading ? "Memproses..." : "Setuju"}
             </button>
           </div>
         </div>
       </div>
-
-      {/* Popup Jadwal */}
-      <PopupJadwalPemeliharaan
-        open={openPopup}
-        onClose={() => setOpenPopup(false)}
-        onSubmit={handleSubmitJadwal}
-      />
     </>
   );
 };

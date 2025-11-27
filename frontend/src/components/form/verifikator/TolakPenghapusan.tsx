@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { CircleHelp } from "lucide-react";
-import axios from "axios";
 
 interface AsetItem {
   id: string;
@@ -27,6 +26,7 @@ const TolakPenghapusan: React.FC<TolakPenghapusanProps> = ({
 
   const handleTolak = async () => {
     const token = localStorage.getItem("token");
+
     if (!token) {
       alert("Token tidak ditemukan. Silakan login ulang.");
       return;
@@ -40,27 +40,34 @@ const TolakPenghapusan: React.FC<TolakPenghapusanProps> = ({
     try {
       setLoading(true);
 
-      await axios.patch(
-        `https://asset-risk-management.vercel.app/api/assets/${aset.id}/verify`,
+      const res = await fetch(
+        `https://asset-risk-management.vercel.app/api/assets/${aset.id}/verify-delete`,
         {
-          approval_status: "rejected",
-          revisian_notes: alasan,
-        },
-        {
+          method: "PATCH",
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
+          body: JSON.stringify({
+            action: "reject",
+            notes: alasan,
+          }),
         }
       );
 
+      if (!res.ok) {
+        const err = await res.text();
+        console.error("Server error:", err);
+        alert("Gagal mengirim penolakan!");
+        return;
+      }
+
       alert("Aset berhasil ditolak.");
       onClose();
-
       window.location.reload();
     } catch (error: any) {
-      console.error("Error menolak aset:", error.response || error.message);
-      alert("Gagal menolak aset. Silakan cek console untuk detail.");
+      console.error("Error:", error);
+      alert("Terjadi kesalahan saat menolak aset.");
     } finally {
       setLoading(false);
     }
@@ -76,10 +83,10 @@ const TolakPenghapusan: React.FC<TolakPenghapusanProps> = ({
         </div>
 
         <h2 className="text-base sm:text-lg font-semibold text-gray-800">
-          Konfirmasi Penolakan
+          Konfirmasi Penolakan Penghapusan
         </h2>
         <p className="text-gray-600 text-sm mt-1">
-          Aset akan dikembalikan ke pengguna dinas untuk diperbaiki.
+          Aset akan dikembalikan kepada pengguna dinas.
         </p>
 
         <hr className="my-4 border-gray-300" />
@@ -91,14 +98,14 @@ const TolakPenghapusan: React.FC<TolakPenghapusanProps> = ({
           <textarea
             value={alasan}
             onChange={(e) => setAlasan(e.target.value)}
-            placeholder="Tuliskan alasan penolakan aset..."
+            placeholder="Tuliskan alasan penolakan..."
             rows={3}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
           />
         </div>
 
         <p className="font-medium text-gray-700 mb-4">
-          Apakah Anda yakin ingin menolak aset ini?
+          Apakah Anda yakin menolak penghapusan aset ini?
         </p>
 
         <div className="flex flex-col sm:flex-row justify-center gap-3">
@@ -114,7 +121,7 @@ const TolakPenghapusan: React.FC<TolakPenghapusanProps> = ({
             className="px-4 py-2 rounded-md bg-red-700 text-white hover:bg-red-800 transition w-full sm:w-auto"
             disabled={loading}
           >
-            {loading ? "Memproses..." : "Tolak Aset"}
+            {loading ? "Memproses..." : "Tolak"}
           </button>
         </div>
       </div>
