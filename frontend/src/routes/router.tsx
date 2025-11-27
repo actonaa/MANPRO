@@ -86,6 +86,7 @@ import VerifikasiPenghapusan from "../views/verifikator/VerifikasiPenghapusan";
 import DataSDM from "../views/dinas/Aset/DataSDM";
 import LaporanAsetAdmin from "../views/admin/Aset/LaporanAset";
 import LaporanRisikoAdmin from "../views/admin/Risiko/LaporanRisiko";
+import DetailNotifikasiAdmin from "../views/admin/DetailNotifikasiAdmin";
 
 export default function AppRoutes() {
   return (
@@ -262,6 +263,7 @@ export default function AppRoutes() {
             path="/notifikasi/notifikasi-admin"
             element={<NotifikasiAdmin />}
           />
+          <Route path="/notifikasi/detailnotifikasi-admin" element={<DetailNotifikasiAdmin />} />
         </Route>
       </Routes>
     </Router>

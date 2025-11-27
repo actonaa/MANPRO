@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import NotifikasiItem from "./NotifikasiItem";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function NotifikasiList({ data }: { data: any[] }) {
   // local copy supaya bisa diupdate (mark read / delete) tanpa API
@@ -37,6 +38,12 @@ export default function NotifikasiList({ data }: { data: any[] }) {
     } catch (err) {
       console.error("Gagal patch satu notif:", err);
     }
+  };
+
+  const navigate = useNavigate();
+
+  const openDetail = (id: string) => {
+    navigate(`/notifikasi/detailnotifikasi-admin?id=${id}`);
   };
 
   // API: Tandai semua notif
@@ -214,6 +221,7 @@ export default function NotifikasiList({ data }: { data: any[] }) {
               onToggleSelect={() => handleToggleSelect(notif.id)}
               onMarkRead={() => markOneAsRead(notif.id)}
               onDelete={() => deleteOne(notif.id)}
+              onOpenDetail={() => openDetail(notif.id)}
             />
           ))
         )}

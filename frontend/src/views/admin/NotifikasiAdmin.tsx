@@ -7,7 +7,7 @@ export default function NotifikasiAdmin() {
   const [activeTab, setActiveTab] = useState<string>("semua");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // ✅ Data dummy sementara
+  // :white_check_mark: Data dummy sementara
   const allData = [
     {
       id: 1,
@@ -35,7 +35,7 @@ export default function NotifikasiAdmin() {
     },
   ];
 
-  // ✅ 1. Filter berdasarkan tab aktif
+  // :white_check_mark: 1. Filter berdasarkan tab aktif
   let filteredData = allData.filter((item) => {
     if (activeTab === "semua") return true;
     if (activeTab === "aset") return item.kategori === "Aset";
@@ -44,7 +44,7 @@ export default function NotifikasiAdmin() {
     return true;
   });
 
-  // ✅ 2. Filter berdasarkan pencarian teks
+  // :white_check_mark: 2. Filter berdasarkan pencarian teks
   if (searchQuery.trim() !== "") {
     filteredData = filteredData.filter(
       (item) =>
@@ -52,6 +52,12 @@ export default function NotifikasiAdmin() {
         item.kategori.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }
+  const counts = {
+    semua: allData.length,
+    aset: allData.filter((i) => i.kategori === "Aset").length,
+    risiko: allData.filter((i) => i.kategori === "Risiko").length,
+    belum: allData.filter((i) => i.waktu === "Just Now").length,
+  };
 
   return (
     <>
@@ -60,22 +66,20 @@ export default function NotifikasiAdmin() {
         Ketahui pesan terbaru untuk akun anda.
       </p>
       <div className="bg-white rounded-xl p-5 space-y-6">
-        {/* 🔔 Judul + SearchBar di satu baris */}
+        {/* :bell: Judul + SearchBar di satu baris */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <h1 className="text-lg font-semibold text-gray-800">
             188 Notifikasi
           </h1>
 
-          {/* 🕵️ SearchBar di kanan */}
+          {/* :detective: SearchBar di kanan */}
           <div className="w-full md:w-1/3">
             <SearchBar onSearch={(val) => setSearchQuery(val)} />
           </div>
         </div>
 
-        {/* 🔍 Filter Tabs */}
-        <FilterTabs onTabChange={(tab) => setActiveTab(tab)} />
+        {/* :mag: Filter Tabs */}
 
-        {/* 📬 Daftar Notifikasi */}
         <NotifikasiList data={filteredData} />
       </div>
     </>

@@ -7,15 +7,18 @@ export default function NotifikasiItem({
   onToggleSelect,
   onMarkRead,
   onDelete,
+  onOpenDetail,
 }: {
   notif: any;
   selected?: boolean;
   onToggleSelect?: () => void;
   onMarkRead?: () => void;
   onDelete?: () => void;
+  onOpenDetail: () => void;
 }) {
   return (
     <div
+      onClick={onOpenDetail}
       className={`
         flex items-center justify-between px-4 py-5 transition duration-200 shadow-sm group relative 
         ${notif.is_read ? "bg-blue-50" : "bg-white"}
@@ -29,6 +32,7 @@ export default function NotifikasiItem({
           checked={!!selected}
           onChange={onToggleSelect}
           className="w-4 h-4 accent-blue-500 cursor-pointer"
+          onClick={(e) => e.stopPropagation()}
         />
 
         {/* Kategori */}
