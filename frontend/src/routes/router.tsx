@@ -86,6 +86,7 @@ import VerifikasiPenghapusan from "../views/verifikator/VerifikasiPenghapusan";
 import LaporanAsetAdmin from "../views/admin/Aset/LaporanAset";
 import LaporanRisikoAdmin from "../views/admin/Risiko/LaporanRisiko";
 import Skenario from "../views/dinas/Aset/DataSkenario";
+import TambahSkenario from "../views/dinas/Aset/TambahSkenario";
 
 export default function AppRoutes() {
   return (
@@ -104,6 +105,7 @@ export default function AppRoutes() {
           <Route path="/aset/:id" element={<DetailAset />} />
           <Route path="/aset/tambah" element={<Tambah />} />
           <Route path="/skenario" element={<Skenario />} />
+          <Route path="/skenario/tambah" element={<TambahSkenario />} />
           <Route path="/laporan/aset" element={<LaporanAset />} />
           <Route path="/risiko" element={<DashboardRisiko />} />
           <Route path="/risiko/data" element={<DaftarRisiko />} />

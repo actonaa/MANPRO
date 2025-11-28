@@ -233,8 +233,8 @@ export default function TableSkenario({
               <th className="py-5 px-4 font-semibold">ID SKENARIO</th>
               <th className="py-5 px-4 font-semibold">NAMA SKENARIO</th>
               <th className="py-5 px-4 font-semibold">DESKRIPSI</th>
-              <th className="py-5 px-4 font-semibold">NAMA ASET</th>
-              <th className="py-5 px-4 font-semibold">PIC</th>
+              <th className="py-5 px-4 font-semibold">ASET TERKAIT</th>
+              <th className="py-5 px-4 font-semibold">JABATAN</th>
               <th className="py-5 px-4 font-semibold">DETAIL</th>
             </tr>
           </thead>

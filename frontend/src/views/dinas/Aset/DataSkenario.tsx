@@ -15,7 +15,7 @@ export default function Skenario() {
   const [searchValue, setSearchValue] = useState<string>("");
 
   const handleNavigate = () => {
-    navigate("/aset/tambah");
+    navigate("/skenario/tambah");
   };
 
   const handleStatusChange = (val: string) => {
@@ -43,7 +43,7 @@ export default function Skenario() {
         </div>
         <div className="w-full">
           <ButtonImg
-            title="Tambah Aset"
+            title="Tambah Skenario"
             img="/kelola-asset/tambah-asset.png"
             color="#00a9ff"
             hoverColor="#a0e9ff"
@@ -130,7 +130,7 @@ export default function Skenario() {
                   px="4"
                 />
                 <ButtonImg
-                  title="Tambah Aset"
+                  title="Tambah Skenario"
                   img="/kelola-asset/tambah-asset.png"
                   color="#00a9ff"
                   hoverColor="#a0e9ff"
