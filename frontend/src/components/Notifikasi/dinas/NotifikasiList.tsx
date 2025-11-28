@@ -209,7 +209,6 @@ export default function NotifikasiList({ data }: { data: any[] }) {
           />
         ))
       )}
-      <div></div>
     </div>
   );
 }
