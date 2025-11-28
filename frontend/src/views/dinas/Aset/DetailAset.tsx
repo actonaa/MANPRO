@@ -291,7 +291,7 @@ export default function DetailAset() {
 
           {/* TOMBOL UBAH Tidak muncul jika aset akan dihapus */}
           {!tidakBolehEdit && (
-            <a href={`/aset/tambah?id=${asset.id}`}>
+            <a href={`/aset/edit/${asset.id}`}>
               <ButtonText
                 title="Ubah"
                 color="bg-[#BFDEFF]"

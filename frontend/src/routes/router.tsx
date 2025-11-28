@@ -90,6 +90,8 @@ import Skenario from "../views/dinas/Aset/DataSkenario";
 import TambahSkenario from "../views/dinas/Aset/TambahSkenario";
 import DetailNotifikasiAdmin from "../views/admin/DetailNotifikasiAdmin";
 import EditMitigasi from "../views/admin/Risiko/EditMitigasi";
+import EditAset from "../views/dinas/Aset/EditAset";
+import DetailNotifikasi from "../components/Notifikasi/dinas/DetailNotif";
 
 export default function AppRoutes() {
   return (
@@ -107,6 +109,7 @@ export default function AppRoutes() {
           <Route path="/aset" element={<KelolaAset />} />
           <Route path="/aset/:id" element={<DetailAset />} />
           <Route path="/aset/tambah" element={<Tambah />} />
+          <Route path="/aset/edit/:id" element={<EditAset />} />
           <Route path="/skenario" element={<Skenario />} />
           <Route path="/skenario/tambah" element={<TambahSkenario />} />
           <Route path="/laporan/aset" element={<LaporanAset />} />
@@ -127,6 +130,7 @@ export default function AppRoutes() {
             element={<DetailLaporanPemeliharaan />}
           />
           <Route path="/notifikasi" element={<Notifications />} />
+          <Route path="/notifikasi/:notifid" element={<DetailNotifikasi />} />
         </Route>
 
         {/* Route verifikator */}
