@@ -110,7 +110,7 @@ export default function TableAsetAdmin({
             textColor="white"
             px="6"
             fontWeight="font-medium"
-            onClick={() => navigate("/admin/aset/tambah")}
+            onClick={() => navigate("/aset-admin/tambah")}
           />
         </div>
       </div>

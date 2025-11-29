@@ -95,12 +95,10 @@ export default function DetailRisiko() {
             levelRisiko={data.risk_level}
           />
 
-          {/* 🔧 Layout 2 kolom untuk Mitigasi & Value */}
-          <div className="grid grid-cols-1 gap-6 items-start">
-            {/* 📁 Kiri: Rencana Mitigasi */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
             <RiwayatAktivitasCard aktivitasList={data.aktivitas} />
+            <RencanaMitigasiCard riskId={data.id} />
           </div>
-          <RencanaMitigasiCard mitigasiList={data.mitigasi} />
         </div>
       </div>
     </>

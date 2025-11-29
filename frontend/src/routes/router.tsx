@@ -85,11 +85,11 @@ import HasilAuditAdmin from "../views/admin/Audit/HasilAuditAdmin";
 import VerifikasiPenghapusan from "../views/verifikator/VerifikasiPenghapusan";
 import LaporanAsetAdmin from "../views/admin/Aset/LaporanAset";
 import LaporanRisikoAdmin from "../views/admin/Risiko/LaporanRisiko";
+import TambahRisiko from "../views/admin/Risiko/Form";
 
 import Skenario from "../views/dinas/Aset/DataSkenario";
 import TambahSkenario from "../views/dinas/Aset/TambahSkenario";
 import DetailNotifikasiAdmin from "../views/admin/DetailNotifikasiAdmin";
-import EditMitigasi from "../views/admin/Risiko/EditMitigasi";
 import EditAset from "../views/dinas/Aset/EditAset";
 import DetailNotifikasi from "../components/Notifikasi/dinas/DetailNotif";
 
@@ -239,7 +239,7 @@ export default function AppRoutes() {
           <Route path="/audit-admin" element={<AuditTrail />} />
 
           <Route path="/aset-admin" element={<AsetAdmin />} />
-          <Route path="/aset-admin/id" element={<DetailAsetAdmin />} />
+          <Route path="/aset-admin/:id" element={<DetailAsetAdmin />} />
           <Route
             path="/Verikasi/aset-admin"
             element={<VerifikasiAsetAdminPage />}
@@ -251,9 +251,16 @@ export default function AppRoutes() {
 
           <Route path="/risiko-admin" element={<DashboardRisikoAdmin />} />
           <Route path="/risiko-admin/daftar" element={<DaftarRisikoAdmin />} />
-          <Route path="/risiko-admin/id" element={<DetailRisiko />} />
-          <Route path="/risiko-admin/tambah" element={<TambahMitigasi />} />
-          <Route path="/risiko-admin/edit" element={<EditMitigasi />} />
+
+          <Route path="/risiko-admin/:id" element={<DetailRisiko />} />
+          <Route
+            path="/risiko-admin/tambah-mitigasi/:riskId"
+            element={<TambahMitigasi />}
+          />
+          <Route
+            path="/aset-admin/tambah-risiko/:asset_id"
+            element={<TambahRisiko />}
+          />
 
           <Route path="/laporan/aset-admin" element={<LaporanAsetAdmin />} />
           <Route
