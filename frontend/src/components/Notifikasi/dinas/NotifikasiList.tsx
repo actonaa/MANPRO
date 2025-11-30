@@ -11,7 +11,7 @@ import NotifikasiItem from "./NotifikasiItem";
 import axios from "axios";
 
 export default function NotifikasiList({ data }: { data: any[] }) {
-  // local copy supaya bisa diupdate (mark read / delete) tanpa API
+  // local copy supaya bisa diupdate (mark read / delete)
   const [notifs, setNotifs] = useState<any[]>(() => data ?? []);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [refreshing, setRefreshing] = useState(false);
@@ -27,36 +27,48 @@ export default function NotifikasiList({ data }: { data: any[] }) {
     () => notifs.length > 0 && selectedIds.size === notifs.length,
     [notifs, selectedIds]
   );
-
   const anySelected = selectedIds.size > 0;
 
+  // PATCH satu notif
   const apiMarkOneAsRead = async (id: string) => {
     try {
       const token = localStorage.getItem("token");
       await axios.patch(
         `https://asset-risk-management.vercel.app/api/notifications/${id}/read`,
         {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (err) {
       console.error("Gagal patch satu notif:", err);
     }
   };
 
+  // PATCH semua notif
   const apiMarkAllAsRead = async () => {
     try {
       const token = localStorage.getItem("token");
       await axios.patch(
         "https://asset-risk-management.vercel.app/api/notifications/read-all",
         {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (err) {
+      console.error("Gagal patch semua notif:", err);
+    }
+  };
+
+  // 🔥 NEW: DELETE semua notif
+  const apiDeleteAll = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(
+        "https://asset-risk-management.vercel.app/api/notifications/clear-all",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
     } catch (err) {
-      console.error("Gagal patch semua notif:", err);
+      console.error("Gagal hapus semua notif:", err);
     }
   };
 
@@ -90,7 +102,6 @@ export default function NotifikasiList({ data }: { data: any[] }) {
 
   const markAllAsRead = async () => {
     await apiMarkAllAsRead();
-
     setNotifs((prev) => prev.map((n) => ({ ...n, is_read: true })));
     setSelectedIds(new Set());
   };
@@ -107,8 +118,26 @@ export default function NotifikasiList({ data }: { data: any[] }) {
     setSelectedIds(new Set());
   };
 
-  const deleteOne = (id: string) => {
+  // 🔥 NEW: DELETE satu notif
+  const apiDeleteOne = async (id: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(
+        `https://asset-risk-management.vercel.app/api/notifications/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+    } catch (err) {
+      console.error("Gagal hapus notif:", err);
+    }
+  };
+
+  const deleteOne = async (id: string) => {
+    await apiDeleteOne(id);
+
     setNotifs((prev) => prev.filter((n) => n.id !== id));
+
     setSelectedIds((prev) => {
       const s = new Set(prev);
       s.delete(id);
@@ -128,6 +157,13 @@ export default function NotifikasiList({ data }: { data: any[] }) {
       s.delete(id);
       return s;
     });
+  };
+
+  // 🔥 NEW: Hapus semua handler
+  const deleteAll = async () => {
+    await apiDeleteAll();
+    setNotifs([]);
+    setSelectedIds(new Set());
   };
 
   return (
@@ -190,6 +226,14 @@ export default function NotifikasiList({ data }: { data: any[] }) {
             className="p-2 rounded hover:bg-green-50 transition"
           >
             <MailCheck size={18} className="text-green-600" />
+          </button>
+
+          {/* 🔥 NEW button delete all */}
+          <button
+            onClick={deleteAll}
+            className="p-2 rounded hover:bg-red-50 transition"
+          >
+            <Trash2 size={18} className="text-red-500" />
           </button>
         </div>
       </div>
