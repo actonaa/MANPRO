@@ -154,7 +154,9 @@ export default function RisikoPage() {
           criteria={data.criteria ?? "-"}
           status={data.approval_status ?? "-"}
         />
-        <div className="w-full md:w-auto">
+
+        {/* 🔥 BAGIAN INI DIBUAT FLEX AGAR BUTTON BERDIRI SAMPING-SAMPINGAN */}
+        <div className="w-full md:w-auto flex gap-3">
           <ButtonCard
             title="Edit Detail Risiko"
             color="#007DFA"
@@ -163,7 +165,19 @@ export default function RisikoPage() {
             borderColor="#007DFA"
             justify="justify-center"
             fontWeight="font-semibold"
-            onClick={() => console.log("Edit Risiko:", data.id)}
+            onClick={() => console.log("/risiko/edit", data.id)}
+          />
+
+          {/* 🔥 Button Hapus Risiko */}
+          <ButtonCard
+            title="Hapus Risiko"
+            color="#FECACA"
+            hoverColor="#FCA5A5"
+            textColor="#B91C1C"
+            borderColor="#FECACA"
+            justify="justify-center"
+            fontWeight="font-semibold"
+            onClick={() => console.log("Hapus Risiko:", data.id)}
           />
         </div>
       </div>

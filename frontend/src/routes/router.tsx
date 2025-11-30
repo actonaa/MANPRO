@@ -16,6 +16,7 @@ import DetailRisiko from "../views/dinas/Risiko/DetailRisiko";
 import RisikoTambah from "../views/dinas/Risiko/From";
 import TambahMitigasi from "../views/dinas/Risiko/TambahMitigasi";
 import LaporanRisiko from "../views/dinas/Risiko/LaporanRisiko";
+import EditRisikoDinas from "../views/dinas/Risiko/FormEditRisiko";
 
 import Pemeliharaan from "../views/dinas/Pemeliharaan/LaporanPemeliharaan";
 import JadwalPemeliharaan from "../views/dinas/Pemeliharaan/JadwalPemeliharaan";
@@ -123,6 +124,8 @@ export default function AppRoutes() {
             element={<DetailLaporanPemeliharaan />}
           />
           <Route path="/notifikasi" element={<Notifications />} />
+          <Route path="/risiko-admin/edit" element={<EditMitigasi />} />
+          <Route path="/risiko/edit" element={<EditRisikoDinas />} />
         </Route>
 
         {/* Route verifikator */}

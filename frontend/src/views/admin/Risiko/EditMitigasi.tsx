@@ -15,9 +15,7 @@ export default function TambahMitigasi() {
       <div>
         {/* 🧭 Judul & Deskripsi */}
         <div className="mb-6">
-          <h1 className="text-xl font-semibold text-gray-800">
-            Tambah Mitigasi
-          </h1>
+          <h1 className="text-xl font-semibold text-gray-800">Edit Mitigasi</h1>
           <p className="text-sm text-gray-500">
             Ikuti langkah-langkah di bawah ini untuk menambahkan mitigasi risiko
             baru.

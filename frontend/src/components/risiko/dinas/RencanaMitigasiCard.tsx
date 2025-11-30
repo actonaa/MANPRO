@@ -331,9 +331,7 @@ export default function RencanaMitigasiCard({
                     <button
                       className="p-2 rounded-full hover:bg-gray-100 transition"
                       title="Edit Aksi"
-                      onClick={() =>
-                        navigate(`/risiko-admin/edit?aksi=${item.aksi}`)
-                      }
+                      onClick={() => navigate("/risiko-admin/edit")}
                     >
                       <Pencil
                         size={18}
