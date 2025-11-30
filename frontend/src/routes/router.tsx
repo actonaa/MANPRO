@@ -86,6 +86,9 @@ import VerifikasiPenghapusan from "../views/verifikator/VerifikasiPenghapusan";
 import LaporanAsetAdmin from "../views/admin/Aset/LaporanAset";
 import LaporanRisikoAdmin from "../views/admin/Risiko/LaporanRisiko";
 import TambahRisiko from "../views/admin/Risiko/Form";
+import EditMitigasi from "../views/admin/Risiko/EditMitigasi";
+import DetailRisikoAdmin from "../views/admin/Risiko/DetailRisiko";
+import EditDetailRisiko from "../views/admin/Risiko/FormEdit-Risiko";
 
 import Skenario from "../views/dinas/Aset/DataSkenario";
 import TambahSkenario from "../views/dinas/Aset/TambahSkenario";
@@ -252,7 +255,7 @@ export default function AppRoutes() {
           <Route path="/risiko-admin" element={<DashboardRisikoAdmin />} />
           <Route path="/risiko-admin/daftar" element={<DaftarRisikoAdmin />} />
 
-          <Route path="/risiko-admin/:id" element={<DetailRisiko />} />
+          <Route path="/risiko-admin/:id" element={<DetailRisikoAdmin />} />
           <Route
             path="/risiko-admin/tambah-mitigasi/:riskId"
             element={<TambahMitigasi />}
@@ -261,7 +264,7 @@ export default function AppRoutes() {
             path="/aset-admin/tambah-risiko/:asset_id"
             element={<TambahRisiko />}
           />
-
+          <Route path="/risiko-admin/edit" element={<EditDetailRisiko />} />
           <Route path="/laporan/aset-admin" element={<LaporanAsetAdmin />} />
           <Route
             path="/laporan/risiko-admin"
@@ -283,6 +286,7 @@ export default function AppRoutes() {
             path="/notifikasi/detailnotifikasi-admin"
             element={<DetailNotifikasiAdmin />}
           />
+          <Route path="/risiko-admin/edit/:id" element={<EditMitigasi />} />
         </Route>
       </Routes>
     </Router>

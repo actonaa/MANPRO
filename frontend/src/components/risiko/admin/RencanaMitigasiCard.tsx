@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import ButtonImg from "../../button/ButtonImg";
 import { useAuth } from "../../../routes/ProtectedRouteBase";
 import { useEffect, useState } from "react";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash } from "lucide-react";
+import HapusMitigasi from "../../form/Admin/HapusMitigasi";
 
 type Mitigasi = {
   aksi: string;
@@ -147,6 +148,9 @@ export default function RencanaMitigasiCard({
     return "bg-gray-100 text-gray-600";
   };
 
+  const [openHapus, setOpenHapus] = useState(false);
+  const [aksiDipilih, setAksiDipilih] = useState("");
+
   // ====================
   // Fetch mitigasi dari API
   // ====================
@@ -279,7 +283,7 @@ export default function RencanaMitigasiCard({
                 <th className="py-2 font-bold">Nilai Residual</th>
 
                 {/* 🆕 Kolom edit */}
-                <th className="py-2 font-bold text-center">Edit</th>
+                <th className="py-2 font-bold text-center">Aksi</th>
               </tr>
             </thead>
 
@@ -326,20 +330,37 @@ export default function RencanaMitigasiCard({
                     {item.nilaiResidual}
                   </td>
 
-                  {/* 🆕 ICON EDIT - Lucide Pencil */}
                   <td className="py-6 text-center">
-                    <button
-                      className="p-2 rounded-full hover:bg-gray-100 transition"
-                      title="Edit Aksi"
-                      onClick={() =>
-                        navigate(`/risiko-dinas/edit?aksi=${item.aksi}`)
-                      }
-                    >
-                      <Pencil
-                        size={18}
-                        className="text-gray-500 hover:text-blue-600 transition"
-                      />
-                    </button>
+                    <div className="flex items-center justify-center gap-3">
+                      {/* ICON EDIT */}
+                      <button
+                        className="p-2 rounded-full hover:bg-gray-100 transition"
+                        title="Edit Aksi"
+                        onClick={() =>
+                          navigate(`/risiko-admin/edit?aksi=${item.aksi}`)
+                        }
+                      >
+                        <Pencil
+                          size={18}
+                          className="text-gray-500 hover:text-blue-600 transition"
+                        />
+                      </button>
+
+                      {/* ICON HAPUS */}
+                      <button
+                        className="p-2 rounded-full hover:bg-gray-100 transition"
+                        title="Hapus Aksi"
+                        onClick={() => {
+                          setAksiDipilih(item.aksi);
+                          setOpenHapus(true);
+                        }}
+                      >
+                        <Trash
+                          size={18}
+                          className="text-gray-500 hover:text-red-600 transition"
+                        />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -351,6 +372,15 @@ export default function RencanaMitigasiCard({
           Belum ada rencana mitigasi ditambahkan.
         </p>
       )}
+      <HapusMitigasi
+        open={openHapus}
+        aksi={aksiDipilih}
+        onClose={() => setOpenHapus(false)}
+        onConfirm={() => {
+          console.log("Hapus Aksi:", aksiDipilih);
+          setOpenHapus(false);
+        }}
+      />
     </div>
   );
 }

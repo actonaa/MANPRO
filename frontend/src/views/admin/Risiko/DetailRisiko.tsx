@@ -3,14 +3,17 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"; // ✅ pastikan kamu pakai react-router
 import RisikoHeader from "../../../components/risiko/dinas/RisikoHeader";
 import RisikoDetailCard from "../../../components/risiko/dinas/RisikoDetailCard";
-import RencanaMitigasiCard from "../../../components/risiko/dinas/RencanaMitigasiCard";
+import RencanaMitigasiCard from "../../../components/risiko/admin/RencanaMitigasiCard";
 import RiwayatAktivitasCard from "../../../components/risiko/dinas/RiwayatAktivitasCard";
 import ButtonCard from "../../../components/button/Button";
+import ModalHapusRisiko from "../../../components/form/Admin/HapisRisiko";
 
 export default function DetailRisiko() {
   const { id } = useParams(); // ambil id dari URL misalnya /risiko/detail/:id
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  const [openHapus, setOpenHapus] = useState(false);
 
   useEffect(() => {
     const fetchRisikoDetail = async () => {
@@ -63,7 +66,7 @@ export default function DetailRisiko() {
           criteria={data.criteria?.name}
           status={data.status}
         />
-        <div className="w-full md:w-auto">
+        <div className="w-full md:w-auto flex gap-3">
           <ButtonCard
             title="Edit Detail Risiko"
             color="#007DFA"
@@ -72,7 +75,17 @@ export default function DetailRisiko() {
             borderColor="#007DFA"
             justify="justify-center"
             fontWeight="font-semibold"
-            onClick={() => console.log("Edit Risiko:", data.id)}
+            onClick={() => console.log("/risiko-admin/edit", data.id)}
+          />
+          <ButtonCard
+            title="Hapus Risiko"
+            color="#FECACA"
+            hoverColor="#FCA5A5"
+            textColor="#B91C1C"
+            borderColor="#FECACA"
+            justify="justify-center"
+            fontWeight="font-semibold"
+            onClick={() => setOpenHapus(true)}
           />
         </div>
       </div>
@@ -100,6 +113,15 @@ export default function DetailRisiko() {
             <RencanaMitigasiCard riskId={data.id} />
           </div>
         </div>
+        <ModalHapusRisiko
+          open={openHapus}
+          onClose={() => setOpenHapus(false)}
+          judul={data.title}
+          onConfirm={() => {
+            console.log("Hapus Risiko:", data.id);
+            setOpenHapus(false);
+          }}
+        />
       </div>
     </>
   );
