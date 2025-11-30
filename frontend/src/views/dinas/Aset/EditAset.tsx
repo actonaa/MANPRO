@@ -307,7 +307,7 @@ export default function EditAset() {
       // === FILE (attachment) ===
       // Based on info: API expects field name "attachment"
       if (uploadedFiles && uploadedFiles.length > 0) {
-        formDataSend.append("attachment", uploadedFiles[0]);
+        formDataSend.append("file", uploadedFiles[0]);
       }
       // If no new file uploaded, we intentionally DON'T append anything so backend can keep existing attachment.
 
@@ -408,7 +408,6 @@ export default function EditAset() {
             uploadedFiles={uploadedFiles}
             // Also pass existing attachment info so Step1 can show existing file name/preview if needed
             // (Assuming Step1 accepts additional props — if not, remove them or extend Step1)
-            // @ts-ignore
             existingAttachmentName={existingAttachmentName}
             // nextStep validation: only if category selected
             nextStep={() => {

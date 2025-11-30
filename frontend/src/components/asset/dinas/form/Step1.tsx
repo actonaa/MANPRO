@@ -25,6 +25,7 @@ interface Step1Props {
   nextStep?: () => void;
   setUploadedFiles?: React.Dispatch<React.SetStateAction<File[] | null>>;
   uploadedFiles?: File[] | null;
+  existingAttachmentName?: string | null;
 }
 
 export default function Step1({

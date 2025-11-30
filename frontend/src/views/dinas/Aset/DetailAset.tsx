@@ -23,7 +23,11 @@ export default function DetailAset() {
   const [jadwalPemeliharaan, setJadwalPemeliharaan] = useState<
     { tanggal: string; kegiatan: string }[]
   >([]);
+  const [riwayatAktivitas, setRiwayatAktivitas] = useState<
+    { tanggal: string; kegiatan: string; status: string }[]
+  >([]);
   const [lampiran, setLampiran] = useState<any[]>([]);
+  const [invoice, setInvoice] = useState<any[]>([]);
   const [tahap1, setTahap1] = useState(false);
   const [tahap2, setTahap2] = useState(false);
   const [deleteReason, setDeleteReason] = useState("");
@@ -75,6 +79,26 @@ export default function DetailAset() {
             .map((m: any) => ({
               tanggal: m.scheduled_date,
               kegiatan: m.notes || "-",
+            }))
+        );
+
+        // Ambil semua maintenance dengan proof dan sesuai asset
+        const invoiceList = dataMaintenance
+          .filter((m: any) => m.asset_id === dataAsset.id && m.proof)
+          .map((m: any) => ({
+            nama: m.proof.split("/").pop() || "Invoice",
+            url: m.proof,
+          }));
+
+        setInvoice(invoiceList);
+
+        setRiwayatAktivitas(
+          dataMaintenance
+            .filter((m: any) => m.asset_id === dataAsset.id)
+            .map((m: any) => ({
+              tanggal: m.completion_date,
+              kegiatan: m.notes || "-",
+              status: m.status,
             }))
         );
       } catch (err) {
@@ -355,14 +379,14 @@ export default function DetailAset() {
             approvalStatus={asset.approval_status}
             assetId={asset.id}
           />
-          <RiwayatAktivitas aktivitas={[]} />
+          <RiwayatAktivitas act={riwayatAktivitas} />
         </div>
       </div>
 
       {/* LAMPIRAN & BARCODE */}
       <div className="flex flex-col lg:flex-row gap-5 mt-6">
         <div className="flex-1">
-          <Lampiran lampiran={lampiran} />
+          <Lampiran lampiran={lampiran} invoice={invoice} />
         </div>
         <div className="flex-1">
           <ScanBarcode barcodeUrl={asset.barcode_qr_url || ""} />

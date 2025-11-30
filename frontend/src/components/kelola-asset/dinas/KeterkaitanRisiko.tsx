@@ -81,7 +81,7 @@ const KeterkaitanRisiko: React.FC<KeterkaitanRisikoProps> = ({
             Menunggu persetujuan verifikator
           </p>
         ) : (
-          <a href={`/aset-admin/tambah-risiko/${assetId}`}>
+          <a href={`/risiko/tambah/${assetId}`}>
             <ButtonImg
               title="Tambah Risiko"
               img="/kelola-asset/tambah-asset.png"

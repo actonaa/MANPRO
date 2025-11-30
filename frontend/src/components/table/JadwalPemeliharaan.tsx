@@ -83,6 +83,7 @@ export default function TableJadwalPemeliharaan({
   // FILTER
   const filteredData = data.filter(
     (item) =>
+      item.status?.toLowerCase() !== "selesai" &&
       (!selectedKategori || item.kategori === selectedKategori) &&
       (!selectedPrioritas || item.prioritas === selectedPrioritas) &&
       (!searchQuery ||

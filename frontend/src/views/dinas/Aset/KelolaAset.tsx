@@ -10,6 +10,8 @@ import TableAset from "../../../components/table/TableAset";
 
 export default function Aset() {
   const [assets, setAssets] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,9 +32,11 @@ export default function Aset() {
         }
 
         const data = await res.json();
-        setAssets(data); // ⬅️ Simpan data aset
+        setAssets(data);
       } catch (err) {
         console.error("❌ Gagal memuat data:", err);
+      } finally {
+        setLoading(false); // ⬅️ SET LOADING SELESAI
       }
     };
 
@@ -43,11 +47,11 @@ export default function Aset() {
   const totalAset = assets.length;
 
   const asetPerluPerbaikan = assets.filter(
-    (item) => item.status?.name === "Perbaikan"
+    (item) => item.status?.name === "Pemeliharaan"
   ).length;
 
   const asetAkanDihapus = assets.filter(
-    (item) => item.status?.name === "Tidak Aktif"
+    (item) => item.status?.name === "Akan Dihapus"
   ).length;
 
   const nilaiAset = assets.reduce(
@@ -107,16 +111,22 @@ export default function Aset() {
       {/* 📊 Card Statistik */}
       <div className="mb-5 overflow-x-auto pb-6 md:mb-0 xl:overflow-x-visible">
         <div className="flex gap-4 min-w-[1000px] md:grid md:grid-cols-2 md:min-w-0 xl:flex">
-          <CardList title="Total Aset" value={totalAset.toLocaleString()} />
+          <CardList
+            title="Total Aset"
+            value={totalAset.toLocaleString()}
+            loading={loading}
+          />
 
           <CardList
             title="Aset Perlu Perbaikan"
             value={asetPerluPerbaikan.toLocaleString()}
+            loading={loading}
           />
 
           <CardList
             title="Aset Akan Dihapus"
             value={asetAkanDihapus.toLocaleString()}
+            loading={loading}
           />
 
           <CardList
@@ -127,6 +137,7 @@ export default function Aset() {
                 minimumFractionDigits: 0,
               })
             }
+            loading={loading}
           />
         </div>
       </div>

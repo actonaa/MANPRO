@@ -1,31 +1,48 @@
-import RisikoResidual from "..//../../components/kelola-risiko/dinas/RisikoResidual";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from "react";
+import RisikoResidual from "../../../components/kelola-risiko/dinas/RisikoResidual";
 import Top10Risiko from "../../../components/kelola-risiko/dinas/Top10Resiko";
 import ButtonText from "../../../components/button/ButtonText";
 import CardList from "../../../components/card/CardList";
 
 export default function KelolaRisiko() {
-  // ✅ Data sementara dari backend (dummy)
-  const totalRisiko = {
-    rendah: 46,
-    sedang: 30,
-    tinggi: 10,
-  };
+  const [risks, setRisks] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // ✅ Data risiko dummy
-  const risikoList = [
-    { id: 1, nama: "Data breach", nilai: 95, kategori: "tinggi" },
-    { id: 2, nama: "Financial Fraud", nilai: 90, kategori: "tinggi" },
-    { id: 3, nama: "Equipment Failure", nilai: 88, kategori: "tinggi" },
-    { id: 4, nama: "Unauthorized Access", nilai: 75, kategori: "sedang" },
-    { id: 5, nama: "Service Downtime", nilai: 70, kategori: "sedang-rendah" },
-    { id: 6, nama: "Configuration Error", nilai: 68, kategori: "menengah" },
-    { id: 7, nama: "Policy Violation", nilai: 65, kategori: "menengah" },
-    { id: 8, nama: "Network Latency", nilai: 60, kategori: "sedang-rendah" },
-    { id: 9, nama: "Data Corruption", nilai: 55, kategori: "menengah" },
-    { id: 10, nama: "Backup Failure", nilai: 45, kategori: "rendah" },
-  ];
+  useEffect(() => {
+    const fetchRisks = async () => {
+      try {
+        const token = localStorage.getItem("token");
 
-  // 📍 Fungsi klik tombol
+        const res = await fetch(
+          "https://asset-risk-management.vercel.app/api/risks",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await res.json();
+        setRisks(data);
+      } catch (error) {
+        console.error("Gagal fetch risks:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRisks();
+  }, []);
+
+  const totalRisiko = risks.length;
+
+  const risikoTinggi = risks.filter((r) => r.entry_level >= 16).length;
+  const risikoSedang = risks.filter(
+    (r) => r.entry_level >= 8 && r.entry_level < 16
+  ).length;
+  const risikoRendah = risks.filter((r) => r.entry_level < 8).length;
+
   const handleLihatRisiko = () => {
     window.location.href = "/risiko/data";
   };
@@ -33,7 +50,6 @@ export default function KelolaRisiko() {
   return (
     <>
       <div className="mb-5 px-4 md:px-0 flex flex-col md:flex-row md:items-center md:justify-between">
-        {/* Kiri: Judul dan deskripsi */}
         <div>
           <h1 className="text-lg md:text-2xl font-semibold">Daftar Risiko</h1>
           <p className="text-sm text-gray-600 mt-1">
@@ -41,39 +57,60 @@ export default function KelolaRisiko() {
           </p>
         </div>
 
-        {/* Kanan: Tombol */}
         <div className="mt-4 md:mt-0">
           <ButtonText
             title="Lihat Daftar Risiko"
             onClick={handleLihatRisiko}
-            color="bg-[#007DFA]" // 🔵 warna biru
-            hoverColor="hover:bg-[#0069D5]" // 🔵 warna hover
+            color="bg-[#007DFA]"
+            hoverColor="hover:bg-[#0069D5]"
             textColor="text-white"
             fontWeight="font-semibold"
           />
         </div>
       </div>
 
+      {/* CARD LIST */}
       <div className="mb-5 overflow-x-auto pb-6 md:pb-0 md:overflow-x-visible">
         <div className="flex gap-4 min-w-[1000px] md:grid md:grid-cols-2 md:min-w-0 lg:flex lg:min-w-[1000px]">
-          <CardList title="Total Risiko" value="56" />
-          <CardList title="Risiko Tinggi" value="10" />
-          <CardList title="Risiko Sedang" value="17" />
-          <CardList title="Risiko Rendah" value="20" />
-          <CardList title="Tindakan Mitigasi" value="11" />
-        </div>
-      </div>
-      <div className="flex flex-col md:flex-row mt-6 md:gap-6 lg:gap-4">
-        {/* 📊 Risiko Residual */}
-        <div className="flex-1 rounded-2xl mb-6 md:mb-0">
-          <RisikoResidual
-            rendah={totalRisiko.rendah}
-            sedang={totalRisiko.sedang}
-            tinggi={totalRisiko.tinggi}
+          <CardList
+            title="Total Risiko"
+            value={totalRisiko.toString()}
+            loading={loading}
+          />
+          <CardList
+            title="Risiko Tinggi"
+            value={risikoTinggi.toString()}
+            loading={loading}
+          />
+          <CardList
+            title="Risiko Sedang"
+            value={risikoSedang.toString()}
+            loading={loading}
+          />
+          <CardList
+            title="Risiko Rendah"
+            value={risikoRendah.toString()}
+            loading={loading}
           />
         </div>
+      </div>
 
-        {/* 🔥 Heatmap Risiko */}
+      {/* BAGIAN RESIDUAL & HEATMAP */}
+      <div className="flex flex-col md:flex-row mt-6 md:gap-6 lg:gap-4">
+        <div className="flex-1 rounded-2xl mb-6 md:mb-0">
+          {loading ? (
+            <div className="bg-white rounded-2xl shadow-lg w-full h-full flex items-center justify-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
+            </div>
+          ) : (
+            <RisikoResidual
+              rendah={risikoRendah}
+              sedang={risikoSedang}
+              tinggi={risikoTinggi}
+            />
+          )}
+        </div>
+
         <div className="flex-2 rounded-2xl shadow-lg p-12 bg-white mb-6 md:mb-0">
           <img
             src="/kelola-risiko/heatmap-risiko.png"
@@ -83,8 +120,8 @@ export default function KelolaRisiko() {
         </div>
       </div>
 
-      {/* 📉 Risiko Progress Bar */}
-      <Top10Risiko data={risikoList} />
+      {/* TOP 10 RISIKO */}
+      <Top10Risiko />
     </>
   );
 }
