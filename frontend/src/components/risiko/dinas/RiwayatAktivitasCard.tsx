@@ -1,49 +1,60 @@
-type Aktivitas = {
-  id: string;
-  tanggal: string; // Format: YYYY-MM-DD
-  deskripsi: string;
+import React from "react";
+
+interface AktivitasItem {
+  tanggal: string;
+  kegiatan: string;
   status: string;
-};
+}
 
-type RiwayatAktivitasCardProps = {
-  aktivitasList?: Aktivitas[];
-};
+interface RiwayatAktivitasProps {
+  act: AktivitasItem[] | null;
+}
 
-export default function RiwayatAktivitasCard({
-  aktivitasList = [],
-}: RiwayatAktivitasCardProps) {
-  // 🗓️ Format tanggal jadi gaya lokal
-  const formatTanggal = (tgl: string) => {
-    if (!tgl) return "-";
-    const date = new Date(tgl);
+const RiwayatAktivitas: React.FC<RiwayatAktivitasProps> = ({ act }) => {
+  const formatTanggal = (dateStr: string) => {
+    if (!dateStr) return "-";
+    const date = new Date(dateStr);
     return date.toLocaleDateString("id-ID", {
       day: "2-digit",
-      month: "short",
+      month: "long",
       year: "numeric",
     });
   };
 
-  return (
-    <div className="bg-white shadow-md rounded-lg p-6 border border-gray-200">
-      <h2 className="text-lg font-bold text-gray-800 mb-4">Riwayat Aktivitas</h2>
+  const getStatusStyle = (status: string) => {
+    const isSelesai = status?.toLowerCase() === "selesai";
 
-      {aktivitasList.length > 0 ? (
+    return isSelesai
+      ? " border-blue-400 text-blue-700"
+      : " border-yellow-400 text-yellow-700";
+  };
+
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-md h-full">
+      <h2 className="font-semibold text-lg mb-4">Riwayat Aktivitas</h2>
+
+      {/* Kondisi jika tidak ada data */}
+      {!act || act.length === 0 ? (
+        <div className="text-gray-500 italic text-center py-4">
+          Tidak ada riwayat aktivitas.
+        </div>
+      ) : (
         <ul className="space-y-3">
-          {aktivitasList.map((item) => (
+          {act.map((item, index) => (
             <li
-              key={item.id}
-              className="border border-gray-200 rounded-md px-4 py-2 bg-white text-gray-800"
+              key={index}
+              className={`px-5 py-3 border rounded-xl font-medium hover:shadow-sm transition ${getStatusStyle(
+                item.status
+              )}`}
             >
-              {formatTanggal(item.tanggal)} — {item.deskripsi} —{" "}
-              <span className="font-semibold text-green-600">
-                {item.status}
-              </span>
+              {item.tanggal ? formatTanggal(item.tanggal) : "-"} —{" "}
+              {item.kegiatan || "-"} — {item.status || "-"}
             </li>
           ))}
         </ul>
-      ) : (
-        <p className="text-gray-500 italic">Belum ada aktivitas tercatat.</p>
       )}
     </div>
   );
-}
+};
+
+export default RiwayatAktivitas;

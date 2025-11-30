@@ -1,17 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, type ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 
 interface Step3Props {
   formData: any;
   handleChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  showErrors: boolean;
+  errors?: Record<string, string>;
 }
 
-export default function Step3({ formData, handleChange }: Step3Props) {
+export default function Step3({
+  formData,
+  handleChange,
+  showErrors,
+}: Step3Props) {
   const isPenerimaan =
     formData.strategi === "Penerimaan Risiko" || formData.strategi === "";
 
   // ==============================
-  //  HITUNG LEVEL RESIDUAL OTOMATIS
+  // HITUNG LEVEL RESIDUAL OTOMATIS
   // ==============================
   useEffect(() => {
     const p = Number(formData.probabilitasResidual);
@@ -34,7 +40,7 @@ export default function Step3({ formData, handleChange }: Step3Props) {
   ]);
 
   // ==============================
-  //  HITUNG EFEKTIVITAS OTOMATIS
+  // HITUNG EFEKTIVITAS OTOMATIS
   // ==============================
   useEffect(() => {
     const level = Number(formData.levelResidual);
@@ -54,7 +60,36 @@ export default function Step3({ formData, handleChange }: Step3Props) {
   }, [formData.levelResidual, formData.efektivitas, handleChange]);
 
   // ==============================
-  //  STRATEGI BARU (POSITIF & NEGATIF)
+  // ERROR STATE HANYA UNTUK NEXT
+  // ==============================
+  const [localErrors, setLocalErrors] = useState<any>({});
+
+  useEffect(() => {
+    if (!showErrors) {
+      setLocalErrors({});
+      return;
+    }
+
+    const newErrors: any = {};
+    if (!formData.strategi) newErrors.strategi = "Strategi wajib dipilih";
+    if (!formData.aksiMitigasi && !isPenerimaan)
+      newErrors.aksiMitigasi = "Aksi wajib diisi";
+    if (!formData.pemilik && !isPenerimaan)
+      newErrors.pemilik = "Pemilik wajib diisi";
+    if (!formData.targetWaktu && !isPenerimaan)
+      newErrors.targetWaktu = "Target waktu wajib diisi";
+    if (!formData.probabilitasResidual && !isPenerimaan)
+      newErrors.probabilitasResidual = "Probabilitas wajib dipilih";
+    if (!formData.dampakResidual && !isPenerimaan)
+      newErrors.dampakResidual = "Dampak wajib dipilih";
+    if (!formData.perkiraanBiaya && !isPenerimaan)
+      newErrors.perkiraanBiaya = "Biaya wajib diisi";
+
+    setLocalErrors(newErrors);
+  }, [formData, isPenerimaan, showErrors]);
+
+  // ==============================
+  // DATA STRATEGI
   // ==============================
   const strategiNegatif = [
     "Eskalasi Risiko",
@@ -80,8 +115,6 @@ export default function Step3({ formData, handleChange }: Step3Props) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* ===================== */}
-        {/*     BAGIAN KIRI       */}
-        {/* ===================== */}
         <div>
           {/* STRATEGI RISIKO */}
           <div className="mb-6">
@@ -90,19 +123,19 @@ export default function Step3({ formData, handleChange }: Step3Props) {
               name="strategi"
               value={formData.strategi}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+              className={`w-full border px-3 py-2 mt-1 rounded-lg ${
+                localErrors.strategi ? "border-red-500" : "border-gray-300"
+              }`}
             >
               <option value="" disabled hidden>
                 Pilih Strategi Risiko
               </option>
-
               {formData.jenisRisiko === "Negatif" &&
                 strategiNegatif.map((item) => (
                   <option key={item} value={item}>
                     {item}
                   </option>
                 ))}
-
               {formData.jenisRisiko === "Positif" &&
                 strategiPositif.map((item) => (
                   <option key={item} value={item}>
@@ -110,6 +143,11 @@ export default function Step3({ formData, handleChange }: Step3Props) {
                   </option>
                 ))}
             </select>
+            {localErrors.strategi && (
+              <p className="text-red-500 text-sm mt-1">
+                {localErrors.strategi}
+              </p>
+            )}
           </div>
 
           {/* AKSI MITIGASI */}
@@ -118,14 +156,22 @@ export default function Step3({ formData, handleChange }: Step3Props) {
             <input
               type="text"
               name="aksiMitigasi"
-              placeholder="Masukkan tindakan mitigasi"
               value={formData.aksiMitigasi}
               onChange={handleChange}
               disabled={isPenerimaan}
-              className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
-                isPenerimaan ? "bg-gray-100 cursor-not-allowed" : ""
+              className={`w-full border rounded-lg px-3 py-2 mt-1 ${
+                isPenerimaan
+                  ? "bg-gray-100 cursor-not-allowed"
+                  : localErrors.aksiMitigasi
+                  ? "border-red-500"
+                  : "border-gray-300"
               }`}
             />
+            {localErrors.aksiMitigasi && (
+              <p className="text-red-500 text-sm mt-1">
+                {localErrors.aksiMitigasi}
+              </p>
+            )}
           </div>
 
           {/* PEMILIK */}
@@ -134,14 +180,20 @@ export default function Step3({ formData, handleChange }: Step3Props) {
             <input
               type="text"
               name="pemilik"
-              placeholder="Masukkan nama pemilik risiko"
               value={formData.pemilik}
               onChange={handleChange}
               disabled={isPenerimaan}
-              className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
-                isPenerimaan ? "bg-gray-100 cursor-not-allowed" : ""
+              className={`w-full border rounded-lg px-3 py-2 mt-1 ${
+                isPenerimaan
+                  ? "bg-gray-100 cursor-not-allowed"
+                  : localErrors.pemilik
+                  ? "border-red-500"
+                  : "border-gray-300"
               }`}
             />
+            {localErrors.pemilik && (
+              <p className="text-red-500 text-sm mt-1">{localErrors.pemilik}</p>
+            )}
           </div>
 
           {/* TARGET WAKTU */}
@@ -154,15 +206,22 @@ export default function Step3({ formData, handleChange }: Step3Props) {
               onChange={handleChange}
               onFocus={(e) => e.target.showPicker && e.target.showPicker()}
               disabled={isPenerimaan}
-              className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
-                isPenerimaan ? "bg-gray-100 cursor-not-allowed" : ""
+              className={`w-full border rounded-lg px-3 py-2 mt-1 ${
+                isPenerimaan
+                  ? "bg-gray-100 cursor-not-allowed"
+                  : localErrors.targetWaktu
+                  ? "border-red-500"
+                  : "border-gray-300"
               }`}
             />
+            {localErrors.targetWaktu && (
+              <p className="text-red-500 text-sm mt-1">
+                {localErrors.targetWaktu}
+              </p>
+            )}
           </div>
         </div>
 
-        {/* ===================== */}
-        {/*     BAGIAN KANAN      */}
         {/* ===================== */}
         <div>
           {/* BIAYA */}
@@ -171,14 +230,22 @@ export default function Step3({ formData, handleChange }: Step3Props) {
             <input
               type="number"
               name="perkiraanBiaya"
-              placeholder="Contoh: 30000000"
               value={formData.perkiraanBiaya}
               onChange={handleChange}
               disabled={isPenerimaan}
-              className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
-                isPenerimaan ? "bg-gray-100 cursor-not-allowed" : ""
+              className={`w-full border rounded-lg px-3 py-2 mt-1 ${
+                isPenerimaan
+                  ? "bg-gray-100 cursor-not-allowed"
+                  : localErrors.perkiraanBiaya
+                  ? "border-red-500"
+                  : "border-gray-300"
               }`}
             />
+            {localErrors.perkiraanBiaya && (
+              <p className="text-red-500 text-sm mt-1">
+                {localErrors.perkiraanBiaya}
+              </p>
+            )}
           </div>
 
           {/* PROBABILITAS RESIDUAL */}
@@ -189,8 +256,12 @@ export default function Step3({ formData, handleChange }: Step3Props) {
               value={formData.probabilitasResidual}
               onChange={handleChange}
               disabled={isPenerimaan}
-              className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
-                isPenerimaan ? "bg-gray-100 cursor-not-allowed" : ""
+              className={`w-full border rounded-lg px-3 py-2 mt-1 ${
+                isPenerimaan
+                  ? "bg-gray-100 cursor-not-allowed"
+                  : localErrors.probabilitasResidual
+                  ? "border-red-500"
+                  : "border-gray-300"
               }`}
             >
               <option value="" disabled hidden>
@@ -202,6 +273,11 @@ export default function Step3({ formData, handleChange }: Step3Props) {
                 </option>
               ))}
             </select>
+            {localErrors.probabilitasResidual && (
+              <p className="text-red-500 text-sm mt-1">
+                {localErrors.probabilitasResidual}
+              </p>
+            )}
           </div>
 
           {/* DAMPAK RESIDUAL */}
@@ -212,8 +288,12 @@ export default function Step3({ formData, handleChange }: Step3Props) {
               value={formData.dampakResidual}
               onChange={handleChange}
               disabled={isPenerimaan}
-              className={`w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 ${
-                isPenerimaan ? "bg-gray-100 cursor-not-allowed" : ""
+              className={`w-full border rounded-lg px-3 py-2 mt-1 ${
+                isPenerimaan
+                  ? "bg-gray-100 cursor-not-allowed"
+                  : localErrors.dampakResidual
+                  ? "border-red-500"
+                  : "border-gray-300"
               }`}
             >
               <option value="" disabled hidden>
@@ -225,6 +305,11 @@ export default function Step3({ formData, handleChange }: Step3Props) {
                 </option>
               ))}
             </select>
+            {localErrors.dampakResidual && (
+              <p className="text-red-500 text-sm mt-1">
+                {localErrors.dampakResidual}
+              </p>
+            )}
           </div>
 
           {/* EFEKTIVITAS */}

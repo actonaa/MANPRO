@@ -4,9 +4,21 @@ import type { ChangeEvent } from "react";
 interface Step2Props {
   formData: any;
   handleChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  showErrors: boolean;
+  errors: Record<string, string>;
 }
 
-export default function Step2({ formData, handleChange }: Step2Props) {
+export default function Step2({
+  formData,
+  handleChange,
+  showErrors,
+  errors,
+}: Step2Props) {
+  // helper error default
+  const getError = (key: string) => {
+    return errors[key] || "Wajib mengisi input ini";
+  };
+
   return (
     <>
       <h2 className="text-base font-semibold mb-6">
@@ -34,7 +46,11 @@ export default function Step2({ formData, handleChange }: Step2Props) {
               name="probabilitas"
               value={formData.probabilitas}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 text-gray-700"
+              className={`w-full border ${
+                showErrors && !formData.probabilitas
+                  ? "border-red-500"
+                  : "border-gray-300"
+              } rounded-lg px-3 py-2 mt-1 text-gray-700`}
             >
               <option value="" disabled hidden>
                 Tentukan Level Probabilitas
@@ -45,6 +61,11 @@ export default function Step2({ formData, handleChange }: Step2Props) {
                 </option>
               ))}
             </select>
+            {showErrors && !formData.probabilitas && (
+              <p className="text-red-500 text-sm mt-1">
+                {getError("probabilitas")}
+              </p>
+            )}
           </div>
 
           {/* Dampak */}
@@ -54,7 +75,11 @@ export default function Step2({ formData, handleChange }: Step2Props) {
               name="dampak"
               value={formData.dampak}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 text-gray-700"
+              className={`w-full border ${
+                showErrors && !formData.dampak
+                  ? "border-red-500"
+                  : "border-gray-300"
+              } rounded-lg px-3 py-2 mt-1 text-gray-700`}
             >
               <option value="" disabled hidden>
                 Tentukan Level Dampak
@@ -65,6 +90,9 @@ export default function Step2({ formData, handleChange }: Step2Props) {
                 </option>
               ))}
             </select>
+            {showErrors && !formData.dampak && (
+              <p className="text-red-500 text-sm mt-1">{getError("dampak")}</p>
+            )}
           </div>
 
           {/* Level Awal */}
@@ -99,7 +127,11 @@ export default function Step2({ formData, handleChange }: Step2Props) {
               name="prioritasRisiko"
               value={formData.prioritasRisiko}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 text-gray-700"
+              className={`w-full border ${
+                showErrors && !formData.prioritasRisiko
+                  ? "border-red-500"
+                  : "border-gray-300"
+              } rounded-lg px-3 py-2 mt-1 text-gray-700`}
             >
               <option value="" disabled hidden>
                 Pilih Prioritas
@@ -110,6 +142,11 @@ export default function Step2({ formData, handleChange }: Step2Props) {
                 </option>
               ))}
             </select>
+            {showErrors && !formData.prioritasRisiko && (
+              <p className="text-red-500 text-sm mt-1">
+                {getError("prioritasRisiko")}
+              </p>
+            )}
           </div>
         </div>
       </div>

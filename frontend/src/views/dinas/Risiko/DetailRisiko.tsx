@@ -14,6 +14,10 @@ export default function RisikoPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  const [riwayatAktivitas, setRiwayatAktivitas] = useState<
+    { tanggal: string; kegiatan: string; status: string }[]
+  >([]);
+
   // ============================
   //   FETCH DETAIL RISIKO
   // ============================
@@ -33,6 +37,23 @@ export default function RisikoPage() {
 
         const json = await res.json();
         setData(json);
+
+        // Fetch semua maintenance
+        const resMaintenance = await fetch(`/api/maintenance`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const dataMaintenance = await resMaintenance.json();
+
+        // Filter berdasarkan asset_id dari API risks
+        setRiwayatAktivitas(
+          dataMaintenance
+            .filter((m: any) => m.asset_id === json.asset_id)
+            .map((m: any) => ({
+              tanggal: m.completion_date,
+              kegiatan: m.notes || "-",
+              status: m.status,
+            }))
+        );
       } catch (error) {
         console.error(error);
       } finally {
@@ -195,7 +216,7 @@ export default function RisikoPage() {
           {/* ===============================
                 Aktivitas / Mitigasi
           ================================== */}
-          <RiwayatAktivitasCard aktivitasList={data.aktivitas ?? []} />
+          <RiwayatAktivitasCard act={riwayatAktivitas} />
           <RencanaMitigasiCard riskId={data.id} />
         </div>
       </div>

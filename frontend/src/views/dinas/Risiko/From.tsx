@@ -165,6 +165,9 @@ export default function RisikoWizard() {
   const [isMobile, setIsMobile] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const [showErrors, setShowErrors] = useState(false);
+  const [errors] = useState<Record<string, string>>({});
+
   const [formData, setFormData] = useState<FormData>({
     tipe: "Aset",
     namaRisiko: "",
@@ -284,7 +287,64 @@ export default function RisikoWizard() {
     setFormData((prev) => ({ ...prev, [key]: updated }));
   };
 
-  const nextStep = () => setStep((prev) => Math.min(prev + 1, 4));
+  const nextStep = () => {
+    if (step === 1) {
+      const isValid =
+        formData.namaRisiko.trim() !== "" &&
+        formData.deskripsiRisiko.trim() !== "" &&
+        formData.penyebabRisiko.some((p) => p.trim() !== "");
+
+      if (!isValid) {
+        setShowErrors(true);
+        return;
+      }
+    }
+
+    if (step === 2) {
+      const isValid =
+        formData.probabilitas.trim() !== "" &&
+        formData.dampak.trim() !== "" &&
+        formData.prioritasRisiko.trim() !== "";
+
+      if (!isValid) {
+        setShowErrors(true);
+        return;
+      }
+    }
+
+    if (step === 3) {
+      // 1️⃣ Harus pilih strategi dulu
+      if (!formData.strategi || formData.strategi.trim() === "") {
+        setShowErrors(true);
+        return;
+      }
+
+      // 2️⃣ Kalau strategi PENERIMAAN RISIKO → langsung lolos
+      if (formData.strategi === "Penerimaan Risiko") {
+        setShowErrors(false);
+        setStep((prev) => Math.min(prev + 1, 4));
+        return;
+      }
+
+      // 3️⃣ Untuk strategi selain penerimaan → harus isi semua input
+      const isValid =
+        formData.aksiMitigasi.trim() !== "" &&
+        formData.pemilik.trim() !== "" &&
+        formData.targetWaktu.trim() !== "" &&
+        formData.perkiraanBiaya.trim() !== "" &&
+        formData.probabilitasResidual.trim() !== "" &&
+        formData.dampakResidual.trim() !== "";
+
+      if (!isValid) {
+        setShowErrors(true);
+        return;
+      }
+    }
+
+    setShowErrors(false);
+    setStep((prev) => Math.min(prev + 1, 4));
+  };
+
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
   // ==========================
@@ -408,14 +468,25 @@ export default function RisikoWizard() {
                 handleArrayChange={handleArrayChange}
                 handleAddField={handleAddField}
                 handleRemoveField={handleRemoveField}
+                showErrors={showErrors}
               />
             )}
 
             {step === 2 && (
-              <Step2 formData={formData} handleChange={handleChange} />
+              <Step2
+                formData={formData}
+                handleChange={handleChange}
+                showErrors={showErrors}
+                errors={errors}
+              />
             )}
             {step === 3 && (
-              <Step3 formData={formData} handleChange={handleChange} />
+              <Step3
+                formData={formData}
+                handleChange={handleChange}
+                showErrors={showErrors}
+                errors={errors}
+              />
             )}
             {step === 4 && <Step4 formData={formData} />}
 

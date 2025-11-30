@@ -14,6 +14,9 @@ interface Step1Props {
   ) => void;
   handleAddField: (type: "penyebab" | "dampak") => void;
   handleRemoveField: (field: "penyebab" | "dampak", index: number) => void;
+
+  // ⬇️ Tambahan
+  showErrors: boolean;
 }
 
 export default function Step1({
@@ -22,11 +25,38 @@ export default function Step1({
   handleArrayChange,
   handleAddField,
   handleRemoveField,
+  showErrors,
 }: Step1Props) {
   const [kategoriList, setKategoriList] = useState<any[]>([]);
   const [areaList, setAreaList] = useState<any[]>([]);
+  const [errors, setErrors] = useState<any>({});
 
-  // Fetch kategori risiko & area dampak
+  // VALIDASI
+  useEffect(() => {
+    const newErrors: any = {};
+
+    if (!formData.tipe) newErrors.tipe = "Tipe wajib diisi";
+    if (!formData.jenisRisiko)
+      newErrors.jenisRisiko = "Jenis risiko wajib diisi";
+    if (!formData.namaRisiko) newErrors.namaRisiko = "Nama risiko wajib diisi";
+    if (!formData.deskripsiRisiko)
+      newErrors.deskripsiRisiko = "Deskripsi wajib diisi";
+
+    if (formData.penyebabRisiko.some((v: string) => !v))
+      newErrors.penyebabRisiko = "Semua penyebab harus diisi";
+
+    if (!formData.kategoriRisiko)
+      newErrors.kategoriRisiko = "Kategori wajib diisi";
+
+    if (formData.dampakRisiko.some((v: string) => !v))
+      newErrors.dampakRisiko = "Semua dampak harus diisi";
+
+    if (!formData.areaDampak) newErrors.areaDampak = "Area dampak wajib diisi";
+
+    setErrors(newErrors);
+  }, [formData]);
+
+  // FETCH DROPDOWN
   useEffect(() => {
     const fetchDropdowns = async () => {
       try {
@@ -54,28 +84,40 @@ export default function Step1({
         Langkah 1 — Identifikasi Risiko
       </h2>
 
-      {/* Tipe (Dropdown) */}
+      {/* TIPE */}
       <div className="mb-4">
         <label className="font-medium">Tipe</label>
         <select
           name="tipe"
           value={formData.tipe || ""}
           onChange={handleChange}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+          className={`w-full border rounded-lg px-3 py-2 mt-1 ${
+            showErrors && errors.tipe ? "border-red-500" : "border-gray-300"
+          }`}
         >
+          <option value="" disabled hidden>
+            Pilih Tipe
+          </option>
           <option value="Aset">Aset</option>
           <option value="Skenario">Skenario</option>
         </select>
+        {showErrors && errors.tipe && (
+          <p className="text-red-500 text-sm mt-1">{errors.tipe}</p>
+        )}
       </div>
 
-      {/* Jenis Risiko */}
+      {/* JENIS RISIKO */}
       <div className="mb-6">
         <label className="font-medium">Jenis Risiko</label>
         <select
           name="jenisRisiko"
-          value={formData.jenisRisiko}
+          value={formData.jenisRisiko || ""}
           onChange={handleChange}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 text-gray-700"
+          className={`w-full border rounded-lg px-3 py-2 mt-1 ${
+            showErrors && errors.jenisRisiko
+              ? "border-red-500"
+              : "border-gray-300"
+          }`}
         >
           <option value="" disabled hidden>
             Pilih Jenis Risiko
@@ -83,80 +125,114 @@ export default function Step1({
           <option value="Negatif">Negatif</option>
           <option value="Positif">Positif</option>
         </select>
+        {showErrors && errors.jenisRisiko && (
+          <p className="text-red-500 text-sm mt-1">{errors.jenisRisiko}</p>
+        )}
       </div>
 
-      {/* Nama Risiko */}
+      {/* NAMA RISIKO */}
       <div className="mb-4">
         <label className="font-medium">Nama Risiko</label>
         <input
           type="text"
           name="namaRisiko"
           placeholder="Masukkan Nama Risiko"
-          value={formData.namaRisiko}
+          value={formData.namaRisiko || ""}
           onChange={handleChange}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+          className={`w-full border rounded-lg px-3 py-2 mt-1 ${
+            showErrors && errors.namaRisiko
+              ? "border-red-500"
+              : "border-gray-300"
+          }`}
         />
+        {showErrors && errors.namaRisiko && (
+          <p className="text-red-500 text-sm mt-1">{errors.namaRisiko}</p>
+        )}
       </div>
 
-      {/* Deskripsi Risiko */}
+      {/* DESKRIPSI */}
       <div className="mb-4">
         <label className="font-medium">Deskripsi Risiko</label>
         <textarea
           name="deskripsiRisiko"
           placeholder="Masukkan Deskripsi Risiko"
-          value={formData.deskripsiRisiko}
+          value={formData.deskripsiRisiko || ""}
           onChange={handleChange}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
           rows={4}
+          className={`w-full border rounded-lg px-3 py-2 mt-1 ${
+            showErrors && errors.deskripsiRisiko
+              ? "border-red-500"
+              : "border-gray-300"
+          }`}
         />
+        {showErrors && errors.deskripsiRisiko && (
+          <p className="text-red-500 text-sm mt-1">{errors.deskripsiRisiko}</p>
+        )}
       </div>
 
-      {/* Penyebab Risiko */}
+      {/* PENYEBAB */}
       <div className="mb-4">
         <label className="font-medium">Penyebab Risiko</label>
-        {formData.penyebabRisiko.map((penyebab: string, index: number) => (
-          <div key={index} className="flex items-center mt-2">
-            <input
-              type="text"
-              placeholder="Masukkan Penyebab Risiko"
-              value={penyebab}
-              onChange={(e) =>
-                handleArrayChange("penyebab", index, e.target.value)
-              }
-              className="w-full border border-gray-300 rounded-lg px-3 py-2"
-            />
 
-            {index === formData.penyebabRisiko.length - 1 && (
-              <button
-                type="button"
-                onClick={() => handleAddField("penyebab")}
-                className="ml-2 p-2 rounded-md border border-gray-300 hover:bg-gray-100"
-              >
-                <Plus className="w-4 h-4 text-gray-500" />
-              </button>
-            )}
+        {formData.penyebabRisiko.map((penyebab: string, index: number) => {
+          const isError = showErrors && penyebab.trim() === "";
 
-            {formData.penyebabRisiko.length > 1 && (
-              <button
-                type="button"
-                onClick={() => handleRemoveField("penyebab", index)}
-                className="ml-2 p-2 rounded-md border border-gray-300 hover:bg-red-100"
-              >
-                <Trash className="w-4 h-4 text-red-500" />
-              </button>
-            )}
-          </div>
-        ))}
+          return (
+            <div key={index} className="mt-2">
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  placeholder="Masukkan Penyebab Risiko"
+                  value={penyebab}
+                  onChange={(e) =>
+                    handleArrayChange("penyebab", index, e.target.value)
+                  }
+                  className={`w-full border rounded-lg px-3 py-2 ${
+                    isError ? "border-red-500" : "border-gray-300"
+                  }`}
+                />
+
+                {index === formData.penyebabRisiko.length - 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleAddField("penyebab")}
+                    className="ml-2 p-2 rounded-md border border-gray-300 hover:bg-gray-100"
+                  >
+                    <Plus className="w-4 h-4 text-gray-500" />
+                  </button>
+                )}
+
+                {formData.penyebabRisiko.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveField("penyebab", index)}
+                    className="ml-2 p-2 rounded-md border border-gray-300 hover:bg-red-100"
+                  >
+                    <Trash className="w-4 h-4 text-red-500" />
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+
+        {showErrors && errors.penyebabRisiko && (
+          <p className="text-red-500 text-sm mt-1">{errors.penyebabRisiko}</p>
+        )}
       </div>
 
-      {/* Kategori Risiko (Dropdown API) */}
+      {/* KATEGORI */}
       <div className="mb-4">
         <label className="font-medium">Kategori Risiko</label>
         <select
           name="kategoriRisiko"
           value={formData.kategoriRisiko || ""}
           onChange={handleChange}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+          className={`w-full border rounded-lg px-3 py-2 mt-1 ${
+            showErrors && errors.kategoriRisiko
+              ? "border-red-500"
+              : "border-gray-300"
+          }`}
         >
           <option value="">Pilih Kategori Risiko</option>
           {kategoriList.map((item) => (
@@ -165,54 +241,74 @@ export default function Step1({
             </option>
           ))}
         </select>
+        {showErrors && errors.kategoriRisiko && (
+          <p className="text-red-500 text-sm mt-1">{errors.kategoriRisiko}</p>
+        )}
       </div>
 
-      {/* Dampak Risiko */}
+      {/* DAMPAK */}
       <div className="mb-4">
         <label className="font-medium">Dampak Risiko</label>
-        {formData.dampakRisiko.map((dampak: string, index: number) => (
-          <div key={index} className="flex items-center mt-2">
-            <input
-              type="text"
-              placeholder="Masukkan Dampak Risiko"
-              value={dampak}
-              onChange={(e) =>
-                handleArrayChange("dampak", index, e.target.value)
-              }
-              className="w-full border border-gray-300 rounded-lg px-3 py-2"
-            />
 
-            {index === formData.dampakRisiko.length - 1 && (
-              <button
-                type="button"
-                onClick={() => handleAddField("dampak")}
-                className="ml-2 p-2 rounded-md border border-gray-300 hover:bg-gray-100"
-              >
-                <Plus className="w-4 h-4 text-gray-500" />
-              </button>
-            )}
+        {formData.dampakRisiko.map((dampak: string, index: number) => {
+          const isError = showErrors && dampak.trim() === "";
 
-            {formData.dampakRisiko.length > 1 && (
-              <button
-                type="button"
-                onClick={() => handleRemoveField("dampak", index)}
-                className="ml-2 p-2 rounded-md border border-gray-300 hover:bg-red-100"
-              >
-                <Trash className="w-4 h-4 text-red-500" />
-              </button>
-            )}
-          </div>
-        ))}
+          return (
+            <div key={index} className="mt-2">
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  placeholder="Masukkan Dampak Risiko"
+                  value={dampak}
+                  onChange={(e) =>
+                    handleArrayChange("dampak", index, e.target.value)
+                  }
+                  className={`w-full border rounded-lg px-3 py-2 ${
+                    isError ? "border-red-500" : "border-gray-300"
+                  }`}
+                />
+
+                {index === formData.dampakRisiko.length - 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleAddField("dampak")}
+                    className="ml-2 p-2 rounded-md border border-gray-300 hover:bg-gray-100"
+                  >
+                    <Plus className="w-4 h-4 text-gray-500" />
+                  </button>
+                )}
+
+                {formData.dampakRisiko.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveField("dampak", index)}
+                    className="ml-2 p-2 rounded-md border border-gray-300 hover:bg-red-100"
+                  >
+                    <Trash className="w-4 h-4 text-red-500" />
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+
+        {showErrors && errors.dampakRisiko && (
+          <p className="text-red-500 text-sm mt-1">{errors.dampakRisiko}</p>
+        )}
       </div>
 
-      {/* Area Dampak (Dropdown API) */}
-      <div className="mb-4">
+      {/* AREA DAMPAK */}
+      <div className="mb-6">
         <label className="font-medium">Area Dampak</label>
         <select
           name="areaDampak"
           value={formData.areaDampak || ""}
           onChange={handleChange}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+          className={`w-full border rounded-lg px-3 py-2 mt-1 ${
+            showErrors && errors.areaDampak
+              ? "border-red-500"
+              : "border-gray-300"
+          }`}
         >
           <option value="">Pilih Area Dampak</option>
           {areaList.map((item) => (
@@ -221,6 +317,9 @@ export default function Step1({
             </option>
           ))}
         </select>
+        {showErrors && errors.areaDampak && (
+          <p className="text-red-500 text-sm mt-1">{errors.areaDampak}</p>
+        )}
       </div>
     </>
   );
