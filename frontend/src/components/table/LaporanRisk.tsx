@@ -25,7 +25,7 @@ const getStatusStyle = (status: string) => {
   if (status === "Perbaikan")
     return "bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-medium";
   if (status === "Tidak Aktif")
-    return "bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-medium";
+    return "bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap";
   return "text-gray-600";
 };
 
@@ -41,10 +41,14 @@ export default function TableRisiko({
   const [data, setData] = useState<Risiko[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // 🔥 NEW: PAGINATION STATE
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   useEffect(() => {
     const fetchRisks = async () => {
       try {
-        const token = localStorage.getItem("token"); // ambil token dari localStorage
+        const token = localStorage.getItem("token");
         const res = await fetch(
           "https://asset-risk-management.vercel.app/api/risks",
           {
@@ -55,7 +59,6 @@ export default function TableRisiko({
         );
         const apiData = await res.json();
 
-        // Map response API ke tipe Risiko
         const mappedData: Risiko[] = apiData.map((item: any) => ({
           id: item.id,
           namaAset: item.asset_info?.name || "Unknown",
@@ -69,9 +72,9 @@ export default function TableRisiko({
           skor: item.entry_level || 0,
           kategori: item.risk_category?.name || "Unknown",
           status:
-            item.status === "planned"
+            item.approval_status === "planned"
               ? "Perbaikan"
-              : item.status === "approved"
+              : item.approval_status === "approved"
               ? "Aktif"
               : "Tidak Aktif",
           date: item.created_at ? item.created_at.split("T")[0] : "",
@@ -95,9 +98,88 @@ export default function TableRisiko({
     return matchPeriod && matchLevel && matchStatus;
   });
 
+  // 🔥 NEW: HITUNG PAGINATION
+  const totalItems = filteredData.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+
+  const pageData = filteredData.slice(startIndex, endIndex);
+
   if (loading)
     return (
-      <p className="text-center text-gray-500 py-4">Loading data risiko...</p>
+      <div className="rounded-2xl p-2 border border-gray-100">
+        {/* DESKTOP TABLE SKELETON */}
+        <div className="hidden md:block rounded-xl bg-white">
+          <table className="min-w-full text-sm text-center">
+            <thead>
+              <tr>
+                {[
+                  "ID RISIKO",
+                  "NAMA ASET",
+                  "NAMA RISIKO",
+                  "LEVEL",
+                  "SKOR",
+                  "KATEGORI",
+                  "STATUS",
+                  "",
+                ].map((col, i) => (
+                  <th key={i} className="py-5 px-4 font-semibold text-gray-600">
+                    {col}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+
+            <tbody>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <tr key={i} className="border-b border-gray-200">
+                  {Array.from({ length: 8 }).map((__, j) => (
+                    <td key={j} className="py-5 px-4">
+                      <div className="h-4 bg-gray-200 rounded animate-pulse mx-auto w-24" />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* MOBILE CARD SKELETON */}
+        <div className="md:hidden space-y-4 mt-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div
+              key={i}
+              className="border bg-white border-gray-200 rounded-xl shadow-sm p-4"
+            >
+              {/* Header */}
+              <div className="flex justify-between items-center mb-2">
+                <div className="h-3 w-20 bg-gray-200 rounded animate-pulse" />
+                <div className="h-3 w-10 bg-gray-200 rounded animate-pulse" />
+              </div>
+
+              {/* Title */}
+              <div className="h-4 w-32 bg-gray-200 rounded animate-pulse mb-3" />
+
+              {/* Grid fields */}
+              <div className="grid grid-cols-2 gap-y-2 text-sm">
+                <div className="h-3 w-24 bg-gray-200 rounded animate-pulse" />
+                <div className="h-3 w-20 bg-gray-200 rounded animate-pulse justify-self-end" />
+
+                <div className="h-3 w-20 bg-gray-200 rounded animate-pulse" />
+                <div className="h-3 w-24 bg-gray-200 rounded animate-pulse justify-self-end" />
+              </div>
+
+              {/* Footer */}
+              <div className="mt-3 flex justify-between">
+                <div className="h-5 w-20 bg-gray-200 rounded-full animate-pulse" />
+                <div className="h-3 w-16 bg-gray-200 rounded animate-pulse" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     );
 
   return (
@@ -118,8 +200,8 @@ export default function TableRisiko({
             </tr>
           </thead>
           <tbody>
-            {filteredData.length > 0 ? (
-              filteredData.map((item, i) => (
+            {pageData.length > 0 ? (
+              pageData.map((item, i) => (
                 <tr key={i} className="hover:bg-gray-50 transition">
                   <td className="py-5 px-4 font-semibold">{item.id}</td>
                   <td className="py-5 px-4">{item.namaAset}</td>
@@ -150,7 +232,7 @@ export default function TableRisiko({
                   colSpan={8}
                   className="text-center py-4 text-gray-400 italic"
                 >
-                  Tidak ada data yang sesuai dengan filter.
+                  Tidak ada data.
                 </td>
               </tr>
             )}
@@ -158,11 +240,11 @@ export default function TableRisiko({
         </table>
       </div>
 
-      {/* CARD VIEW */}
+      {/* CARD VIEW (mobile) */}
       <div className="md:hidden space-y-4">
-        {filteredData.length > 0 ? (
+        {pageData.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {filteredData.map((item, i) => (
+            {pageData.map((item, i) => (
               <div
                 key={i}
                 className="border bg-white border-gray-200 rounded-xl shadow-sm p-4 hover:shadow-md transition"
@@ -214,10 +296,57 @@ export default function TableRisiko({
             ))}
           </div>
         ) : (
-          <p className="text-center text-gray-500 italic">
-            Tidak ada data yang sesuai dengan filter.
-          </p>
+          <p className="text-center text-gray-500 italic">Tidak ada data.</p>
         )}
+      </div>
+
+      {/* 🔥 NEW PAGINATION UI */}
+      <div className="flex justify-between bg-white">
+        {/* 🔥 NEW: INFO JUMLAH DATA */}
+        <p className="text-gray-600 text-sm px-3 py-6 mt-4">
+          Menampilkan <b>{startIndex + 1}</b>–<b>{endIndex}</b> dari{" "}
+          <b>{totalItems}</b> risiko
+        </p>
+
+        <div className="flex justify-center py-6 space-x-2">
+          {/* Prev */}
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => p - 1)}
+            className={`px-3 py-1 rounded ${
+              currentPage === 1 ? "text-gray-400" : "hover:bg-gray-100"
+            }`}
+          >
+            ‹
+          </button>
+
+          {/* Page numbers */}
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+            <button
+              key={num}
+              onClick={() => setCurrentPage(num)}
+              className={`px-3 py-1 rounded ${
+                currentPage === num
+                  ? "bg-gray-200 font-semibold"
+                  : "hover:bg-gray-100"
+              }`}
+            >
+              {num}
+            </button>
+          ))}
+
+          {/* Next */}
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((p) => p + 1)}
+            className={`px-3 py-1 rounded ${
+              currentPage === totalPages ? "text-gray-400" : "hover:bg-gray-100"
+            }`}
+          >
+            ›
+          </button>
+        </div>
+        <div></div>
       </div>
     </div>
   );

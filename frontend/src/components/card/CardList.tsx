@@ -1,6 +1,6 @@
 type CardListProps = {
   title: string;
-  value: string;
+  value: string | number;
   loading?: boolean; // untuk spinner
 };
 

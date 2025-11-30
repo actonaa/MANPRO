@@ -126,7 +126,7 @@ export default function AppRoutes() {
           />
           <Route path="/laporan/pemeliharaan" element={<Pemeliharaan />} />
           <Route
-            path="/laporan/pemeliharaan/detail"
+            path="/laporan/pemeliharaan/:id"
             element={<DetailLaporanPemeliharaan />}
           />
           <Route path="/notifikasi" element={<Notifications />} />
