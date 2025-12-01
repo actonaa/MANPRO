@@ -153,7 +153,7 @@ export default function TableAset({
         return "bg-yellow-200 text-yellow-800";
       case "Tidak Aktif":
       case "Non-Aktif":
-        return "bg-red-200 text-red-800";
+        return "bg-red-200 text-red-800 whitespace-nowrap";
       default:
         return "bg-gray-200 text-gray-800";
     }
