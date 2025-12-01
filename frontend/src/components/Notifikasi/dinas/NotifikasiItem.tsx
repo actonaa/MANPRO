@@ -19,6 +19,7 @@ export default function NotifikasiItem({
 
   // 🔥 Klik pada container → navigate ke detail
   const goToDetail = () => {
+    onMarkRead?.(); // ⬅️ mark read otomatis
     navigate(`/notifikasi/${notif.id}`);
   };
 
