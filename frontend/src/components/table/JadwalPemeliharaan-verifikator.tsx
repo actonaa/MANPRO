@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { CalendarDays } from "lucide-react";
 import PopupJadwalPemeliharaan from "../../components/form/verifikator/JadwalPemeliharaan";
@@ -14,6 +15,7 @@ type PemeliharaanItem = {
   lokasi: string;
   prioritas: string;
   tanggal: string;
+  risk_id?: string | null;
 };
 
 export default function TablePemeliharaanVerifikator({
@@ -26,53 +28,122 @@ export default function TablePemeliharaanVerifikator({
     null
   );
 
+  // PAGINATION
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // ============================
+  // FETCH MAINTENANCE + ASSETS + RISKS
+  // ============================
   useEffect(() => {
-    setData([
-      {
-        id: "AST-001",
-        nama: "Laptop Kerja",
-        kategori: "Aset TI",
-        lokasi: "Kantor Pusat",
-        prioritas: "Rendah",
-        tanggal: "2025-01-12",
-      },
-      {
-        id: "AST-002",
-        nama: "CCTV Lobby",
-        kategori: "Aset TI",
-        lokasi: "Kantor Pusat",
-        prioritas: "Tinggi",
-        tanggal: "2025-01-13",
-      },
-      {
-        id: "AST-003",
-        nama: "Server Ruangan IT",
-        kategori: "Aset TI",
-        lokasi: "Kantor Pusat",
-        prioritas: "Sedang",
-        tanggal: "2025-01-15",
-      },
-      {
-        id: "AST-004",
-        nama: "Printer Kantor",
-        kategori: "Aset Non TI",
-        lokasi: "Kantor Cabang",
-        prioritas: "Rendah",
-        tanggal: "2025-01-12",
-      },
-    ]);
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.warn("Token tidak ditemukan.");
+          return;
+        }
+
+        const [maintenanceRes, assetsRes, risksRes] = await Promise.all([
+          fetch("https://asset-risk-management.vercel.app/api/maintenance", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("https://asset-risk-management.vercel.app/api/assets", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("https://asset-risk-management.vercel.app/api/risks", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        const [maintenanceJson, assetsJson, risksJson] = await Promise.all([
+          maintenanceRes.json(),
+          assetsRes.json(),
+          risksRes.json(),
+        ]);
+
+        if (
+          !Array.isArray(maintenanceJson) ||
+          !Array.isArray(assetsJson) ||
+          !Array.isArray(risksJson)
+        ) {
+          console.warn("Format data API tidak sesuai");
+          return;
+        }
+
+        // Buat Map untuk assets
+        const assetsMap = assetsJson.reduce((acc: any, item: any) => {
+          acc[item.id] = item;
+          return acc;
+        }, {});
+
+        // Map risk_id berdasarkan asset_id
+        const riskMap = risksJson.reduce((acc: any, item: any) => {
+          acc[item.asset_id] = item.id;
+          return acc;
+        }, {});
+
+        const mappedData: PemeliharaanItem[] = maintenanceJson.map(
+          (item: any) => {
+            const asset = assetsMap[item.asset_id];
+            const riskId = riskMap[item.asset_id] || null;
+
+            return {
+              id: item.id,
+              nama: asset?.name || "Tidak diketahui",
+              kategori: asset?.category?.name || "-",
+              lokasi: asset?.lokasi || "-",
+              prioritas: item.priority
+                ? item.priority.charAt(0).toUpperCase() + item.priority.slice(1)
+                : "-",
+              tanggal: item.scheduled_date || "-",
+              risk_id: riskId,
+            };
+          }
+        );
+
+        setData(mappedData);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      }
+    };
+
+    fetchData();
   }, []);
 
+  // ============================
+  // FILTERING
+  // ============================
   const filteredData = data.filter((item) => {
     const matchLevel = selectedLevel
       ? item.prioritas.toLowerCase() === selectedLevel.toLowerCase()
       : true;
+
     const matchDate = selectedDate
       ? item.tanggal >= selectedDate.start && item.tanggal <= selectedDate.end
       : true;
+
     return matchLevel && matchDate;
   });
 
+  // ============================
+  // PAGINATION
+  // ============================
+  const totalItems = filteredData.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const indexOfLast = currentPage * itemsPerPage;
+  const indexOfFirst = indexOfLast - itemsPerPage;
+
+  const currentData = filteredData.slice(indexOfFirst, indexOfLast);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedLevel, selectedDate]);
+
+  // ============================
+  // BADGE COLOR
+  // ============================
   const getBadgeColor = (prioritas: string) => {
     switch (prioritas) {
       case "Tinggi":
@@ -91,16 +162,71 @@ export default function TablePemeliharaanVerifikator({
     setOpenPopup(true);
   };
 
-  const handleSubmitJadwal = (tanggal: string) => {
+  // ============================
+  // UPDATE JADWAL (PUT)
+  // ============================
+  const handleSubmitJadwal = async (
+    tanggal: string,
+    priority: string,
+    setPopupLoading: (state: boolean) => void
+  ) => {
     if (!selectedAset) return;
-    setData((prev) =>
-      prev.map((x) => (x.id === selectedAset.id ? { ...x, tanggal } : x))
-    );
+
+    try {
+      setPopupLoading(true);
+
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.warn("Token hilang.");
+        return;
+      }
+
+      const res = await fetch(
+        `https://asset-risk-management.vercel.app/api/maintenance/${selectedAset.id}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            risk_id: selectedAset.risk_id,
+            scheduled_date: tanggal,
+            priority: priority, // ⬅️ DIAMBIL DARI POPUP
+            notes: "",
+          }),
+        }
+      );
+
+      const resJson = await res.json();
+      console.log("PUT Response:", resJson);
+
+      setData((prev) =>
+        prev.map((x) =>
+          x.id === selectedAset.id
+            ? {
+                ...x,
+                tanggal: resJson.data.scheduled_date,
+                prioritas: resJson.data.priority
+                  ? resJson.data.priority.charAt(0).toUpperCase() +
+                    resJson.data.priority.slice(1)
+                  : "-",
+              }
+            : x
+        )
+      );
+
+      setOpenPopup(false);
+      setPopupLoading(false);
+    } catch (error) {
+      console.error("Gagal update jadwal:", error);
+      setPopupLoading(false);
+    }
   };
 
   return (
     <div className="md:pb-10 xl:bg-white xl:shadow-xl xl:p-5 lg:rounded-2xl relative">
-      {/* 🖥️ Tabel Desktop */}
+      {/* DESKTOP */}
       <div className="hidden xl:block">
         <table className="w-full min-w-[900px] text-[13px] text-center border-collapse">
           <thead className="text-[#666666]">
@@ -114,8 +240,9 @@ export default function TablePemeliharaanVerifikator({
               <th className="py-5 px-4 font-semibold"></th>
             </tr>
           </thead>
+
           <tbody>
-            {filteredData.map((item) => (
+            {currentData.map((item) => (
               <tr
                 key={item.id}
                 className="border-b border-b-[#ddd] hover:bg-gray-50 transition"
@@ -124,6 +251,7 @@ export default function TablePemeliharaanVerifikator({
                 <td className="py-5 px-4">{item.nama}</td>
                 <td className="py-5 px-4">{item.kategori}</td>
                 <td className="py-5 px-4">{item.lokasi}</td>
+
                 <td className="py-5 px-4">
                   <span
                     className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeColor(
@@ -133,19 +261,16 @@ export default function TablePemeliharaanVerifikator({
                     {item.prioritas}
                   </span>
                 </td>
+
                 <td className="py-5 px-4 text-gray-600">{item.tanggal}</td>
 
-                {/* ICON TUNGGAL */}
                 <td className="py-5 px-4">
-                  <div className="flex items-center justify-center min-w-[60px]">
-                    <button
-                      className="hover:text-green-600"
-                      title="Jadwalkan Pemeliharaan"
-                      onClick={() => handleJadwalkan(item)}
-                    >
-                      <CalendarDays size={18} />
-                    </button>
-                  </div>
+                  <button
+                    className="hover:text-green-600"
+                    onClick={() => handleJadwalkan(item)}
+                  >
+                    <CalendarDays size={18} />
+                  </button>
                 </td>
               </tr>
             ))}
@@ -153,45 +278,38 @@ export default function TablePemeliharaanVerifikator({
         </table>
       </div>
 
-      {/* 📱 Card Mobile */}
+      {/* MOBILE */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden">
-        {filteredData.map((item) => (
+        {currentData.map((item) => (
           <div
             key={item.id}
-            className="border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition bg-white"
+            className="border rounded-xl p-4 shadow-sm bg-white"
           >
             <p className="text-sm text-gray-500 mb-2">{item.tanggal}</p>
-
-            <h3 className="text-base font-semibold text-gray-800 mb-1">
-              {item.nama}
-            </h3>
+            <h3 className="text-base font-semibold">{item.nama}</h3>
             <p className="text-sm text-gray-500 mb-3">{item.lokasi}</p>
 
-            <div className="grid grid-cols-2 text-sm text-gray-600 gap-y-1">
+            <div className="grid grid-cols-2 text-sm gap-y-1">
               <p>
-                <span className="font-medium text-gray-700">ID:</span> {item.id}
+                <span className="font-medium">ID:</span> {item.id}
               </p>
               <p>
-                <span className="font-medium text-gray-700">Prioritas:</span>{" "}
+                <span className="font-medium">Prioritas:</span>{" "}
                 <span className={getBadgeColor(item.prioritas)}>
                   {item.prioritas}
                 </span>
               </p>
               <p>
-                <span className="font-medium text-gray-700">Kategori:</span>{" "}
-                {item.kategori}
+                <span className="font-medium">Kategori:</span> {item.kategori}
               </p>
               <p>
-                <span className="font-medium text-gray-700">Tanggal:</span>{" "}
-                {item.tanggal}
+                <span className="font-medium">Tanggal:</span> {item.tanggal}
               </p>
             </div>
 
-            {/* ICON TUNGGAL MOBILE */}
-            <div className="flex justify-end gap-3 mt-4 text-gray-500">
+            <div className="flex justify-end mt-4 text-gray-500">
               <button
                 className="hover:text-green-600"
-                title="Jadwalkan Pemeliharaan"
                 onClick={() => handleJadwalkan(item)}
               >
                 <CalendarDays size={18} />
@@ -207,7 +325,46 @@ export default function TablePemeliharaanVerifikator({
         </p>
       )}
 
-      {/* Popup Jadwal */}
+      {/* PAGINATION */}
+      <div className="flex items-center justify-between mt-6 px-1 text-sm text-gray-600">
+        <p>
+          Menampilkan {currentData.length} dari {totalItems} hasil
+        </p>
+
+        <div className="flex items-center gap-2 select-none">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            className="px-2 py-1 disabled:text-gray-400 hover:text-black"
+          >
+            &lt;
+          </button>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-2 py-1 rounded ${
+                currentPage === page
+                  ? "bg-gray-200 font-semibold"
+                  : "hover:bg-gray-100"
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            className="px-2 py-1 disabled:text-gray-400 hover:text-black"
+          >
+            &gt;
+          </button>
+        </div>
+      </div>
+
+      {/* POPUP */}
       <PopupJadwalPemeliharaan
         open={openPopup}
         onClose={() => setOpenPopup(false)}

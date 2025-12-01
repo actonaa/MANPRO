@@ -47,6 +47,7 @@ const PopupJadwalPemeliharaan: React.FC<PopupJadwalPemeliharaanProps> = ({
               type="date"
               value={tanggal}
               onChange={(e) => setTanggal(e.target.value)}
+              onFocus={(e) => e.target.showPicker && e.target.showPicker()}
               className="w-full border border-gray-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
             <Calendar
