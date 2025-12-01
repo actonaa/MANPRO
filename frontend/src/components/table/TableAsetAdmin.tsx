@@ -83,40 +83,47 @@ export default function TableAsetAdmin({
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm w-full">
       {/* HEADER */}
-      <div className="flex justify-between border-b border-gray-300 py-4 items-center mb-4">
+      {/* HEADER */}
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center border-b border-gray-300 py-4 mb-4 gap-3">
         <h2 className="text-lg font-semibold">Data Aset</h2>
 
-        <div className="flex items-center gap-2">
+        {/* WRAPPER TOMBOL */}
+        <div className="w-full md:w-auto grid grid-cols-2 md:flex md:items-center gap-3">
+          {/* EKSPOR */}
           <button
-            className="flex items-center gap-2 border border-gray-300 px-3 py-1.5 rounded-lg text-gray-600 hover:bg-gray-50"
             onClick={() => setOpenExport(true)}
+            className="flex items-center justify-center gap-2 border border-gray-300 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 text-sm"
           >
             <Upload size={16} /> Ekspor
           </button>
 
+          {/* IMPOR */}
           <button
-            className="flex items-center gap-2 border border-gray-300 px-3 py-1.5 rounded-lg text-gray-600 hover:bg-gray-50"
             onClick={() => setOpenImport(true)}
+            className="flex items-center justify-center gap-2 border border-gray-300 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 text-sm"
           >
             <Download size={16} /> Impor
           </button>
 
-          <ButtonImg
-            title="Tambah Aset"
-            img="/kelola-asset/tambah-asset.png"
-            color="#00a9ff"
-            hoverColor="#a0e9ff"
-            borderColor="#00a9ff"
-            textColor="white"
-            px="6"
-            fontWeight="font-medium"
-            onClick={() => navigate("/aset-admin/tambah")}
-          />
+          {/* TAMBAH ASET → FULL WIDTH DI MOBILE */}
+          <div className="col-span-2 md:col-span-1 md:w-auto">
+            <ButtonImg
+              title="Tambah Aset"
+              img="/kelola-asset/tambah-asset.png"
+              color="#00a9ff"
+              hoverColor="#a0e9ff"
+              borderColor="#00a9ff"
+              textColor="white"
+              px="6"
+              fontWeight="font-medium"
+              onClick={() => navigate("/aset-admin/tambah")}
+            />
+          </div>
         </div>
       </div>
 
       {/* TABLE */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto hidden md:block">
         <table className="w-full min-w-[950px] text-sm text-center">
           <thead className="bg-gray-50 text-gray-600">
             <tr>
@@ -190,6 +197,76 @@ export default function TableAsetAdmin({
             ))}
           </tbody>
         </table>
+      </div>
+      {/* MOBILE CARD VIEW */}
+      <div className="grid grid-cols-1 gap-4 md:hidden mt-4">
+        {currentData.map((item) => (
+          <div
+            key={item.id}
+            className="border border-gray-200 rounded-xl px-4 py-3 shadow-sm bg-white"
+          >
+            {/* TOP ROW: ID + DETAIL */}
+            <div className="flex justify-between items-center mb-1">
+              <p className="text-xs text-gray-500">{item.id}</p>
+              <button
+                onClick={() => navigate(`/aset-admin/${item.id}`)}
+                className="text-blue-600 text-sm font-medium"
+              >
+                Detail
+              </button>
+            </div>
+
+            {/* NAMA ASET */}
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">
+              {item.nama_aset}
+            </h3>
+
+            {/* LOKASI */}
+            <p className="text-sm text-gray-500 mb-3">{item.lokasi}</p>
+
+            {/* INFORMASI GRID */}
+            <div className="grid grid-cols-2 gap-y-2 text-sm">
+              <p className="text-gray-500">Kategori</p>
+              <p className="text-right font-medium">{item.kategori}</p>
+
+              <p className="text-gray-500">Status Aset</p>
+              <p className="text-right">
+                <span
+                  className={`px-3 py-0.5 rounded-full text-xs ${
+                    item.status_aset === "Aktif"
+                      ? "bg-green-100 text-green-700"
+                      : item.status_aset === "Perbaikan"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {item.status_aset}
+                </span>
+              </p>
+
+              <p className="text-gray-500">Pengajuan</p>
+              <p className="text-right">
+                <span
+                  className={`px-3 py-0.5 rounded-full text-xs ${
+                    item.status_pengajuan === "Diterima"
+                      ? "bg-green-100 text-green-700"
+                      : item.status_pengajuan === "Menunggu"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {item.status_pengajuan}
+                </span>
+              </p>
+
+              <p className="text-gray-500">Dinas</p>
+              <p className="text-right font-medium">{item.dinas}</p>
+
+              <p className="text-gray-500">Perolehan</p>
+              <p className="text-right">{item.tanggal_perolehan}</p>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* FOOTER PAGINATION */}

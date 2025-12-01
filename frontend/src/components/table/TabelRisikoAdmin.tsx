@@ -37,12 +37,15 @@ export default function TableRisikoAdmin({
     const fetchRisiko = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("https://asset-risk-management.vercel.app/api/risks", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(
+          "https://asset-risk-management.vercel.app/api/risks",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!res.ok) throw new Error("Gagal memuat data risiko");
         const json = await res.json();
@@ -95,9 +98,11 @@ export default function TableRisikoAdmin({
     return (
       (item.title.toLowerCase().includes(s) ||
         item.asset_info?.name?.toLowerCase().includes(s)) &&
-      (!selectedStatus || item.status.toLowerCase() === selectedStatus.toLowerCase()) &&
+      (!selectedStatus ||
+        item.status.toLowerCase() === selectedStatus.toLowerCase()) &&
       (!selectedKategori ||
-        item.risk_category?.name?.toLowerCase() === selectedKategori.toLowerCase()) &&
+        item.risk_category?.name?.toLowerCase() ===
+          selectedKategori.toLowerCase()) &&
       (!selectedDinas ||
         item.department?.name?.toLowerCase() === selectedDinas.toLowerCase()) &&
       (!selectedLevel ||
@@ -114,7 +119,11 @@ export default function TableRisikoAdmin({
   const getPageNumbers = () => {
     const pages: number[] = [];
     for (let i = 1; i <= totalPages; i++) {
-      if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+      if (
+        i === 1 ||
+        i === totalPages ||
+        (i >= currentPage - 1 && i <= currentPage + 1)
+      ) {
         pages.push(i);
       } else if (pages[pages.length - 1] !== -1) {
         pages.push(-1);
@@ -123,7 +132,8 @@ export default function TableRisikoAdmin({
     return pages;
   };
 
-  if (loading) return <p className="text-center text-gray-500 py-6">Memuat data...</p>;
+  if (loading)
+    return <p className="text-center text-gray-500 py-6">Memuat data...</p>;
 
   return (
     <div className="mt-5">
@@ -148,7 +158,10 @@ export default function TableRisikoAdmin({
           <tbody>
             {paginatedData.length ? (
               paginatedData.map((item) => (
-                <tr key={item.id} className="border-b border-b-gray-300 hover:bg-gray-50">
+                <tr
+                  key={item.id}
+                  className="border-b border-b-gray-300 hover:bg-gray-50"
+                >
                   <td className="py-5 text-[#333] font-semibold">{item.id}</td>
 
                   <td className="py-5 text-[#666]">{item.asset_info?.name}</td>
@@ -158,13 +171,21 @@ export default function TableRisikoAdmin({
                   <td className="py-5 text-[#666]">{item.type_of_risk}</td>
 
                   <td className="py-5">
-                    <span className={`px-4 py-1 rounded-full ${getLevelColor(item.criteria)}`}>
+                    <span
+                      className={`px-4 py-1 rounded-full ${getLevelColor(
+                        item.criteria
+                      )}`}
+                    >
                       {item.criteria}
                     </span>
                   </td>
 
                   <td className="py-4">
-                    <span className={`px-4 py-1 rounded-full ${getStatusColor(item.status)}`}>
+                    <span
+                      className={`px-4 py-1 rounded-full ${getStatusColor(
+                        item.status
+                      )}`}
+                    >
                       {item.status}
                     </span>
                   </td>
@@ -178,7 +199,10 @@ export default function TableRisikoAdmin({
                   <td className="py-4 text-[#666]">{item.department?.name}</td>
 
                   <td>
-                    <a href={`/risiko-admin/${item.id}`} className="text-[#0095E8] hover:underline">
+                    <a
+                      href={`/risiko-admin/${item.id}`}
+                      className="text-[#0095E8] hover:underline"
+                    >
                       Detail
                     </a>
                   </td>
@@ -193,6 +217,77 @@ export default function TableRisikoAdmin({
             )}
           </tbody>
         </table>
+      </div>
+      {/* MOBILE CARD VIEW */}
+      <div className="grid grid-cols-1 gap-4 md:hidden mt-4">
+        {paginatedData.length ? (
+          paginatedData.map((item) => (
+            <div
+              key={item.id}
+              className="border border-gray-200 rounded-xl px-4 py-3 shadow-sm bg-white"
+            >
+              {/* HEADER */}
+              <div className="flex justify-between items-center mb-1">
+                <p className="text-xs text-gray-500">{item.id}</p>
+
+                <a
+                  href={`/risiko-admin/${item.id}`}
+                  className="text-blue-600 text-sm font-medium"
+                >
+                  Detail
+                </a>
+              </div>
+
+              {/* TITLE */}
+              <h3 className="text-base font-semibold text-gray-800 mb-1">
+                {item.title}
+              </h3>
+
+              {/* ASET */}
+              <p className="text-sm text-gray-500 mb-3">
+                {item.asset_info?.name}
+              </p>
+
+              {/* GRID INFORMASI */}
+              <div className="grid grid-cols-2 gap-y-2 text-sm">
+                <p className="text-gray-500">Kategori</p>
+                <p className="text-right font-medium">
+                  {item.risk_category?.name || "-"}
+                </p>
+
+                <p className="text-gray-500">Level</p>
+                <p className="text-right">
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-xs ${getLevelColor(
+                      item.criteria
+                    )}`}
+                  >
+                    {item.criteria}
+                  </span>
+                </p>
+
+                <p className="text-gray-500">Status</p>
+                <p className="text-right">
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-xs ${getStatusColor(
+                      item.status
+                    )}`}
+                  >
+                    {item.status}
+                  </span>
+                </p>
+
+                <p className="text-gray-500">Skor</p>
+                <p className="text-right font-medium">{item.entry_level}</p>
+
+                <p className="text-gray-500">Dinas</p>
+                <p className="text-right">{item.department?.name}</p>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-500 italic">Tidak ada data</p>
+        )}
       </div>
 
       {/* Pagination */}
@@ -214,13 +309,17 @@ export default function TableRisikoAdmin({
 
               {getPageNumbers().map((num, idx) =>
                 num === -1 ? (
-                  <span key={idx} className="px-2">…</span>
+                  <span key={idx} className="px-2">
+                    …
+                  </span>
                 ) : (
                   <button
                     key={idx}
                     onClick={() => setCurrentPage(num)}
                     className={`w-8 h-8 rounded-md flex items-center justify-center text-sm transition ${
-                      currentPage === num ? "bg-gray-200 font-semibold" : "hover:text-blue-600"
+                      currentPage === num
+                        ? "bg-gray-200 font-semibold"
+                        : "hover:text-blue-600"
                     }`}
                   >
                     {num}
