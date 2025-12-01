@@ -41,10 +41,10 @@ export default function JadwalPemeliharaanVerifikator() {
           {/* 🔧 Prioritas */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Level
+              Prioritas
             </label>
             <ButtonFilter
-              label="Pilih level"
+              label="Pilih Prioritas"
               options={["Rendah", "Sedang", "Tinggi"]}
               onSelect={setSelectedLevel}
             />
@@ -65,10 +65,10 @@ export default function JadwalPemeliharaanVerifikator() {
       </div>
 
       {
-      <TablePemeliharaan
-        selectedLevel={selectedLevel}
-        selectedDate={selectedDate}
-      /> 
+        <TablePemeliharaan
+          selectedLevel={selectedLevel}
+          selectedDate={selectedDate}
+        />
       }
     </>
   );
