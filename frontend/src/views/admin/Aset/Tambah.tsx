@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle } from "lucide-react";
-import Step1, {
+import Step1Admin, {
   type AsetFormData,
-} from "../../../components/asset/dinas/form/Step1";
-import StepTI, {
+} from "../../../components/asset/Admin/form/Step1";
+import StepTIAdmin, {
   type FormDataTI,
-} from "../../../components/asset/dinas/form/TI";
-import StepNonTI, {
+} from "../../../components/asset/Admin/form/StepTI";
+import StepNonTIAdmin, {
   type FormDataNonTI,
-} from "../../../components/asset/dinas/form/Non-TI";
+} from "../../../components/asset/Admin/form/StepNonTI";
 
 export default function Tambah() {
   const navigate = useNavigate();
@@ -29,6 +29,8 @@ export default function Tambah() {
     merkTipe: "Merk / Tipe",
     kodeBMD: "Kode BMD",
     tanggalPerolehan: "Tanggal Perolehan",
+    divisi: "Divisi",
+    dinas: "Dinas",
     indukAset: "Induk Aset",
     lokasiAset: "Lokasi Aset",
     penanggungJawab: "Penanggung Jawab",
@@ -61,6 +63,8 @@ export default function Tambah() {
     merkTipe: "",
     kodeBMD: "",
     tanggalPerolehan: "",
+    divisi: "",
+    dinas: "",
     indukAset: "",
     lokasiAset: "",
     penanggungJawab: "",
@@ -110,6 +114,8 @@ export default function Tambah() {
       formDataSend.append("bmd_code", formData.kodeBMD);
       formDataSend.append("acquisition_date", formData.tanggalPerolehan || "");
       formDataSend.append("lokasi", formData.lokasiAset);
+      formDataSend.append("divisi", formData.divisi);
+      formDataSend.append("dinas", formData.dinas);
       formDataSend.append("pic", formData.penanggungJawab);
       formDataSend.append("category_id", formData.kategoriAset);
       formDataSend.append("sub_category_id", formData.subKategori);
@@ -231,7 +237,7 @@ export default function Tambah() {
       {/* FORM WIZARD */}
       <div>
         {step === 1 && (
-          <Step1
+          <Step1Admin
             formData={formData}
             setFormData={setFormData}
             setUploadedFiles={setUploadedFiles}
@@ -243,7 +249,7 @@ export default function Tambah() {
         )}
 
         {step === 2 && isTI && (
-          <StepTI
+          <StepTIAdmin
             formData={formDataTI}
             setFormData={setFormDataTI}
             nextStep={nextStep}
@@ -252,7 +258,7 @@ export default function Tambah() {
         )}
 
         {step === 2 && !isTI && (
-          <StepNonTI
+          <StepNonTIAdmin
             formData={formDataNonTI}
             setFormData={setFormDataNonTI}
             nextStep={nextStep}
