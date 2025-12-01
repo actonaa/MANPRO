@@ -11,14 +11,11 @@ export default function Callback() {
 
     if (token && userParam) {
       try {
-        // decode user JSON jika dikirim dalam bentuk string
         const user = JSON.parse(decodeURIComponent(userParam));
 
-        // simpan ke localStorage
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
 
-        // tambahkan sedikit delay agar sinkron
         setTimeout(() => {
           navigate("/dashboard", { replace: true });
         }, 200);
@@ -27,10 +24,17 @@ export default function Callback() {
         window.location.href = `${import.meta.env.VITE_LINK_BACK}`;
       }
     } else {
-      // jika token tidak ada, redirect ke login SSO
       window.location.href = `${import.meta.env.VITE_LINK_BACK}`;
     }
   }, [navigate]);
 
-  return <p>Mengautentikasi...</p>;
+  return (
+    <div className="flex items-center justify-center h-screen">
+      <div className="flex flex-col items-center gap-3">
+        {/* Spinner */}
+        <div className="w-10 h-10 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+        <p className="text-gray-600">Mengautentikasi...</p>
+      </div>
+    </div>
+  );
 }

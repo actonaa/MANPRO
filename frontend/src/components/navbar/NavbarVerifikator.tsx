@@ -142,7 +142,7 @@ export default function NavbarDinas() {
 
       {/* === Sidebar === */}
       <div
-        className={`fixed top-0 left-0 w-[240px] bg-white shadow-lg transition-transform duration-300 h-screen z-60 lg:z-40
+        className={`fixed top-0 left-0 w-[240px] bg-white shadow-lg transition-transform duration-300 whitespace-nowrap h-screen z-60 lg:z-40
           ${
             isSidebarOpen
               ? "translate-x-0"
