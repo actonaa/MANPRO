@@ -241,7 +241,7 @@ export default function TableRisiko({
         {paginatedData.map((item) => (
           <div
             key={item.id}
-            className="border border-gray-200 rounded-xl p-4 shadow-sm"
+            className="border border-gray-200 rounded-xl p-4 shadow-sm bg-white"
           >
             <p className="text-sm text-gray-500 mb-2">{item.date}</p>
             <h3 className="text-base font-semibold text-gray-800 mb-1">

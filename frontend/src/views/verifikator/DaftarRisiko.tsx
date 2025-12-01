@@ -41,7 +41,7 @@ export default function DaftarRisiko() {
             </label>
             <ButtonFilter
               label="Pilih level"
-              options={["Rendah", "Sedang", "Tinggi"]}
+              options={["Low", "Medium", "High"]}
               onSelect={setSelectedLevel}
             />
           </div>
