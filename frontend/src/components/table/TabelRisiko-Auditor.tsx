@@ -1,83 +1,83 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { MessageCircleMore } from "lucide-react";
-import AuditorModal from "../auditor/AuditorModal"; // ⬅ ADD
-import type { RisikoItem as RisikoType } from "../auditor/AuditorModal"; // ⬅ TYPE IMPORT
+import { MessageCircleMore, ChevronLeft, ChevronRight } from "lucide-react";
+import AuditorModal from "../auditor/AuditorModal";
+import type { RisikoItem as RisikoType } from "../auditor/AuditorModal";
 
 type Filters = {
   search: string;
   date: { start: string; end: string };
 };
 
-// RisikoItem override agar sesuai dengan modal
+// RisikoItem final setelah mapping API → table
 type RisikoItem = RisikoType & {
+  id: string;
+  title: string;
   date: string;
-  asset: { name: string; lokasi: string };
+  criteria: string;
+  category: string;
+  status: string;
+  entry_level: number;
+  asset: { name: string; lokasi?: string };
   department: { name: string };
+  priority: string;
 };
 
 export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
   const [data, setData] = useState<RisikoItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // 🔥 STATE UNTUK MODAL
   const [openModal, setOpenModal] = useState(false);
   const [selectedData, setSelectedData] = useState<RisikoItem | null>(null);
 
-  useEffect(() => {
-    setData([
-      {
-        id: "RISK-001",
-        date: "2025-10-10",
-        title: "Kebocoran data",
-        criteria: "Tinggi",
-        category: "TI",
-        status: "Diterima",
-        entry_level: 20,
-        asset: { name: "Laptop Kerja", lokasi: "Kantor Pusat" },
-        department: { name: "DISKOMINFO" },
-        type: "TI",
-        priority: "A1",
-      },
-      {
-        id: "RISK-002",
-        date: "2025-10-20",
-        title: "Gangguan Keamanan",
-        criteria: "Sedang",
-        category: "TI",
-        status: "Tertunda",
-        entry_level: 12,
-        asset: { name: "CCTV Lobby", lokasi: "Lobby" },
-        department: { name: "DISKOMINFO" },
-        type: "TI",
-        priority: "B1",
-      },
-      {
-        id: "RISK-003",
-        date: "2025-09-22",
-        title: "Permukaan Rusak",
-        criteria: "Rendah",
-        category: "NON-TI",
-        status: "Ditolak",
-        entry_level: 6,
-        asset: { name: "Meja", lokasi: "Ruang Rapat" },
-        department: { name: "DISKOMINFO" },
-        type: "NON-TI",
-        priority: "C1",
-      },
-    ]);
-  }, []);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
 
-  // ==========================================
-  //    🔥 OPEN MODAL WITH DATA
-  // ==========================================
+  const token = localStorage.getItem("token");
+
+  // ============================
+  // FETCH DATA FROM API
+  // ============================
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("https://asset-risk-management.vercel.app/api/risks", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const json = await res.json();
+
+        const mapped: RisikoItem[] = json.map((item: any) => ({
+          id: item.id,
+          title: item.title,
+          criteria: item.criteria || "-",
+          category: item.risk_category?.name || "-",
+          status: item.approval_status || "-",
+          entry_level: item.entry_level || 0,
+          priority: item.priority || "-",
+          date: item.created_at,
+          asset: { name: item.asset_info?.name || "-" },
+          department: { name: item.department?.name || "-" },
+        }));
+
+        setData(mapped);
+      } catch (e) {
+        console.error("Error fetching risks:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [token]);
+
+  // ============================
+  // MODAL HANDLING
+  // ============================
   const openCommentModal = (item: RisikoItem) => {
     setSelectedData(item);
     setOpenModal(true);
   };
 
-  // ==========================================
-  //    🔥 SUBMIT COMMENT HANDLER
-  // ==========================================
   const handleSubmitComment = (comment: string) => {
     console.log("Komentar auditor:", comment);
     console.log("Untuk risiko:", selectedData);
@@ -87,14 +87,16 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
     setSelectedData(null);
   };
 
+  // ============================
   // FILTER
+  // ============================
   const filteredData = data.filter((item) => {
     const { search, date } = filters;
 
     const matchSearch = search
-      ? item.id.toLowerCase().includes(search.toLowerCase()) ||
+      ? item.title.toLowerCase().includes(search.toLowerCase()) ||
         item.asset.name.toLowerCase().includes(search.toLowerCase()) ||
-        item.title.toLowerCase().includes(search.toLowerCase())
+        item.id.toLowerCase().includes(search.toLowerCase())
       : true;
 
     const matchDate =
@@ -106,9 +108,78 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
     return matchSearch && matchDate;
   });
 
+  // ============================
+  // PAGINATION
+  // ============================
+  const totalItems = filteredData.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const indexLast = currentPage * itemsPerPage;
+  const indexFirst = indexLast - itemsPerPage;
+  const currentData = filteredData.slice(indexFirst, indexLast);
+
+  const prevPage = () => setCurrentPage((p) => Math.max(1, p - 1));
+  const nextPage = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
+
+  // ============================
+  // SKELETON LOADING
+  // ============================
+  if (loading) {
+    return (
+      <div className="p-6 space-y-4 animate-pulse">
+        {/* Desktop skeleton */}
+        <div className="hidden xl:block">
+          <table className="w-full min-w-[1050px] text-[13px] text-center border-collapse">
+            <thead>
+              <tr>
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <th key={i} className="py-5 px-4">
+                    <div className="h-4 bg-gray-200 rounded w-20 mx-auto" />
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: itemsPerPage }).map((_, i) => (
+                <tr key={i} className="border-b border-gray-200">
+                  {Array.from({ length: 10 }).map((_, j) => (
+                    <td key={j} className="py-5">
+                      <div className="h-4 bg-gray-200 rounded w-24 mx-auto" />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden">
+          {Array.from({ length: itemsPerPage }).map((_, i) => (
+            <div
+              key={i}
+              className="border border-gray-300 rounded-xl p-4 shadow-sm bg-white"
+            >
+              <div className="h-6 bg-gray-200 rounded w-32 mb-2" />
+              <div className="h-4 bg-gray-200 rounded w-20 mb-1" />
+              <div className="h-4 bg-gray-200 rounded w-24 mb-1" />
+              <div className="h-4 bg-gray-200 rounded w-28 mb-1" />
+              <div className="h-4 bg-gray-200 rounded w-20" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // ============================
+  // RENDER TABLE
+  // ============================
+  const startIndex = indexFirst + 1;
+  const endIndex = Math.min(indexLast, totalItems);
+
   return (
     <div>
-      {/* DESKTOP */}
+      {/* DESKTOP TABLE */}
       <div className="hidden xl:block bg-white rounded-xl shadow-sm border border-gray-200 p-5">
         <table className="w-full min-w-[1050px] text-[13px] text-center border-collapse">
           <thead className="text-[#666]">
@@ -127,37 +198,31 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
           </thead>
 
           <tbody>
-            {filteredData.map((item) => (
-              <tr
-                key={item.id}
-                className="border-b border-[#e5e5e5] hover:bg-gray-50"
-              >
+            {currentData.map((item) => (
+              <tr key={item.id} className="border-b border-[#e5e5e5] hover:bg-gray-50">
                 <td className="py-5">{item.department.name}</td>
                 <td className="py-5">{item.id}</td>
                 <td className="py-5">{item.asset.name}</td>
                 <td className="py-5">{item.title}</td>
-
                 <td
                   className={`py-5 font-semibold ${
-                    item.criteria === "Tinggi"
+                    item.criteria === "High"
                       ? "text-red-500"
-                      : item.criteria === "Sedang"
+                      : item.criteria === "Medium"
                       ? "text-orange-500"
                       : "text-green-500"
                   }`}
                 >
                   {item.criteria}
                 </td>
-
                 <td className="py-5">{item.entry_level}</td>
                 <td className="py-5">{item.category}</td>
-
                 <td className="py-5">
                   <span
                     className={`px-4 py-1 rounded-full text-xs font-medium ${
-                      item.status === "Diterima"
+                      item.status === "approved"
                         ? "bg-green-100 text-green-600"
-                        : item.status === "Tertunda"
+                        : item.status === "pending"
                         ? "bg-yellow-100 text-yellow-600"
                         : "bg-red-100 text-red-600"
                     }`}
@@ -165,20 +230,18 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
                     {item.status}
                   </span>
                 </td>
-
                 <td className="py-5">
                   <Link
-                    to="/laporan/risiko-auditor/id"
+                    to={`/laporan/risiko-auditor/${item.id}`}
                     className="text-blue-600 font-medium hover:underline"
                   >
                     Detail
                   </Link>
                 </td>
-
                 <td className="py-5">
                   <button
                     className="p-2 rounded-full hover:bg-gray-100"
-                    onClick={() => openCommentModal(item)} // 🔥 OPEN MODAL
+                    onClick={() => openCommentModal(item)}
                   >
                     <MessageCircleMore className="w-5 h-5 text-gray-700" />
                   </button>
@@ -187,28 +250,73 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
             ))}
           </tbody>
         </table>
+
+        {/* FOOTER — INFO & PAGINATION */}
+        <div className="flex justify-between items-center pt-5">
+          {/* LEFT: info */}
+          <p className="text-sm text-gray-600">
+            Menampilkan {startIndex}-{endIndex} dari {totalItems} data
+          </p>
+
+          {/* CENTER: pagination */}
+          <div className="flex justify-center items-center gap-2">
+            <button
+              onClick={prevPage}
+              disabled={currentPage === 1}
+              className="px-3 py-1 rounded-lg text-sm disabled:opacity-40 flex items-center"
+            >
+              <ChevronLeft size={16} />
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter((n) => n === 1 || n === totalPages || Math.abs(n - currentPage) <= 1)
+              .map((n, i, arr) => {
+                const prev = arr[i - 1];
+                return (
+                  <div key={n} className="flex items-center">
+                    {prev && n - prev > 1 && <span className="px-2">...</span>}
+                    <button
+                      onClick={() => setCurrentPage(n)}
+                      className={`px-3 py-1 rounded-lg text-sm ${
+                        currentPage === n ? "bg-blue-600 text-white" : "hover:bg-gray-100"
+                      }`}
+                    >
+                      {n}
+                    </button>
+                  </div>
+                );
+              })}
+
+            <button
+              onClick={nextPage}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 rounded-lg text-sm disabled:opacity-40 flex items-center"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+
+          {/* right empty for spacing */}
+          <div className="w-24" />
+        </div>
       </div>
 
-      {/* MOBILE */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden">
-        {filteredData.map((item) => (
+      {/* MOBILE TABLE */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden mt-4">
+        {currentData.map((item) => (
           <div
             key={item.id}
             className="border border-gray-300 rounded-xl p-4 shadow-sm bg-white relative"
           >
             <button
               className="absolute top-3 right-3 p-2 hover:bg-gray-100 rounded-full"
-              onClick={() => openCommentModal(item)} // 🔥 OPEN MODAL MOBILE
+              onClick={() => openCommentModal(item)}
             >
               <MessageCircleMore className="w-5 h-5 text-gray-800" />
             </button>
 
             <p className="text-sm text-gray-500 mb-1">{item.date}</p>
-
-            <h3 className="text-base font-semibold text-gray-900">
-              {item.title}
-            </h3>
-
+            <h3 className="text-base font-semibold text-gray-900">{item.title}</h3>
             <p className="text-sm text-gray-500 mb-3">{item.asset.name}</p>
 
             <div className="text-sm text-gray-700 space-y-1">
@@ -221,9 +329,9 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
                 <span>Level</span>
                 <span
                   className={
-                    item.criteria === "Tinggi"
+                    item.criteria === "High"
                       ? "text-red-500 font-semibold"
-                      : item.criteria === "Sedang"
+                      : item.criteria === "Medium"
                       ? "text-orange-500 font-semibold"
                       : "text-green-500 font-semibold"
                   }
@@ -244,7 +352,7 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
 
               <div className="flex justify-between items-center pt-2">
                 <Link
-                  to="/laporan/risiko-auditor/id"
+                  to={`/laporan/risiko-auditor/${item.id}`}
                   className="text-blue-600 font-medium hover:underline text-sm"
                 >
                   Detail
@@ -252,9 +360,9 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
 
                 <span
                   className={`px-3 py-1 text-xs rounded-full font-medium ${
-                    item.status === "Diterima"
+                    item.status === "approved"
                       ? "bg-green-100 text-green-600"
-                      : item.status === "Tertunda"
+                      : item.status === "pending"
                       ? "bg-yellow-100 text-yellow-600"
                       : "bg-red-100 text-red-600"
                   }`}
@@ -267,7 +375,33 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
         ))}
       </div>
 
-      {/* 🔥 AUDITOR MODAL */}
+      {/* MOBILE PAGINATION */}
+      <div className="flex justify-between items-center mt-4 xl:hidden px-1">
+        <p className="text-sm text-gray-600">
+          {startIndex}-{endIndex} dari {totalItems} data
+        </p>
+        <div className="flex gap-3">
+          <button
+            onClick={prevPage}
+            disabled={currentPage === 1}
+            className="px-3 py-1 border rounded-md disabled:opacity-40"
+          >
+            &lt;
+          </button>
+          <span className="text-sm">
+            {currentPage}/{totalPages}
+          </span>
+          <button
+            onClick={nextPage}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 border rounded-md disabled:opacity-40"
+          >
+            &gt;
+          </button>
+        </div>
+      </div>
+
+      {/* MODAL */}
       <AuditorModal
         isOpen={openModal}
         onClose={() => setOpenModal(false)}

@@ -1,20 +1,18 @@
 import React from "react";
 
-// ⬅️ Type Risiko untuk modal
-export type RisikoItem = {
+interface AuditFile {
   id: string;
-  title: string;
-  criteria?: string;
-  entry_level?: number;
-  status?: string;
-  asset_info?: { name: string | null };
-};
+  file_code: string;
+  name: string;
+  dinas: string;
+  date: string;
+}
 
 interface AuditorModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (comment: string) => void;
-  data: RisikoItem | null; // ⬅️ TAMBAHKAN
+  data: AuditFile | null;
 }
 
 const AuditorModal: React.FC<AuditorModalProps> = ({
@@ -32,12 +30,24 @@ const AuditorModal: React.FC<AuditorModalProps> = ({
       <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-6 animate-fadeIn">
         <h2 className="text-xl font-semibold mb-4">Komentar Auditor</h2>
 
-        {/* INFO RISIKO */}
+        {/* INFO FILE AUDIT */}
         {data && (
           <div className="mb-4 text-sm text-gray-600 border p-3 rounded-md">
-            <p><b>ID Risiko:</b> {data.id}</p>
-            <p><b>Nama Risiko:</b> {data.title}</p>
-            <p><b>Aset:</b> {data.asset_info?.name || "-"}</p>
+            <p>
+              <b>ID File:</b> {data.id}
+            </p>
+            <p>
+              <b>Nama File:</b> {data.name}
+            </p>
+            <p>
+              <b>Kode File:</b> {data.file_code}
+            </p>
+            <p>
+              <b>Dinas:</b> {data.dinas}
+            </p>
+            <p>
+              <b>Tanggal:</b> {data.date}
+            </p>
           </div>
         )}
 
@@ -58,7 +68,10 @@ const AuditorModal: React.FC<AuditorModalProps> = ({
           </button>
 
           <button
-            onClick={() => onSubmit(comment)}
+            onClick={() => {
+              onSubmit(comment);
+              setComment(""); // Reset comment setelah submit
+            }}
             className="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
           >
             Kirim Komentar

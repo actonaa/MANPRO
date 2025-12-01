@@ -1,22 +1,47 @@
 import { ArrowLeft, Download } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import ExportModal from "../../components/dropdown/Export";
 
 export default function DetailLaporanPenghapusan() {
   const navigate = useNavigate();
+  const { id } = useParams(); // ambil id dari URL
   const [showExportModal, setShowExportModal] = useState(false);
   const [hover, setHover] = useState(false);
+  const [data, setData] = useState<any>(null);
 
-  const data = {
-    id: "AST - 001",
-    nama: "ASUS ZENBOOK",
-    nilai: "Rp21.500.000",
-    tanggal: "10-12-2026",
-    unit: "Departemen Teknologi Informasi",
-    pic: "chvasdbvkdsn",
-    alasan: "Terlalu usang dan tidak kompatibel dengan sistem baru.",
-  };
+  useEffect(() => {
+    const fetchAsset = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`https://asset-risk-management.vercel.app/api/assets/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const asset = await res.json();
+
+        // mapping data sesuai UI
+        setData({
+          id: asset.id,
+          nama: asset.name,
+          nilai: asset.acquisition_value
+            ? `Rp${asset.acquisition_value.toLocaleString()}`
+            : "-",
+          tanggal: asset.updated_at
+            ? new Date(asset.updated_at).toLocaleDateString("id-ID")
+            : "-",
+          unit: asset.department?.name || "-",
+          pic: asset.pic || "-",
+          alasan: asset.revision_notes || "-",
+        });
+      } catch (err) {
+        console.error("Error fetching asset:", err);
+      }
+    };
+
+    if (id) fetchAsset();
+  }, [id]);
+
+  if (!data) return <p className="text-gray-500">Loading...</p>;
 
   return (
     <div className="">
@@ -44,7 +69,7 @@ export default function DetailLaporanPenghapusan() {
           <p className="text-gray-500 mt-1">{data.nama}</p>
         </div>
 
-        {/* Export Button (Abu-abu) */}
+        {/* Export Button */}
         <button
           onClick={() => setShowExportModal(true)}
           onMouseEnter={() => setHover(true)}

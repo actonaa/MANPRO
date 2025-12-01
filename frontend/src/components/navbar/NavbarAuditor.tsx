@@ -49,7 +49,7 @@ export default function NavbarAuditor() {
     {
       label: "Notifikasi",
       icon: "/sidebar-icon/Notif.png",
-      to: "/notifikasi-auditorr",
+      to: "/notifikasi-auditor",
     },
   ];
 

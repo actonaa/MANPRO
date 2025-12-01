@@ -80,17 +80,19 @@ export default function LaporanSdmAdmin() {
         ? item.dinas.toLowerCase() === filterDinas
         : true;
 
-      // 3) PERIODE TANGGAL
+      // 3) PERIODE
       let matchPeriode = true;
 
       if (filterPeriode?.start && filterPeriode?.end) {
         const filterStart = parseYYYYMMDD(filterPeriode.start);
         const filterEnd = parseYYYYMMDD(filterPeriode.end);
 
-        const [periodStart] = item.periodeKerja.split(" - ");
-        const itemDate = parseDDMMYYYY(periodStart);
+        const [pStart, pEnd] = item.periodeKerja.split(" - ");
+        const startDate = parseDDMMYYYY(pStart);
+        const endDate = parseDDMMYYYY(pEnd);
 
-        matchPeriode = itemDate >= filterStart && itemDate <= filterEnd;
+        // cek overlap range
+        matchPeriode = startDate <= filterEnd && endDate >= filterStart;
       }
 
       return matchSearch && matchDinas && matchPeriode;
@@ -104,7 +106,9 @@ export default function LaporanSdmAdmin() {
         <h1 className="font-semibold text-[22px] md:text-2xl lg:text-[28px]">
           Laporan Data Sumber Daya Manusia
         </h1>
-        <p className="text-sm text-gray-500 mt-1">Pantau seluruh data SDM yang tercatat</p>
+        <p className="text-sm text-gray-500 mt-1">
+          Pantau seluruh data SDM yang tercatat
+        </p>
       </div>
 
       {/* ===== FILTER SECTION ===== */}

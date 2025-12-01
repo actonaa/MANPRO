@@ -38,7 +38,7 @@ export default function TabelSDM({ data }: { data: SDM[] }) {
         </button>
 
         <Link
-          to="/sdm-admin-tambah"
+          to="/sdm/aset-admin/tambah"
           className="flex items-center gap-2 text-white bg-[#0095E8] hover:bg-[#007ACC] rounded-lg px-4 py-2 text-[14px] font-medium"
         >
           <Plus className="w-4 h-4" />

@@ -24,7 +24,7 @@ import DetailJadwalPemeliharaan from "../views/dinas/Pemeliharaan/DetailJadwalPe
 
 import Notifications from "../views/dinas/Notifications";
 import NotificationsVerifikator from "../views/dinas/Notifications";
-import NotificationsAuditor from "../views/dinas/Notifications";
+import NotificationsAuditor from "../views/auditor/NotifikasiAuditor";
 
 import DashboardVerifikator from "../views/verifikator/Dashboard";
 import RisikoVerifikator from "../views/verifikator/DaftarRisiko";
@@ -86,12 +86,15 @@ import VerifikasiPenghapusan from "../views/verifikator/VerifikasiPenghapusan";
 import LaporanAsetAdmin from "../views/admin/Aset/LaporanAset";
 import LaporanRisikoAdmin from "../views/admin/Risiko/LaporanRisiko";
 import TambahRisiko from "../views/admin/Risiko/Form";
+import EditDetailRisk from "../views/admin/Risiko/EditDetailRisk";
+import DetailRisikoAdmin from "../views/admin/Risiko/DetailRisiko";
 
 import Skenario from "../views/dinas/Aset/DataSkenario";
 import TambahSkenario from "../views/dinas/Aset/TambahSkenario";
 import DetailNotifikasiAdmin from "../views/admin/DetailNotifikasiAdmin";
 import EditAset from "../views/dinas/Aset/EditAset";
 import DetailNotifikasi from "../components/Notifikasi/dinas/DetailNotif";
+import TambahSDM from "../views/admin/SDM/TambahSDM";
 
 export default function AppRoutes() {
   return (
@@ -195,11 +198,11 @@ export default function AppRoutes() {
             element={<LaporanRisikoAuditor />}
           />
           <Route
-            path="/laporan/aset-auditor/id"
+            path="/laporan/aset-auditor/:id"
             element={<DetailAsetAuditor />}
           />
           <Route
-            path="/laporan/risiko-auditor/id"
+            path="/laporan/risiko-auditor/:id"
             element={<DetailRisikoAuditor />}
           />
 
@@ -208,7 +211,7 @@ export default function AppRoutes() {
             element={<LaporanPenghapusan />}
           />
           <Route
-            path="/laporan/Penghapusan-auditor/id"
+            path="/laporan/Penghapusan-auditor/:id"
             element={<DetailLaporanPenghapusan />}
           />
 
@@ -248,18 +251,23 @@ export default function AppRoutes() {
           <Route path="/sdm/aset-admin" element={<DataSumberDayaManusia />} />
           <Route path="/sdm/aset-admin/edit" element={<EditSDM />} />
           <Route path="/sdm/aset-admin/id" element={<DetailSDM />} />
+          <Route path="/sdm/aset-admin/tambah" element={<TambahSDM />} />
 
           <Route path="/risiko-admin" element={<DashboardRisikoAdmin />} />
           <Route path="/risiko-admin/daftar" element={<DaftarRisikoAdmin />} />
 
-          <Route path="/risiko-admin/:id" element={<DetailRisiko />} />
+          <Route path="/risiko-admin/:id" element={<DetailRisikoAdmin />} />
           <Route
             path="/risiko-admin/tambah-mitigasi/:riskId"
             element={<TambahMitigasi />}
           />
           <Route
-            path="/aset-admin/tambah-risiko/:asset_id"
+            path="/aset-admin/tambah-risiko/:riskId"
             element={<TambahRisiko />}
+          />
+          <Route
+            path="/risiko-admin/edit-risiko/:riskId"
+            element={<EditDetailRisk />}
           />
 
           <Route path="/laporan/aset-admin" element={<LaporanAsetAdmin />} />

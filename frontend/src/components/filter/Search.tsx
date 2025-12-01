@@ -3,9 +3,11 @@ import { Search } from "lucide-react";
 export default function SearchBar({
   placeholder = "Search",
   onChange,
+  value,
 }: {
   placeholder?: string;
   onChange?: (v: string) => void;
+  value?: string; // ⬅ Ditambahkan
 }) {
   return (
     <div
@@ -16,6 +18,7 @@ export default function SearchBar({
 
       <input
         type="text"
+        value={value} // ⬅ Controlled value
         placeholder={placeholder}
         onChange={(e) => onChange?.(e.target.value)}
         className="w-full text-sm text-gray-700 placeholder-gray-400 outline-none bg-transparent"
