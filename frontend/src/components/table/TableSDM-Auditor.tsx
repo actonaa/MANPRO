@@ -1,80 +1,137 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
-import { MessageCircleMore } from "lucide-react";
-import AuditorModal from "../auditor/AuditorModal"; // pastikan path sesuai
+import { MessageCircleMore, ChevronLeft, ChevronRight } from "lucide-react";
+import AuditorModal from "../auditor/AuditorModal";
+
+// 🔥 TYPE UNTUK ITEM SDM
+type SDMItem = {
+  dinas: string;
+  id: string;
+  asset: string;
+  nip: string;
+  name: string;
+  tugas: string;
+  risiko: string;
+  date: string;
+};
+
+// 🔥 TYPE UNTUK SCENARIO
+type ScenarioItem = {
+  id: string;
+  name: string;
+  description: string;
+  assets: { id: string; name: string }[];
+};
+
+// 🔥 TYPE UNTUK RISIKO
+type RisikoItem = {
+  id: string;
+  title: string;
+  type: string;
+  scenario_id: string;
+  asset_info: { id: string | null; name: string | null };
+  department: string | null;
+};
 
 export default function TableSDM({ filters }: any) {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<SDMItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [selectedItem, setSelectedItem] = useState<SDMItem | null>(null);
 
+  const token = localStorage.getItem("token");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
+
+  // ======================================================
+  // FETCH SDM + SCENARIOS + RISKS
+  // ======================================================
   useEffect(() => {
-    setData([
-      {
-        dinas: "DISKOMINFO",
-        id: "AST - 001",
-        asset: "Laptop Kerja",
-        nip: "220512141116",
-        name: "Budi Santoso",
-        tugas: "Pengelolaan sistem server dan jaringan",
-        risiko: "Kehilangan data, gangguan layanan",
-        date: "2025-11-15",
-      },
-      {
-        dinas: "DISNAKER",
-        id: "AST - 002",
-        asset: "Meja",
-        nip: "220512141119",
-        name: "Cinta Laura",
-        tugas: "Pemeliharaan dan pengawasan perangkat",
-        risiko: "Kesalahan pengukuran, kerusakan",
-        date: "2025-11-15",
-      },
-      {
-        dinas: "DISBUDPORA",
-        id: "AST - 003",
-        asset: "Komputer",
-        nip: "220512141128",
-        name: "Lana Del Rey",
-        tugas: "Pengelolaan sistem server dan jaringan",
-        risiko: "Kehilangan data, gangguan layanan",
-        date: "2025-11-15",
-      },
-      {
-        dinas: "DISDUKCAPIL",
-        id: "AST - 004",
-        asset: "Kendaraan Operasional",
-        nip: "22051214102",
-        name: "Selena Gomez",
-        tugas: "Pemeliharaan dan pengawasan kendaraan",
-        risiko: "Kerusakan kendaraan, kecelakaan",
-        date: "2025-11-15",
-      },
-    ]);
-  }, []);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
 
-  // OPEN POPUP
-  const openModal = (item: any) => {
+        const [sdmRes, scenarioRes, riskRes] = await Promise.all([
+          axios.get("https://sso-user-management.vercel.app/api/hr", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get("https://asset-risk-management.vercel.app/api/scenarios", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get("https://asset-risk-management.vercel.app/api/risks", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        const sdmList = sdmRes.data.data || [];
+        const scenarioList: ScenarioItem[] = scenarioRes.data || [];
+        const risikoList: RisikoItem[] = (riskRes.data || []).filter(
+          (r: any) => r.type === "Skenario"
+        );
+
+        // 🔥 MERGE DATA SDM DENGAN SCENARIO & RISIKO
+        const merged = sdmList.map((sdm: any) => {
+          // Cari scenario yang cocok berdasarkan department SDM
+          const scenarioCocok = scenarioList.find((s) =>
+            s.assets.some((a) =>
+              a.name.toLowerCase().includes(sdm.department?.toLowerCase() || "")
+            )
+          );
+
+          // Cari risiko yang terkait dengan scenario
+          const risikoCocok = risikoList.find(
+            (r) => r.scenario_id === scenarioCocok?.id
+          );
+
+          return {
+            dinas: sdm.department || "-",
+            id: sdm.hr_id || "-",
+            asset: scenarioCocok
+              ? scenarioCocok.assets.map((a) => a.name).join(", ")
+              : "-",
+            nip: sdm.nip || "-",
+            name: sdm.name || "-",
+            tugas: scenarioCocok?.description || "-",
+            risiko: risikoCocok?.title || "-",
+            date: new Date().toISOString(),
+          };
+        });
+
+        setData(merged);
+      } catch (err) {
+        console.error("FETCH ERROR:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [token]);
+
+  // ==========================
+  // Modal
+  // ==========================
+  const openModal = (item: SDMItem) => {
     setSelectedItem(item);
     setIsModalOpen(true);
   };
 
-  // SUBMIT KOMENTAR
   const handleSubmit = (comment: string) => {
-    console.log("Komentar:", comment);
-    console.log("Untuk SDM:", selectedItem);
+    console.log("Komentar:", comment, selectedItem);
     setIsModalOpen(false);
   };
 
-  // FILTER LOGIC
+  // ==========================
+  // Filter & Pagination
+  // ==========================
   const filtered = data.filter((item) => {
     const s = filters.search.toLowerCase();
-
     const matchSearch =
       !filters.search ||
       item.id.toLowerCase().includes(s) ||
-      item.asset.toLowerCase().includes(s) ||
-      item.name.toLowerCase().includes(s);
+      item.name.toLowerCase().includes(s) ||
+      item.nip.toLowerCase().includes(s);
 
     const matchDate =
       filters.date.start && filters.date.end
@@ -85,31 +142,46 @@ export default function TableSDM({ filters }: any) {
     return matchSearch && matchDate;
   });
 
+  const totalItems = filtered.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const indexLast = currentPage * itemsPerPage;
+  const indexFirst = indexLast - itemsPerPage;
+  const currentData = filtered.slice(indexFirst, indexLast);
+  const startIndex = totalItems === 0 ? 0 : indexFirst + 1;
+  const endIndex = Math.min(indexLast, totalItems);
+
+  const prevPage = () => setCurrentPage((p) => Math.max(1, p - 1));
+  const nextPage = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
+
+  // ==========================
+  // Loading & Empty State
+  // ==========================
+  if (loading) return <p className="p-6">Loading...</p>;
+  if (!data.length) return <p className="text-red-500 p-6">Data SDM tidak ditemukan.</p>;
+
+  // ==========================
+  // Render Table
+  // ==========================
   return (
-    <div>
-      {/* DESKTOP */}
+    <div className="w-full">
       <div className="hidden xl:block bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-        <table className="w-full min-w-[1100px] text-[13px] text-center border-collapse">
+        <table className="w-full text-center border-collapse text-[13px]">
           <thead className="text-gray-600">
             <tr>
               <th className="py-5 px-4">DINAS</th>
-              <th className="py-5 px-4">ID ASET</th>
+              <th className="py-5 px-4">ID SDM</th>
               <th className="py-5 px-4">NAMA ASET</th>
               <th className="py-5 px-4">NIP</th>
               <th className="py-5 px-4">NAMA</th>
               <th className="py-5 px-4">TUGAS</th>
-              <th className="py-5 px-4">SKENARIO RISIKO</th>
+              <th className="py-5 px-4">RISIKO / SKENARIO</th>
               <th className="py-5 px-4"></th>
               <th className="py-5 px-4"></th>
             </tr>
           </thead>
-
           <tbody>
-            {filtered.map((item) => (
-              <tr
-                key={item.id}
-                className="border-b border-gray-200 hover:bg-gray-50"
-              >
+            {currentData.map((item) => (
+              <tr key={item.id} className="border-b border-gray-200 hover:bg-gray-50">
                 <td className="py-5">{item.dinas}</td>
                 <td className="py-5">{item.id}</td>
                 <td className="py-5">{item.asset}</td>
@@ -117,21 +189,13 @@ export default function TableSDM({ filters }: any) {
                 <td className="py-5">{item.name}</td>
                 <td className="py-5">{item.tugas}</td>
                 <td className="py-5">{item.risiko}</td>
-
                 <td className="py-5">
-                  <Link
-                    to="/laporan/sdm-auditor/id"
-                    className="text-blue-600 hover:underline font-medium"
-                  >
+                  <Link to="/laporan/sdm-auditor/id" className="text-blue-600 hover:underline font-medium">
                     Detail
                   </Link>
                 </td>
-
                 <td className="py-5">
-                  <button
-                    onClick={() => openModal(item)}
-                    className="p-2 rounded-full hover:bg-gray-100"
-                  >
+                  <button onClick={() => openModal(item)} className="p-2 rounded-full hover:bg-gray-100">
                     <MessageCircleMore className="w-5 h-5 text-gray-700" />
                   </button>
                 </td>
@@ -139,72 +203,53 @@ export default function TableSDM({ filters }: any) {
             ))}
           </tbody>
         </table>
-      </div>
 
-      {/* MOBILE */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden mt-4">
-        {filtered.map((item) => (
-          <div
-            key={item.id}
-            className="border border-gray-300 rounded-xl p-4 shadow-sm bg-white relative"
-          >
-            <button
-              onClick={() => openModal(item)}
-              className="absolute top-3 right-3 p-2 hover:bg-gray-100 rounded-full"
-            >
-              <MessageCircleMore className="w-5 h-5 text-gray-800" />
+        {/* Pagination Footer */}
+        <div className="flex justify-between items-center pt-5">
+          <p className="text-sm text-gray-600">
+            Menampilkan {startIndex}–{endIndex} dari {filtered.length} data
+          </p>
+          <div className="flex justify-center items-center gap-2">
+            <button onClick={prevPage} disabled={currentPage === 1} className="px-3 py-1 rounded-lg text-sm disabled:opacity-40 flex items-center">
+              <ChevronLeft size={16} />
             </button>
-
-            <h3 className="text-base font-semibold text-gray-900">
-              {item.asset}
-            </h3>
-
-            <p className="text-sm text-gray-600 mb-2">{item.id}</p>
-
-            <div className="space-y-1 text-sm text-gray-700">
-              <p className="flex justify-between">
-                <span>Dinas</span>
-                <span>{item.dinas}</span>
-              </p>
-
-              <p className="flex justify-between">
-                <span>NIP</span>
-                <span>{item.nip}</span>
-              </p>
-
-              <p className="flex justify-between">
-                <span>Nama</span>
-                <span>{item.name}</span>
-              </p>
-
-              <p className="flex justify-between">
-                <span>Tugas</span>
-                <span className="text-right w-[55%]">{item.tugas}</span>
-              </p>
-
-              <p className="flex justify-between">
-                <span>Risiko</span>
-                <span className="text-right w-[55%]">{item.risiko}</span>
-              </p>
-
-              <div className="flex justify-end pt-3">
-                <Link
-                  to="/laporan/sdm-auditor/id"
-                  className="text-blue-600 font-medium hover:underline text-sm"
-                >
-                  Detail
-                </Link>
-              </div>
-            </div>
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter((n) => n === 1 || n === totalPages || Math.abs(n - currentPage) <= 1)
+              .map((n, i, arr) => {
+                const prev = arr[i - 1];
+                return (
+                  <div key={n} className="flex items-center">
+                    {prev && n - prev > 1 && <span className="px-2">...</span>}
+                    <button
+                      onClick={() => setCurrentPage(n)}
+                      className={`px-3 py-1 rounded-lg text-sm ${currentPage === n ? "bg-blue-600 text-white" : "hover:bg-gray-100"}`}
+                    >
+                      {n}
+                    </button>
+                  </div>
+                );
+              })}
+            <button onClick={nextPage} disabled={currentPage === totalPages} className="px-3 py-1 rounded-lg text-sm disabled:opacity-40 flex items-center">
+              <ChevronRight size={16} />
+            </button>
           </div>
-        ))}
+        </div>
       </div>
 
-      {/* POPUP AUDITOR */}
+      {/* Modal */}
       <AuditorModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSubmit}
+        data={
+          selectedItem
+            ? {
+                id: selectedItem.id,
+                title: selectedItem.risiko,
+                asset_info: { name: selectedItem.asset || "-" },
+              }
+            : null
+        }
       />
     </div>
   );

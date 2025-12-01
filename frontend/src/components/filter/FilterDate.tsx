@@ -3,15 +3,15 @@ import { CalendarDays, ChevronDown } from "lucide-react";
 
 type FilterDateProps = {
   onSelect?: (dateRange: { start: string; end: string }) => void;
+  value?: { start: string | null; end: string | null }; // ⬅ Ditambahkan
 };
 
-export default function FilterDate({ onSelect }: FilterDateProps) {
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+export default function FilterDate({ onSelect, value }: FilterDateProps) {
+  const [startDate, setStartDate] = useState(value?.start || "");
+  const [endDate, setEndDate] = useState(value?.end || "");
   const [showCalendar, setShowCalendar] = useState(false);
   const calendarRef = useRef<HTMLDivElement | null>(null);
 
-  // 🔹 Tutup dropdown saat klik di luar
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -27,7 +27,6 @@ export default function FilterDate({ onSelect }: FilterDateProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showCalendar]);
 
-  // 🔹 Kirim data tanggal ke parent
   const handleApplyFilter = () => {
     if (onSelect) {
       onSelect({ start: startDate, end: endDate });
@@ -37,7 +36,6 @@ export default function FilterDate({ onSelect }: FilterDateProps) {
 
   return (
     <div className="relative w-full" ref={calendarRef}>
-      {/* 🔘 Tombol utama filter — tampilan disamakan dengan ButtonFilter */}
       <button
         onClick={() => setShowCalendar(!showCalendar)}
         className="
@@ -53,9 +51,7 @@ export default function FilterDate({ onSelect }: FilterDateProps) {
         <div className="flex items-center gap-2 truncate">
           <CalendarDays className="w-5 h-5 text-gray-500" />
           <span className="truncate text-sm font-semi text-[#6B7280]">
-            {startDate && endDate
-              ? `${startDate} — ${endDate}`
-              : "Filter"}
+            {startDate && endDate ? `${startDate} — ${endDate}` : "Filter"}
           </span>
         </div>
         <ChevronDown
@@ -65,7 +61,6 @@ export default function FilterDate({ onSelect }: FilterDateProps) {
         />
       </button>
 
-      {/* 🗓️ Dropdown Kalender */}
       {showCalendar && (
         <div
           className="
@@ -75,7 +70,6 @@ export default function FilterDate({ onSelect }: FilterDateProps) {
             w-full sm:min-w-[350px] max-w-[95vw]
           "
         >
-          {/* 🔹 Input tanggal range */}
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex flex-col w-full">
               <label className="text-xs text-gray-500 mb-1">Dari:</label>
@@ -107,7 +101,6 @@ export default function FilterDate({ onSelect }: FilterDateProps) {
             </div>
           </div>
 
-          {/* 🔹 Tombol Terapkan */}
           <div className="flex justify-end w-full mt-2">
             <button
               onClick={handleApplyFilter}
@@ -120,20 +113,6 @@ export default function FilterDate({ onSelect }: FilterDateProps) {
               "
             >
               <span>Terapkan</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                />
-              </svg>
             </button>
           </div>
         </div>

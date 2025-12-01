@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { MessageCircleMore } from "lucide-react";
 
 interface Asset {
@@ -10,226 +10,192 @@ interface Asset {
   acquisition_date: string;
   category?: { name: string };
   status?: { name: string };
-  dinas?: { name: string };
-  condition?: string;
+  department?: { name: string };
+  condition?: { name: string };
 }
 
 export default function TableAset({ filters }: { filters?: any }) {
   const [data, setData] = useState<Asset[]>([]);
-  const [filteredData, setFilteredData] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
 
-  // ============================
-  // 🔵 MODAL KOMENTAR
-  // ============================
   const [commentOpen, setCommentOpen] = useState(false);
-  const openComment = () => setCommentOpen(true);
-  const closeComment = () => setCommentOpen(false);
+  const [selectedItem, setSelectedItem] = useState<Asset | null>(null);
+
+  const openComment = (item: Asset) => {
+    setSelectedItem(item);
+    setCommentOpen(true);
+  };
+  const closeComment = () => {
+    setCommentOpen(false);
+    setSelectedItem(null);
+  };
+
+  const token = localStorage.getItem("token");
 
   // ============================
-  // 1️⃣ LOAD DUMMY DATA SEKALI
+  // FETCH DATA
   // ============================
   useEffect(() => {
-    setTimeout(() => {
-      const dummyData: Asset[] = [
-        {
-          id: "AST - 001",
-          name: "CCTV Lobby",
-          serial_number: "AST - 001",
-          lokasi: "Kantor Pusat",
-          acquisition_date: "12 - 01 - 2025",
-          category: { name: "Infrastruktur" },
-          status: { name: "Aktif" },
-          dinas: { name: "DISKOMINFO" },
-          condition: "BAIK",
-        },
-        {
-          id: "AST - 002",
-          name: "Mobil Operasional",
-          serial_number: "AST - 002",
-          lokasi: "Garasi",
-          acquisition_date: "12 - 01 - 2025",
-          category: { name: "Kendaraan" },
-          status: { name: "End-of-life" },
-          dinas: { name: "DISKOMINFO" },
-          condition: "RUSAK - BERAT",
-        },
-        {
-          id: "AST - 003",
-          name: "Mobil Operasional",
-          serial_number: "AST - 003",
-          lokasi: "Garasi",
-          acquisition_date: "12 - 01 - 2025",
-          category: { name: "Kendaraan" },
-          status: { name: "Akan Dihapus" },
-          dinas: { name: "DISKOMINFO" },
-          condition: "RUSAK - RINGAN",
-        },
-        {
-          id: "AST - 004",
-          name: "Laptop Asus Zenbook",
-          serial_number: "AST - 004",
-          lokasi: "Ruang Server",
-          acquisition_date: "12 - 01 - 2025",
-          category: { name: "Elektronik" },
-          status: { name: "Perbaikan" },
-          dinas: { name: "DISKOMINFO" },
-          condition: "RUSAK - BERAT",
-        },
-      ];
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(
+          "https://asset-risk-management.vercel.app/api/assets",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const json = await res.json();
+        const mapped: Asset[] = json.map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          serial_number: item.serial_number,
+          lokasi: item.lokasi,
+          acquisition_date: item.acquisition_date,
+          category: item.category,
+          status: item.status,
+          department: item.department,
+          condition: item.condition,
+        }));
+        setData(mapped);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [token]);
 
-      setData(dummyData);
-      setFilteredData(dummyData);
-      setLoading(false);
-    }, 400);
-  }, []);
+  // ============================
+  // FILTER DATA
+  // ============================
+  const filteredData = data.filter((item) => {
+    if (!filters) return true;
 
-  // ============================================
-  // 2️⃣ JALANKAN FILTER (SEARCH + TANGGAL)
-  // ============================================
-  useEffect(() => {
-    if (loading) return;
+    const keyword = filters.search?.toLowerCase() || "";
 
-    let result = [...data];
+    const safe = (v: any) => (typeof v === "string" ? v.toLowerCase() : "");
 
-    // 🔍 SEARCH
-    if (filters?.search) {
-      const keyword = filters.search.toLowerCase();
-      result = result.filter(
-        (item) =>
-          item.name.toLowerCase().includes(keyword) ||
-          item.id.toLowerCase().includes(keyword) ||
-          item.serial_number.toLowerCase().includes(keyword) ||
-          item.category?.name.toLowerCase().includes(keyword) ||
-          item.dinas?.name.toLowerCase().includes(keyword) ||
-          item.lokasi.toLowerCase().includes(keyword)
-      );
-    }
+    const matchSearch =
+      !keyword ||
+      safe(item.name).includes(keyword) ||
+      safe(item.serial_number).includes(keyword) ||
+      safe(item.department?.name).includes(keyword) ||
+      safe(item.category?.name).includes(keyword);
 
-    // 📅 TANGGAL
-    if (filters?.tanggal?.start && filters?.tanggal?.end) {
-      const start = new Date(filters.tanggal.start);
-      const end = new Date(filters.tanggal.end);
+    const matchDate =
+      filters.tanggal?.start && filters.tanggal?.end
+        ? new Date(item.acquisition_date) >= new Date(filters.tanggal.start) &&
+          new Date(item.acquisition_date) <= new Date(filters.tanggal.end)
+        : true;
 
-      result = result.filter((d) => {
-        const [day, month, year] = d.acquisition_date
-          .split(" - ")
-          .map((v) => v.trim());
-        const formattedDate = new Date(`${year}-${month}-${day}`);
-        return formattedDate >= start && formattedDate <= end;
-      });
-    }
+    return matchSearch && matchDate;
+  });
 
-    setFilteredData(result);
-  }, [filters, data, loading]);
+  // ============================
+  // PAGINATION
+  // ============================
+  const totalItems = filteredData.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const indexLast = currentPage * itemsPerPage;
+  const indexFirst = indexLast - itemsPerPage;
+  const currentData = filteredData.slice(indexFirst, indexLast);
 
-  // =====================================================
-  // STYLE BADGES
-  // =====================================================
-  const getConditionColor = (v: string) => {
-    switch (v) {
-      case "BAIK":
+  const prevPage = () => setCurrentPage((p) => Math.max(1, p - 1));
+  const nextPage = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
+  const startIndex = indexFirst + 1;
+  const endIndex = Math.min(indexLast, totalItems);
+
+  // ============================
+  // BADGES
+  // ============================
+  const getConditionColor = (c?: { name: string }) => {
+    switch (c?.name?.toLowerCase()) {
+      case "baik":
         return "text-green-600 font-semibold";
-      case "RUSAK - RINGAN":
+      case "rusak - ringan":
         return "text-yellow-600 font-semibold";
-      case "RUSAK - BERAT":
+      case "rusak - berat":
         return "text-red-600 font-semibold";
       default:
         return "text-gray-600";
     }
   };
 
-  const getStatusBadge = (s: string) => {
-    switch (s) {
+  const getStatusBadge = (s?: { name: string }) => {
+    switch (s?.name) {
       case "Aktif":
         return "bg-green-100 text-green-700";
       case "End-of-life":
         return "bg-red-100 text-red-700";
-      case "Akan Dihapus":
       case "Perbaikan":
+      case "Akan Dihapus":
         return "bg-yellow-100 text-yellow-700";
       default:
         return "bg-gray-100 text-gray-700";
     }
   };
 
-  if (loading) return <p className="text-center py-5">Memuat data aset...</p>;
-
-  return (
-    <div className="lg:rounded-xl p-2 lg:bg-white">
-      {/* 📱 MOBILE VIEW */}
-      <div className="grid grid-cols-1 md:grid-cols-2 md:gap-5 lg:hidden space-y-4 mt-5">
-        {filteredData.map((item) => (
-          <div
-            key={item.id}
-            className="rounded-xl border border-gray-200 shadow-sm p-4 bg-white relative"
-          >
-            {/* ICON CHAT */}
-            <button
-              onClick={openComment}
-              className="absolute top-3 right-3 p-2 rounded-full hover:bg-gray-100"
+  // ============================
+  // SKELETON LOADING
+  // ============================
+  if (loading) {
+    return (
+      <div className="p-6 space-y-4 animate-pulse">
+        <div className="hidden xl:block">
+          <table className="w-full min-w-[1050px] text-[13px] text-center border-collapse">
+            <thead>
+              <tr>
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <th key={i} className="py-5 px-4">
+                    <div className="h-4 bg-gray-200 rounded w-20 mx-auto" />
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: itemsPerPage }).map((_, i) => (
+                <tr key={i} className="border-b border-gray-200">
+                  {Array.from({ length: 10 }).map((_, j) => (
+                    <td key={j} className="py-5">
+                      <div className="h-4 bg-gray-200 rounded w-24 mx-auto" />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden">
+          {Array.from({ length: itemsPerPage }).map((_, i) => (
+            <div
+              key={i}
+              className="border border-gray-300 rounded-xl p-4 shadow-sm bg-white"
             >
-              <MessageCircleMore className="w-5 h-5 text-gray-700" />
-            </button>
-
-            <div className="flex justify-between items-center pr-10">
-              <p className="text-sm text-gray-500 font-medium">
-                {item.serial_number}
-              </p>
-
-              <a
-                href="/laporan/aset-auditor/id"
-                className="text-[#0095E8] font-medium text-sm hover:underline"
-              >
-                Detail
-              </a>
+              <div className="h-6 bg-gray-200 rounded w-32 mb-2" />
+              <div className="h-4 bg-gray-200 rounded w-20 mb-1" />
+              <div className="h-4 bg-gray-200 rounded w-24 mb-1" />
+              <div className="h-4 bg-gray-200 rounded w-28 mb-1" />
+              <div className="h-4 bg-gray-200 rounded w-20" />
             </div>
-
-            <h2 className="text-base font-semibold text-gray-900 mt-1 pr-10">
-              {item.name}
-            </h2>
-
-            <hr className="my-3" />
-
-            <div className="space-y-1 text-sm text-gray-700">
-              <p className="flex justify-between">
-                <span>Kategori</span> <span>{item.category?.name}</span>
-              </p>
-              <p className="flex justify-between">
-                <span>Lokasi</span> <span>{item.lokasi}</span>
-              </p>
-              <p className="flex justify-between">
-                <span>Dinas</span> <span>{item.dinas?.name}</span>
-              </p>
-              <p className="flex justify-between">
-                <span>Kondisi</span>
-                <span className={getConditionColor(item.condition || "")}>
-                  {item.condition}
-                </span>
-              </p>
-              <p className="flex justify-between">
-                <span>Status</span>
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(
-                    item.status?.name || ""
-                  )}`}
-                >
-                  {item.status?.name}
-                </span>
-              </p>
-              <p className="flex justify-between">
-                <span>Tanggal Pengajuan</span>{" "}
-                <span>{item.acquisition_date}</span>
-              </p>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
+    );
+  }
 
-      {/* 🖥 DESKTOP VIEW */}
-      <div className="hidden lg:block overflow-x-auto mt-5">
-        <table className="w-full min-w-[1100px] text-center text-[13px] border-collapse">
-          <thead className="text-gray-600">
+  // ============================
+  // RENDER TABLE
+  // ============================
+  return (
+    <div>
+      {/* DESKTOP TABLE */}
+      <div className="grid grid-cols-1 xl:block bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+        <table className="hidden xl:table w-full min-w-[1050px] text-[13px] text-center border-collapse">
+          <thead className="text-[#666]">
             <tr>
               <th className="py-5 px-4">DINAS</th>
               <th className="py-5 px-4">ID ASET</th>
@@ -240,72 +206,179 @@ export default function TableAset({ filters }: { filters?: any }) {
               <th className="py-5 px-4">STATUS</th>
               <th className="py-5 px-4">TANGGAL</th>
               <th className="py-5 px-4"></th>
+              <th className="py-5 px-4"></th>
             </tr>
           </thead>
-
           <tbody>
-            {filteredData.map((item, index) => (
+            {currentData.map((item) => (
               <tr
-                key={index}
-                className="border-b border-gray-200 hover:bg-gray-50"
+                key={item.id}
+                className="border-b border-[#e5e5e5] hover:bg-gray-50"
               >
-                <td className="py-5 px-4">{item.dinas?.name}</td>
-                <td className="py-5 px-4">{item.id}</td>
-                <td className="py-5 px-4">{item.name}</td>
-                <td className="py-5 px-4">{item.category?.name}</td>
-                <td className="py-5 px-4">{item.lokasi}</td>
-                <td className="py-5 px-4">
-                  <span className={getConditionColor(item.condition || "")}>
-                    {item.condition}
+                <td className="py-5">{item.department?.name}</td>
+                <td className="py-5">{item.id}</td>
+                <td className="py-5">{item.name}</td>
+                <td className="py-5">{item.category?.name}</td>
+                <td className="py-5">{item.lokasi}</td>
+                <td className="py-5">
+                  <span className={getConditionColor(item.condition)}>
+                    {item.condition?.name}
                   </span>
                 </td>
-                <td className="py-5 px-4">
+                <td className="py-5">
                   <span
-                    className={`px-4 py-1 rounded-full text-sm font-medium ${getStatusBadge(
-                      item.status?.name || ""
+                    className={`px-4 py-1 rounded-full text-xs font-medium ${getStatusBadge(
+                      item.status
                     )}`}
                   >
                     {item.status?.name}
                   </span>
                 </td>
-                <td className="py-5 px-4">{item.acquisition_date}</td>
-                <td className="py-5 px-4">
-                  <div className="flex items-center justify-center gap-3">
-                    <a
-                      href="/laporan/aset-auditor/id"
-                      className="text-[#0095E8] font-medium hover:underline"
-                    >
-                      Detail
-                    </a>
-                    <button
-                      onClick={openComment}
-                      className="p-2 hover:bg-gray-100 rounded-full"
-                    >
-                      <MessageCircleMore className="w-5 h-5 text-gray-700" />
-                    </button>
-                  </div>
+                <td className="py-5">{item.acquisition_date}</td>
+
+                {/* LINK DETAIL */}
+                <td className="py-5 text-left">
+                  <a
+                    href={`/laporan/aset-auditor/${item.id}`}
+                    className="text-blue-600 hover:underline text-sm"
+                  >
+                    Detail
+                  </a>
+                </td>
+
+                {/* ICON KOMENTAR */}
+                <td className="py-5">
+                  <button
+                    className="p-2 rounded-full hover:bg-gray-100"
+                    onClick={() => openComment(item)}
+                  >
+                    <MessageCircleMore className="w-5 h-5 text-gray-700" />
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+
+        {/* MOBILE TABLE */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden mt-4">
+          {currentData.map((item) => (
+            <div
+              key={item.id}
+              className="border border-gray-300 rounded-xl p-4 shadow-sm bg-white relative"
+            >
+              <p className="text-sm text-gray-500 mb-1">
+                {item.acquisition_date}
+              </p>
+              <h3 className="text-base font-semibold text-gray-900">
+                {item.name}
+              </h3>
+              <p className="text-sm text-gray-500 mb-3">
+                {item.department?.name}
+              </p>
+
+              <div className="text-sm text-gray-700 space-y-1">
+                <p className="flex justify-between">
+                  <span>ID</span>
+                  <span>{item.serial_number}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span>Kategori</span>
+                  <span>{item.category?.name}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span>Lokasi</span>
+                  <span>{item.lokasi}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span>Status</span>
+                  <span
+                    className={`px-3 py-1 text-xs rounded-full font-medium ${getStatusBadge(
+                      item.status
+                    )}`}
+                  >
+                    {item.status?.name}
+                  </span>
+                </p>
+
+                {/* LINK DETAIL + ICON KOMENTAR */}
+                <div className="flex justify-between items-center pt-2">
+                  <a
+                    href={`/laporan/aset-auditor/${item.id}`}
+                    className="text-blue-600 hover:underline text-sm"
+                  >
+                    Detail
+                  </a>
+                  <button
+                    className="p-2 rounded-full hover:bg-gray-100"
+                    onClick={() => openComment(item)}
+                  >
+                    <MessageCircleMore className="w-5 h-5 text-gray-800" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* PAGINATION */}
+        <div className="relative mt-5 flex items-center">
+          <p className="text-sm text-gray-600">
+            Menampilkan {startIndex}-{endIndex} dari {totalItems} data
+          </p>
+          <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2">
+            <button
+              onClick={prevPage}
+              disabled={currentPage === 1}
+              className="px-3 py-1 rounded-lg disabled:opacity-40"
+            >
+              &lt;
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter(
+                (n) =>
+                  n === 1 || n === totalPages || Math.abs(n - currentPage) <= 1
+              )
+              .map((n, i, arr) => {
+                const prev = arr[i - 1];
+                return (
+                  <div key={n} className="flex items-center">
+                    {prev && n - prev > 1 && <span className="px-2">...</span>}
+                    <button
+                      onClick={() => setCurrentPage(n)}
+                      className={`px-3 py-1 rounded-lg  text-sm ${
+                        currentPage === n
+                          ? "bg-blue-600 text-white"
+                          : "hover:bg-gray-100"
+                      }`}
+                    >
+                      {n}
+                    </button>
+                  </div>
+                );
+              })}
+            <button
+              onClick={nextPage}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 rounded-lg  disabled:opacity-40"
+            >
+              &gt;
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* =======================
-          🔵 MODAL KOMENTAR
-      ======================= */}
-      {commentOpen && (
+      {/* MODAL */}
+      {commentOpen && selectedItem && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white w-[400px] rounded-xl shadow-xl p-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-3">
               Tambahkan Komentar
             </h2>
-
             <textarea
               className="w-full h-32 border border-gray-300 rounded-lg p-3 text-sm focus:ring focus:ring-blue-200 outline-none"
               placeholder="Tulis komentar di sini..."
             />
-
             <div className="flex justify-end gap-3 mt-4">
               <button
                 onClick={closeComment}
