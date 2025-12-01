@@ -7,6 +7,7 @@ import RisikoTolak from "../../components/form/verifikator/RisikoTolak";
 type TableRisikoProps = {
   selectedLevel?: string;
   selectedDate?: { start: string; end: string } | null;
+  selectedStatus?: string; // ⬅ WAJIB TAMBAH
 };
 
 type RisikoItem = {
@@ -35,6 +36,7 @@ type ApiRisk = {
 export default function TableRisiko({
   selectedLevel = "",
   selectedDate = null,
+  selectedStatus = "",
 }: TableRisikoProps) {
   const [data, setData] = useState<RisikoItem[]>([]);
   const [selectedRisiko, setSelectedRisiko] = useState<RisikoItem | null>(null);
@@ -95,10 +97,13 @@ export default function TableRisiko({
     const matchesLevel = selectedLevel
       ? item.criteria.toLowerCase() === selectedLevel.toLowerCase()
       : true;
+    const matchesStatus = selectedStatus
+      ? item.category?.toLowerCase() === selectedStatus.toLowerCase()
+      : true;
     const matchesDate = selectedDate
       ? item.date >= selectedDate.start && item.date <= selectedDate.end
       : true;
-    return matchesLevel && matchesDate;
+    return matchesLevel && matchesStatus && matchesDate;
   });
 
   // Pagination Logic

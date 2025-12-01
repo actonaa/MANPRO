@@ -5,7 +5,7 @@ import TablePemeliharaan from "../../components/table/JadwalPemeliharaan-verifik
 
 export default function JadwalPemeliharaanVerifikator() {
   const [selectedLevel, setSelectedLevel] = useState("");
-  const [, setSelectedStatus] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedDate, setSelectedDate] = useState<{
     start: string;
     end: string;
@@ -41,23 +41,23 @@ export default function JadwalPemeliharaanVerifikator() {
           {/* 🔧 Prioritas */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Level
+              Prioritas
             </label>
             <ButtonFilter
-              label="Pilih level"
+              label="Pilih Prioritas"
               options={["Rendah", "Sedang", "Tinggi"]}
               onSelect={setSelectedLevel}
             />
           </div>
 
-          {/* 📊 Status */}
+          {/* 📊 Kategori */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Status
+              Kategori
             </label>
             <ButtonFilter
               label="Pilih status"
-              options={["Dijadwalkan", "Selesai", "Tertunda"]}
+              options={["Aset TI", "Aset Non TI"]}
               onSelect={setSelectedStatus}
             />
           </div>
@@ -65,10 +65,11 @@ export default function JadwalPemeliharaanVerifikator() {
       </div>
 
       {
-      <TablePemeliharaan
-        selectedLevel={selectedLevel}
-        selectedDate={selectedDate}
-      /> 
+        <TablePemeliharaan
+          selectedLevel={selectedLevel}
+          selectedStatus={selectedStatus}
+          selectedDate={selectedDate}
+        />
       }
     </>
   );

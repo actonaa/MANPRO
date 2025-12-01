@@ -6,7 +6,7 @@ import TolakPemeliharaan from "../../components/form/verifikator/tolakPemelihara
 
 type TablePemeliharaanProps = {
   selectedLevel?: string;
-  selectedStatus?: string;
+  selectedKategori?: string; // ⬅ TAMBAHKAN INI
   selectedDate?: { start: string; end: string } | null;
 };
 
@@ -31,7 +31,7 @@ const formatTanggal = (tanggal: string) => {
 
 export default function TablePemeliharaanVerifikator({
   selectedLevel = "",
-  selectedStatus = "",
+  selectedKategori = "", // ⬅ TAMBAHKAN INI
   selectedDate = null,
 }: TablePemeliharaanProps) {
   const [data, setData] = useState<PemeliharaanItem[]>([]);
@@ -98,14 +98,15 @@ export default function TablePemeliharaanVerifikator({
     const matchLevel = selectedLevel
       ? item.jenis.toLowerCase().includes(selectedLevel.toLowerCase())
       : true;
-    const matchStatus = selectedStatus
-      ? item.status.toLowerCase() === selectedStatus.toLowerCase()
-      : true;
+    const kategoriMatch =
+      !selectedKategori ||
+      item.category.toLowerCase() === selectedKategori.toLowerCase();
+
     const matchDate = selectedDate
       ? item.realisasi >= selectedDate.start &&
         item.realisasi <= selectedDate.end
       : true;
-    return matchLevel && matchStatus && matchDate;
+    return matchLevel && kategoriMatch && matchDate;
   });
 
   return (

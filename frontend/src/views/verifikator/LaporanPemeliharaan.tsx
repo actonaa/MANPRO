@@ -5,7 +5,6 @@ import LaporanPemeliharaan from "../../components/table/LaporanPemeliharaan-veri
 
 export default function JadwalPemeliharaanVerifikator() {
   const [selectedLevel, setSelectedLevel] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedDate, setSelectedDate] = useState<{
     start: string;
     end: string;
@@ -20,7 +19,7 @@ export default function JadwalPemeliharaanVerifikator() {
     <>
       {/* 🧭 Judul Halaman */}
       <h1 className="font-semibold text-sm mb-2 md:text-2xl xl:text-[28px]">
-        Laporan Pemeliharaan 
+        Laporan Pemeliharaan
       </h1>
       {/* 📦 Card Filter */}
       <div className="bg-white shadow-md rounded-xl p-4 border border-gray-200 mb-8">
@@ -33,38 +32,31 @@ export default function JadwalPemeliharaanVerifikator() {
             <FilterDate onSelect={handleDateChange} />
           </div>
 
-          {/* 🔧 Prioritas */}
+          {/* 🔧 Jenis */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Level
             </label>
             <ButtonFilter
-              label="Pilih level"
-              options={["Rendah", "Sedang", "Tinggi"]}
+              label="Pilih Jenis"
+              options={[
+                "Perawatan Hardware",
+                "Penggantian Komponen",
+                "Update Software",
+                "Kalibrasi Sistem",
+                "Tinggi",
+              ]}
               onSelect={setSelectedLevel}
-            />
-          </div>
-
-          {/* 📊 Status */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Status
-            </label>
-            <ButtonFilter
-              label="Pilih status"
-              options={["Dijadwalkan", "Selesai", "Tertunda"]}
-              onSelect={setSelectedStatus}
             />
           </div>
         </div>
       </div>
 
       {
-      <LaporanPemeliharaan
-        selectedLevel={selectedLevel}
-        selectedStatus={selectedStatus}
-        selectedDate={selectedDate}
-      /> 
+        <LaporanPemeliharaan
+          selectedLevel={selectedLevel}
+          selectedDate={selectedDate}
+        />
       }
     </>
   );

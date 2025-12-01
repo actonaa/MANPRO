@@ -5,6 +5,7 @@ import { Link } from "react-router-dom"; // ✅ Untuk routing
 type LaporanRiskVerifProps = {
   selectedLevel?: string;
   selectedDate?: { start: string; end: string } | null;
+  selectedKategori?: string; // ⬅ TAMBAHKAN INI
 };
 
 type RisikoItem = {
@@ -21,6 +22,7 @@ type RisikoItem = {
 export default function LaporanRiskVerif({
   selectedLevel = "",
   selectedDate = null,
+  selectedKategori = "", // ⬅ TAMBAHKAN INI
 }: LaporanRiskVerifProps) {
   const [data, setData] = useState<RisikoItem[]>([]);
 
@@ -65,12 +67,15 @@ export default function LaporanRiskVerif({
     const matchesLevel = selectedLevel
       ? item.criteria.toLowerCase() === selectedLevel.toLowerCase()
       : true;
+    const kategoriMatch =
+      !selectedKategori ||
+      item.category.toLowerCase() === selectedKategori.toLowerCase();
 
     const matchesDate = selectedDate
       ? item.date >= selectedDate.start && item.date <= selectedDate.end
       : true;
 
-    return matchesLevel && matchesDate;
+    return matchesLevel && kategoriMatch && matchesDate;
   });
 
   return (

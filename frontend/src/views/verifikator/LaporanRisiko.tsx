@@ -5,7 +5,7 @@ import LaporanRiskVerif from "../../components/table/LaporanRIsk-verifikator";
 
 export default function DaftarRisiko() {
   const [selectedLevel, setSelectedLevel] = useState("");
-  const [, setSelectedStatus] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedDate, setSelectedDate] = useState<{
     start: string;
     end: string;
@@ -49,14 +49,14 @@ export default function DaftarRisiko() {
             />
           </div>
 
-          {/* 📊 Status */}
+          {/* 📊 Kategori */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Status
+              Kategori
             </label>
             <ButtonFilter
-              label="Pilih status"
-              options={["Diterima", "Tertunda", "Ditolak"]}
+              label="Pilih Kategori"
+              options={["IT", "NON-IT"]}
               onSelect={setSelectedStatus}
             />
           </div>
@@ -67,6 +67,7 @@ export default function DaftarRisiko() {
       <LaporanRiskVerif
         selectedLevel={selectedLevel}
         selectedDate={selectedDate}
+        selectedKategori={selectedStatus}
       />
     </>
   );

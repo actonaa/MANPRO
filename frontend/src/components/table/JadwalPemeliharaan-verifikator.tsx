@@ -4,6 +4,7 @@ import PopupJadwalPemeliharaan from "../../components/form/verifikator/JadwalPem
 
 type TablePemeliharaanProps = {
   selectedLevel?: string;
+  selectedStatus?: string; // ⬅ WAJIB TAMBAH
   selectedDate?: { start: string; end: string } | null;
 };
 
@@ -19,6 +20,7 @@ type PemeliharaanItem = {
 export default function TablePemeliharaanVerifikator({
   selectedLevel = "",
   selectedDate = null,
+  selectedStatus = "",
 }: TablePemeliharaanProps) {
   const [data, setData] = useState<PemeliharaanItem[]>([]);
   const [openPopup, setOpenPopup] = useState(false);
@@ -67,10 +69,13 @@ export default function TablePemeliharaanVerifikator({
     const matchLevel = selectedLevel
       ? item.prioritas.toLowerCase() === selectedLevel.toLowerCase()
       : true;
+    const matchesStatus = selectedStatus
+      ? item.kategori?.toLowerCase() === selectedStatus.toLowerCase()
+      : true;
     const matchDate = selectedDate
       ? item.tanggal >= selectedDate.start && item.tanggal <= selectedDate.end
       : true;
-    return matchLevel && matchDate;
+    return matchLevel && matchesStatus && matchDate;
   });
 
   const getBadgeColor = (prioritas: string) => {

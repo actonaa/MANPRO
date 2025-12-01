@@ -5,8 +5,11 @@ import TableAsetVerif from "../../components/table/TableAset-verifikator";
 
 export default function JadwalPemeliharaanVerifikator() {
   const [selectedkondisi, setSelectedLevel] = useState("");
-  const [, setSelectedStatus] = useState("");
-  const [selectedDate, setSelectedDate] = useState<{ start: string; end: string } | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedDate, setSelectedDate] = useState<{
+    start: string;
+    end: string;
+  } | null>(null);
 
   // ✅ Tangani perubahan tanggal
   const handleDateChange = (range: { start: string; end: string }) => {
@@ -46,14 +49,14 @@ export default function JadwalPemeliharaanVerifikator() {
             />
           </div>
 
-          {/* 📊 Status */}
+          {/* 📊 Kategori */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Status
+              Kategori
             </label>
             <ButtonFilter
               label="Pilih status"
-              options={["Diterima", "Tertunda", "Ditolak"]}
+              options={["TI", "NON-TI"]}
               onSelect={setSelectedStatus}
             />
           </div>
@@ -64,6 +67,7 @@ export default function JadwalPemeliharaanVerifikator() {
       <TableAsetVerif
         selectedkondisi={selectedkondisi}
         selectedDate={selectedDate}
+        selectedKategori={selectedStatus}
       />
     </>
   );

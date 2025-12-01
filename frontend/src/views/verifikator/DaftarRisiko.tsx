@@ -5,8 +5,11 @@ import TableRisiko from "../../components/table/TableRisiko-verifikator";
 
 export default function DaftarRisiko() {
   const [selectedLevel, setSelectedLevel] = useState("");
-  const [, setSelectedStatus] = useState("");
-  const [selectedDate, setSelectedDate] = useState<{ start: string; end: string } | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedDate, setSelectedDate] = useState<{
+    start: string;
+    end: string;
+  } | null>(null);
 
   // ✅ Tangani perubahan tanggal
   const handleDateChange = (range: { start: string; end: string }) => {
@@ -41,19 +44,27 @@ export default function DaftarRisiko() {
             </label>
             <ButtonFilter
               label="Pilih level"
-              options={["Low", "Medium", "High"]}
+              options={["Rendah", "Sedang", "Tinggi"]}
               onSelect={setSelectedLevel}
             />
           </div>
 
-          {/* 📊 Status */}
+          {/* 📊 Kategori */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Status
+              Kategori
             </label>
             <ButtonFilter
-              label="Pilih status"
-              options={["Diterima", "Tertunda", "Ditolak"]}
+              label="Pilih Kategori"
+              options={[
+                "Infrastruktur SPBE",
+                "Rencana dan Anggaran",
+                "Keamanan SPBE",
+                "Aplikasi SPBE",
+                "Proses Bisnis",
+                "Rencana dan Anggatan",
+                "Data dan Informasi",
+              ]}
               onSelect={setSelectedStatus}
             />
           </div>
@@ -63,6 +74,7 @@ export default function DaftarRisiko() {
       {/* 📋 Tabel Risiko */}
       <TableRisiko
         selectedLevel={selectedLevel}
+        selectedStatus={selectedStatus}
         selectedDate={selectedDate}
       />
     </>

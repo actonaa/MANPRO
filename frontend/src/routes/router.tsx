@@ -89,6 +89,7 @@ import TambahRisiko from "../views/admin/Risiko/Form";
 import EditMitigasi from "../views/admin/Risiko/EditMitigasi";
 import DetailRisikoAdmin from "../views/admin/Risiko/DetailRisiko";
 import EditDetailRisiko from "../views/admin/Risiko/FormEdit-Risiko";
+import DetailLaporanPemeliharaanAdmin from "../views/admin/Pemeliharaan/DetailLaporanPemeliharaan";
 
 import Skenario from "../views/dinas/Aset/DataSkenario";
 import TambahSkenario from "../views/dinas/Aset/TambahSkenario";
@@ -287,6 +288,7 @@ export default function AppRoutes() {
             element={<DetailNotifikasiAdmin />}
           />
           <Route path="/risiko-admin/edit/:id" element={<EditMitigasi />} />
+          <Route path="/pemeliharaan-admin/detail" element={<DetailLaporanPemeliharaanAdmin />} />
         </Route>
       </Routes>
     </Router>

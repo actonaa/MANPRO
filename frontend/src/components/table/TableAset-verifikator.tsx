@@ -4,6 +4,7 @@ import { Eye } from "lucide-react";
 type TableProps = {
   selectedkondisi?: string;
   selectedDate?: { start: string; end: string } | null;
+  selectedKategori?: string; // ⬅ TAMBAHKAN INI
 };
 
 type AsetItem = {
@@ -18,6 +19,7 @@ type AsetItem = {
 export default function TableAset({
   selectedkondisi = "",
   selectedDate = null,
+  selectedKategori = "", // ⬅ TAMBAHKAN INI
 }: TableProps) {
   const [data, setData] = useState<AsetItem[]>([]);
 
@@ -81,11 +83,14 @@ export default function TableAset({
     const kondisiMatch =
       !selectedkondisi ||
       item.kondisi.toLowerCase().includes(selectedkondisi.toLowerCase());
+    const kategoriMatch =
+      !selectedKategori ||
+      item.kategori.toLowerCase() === selectedKategori.toLowerCase();
     const dateMatch =
       !selectedDate ||
       (parseDate(item.tanggal) >= parseDate(selectedDate.start) &&
         parseDate(item.tanggal) <= parseDate(selectedDate.end));
-    return kondisiMatch && dateMatch;
+    return kondisiMatch && kategoriMatch && dateMatch;
   });
 
   const getKondisiColor = (kondisi: string) => {
@@ -122,7 +127,11 @@ export default function TableAset({
                 <td className="py-5 px-4">{item.nama}</td>
                 <td className="py-5 px-4">{item.kategori}</td>
                 <td className="py-5 px-4">{item.lokasi}</td>
-                <td className={`py-5 px-4 font-semibold ${getKondisiColor(item.kondisi)}`}>
+                <td
+                  className={`py-5 px-4 font-semibold ${getKondisiColor(
+                    item.kondisi
+                  )}`}
+                >
                   {item.kondisi}
                 </td>
                 <td className="py-5 px-4">{formatTanggal(item.tanggal)}</td>
@@ -149,10 +158,14 @@ export default function TableAset({
             className="border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition bg-white"
           >
             <div className="flex justify-between items-center mb-2">
-              <p className="text-sm text-gray-500">{formatTanggal(item.tanggal)}</p>
+              <p className="text-sm text-gray-500">
+                {formatTanggal(item.tanggal)}
+              </p>
             </div>
 
-            <h3 className="text-base font-semibold text-gray-800 mb-1">{item.nama}</h3>
+            <h3 className="text-base font-semibold text-gray-800 mb-1">
+              {item.nama}
+            </h3>
             <p className="text-sm text-gray-500 mb-3">{item.kategori}</p>
 
             <div className="grid grid-cols-2 text-sm text-gray-600 gap-y-1">
@@ -161,15 +174,19 @@ export default function TableAset({
               </p>
               <p>
                 <span className="font-medium text-gray-700">Kondisi:</span>{" "}
-                <span className={`${getKondisiColor(item.kondisi)} font-semibold`}>
+                <span
+                  className={`${getKondisiColor(item.kondisi)} font-semibold`}
+                >
                   {item.kondisi}
                 </span>
               </p>
               <p>
-                <span className="font-medium text-gray-700">Lokasi:</span> {item.lokasi}
+                <span className="font-medium text-gray-700">Lokasi:</span>{" "}
+                {item.lokasi}
               </p>
               <p>
-                <span className="font-medium text-gray-700">Kategori:</span> {item.kategori}
+                <span className="font-medium text-gray-700">Kategori:</span>{" "}
+                {item.kategori}
               </p>
             </div>
 
@@ -187,7 +204,9 @@ export default function TableAset({
       </div>
 
       {filteredData.length === 0 && (
-        <p className="text-center text-gray-500 py-6">Tidak ada data yang cocok dengan filter.</p>
+        <p className="text-center text-gray-500 py-6">
+          Tidak ada data yang cocok dengan filter.
+        </p>
       )}
     </div>
   );
