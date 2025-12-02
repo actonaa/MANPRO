@@ -4,7 +4,7 @@ import ButtonFilter from "../../../components/button/ButtonFilter";
 import VerifikasiAsetAdmin from "../../../components/table/VerifikasiAsetAdmin";
 import FilterDate from "../../../components/filter/FilterDate";
 
-export default function VerifikasiAsetAdminPage() {
+export default function VerifikasiPenghapusanAdminPage() {
   const [condition, setCondition] = useState("");
   const [category, setCategory] = useState("");
   const [search, setSearch] = useState("");
@@ -18,12 +18,13 @@ export default function VerifikasiAsetAdminPage() {
     <div className="p-4 space-y-6">
       {/* Judul */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-800">Verifikasi Penghapusan</h1>
+        <h1 className="text-2xl font-bold text-gray-800">
+          Verifikasi Penghapusan
+        </h1>
       </div>
 
       {/* Card Filter */}
       <div className="bg-white shadow-md rounded-lg p-4 border border-gray-200 space-y-4">
-        
         {/* 🔍 Search Bar */}
         <div className="relative w-[300px]">
           <Search
@@ -41,7 +42,6 @@ export default function VerifikasiAsetAdminPage() {
 
         {/* Filter Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
           {/* Periode (Menggunakan FilterDate) */}
           <div>
             <p className="text-sm font-medium text-gray-600 mb-1">Periode</p>
@@ -73,7 +73,6 @@ export default function VerifikasiAsetAdminPage() {
               onSelect={handleKategoriChange}
             />
           </div>
-
         </div>
       </div>
 

@@ -77,6 +77,9 @@ export default function Tambah() {
     nilaiAset: "",
     vendor: "",
     kategoriAsetNama: "",
+    department_id: "",
+    division_id: "",
+    section_id: "",
   });
 
   // --- Data Step TI ---
@@ -116,9 +119,9 @@ export default function Tambah() {
       formDataSend.append("bmd_code", formData.kodeBMD);
       formDataSend.append("acquisition_date", formData.tanggalPerolehan || "");
       formDataSend.append("lokasi", formData.lokasiAset);
-      formDataSend.append("dinas", formData.dinas);
-      formDataSend.append("divisi", formData.divisi);
-      formDataSend.append("seksi", formData.seksi);
+      formDataSend.append("department_id", formData.department_id || "");
+      formDataSend.append("division_id", formData.division_id || "");
+      formDataSend.append("section_id", formData.section_id || "");
       formDataSend.append("pic", formData.penanggungJawab);
       formDataSend.append("category_id", formData.kategoriAset);
       formDataSend.append("sub_category_id", formData.subKategori);
@@ -424,7 +427,7 @@ export default function Tambah() {
 
             {/* Tombol */}
             <button
-              onClick={() => navigate(`/aset/${savedAsset?.id}`)}
+              onClick={() => navigate(`/aset-admin/${savedAsset?.id}`)}
               className="w-full bg-blue-600 text-white py-3.5 rounded-lg font-medium hover:bg-blue-700"
             >
               Lihat Detail Aset
@@ -432,7 +435,7 @@ export default function Tambah() {
 
             <button
               onClick={() => {
-                navigate("/aset/tambah", { replace: true });
+                navigate("/aset-admin/tambah", { replace: true });
                 window.location.reload();
               }}
               className="w-full text-blue-600 py-3.5 rounded-lg font-medium hover:bg-blue-50 mt-3"
@@ -441,7 +444,7 @@ export default function Tambah() {
             </button>
 
             <button
-              onClick={() => navigate("/aset")}
+              onClick={() => navigate("/aset-admin")}
               className="w-full text-gray-600 py-2 text-sm hover:text-gray-800 mt-2"
             >
               Kembali ke Dashboard Aset

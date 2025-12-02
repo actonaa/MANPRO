@@ -1,19 +1,50 @@
-import { useState } from "react";
-import {
-  Menu,
-  X,
-  Search,
-  CircleChevronDown,
-  ChevronDown,
-  ChevronUp,
-  LogOut,
-} from "lucide-react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect } from "react";
+import { Menu, X, ChevronDown, ChevronUp, LogOut } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
+import axios from "axios";
 
-export default function NavbarAdmin() {
+interface NotificationItem {
+  id: string;
+  message: string;
+  is_read: boolean;
+  category: string;
+  // tambah field lain jika perlu
+}
+
+export default function NavbarDiskominfo() {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  // === Tambahan Notifikasi ===
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await axios.get<NotificationItem[]>(
+          "https://asset-risk-management.vercel.app/api/notifications",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        const data = res.data; // sudah aman, bukan unknown
+
+        const unread = data.filter(
+          (item: any) => item.is_read === false
+        ).length;
+        setUnreadCount(unread);
+      } catch (err) {
+        console.error("Gagal mengambil notifikasi:", err);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
 
   // === Data sidebar utama ===
   const sidebarItems = [
@@ -28,15 +59,13 @@ export default function NavbarAdmin() {
       children: [
         { label: "Data Aset", to: "/aset-admin" },
         { label: "Data SDM", to: "/sdm/aset-admin" },
-        { label: "Verifikasi Aset", to: "/Verikasi/aset-admin" },
+        { label: "Verifikasi Penghapusan", to: "/Verikasi/aset-admin" },
       ],
     },
     {
       label: "Kelola Risiko",
       icon: "/sidebar-icon/Risk.png",
-      children: [
-        { label: "Data Risiko", to: "/risiko-admin" },
-      ],
+      children: [{ label: "Data Risiko", to: "/risiko-admin" }],
     },
     {
       label: "Laporan",
@@ -80,6 +109,10 @@ export default function NavbarAdmin() {
     setIsSidebarOpen(false);
   };
 
+  // === Ambil data user ===
+  const userString = localStorage.getItem("user");
+  const user = userString ? JSON.parse(userString) : null;
+
   return (
     <div>
       {/* === Navbar Atas === */}
@@ -97,18 +130,18 @@ export default function NavbarAdmin() {
           className="hidden lg:block w-[140px]"
         />
 
-        <button className="flex items-center gap-2 px-4 py-2 w-1/2 lg:w-1/4 lg:-ml-130 xl:-ml-160 bg-gray-50 border border-gray-200 rounded-full text-gray-500 hover:bg-gray-100 transition">
-          <Search className="w-4 h-4" />
-          <span className="text-sm">Cari</span>
-        </button>
-
         <div className="flex items-center gap-3 cursor-pointer">
           <img
             src="/navbar/user.png"
             alt="user"
             className="w-[35px] h-[35px] rounded-full"
           />
-          <CircleChevronDown className="text-[#475467] text-xs" />
+          <div className="text-xs">
+            <p className="font-semibold text-slate-900">
+              {user?.name} ({user?.role})
+            </p>
+            <p className="font-light text-slate-900">{user?.department}</p>
+          </div>
         </div>
       </div>
 
@@ -122,14 +155,14 @@ export default function NavbarAdmin() {
 
       {/* === Sidebar === */}
       <div
-        className={`fixed top-0 left-0 w-[240px] bg-white shadow-lg transition-transform duration-300 h-screen z-60 lg:z-40
+        className={`fixed top-0 left-0 w-[240px] bg-white shadow-lg transition-transform duration-300 whitespace-nowrap h-screen z-60 lg:z-40
           ${
             isSidebarOpen
               ? "translate-x-0"
               : "-translate-x-full lg:translate-x-0"
           }`}
       >
-        {/* Header Sidebar (mobile) */}
+        {/* Sidebar Mobile Header */}
         <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200 lg:hidden">
           <img src="/logo/LogoMobile.png" alt="sirasa" className="w-[120px]" />
           <button
@@ -152,6 +185,7 @@ export default function NavbarAdmin() {
                     location.pathname.startsWith(sub.to)
                   ));
 
+              // ==== ITEM DENGAN CHILDREN ====
               if (item.children) {
                 return (
                   <div key={item.label}>
@@ -166,8 +200,7 @@ export default function NavbarAdmin() {
                       <div className="flex items-center gap-4">
                         <img
                           src={item.icon}
-                          alt={item.label}
-                          className={`w-5 h-5 transition duration-200 ${
+                          className={`w-5 h-5 ${
                             isOpen
                               ? "invert brightness-0"
                               : "group-hover:invert group-hover:brightness-0"
@@ -175,6 +208,7 @@ export default function NavbarAdmin() {
                         />
                         <p className="font-medium">{item.label}</p>
                       </div>
+
                       {isOpen ? (
                         <ChevronUp className="w-4 h-4" />
                       ) : (
@@ -182,6 +216,7 @@ export default function NavbarAdmin() {
                       )}
                     </button>
 
+                    {/* Submenu */}
                     {isOpen && (
                       <div className="mt-1 flex flex-col space-y-1">
                         {item.children.map((sub) => (
@@ -190,7 +225,7 @@ export default function NavbarAdmin() {
                             to={sub.to}
                             onClick={() => setIsSidebarOpen(false)}
                             className={({ isActive }) =>
-                              `block px-3 py-4 rounded-xl text-sm font-medium transition duration-200 ${
+                              `block px-3 py-4 rounded-xl text-sm font-medium transition ${
                                 isActive
                                   ? "bg-blue-100 text-blue-500"
                                   : "text-slate-500 hover:bg-blue-500 hover:text-white"
@@ -206,13 +241,14 @@ export default function NavbarAdmin() {
                 );
               }
 
+              // ==== ITEM TANPA CHILDREN (Termasuk Notifikasi) ====
               return (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   onClick={() => handleNavClick()}
                   className={({ isActive }) =>
-                    `group flex items-center gap-4 p-4 rounded-xl transition duration-200 ${
+                    `group relative flex items-center gap-4 p-4 rounded-xl transition ${
                       isActive
                         ? "bg-blue-500 text-white"
                         : "text-slate-500 hover:bg-blue-500 hover:text-white"
@@ -223,14 +259,21 @@ export default function NavbarAdmin() {
                     <>
                       <img
                         src={item.icon}
-                        alt={item.label}
-                        className={`w-5 h-5 transition duration-200 ${
+                        className={`w-5 h-5 ${
                           isActive
                             ? "invert brightness-0"
                             : "group-hover:invert group-hover:brightness-0"
                         }`}
                       />
+
                       <p className="font-medium">{item.label}</p>
+
+                      {/* Badge Notifikasi */}
+                      {item.label === "Notifikasi" && unreadCount > 0 && (
+                        <span className="absolute right-4 top-3 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                          {unreadCount}
+                        </span>
+                      )}
                     </>
                   )}
                 </NavLink>
@@ -238,11 +281,11 @@ export default function NavbarAdmin() {
             })}
           </div>
 
-          {/* Tombol Logout di bawah */}
+          {/* Tombol Logout */}
           <div className="p-4 border-t border-gray-200">
             <a
               href="https://fe-sso.vercel.app"
-              className="flex items-center gap-4 p-4 rounded-xl text-slate-500 hover:bg-red-500 hover:text-white transition duration-200"
+              className="flex items-center gap-4 p-4 rounded-xl text-slate-500 hover:bg-red-500 hover:text-white transition"
             >
               <LogOut className="w-5 h-5" />
               <p className="font-medium">Keluar Aplikasi</p>

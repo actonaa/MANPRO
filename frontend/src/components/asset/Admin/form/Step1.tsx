@@ -10,8 +10,9 @@ export interface AsetFormData {
   dinas: string;
   divisi: string;
   seksi: string;
-  department_id?: string;
-  division_id?: string;
+  department_id: string;
+  division_id: string;
+  section_id: string;
   indukAset: string;
   lokasiAset: string;
   penanggungJawab: string;
@@ -55,14 +56,16 @@ export default function Step1({
   const [divisions, setDivisions] = useState<any[]>([]);
   const [showDropdownDivisi, setShowDropdownDivisi] = useState(false);
   const [showDropdownDinas, setShowDropdownDinas] = useState(false);
+  const [searchDinas, setSearchDinas] = useState("");
+  const [searchDivisi, setSearchDivisi] = useState("");
+  const [searchSeksi, setSearchSeksi] = useState("");
 
   const divisiRef = useRef<HTMLDivElement>(null);
   const dinasRef = useRef<HTMLDivElement>(null);
-
   const seksiRef = useRef<HTMLDivElement>(null);
-
   const indukRef = useRef<HTMLDivElement>(null);
   const pjRef = useRef<HTMLDivElement>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const token = localStorage.getItem("token");
@@ -208,6 +211,47 @@ export default function Step1({
     fetchDepartments();
   }, []);
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dinasRef.current &&
+        !dinasRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdownDinas(false);
+      }
+
+      if (
+        divisiRef.current &&
+        !divisiRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdownDivisi(false);
+      }
+
+      if (
+        seksiRef.current &&
+        !seksiRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdownSeksi(false);
+      }
+
+      if (
+        indukRef.current &&
+        !indukRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+
+      if (pjRef.current && !pjRef.current.contains(event.target as Node)) {
+        setShowDropdownPJ(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const selectedDepartmentName = departments.find(
     (d) => d.department_id === formData.department_id
   )?.department_name;
@@ -269,6 +313,7 @@ export default function Step1({
     "subKategori",
     "kondisi",
     "useful_life",
+    "dinas",
   ];
 
   const validateForm = () => {
@@ -377,35 +422,53 @@ export default function Step1({
           </div>
 
           {showDropdownDinas && (
-            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow max-h-48 overflow-y-auto">
-              {departments.length > 0 ? (
-                departments.map((dept) => (
-                  <div
-                    key={dept.department_id || dept.id}
-                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                    onClick={() => {
-                      setFormData((prev) => ({
-                        ...prev,
-                        dinas: dept.department_name,
-                        department_id: dept.department_id,
-                        divisi: "",
-                        seksi: "",
-                        indukAset: "",
-                      }));
-                      setShowDropdownDinas(false);
-                    }}
-                  >
-                    {dept.department_name}
-                  </div>
-                ))
-              ) : (
-                <div className="px-3 py-2 text-sm text-gray-500">
-                  Loading...
-                </div>
-              )}
+            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow max-h-60 overflow-hidden">
+              <div className="flex items-center border-b border-gray-300 p-2">
+                <Search className="w-4 h-4 text-gray-400 mr-2" />
+                <input
+                  type="text"
+                  placeholder="Cari dinas..."
+                  value={searchDinas}
+                  onChange={(e) => setSearchDinas(e.target.value)}
+                  className="w-full outline-none py-1"
+                />
+              </div>
+
+              <div className="max-h-48 overflow-y-auto">
+                {departments
+                  .filter((dept) =>
+                    dept.department_name
+                      .toLowerCase()
+                      .includes(searchDinas.toLowerCase())
+                  )
+                  .map((dept) => (
+                    <div
+                      key={dept.department_id}
+                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                      onClick={() => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          dinas: dept.department_name,
+                          department_id: dept.department_id,
+                          divisi: "",
+                          seksi: "",
+                        }));
+                        setShowDropdownDinas(false);
+                        setSearchDinas("");
+                      }}
+                    >
+                      {dept.department_name}
+                    </div>
+                  ))}
+              </div>
             </div>
           )}
         </div>
+
+        {/* 🔥 ERROR MESSAGE DINAS */}
+        {errors.dinas && (
+          <p className="text-sm text-red-500 mt-1">{errors.dinas}</p>
+        )}
       </div>
 
       {/* Divisi */}
@@ -423,30 +486,45 @@ export default function Step1({
           </div>
 
           {showDropdownDivisi && (
-            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow max-h-48 overflow-y-auto">
-              {filteredDivisions.length > 0 ? (
-                filteredDivisions.map((div: any) => (
-                  <div
-                    key={div.division_id}
-                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                    onClick={() => {
-                      setFormData((prev) => ({
-                        ...prev,
-                        divisi: div.division_name,
-                        division_id: div.division_id,
-                        seksi: "",
-                      }));
-                      setShowDropdownDivisi(false);
-                    }}
-                  >
-                    {div.division_name}
-                  </div>
-                ))
-              ) : (
-                <div className="px-3 py-2 text-sm text-gray-500">
-                  Pilih dinas terlebih dahulu
-                </div>
-              )}
+            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow max-h-60 overflow-hidden">
+              {/* Search box */}
+              <div className="flex items-center border-b border-gray-300 p-2">
+                <Search className="w-4 h-4 text-gray-400 mr-2" />
+                <input
+                  type="text"
+                  placeholder="Cari divisi..."
+                  value={searchDivisi}
+                  onChange={(e) => setSearchDivisi(e.target.value)}
+                  className="w-full outline-none py-1"
+                />
+              </div>
+
+              <div className="max-h-48 overflow-y-auto">
+                {filteredDivisions
+                  .filter((div) =>
+                    div.division_name
+                      .toLowerCase()
+                      .includes(searchDivisi.toLowerCase())
+                  )
+                  .map((div) => (
+                    <div
+                      key={div.division_id}
+                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                      onClick={() => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          divisi: div.division_name,
+                          division_id: div.division_id,
+                          seksi: "",
+                        }));
+                        setShowDropdownDivisi(false);
+                        setSearchDivisi("");
+                      }}
+                    >
+                      {div.division_name}
+                    </div>
+                  ))}
+              </div>
             </div>
           )}
         </div>
@@ -467,28 +545,44 @@ export default function Step1({
           </div>
 
           {showDropdownSeksi && (
-            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow max-h-48 overflow-y-auto">
-              {filteredSections.length > 0 ? (
-                filteredSections.map((sec: any) => (
-                  <div
-                    key={sec.section_id}
-                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                    onClick={() => {
-                      setFormData((prev) => ({
-                        ...prev,
-                        seksi: sec.section_name,
-                      }));
-                      setShowDropdownSeksi(false);
-                    }}
-                  >
-                    {sec.section_name}
-                  </div>
-                ))
-              ) : (
-                <div className="px-3 py-2 text-sm text-gray-500">
-                  Pilih divisi terlebih dahulu
-                </div>
-              )}
+            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow max-h-60 overflow-hidden">
+              {/* Search box */}
+              <div className="flex items-center border-b border-gray-300 p-2">
+                <Search className="w-4 h-4 text-gray-400 mr-2" />
+                <input
+                  type="text"
+                  placeholder="Cari seksi..."
+                  value={searchSeksi}
+                  onChange={(e) => setSearchSeksi(e.target.value)}
+                  className="w-full outline-none py-1"
+                />
+              </div>
+
+              <div className="max-h-48 overflow-y-auto">
+                {filteredSections
+                  .filter((s) =>
+                    s.section_name
+                      .toLowerCase()
+                      .includes(searchSeksi.toLowerCase())
+                  )
+                  .map((sec) => (
+                    <div
+                      key={sec.section_id}
+                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                      onClick={() => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          seksi: sec.section_name,
+                          section_id: sec.section_id,
+                        }));
+                        setShowDropdownSeksi(false);
+                        setSearchSeksi("");
+                      }}
+                    >
+                      {sec.section_name}
+                    </div>
+                  ))}
+              </div>
             </div>
           )}
         </div>

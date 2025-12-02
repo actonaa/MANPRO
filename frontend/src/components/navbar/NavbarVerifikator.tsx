@@ -12,7 +12,7 @@ interface NotificationItem {
   // tambah field lain jika perlu
 }
 
-export default function NavbarDinas() {
+export default function NavbarVerifikator() {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
