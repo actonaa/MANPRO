@@ -7,9 +7,11 @@ export interface AsetFormData {
   merkTipe: string;
   kodeBMD: string;
   tanggalPerolehan: string;
-  divisi: string;
   dinas: string;
+  divisi: string;
+  seksi: string;
   department_id?: string;
+  division_id?: string;
   indukAset: string;
   lokasiAset: string;
   penanggungJawab: string;
@@ -41,18 +43,27 @@ export default function Step1({
   const [categories, setCategories] = useState<any[]>([]);
   const [subcategories, setSubcategories] = useState<any[]>([]);
   const [allAssets, setAllAssets] = useState<any[]>([]);
-
   const [searchInduk, setSearchInduk] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
-
   const [allHR, setAllHR] = useState<any[]>([]);
   const [searchPJ, setSearchPJ] = useState("");
   const [showDropdownPJ, setShowDropdownPJ] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [departments, setDepartments] = useState<any[]>([]);
+  const [sections, setSections] = useState<any[]>([]);
+  const [showDropdownSeksi, setShowDropdownSeksi] = useState(false);
+  const [divisions, setDivisions] = useState<any[]>([]);
+  const [showDropdownDivisi, setShowDropdownDivisi] = useState(false);
+  const [showDropdownDinas, setShowDropdownDinas] = useState(false);
+
+  const divisiRef = useRef<HTMLDivElement>(null);
+  const dinasRef = useRef<HTMLDivElement>(null);
+
+  const seksiRef = useRef<HTMLDivElement>(null);
 
   const indukRef = useRef<HTMLDivElement>(null);
   const pjRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const token = localStorage.getItem("token");
 
@@ -61,8 +72,6 @@ export default function Step1({
     Ringan: "529392ea-6133-4243-8039-1e62f15c2066",
     Berat: "6e41ff82-91db-451d-88a5-1d93f9855060",
   };
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -89,23 +98,6 @@ export default function Step1({
       }
     }
     fetchData();
-  }, [token]);
-
-  useEffect(() => {
-    async function fetchAssets() {
-      try {
-        const res = await fetch(
-          "https://asset-risk-management.vercel.app/api/assets",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setAllAssets(await res.json());
-      } catch (error) {
-        console.error("Gagal fetch aset induk:", error);
-      }
-    }
-    fetchAssets();
   }, [token]);
 
   useEffect(() => {
@@ -149,83 +141,27 @@ export default function Step1({
     fetchAssets();
   }, [token]);
 
-  const selectedDepartmentName = departments.find(
-    (d) => d.department_id === formData.department_id
-  )?.department_name;
+  useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        const token = localStorage.getItem("token");
 
-  const filteredHR = allHR.filter(
-    (h) =>
-      h.name?.toLowerCase().includes(searchPJ.toLowerCase()) &&
-      h.department === selectedDepartmentName
-  );
+        const res = await fetch(
+          "https://sso-user-management.vercel.app/api/hierarchy/sections",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    // validasi langsung
-    if (!value || value.trim() === "") {
-      setErrors((prev) => ({ ...prev, [name]: "Field ini wajib diisi" }));
-    } else {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
-  };
-
-  const filteredSubcategories = subcategories.filter(
-    (sub) => sub.category_id === formData.kategoriAset
-  );
-
-  const filteredAssets = allAssets
-    .filter((a) => {
-      const statusName = a.status?.name;
-      return statusName === "Aktif" || statusName === "Pemeliharaan";
-    })
-    .filter((a) =>
-      formData.department_id ? a.department_id === formData.department_id : true
-    )
-    .filter((a) => a.name?.toLowerCase().includes(searchInduk.toLowerCase()));
-
-  const requiredFields: (keyof AsetFormData)[] = [
-    "namaAset",
-    "merkTipe",
-    "kodeBMD",
-    "tanggalPerolehan",
-    "lokasiAset",
-    "penanggungJawab",
-    "kategoriAset",
-    "subKategori",
-    "kondisi",
-    "useful_life",
-  ];
-
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    requiredFields.forEach((field) => {
-      const value = formData[field];
-
-      if (!value || value.toString().trim() === "") {
-        newErrors[field] = "Field ini wajib diisi";
+        const json = await res.json();
+        setSections(json.data || []);
+      } catch (error) {
+        console.error("Gagal fetch sections:", error);
       }
-    });
+    };
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const [divisions, setDivisions] = useState<any[]>([]);
-
-  const [showDropdownDivisi, setShowDropdownDivisi] = useState(false);
-  const divisiRef = useRef<HTMLDivElement>(null);
-
-  const [showDropdownDinas, setShowDropdownDinas] = useState(false);
-  const dinasRef = useRef<HTMLDivElement>(null);
+    fetchSections();
+  }, []);
 
   useEffect(() => {
     const fetchDivisionData = async () => {
@@ -271,6 +207,84 @@ export default function Step1({
 
     fetchDepartments();
   }, []);
+
+  const selectedDepartmentName = departments.find(
+    (d) => d.department_id === formData.department_id
+  )?.department_name;
+
+  const filteredHR = allHR.filter(
+    (h) =>
+      h.name?.toLowerCase().includes(searchPJ.toLowerCase()) &&
+      h.department === selectedDepartmentName
+  );
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // validasi langsung
+    if (!value || value.trim() === "") {
+      setErrors((prev) => ({ ...prev, [name]: "Field ini wajib diisi" }));
+    } else {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const filteredSubcategories = subcategories.filter(
+    (sub) => sub.category_id === formData.kategoriAset
+  );
+
+  const filteredDivisions = divisions.filter(
+    (div) => div.department_id === formData.department_id
+  );
+
+  const filteredSections = sections.filter(
+    (s) => s.division_id === formData.division_id
+  );
+
+  const filteredAssets = allAssets
+    .filter((a) => {
+      const statusName = a.status?.name;
+      return statusName === "Aktif" || statusName === "Pemeliharaan";
+    })
+    .filter((a) =>
+      formData.department_id ? a.department_id === formData.department_id : true
+    )
+    .filter((a) => a.name?.toLowerCase().includes(searchInduk.toLowerCase()));
+
+  const requiredFields: (keyof AsetFormData)[] = [
+    "namaAset",
+    "merkTipe",
+    "kodeBMD",
+    "tanggalPerolehan",
+    "lokasiAset",
+    "penanggungJawab",
+    "kategoriAset",
+    "subKategori",
+    "kondisi",
+    "useful_life",
+  ];
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    requiredFields.forEach((field) => {
+      const value = formData[field];
+
+      if (!value || value.toString().trim() === "") {
+        newErrors[field] = "Field ini wajib diisi";
+      }
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6 space-y-5">
@@ -348,48 +362,6 @@ export default function Step1({
         )}
       </div>
 
-      {/* Divisi */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium mb-1">Divisi</label>
-        <div className="relative w-full" ref={divisiRef}>
-          <div
-            className="flex items-center justify-between border border-gray-300 px-3 py-2 rounded cursor-pointer"
-            onClick={() => setShowDropdownDivisi(!showDropdownDivisi)}
-          >
-            <span className={formData.divisi ? "text-black" : "text-gray-400"}>
-              {formData.divisi || "Pilih Divisi"}
-            </span>
-            <ChevronDown className="w-5 h-5 text-gray-500" />
-          </div>
-
-          {showDropdownDivisi && (
-            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow max-h-48 overflow-y-auto">
-              {divisions.length > 0 ? (
-                divisions.map((div: any, idx) => (
-                  <div
-                    key={idx}
-                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                    onClick={() => {
-                      setFormData((prev) => ({
-                        ...prev,
-                        divisi: div.division_name,
-                      }));
-                      setShowDropdownDivisi(false);
-                    }}
-                  >
-                    {div.division_name}
-                  </div>
-                ))
-              ) : (
-                <div className="px-3 py-2 text-sm text-gray-500">
-                  Loading...
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
       {/* Dinas */}
       <div className="mb-6">
         <label className="block text-sm font-medium mb-1">Dinas</label>
@@ -415,8 +387,10 @@ export default function Step1({
                       setFormData((prev) => ({
                         ...prev,
                         dinas: dept.department_name,
-                        department_id: dept.department_id, // simpan ID juga
-                        indukAset: "", // reset induk aset
+                        department_id: dept.department_id,
+                        divisi: "",
+                        seksi: "",
+                        indukAset: "",
                       }));
                       setShowDropdownDinas(false);
                     }}
@@ -427,6 +401,92 @@ export default function Step1({
               ) : (
                 <div className="px-3 py-2 text-sm text-gray-500">
                   Loading...
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Divisi */}
+      <div className="mb-6">
+        <label className="block text-sm font-medium mb-1">Divisi</label>
+        <div className="relative w-full" ref={divisiRef}>
+          <div
+            className="flex items-center justify-between border border-gray-300 px-3 py-2 rounded cursor-pointer"
+            onClick={() => setShowDropdownDivisi(!showDropdownDivisi)}
+          >
+            <span className={formData.divisi ? "text-black" : "text-gray-400"}>
+              {formData.divisi || "Pilih Divisi"}
+            </span>
+            <ChevronDown className="w-5 h-5 text-gray-500" />
+          </div>
+
+          {showDropdownDivisi && (
+            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow max-h-48 overflow-y-auto">
+              {filteredDivisions.length > 0 ? (
+                filteredDivisions.map((div: any) => (
+                  <div
+                    key={div.division_id}
+                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                    onClick={() => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        divisi: div.division_name,
+                        division_id: div.division_id,
+                        seksi: "",
+                      }));
+                      setShowDropdownDivisi(false);
+                    }}
+                  >
+                    {div.division_name}
+                  </div>
+                ))
+              ) : (
+                <div className="px-3 py-2 text-sm text-gray-500">
+                  Pilih dinas terlebih dahulu
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Seksi */}
+      <div className="mb-6">
+        <label className="block text-sm font-medium mb-1">Seksi</label>
+        <div className="relative w-full" ref={seksiRef}>
+          <div
+            className="flex items-center justify-between border border-gray-300 px-3 py-2 rounded cursor-pointer"
+            onClick={() => setShowDropdownSeksi(!showDropdownSeksi)}
+          >
+            <span className={formData.seksi ? "text-black" : "text-gray-400"}>
+              {formData.seksi || "Pilih Seksi"}
+            </span>
+            <ChevronDown className="w-5 h-5 text-gray-500" />
+          </div>
+
+          {showDropdownSeksi && (
+            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow max-h-48 overflow-y-auto">
+              {filteredSections.length > 0 ? (
+                filteredSections.map((sec: any) => (
+                  <div
+                    key={sec.section_id}
+                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                    onClick={() => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        seksi: sec.section_name,
+                      }));
+                      setShowDropdownSeksi(false);
+                    }}
+                  >
+                    {sec.section_name}
+                  </div>
+                ))
+              ) : (
+                <div className="px-3 py-2 text-sm text-gray-500">
+                  Pilih divisi terlebih dahulu
                 </div>
               )}
             </div>

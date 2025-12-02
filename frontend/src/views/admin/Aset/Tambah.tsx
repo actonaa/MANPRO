@@ -29,8 +29,9 @@ export default function Tambah() {
     merkTipe: "Merk / Tipe",
     kodeBMD: "Kode BMD",
     tanggalPerolehan: "Tanggal Perolehan",
-    divisi: "Divisi",
     dinas: "Dinas",
+    divisi: "Divisi",
+    seksi: "Seksi",
     indukAset: "Induk Aset",
     lokasiAset: "Lokasi Aset",
     penanggungJawab: "Penanggung Jawab",
@@ -63,8 +64,9 @@ export default function Tambah() {
     merkTipe: "",
     kodeBMD: "",
     tanggalPerolehan: "",
-    divisi: "",
     dinas: "",
+    divisi: "",
+    seksi: "",
     indukAset: "",
     lokasiAset: "",
     penanggungJawab: "",
@@ -114,8 +116,9 @@ export default function Tambah() {
       formDataSend.append("bmd_code", formData.kodeBMD);
       formDataSend.append("acquisition_date", formData.tanggalPerolehan || "");
       formDataSend.append("lokasi", formData.lokasiAset);
-      formDataSend.append("divisi", formData.divisi);
       formDataSend.append("dinas", formData.dinas);
+      formDataSend.append("divisi", formData.divisi);
+      formDataSend.append("seksi", formData.seksi);
       formDataSend.append("pic", formData.penanggungJawab);
       formDataSend.append("category_id", formData.kategoriAset);
       formDataSend.append("sub_category_id", formData.subKategori);
