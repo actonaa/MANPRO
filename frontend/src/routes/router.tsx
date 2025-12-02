@@ -261,13 +261,13 @@ export default function AppRoutes() {
           <Route path="/risiko-admin" element={<DashboardRisikoAdmin />} />
           <Route path="/risiko-admin/daftar" element={<DaftarRisikoAdmin />} />
 
-          <Route path="/risiko-admin/:id" element={<DetailRisikoAdmin />} />
+          <Route path="/risiko-admin/:riskId" element={<DetailRisikoAdmin />} />
           <Route
             path="/risiko-admin/tambah-mitigasi/:riskId"
             element={<TambahMitigasi />}
           />
           <Route
-            path="/aset-admin/tambah-risiko/:riskId"
+            path="/risiko-admin/tambah-risiko/:asset_id"
             element={<TambahRisiko />}
           />
           <Route

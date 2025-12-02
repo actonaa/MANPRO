@@ -67,6 +67,22 @@ export default function NavbarDiskominfo() {
       icon: "/sidebar-icon/Risk.png",
       children: [{ label: "Data Risiko", to: "/risiko-admin" }],
     },
+
+    {
+      label: "Kelola Pengguna",
+      icon: "/sidebar-icon/Kelola Pengguna.png",
+      to: "/kelolapengguna-admin",
+    },
+    {
+      label: "Hasil Audit",
+      icon: "/sidebar-icon/Hasil Audit.png",
+      to: "/hasilaudit-admin",
+    },
+    {
+      label: "Audit Trail",
+      icon: "/sidebar-icon/Audit Trail.png",
+      to: "/audit-admin",
+    },
     {
       label: "Laporan",
       icon: "/sidebar-icon/Laporan.png",
@@ -82,21 +98,6 @@ export default function NavbarDiskominfo() {
       label: "Notifikasi",
       icon: "/sidebar-icon/Notif.png",
       to: "/notifikasi/notifikasi-admin",
-    },
-    {
-      label: "Kelola Pengguna",
-      icon: "/sidebar-icon/Kelola Pengguna.png",
-      to: "/kelolapengguna-admin",
-    },
-    {
-      label: "Hasil Audit",
-      icon: "/sidebar-icon/Hasil Audit.png",
-      to: "/hasilaudit-admin",
-    },
-    {
-      label: "Audit Trail",
-      icon: "/sidebar-icon/Audit Trail.png",
-      to: "/audit-admin",
     },
   ];
 

@@ -5,7 +5,7 @@ import { Upload } from "lucide-react";
 import ButtonText from "../../../components/button/ButtonText";
 import InformasiUtama from "../../../components/kelola-asset/dinas/InformasiUtama";
 import JadwalPemeliharaan from "../../../components/kelola-asset/dinas/JadwalPemeliharaan";
-import KeterkaitanRisiko from "../../../components/kelola-asset/dinas/KeterkaitanRisiko";
+import KeterkaitanRisiko from "../../../components/kelola-asset/diskominfo/KeterkaitanRIsiko";
 import Lampiran from "../../../components/kelola-asset/dinas/Lampiran";
 import RiwayatAktivitas from "../../../components/kelola-asset/dinas/RiwayatAktivitas";
 import ScanBarcode from "../../../components/kelola-asset/dinas/ScanBarcode";
