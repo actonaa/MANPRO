@@ -1,10 +1,11 @@
-import type { CustomJwtPayload } from "../middleware/auth.middleware.ts";
+
+import type { NormalizedUser } from './index.js';
 
 declare global {
   namespace Express {
-    // Override bawaan Express
-    interface Request {
-      user: CustomJwtPayload; 
+    export interface Request {
+      user?: NormalizedUser; 
     }
   }
 }
+export {};
