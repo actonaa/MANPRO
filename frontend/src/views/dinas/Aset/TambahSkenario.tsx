@@ -21,6 +21,11 @@ interface PositionItem {
   position_name: string;
 }
 
+interface AssetItem {
+  id: string;
+  name: string;
+}
+
 export default function TambahSkenario() {
   const [form, setForm] = useState<SDMFormData>({
     nama: "",
@@ -30,10 +35,18 @@ export default function TambahSkenario() {
   });
 
   const [positions, setPositions] = useState<PositionItem[]>([]);
+  const [assets, setAssets] = useState<AssetItem[]>([]);
+
   const [openDropdown, setOpenDropdown] = useState(false);
+  const [openAssetDropdown, setOpenAssetDropdown] = useState<number | null>(
+    null
+  );
+
   const [searchPosisi, setSearchPosisi] = useState("");
+  const [searchAsset, setSearchAsset] = useState("");
 
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const assetRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // === CLICK OUTSIDE UNTUK CLOSE DROPDOWN ===
   useEffect(() => {
@@ -44,11 +57,17 @@ export default function TambahSkenario() {
       ) {
         setOpenDropdown(false);
       }
+
+      assetRefs.current.forEach((ref, index) => {
+        if (ref && !ref.contains(e.target as Node)) {
+          if (openAssetDropdown === index) setOpenAssetDropdown(null);
+        }
+      });
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [openAssetDropdown]);
 
   // === FETCH POSISI JABATAN ===
   useEffect(() => {
@@ -70,6 +89,31 @@ export default function TambahSkenario() {
     };
 
     fetchPositions();
+  }, []);
+
+  // === FETCH ASSETS ===
+  useEffect(() => {
+    const fetchAssets = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const response = await axios.get<any>(
+          "https://asset-risk-management.vercel.app/api/assets",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        console.log("Asset response:", response.data);
+
+        // karena response berupa array langsung, bukan { data: [] }
+        setAssets(response.data || []);
+      } catch (error) {
+        console.error("Gagal mengambil aset:", error);
+      }
+    };
+
+    fetchAssets();
   }, []);
 
   const handleChange = (
@@ -123,10 +167,12 @@ export default function TambahSkenario() {
     }
   };
 
-  // Filter posisi
   const filteredPositions = positions.filter((pos) =>
     pos.position_name.toLowerCase().includes(searchPosisi.toLowerCase())
   );
+
+  const filteredAssets = (search: string) =>
+    assets.filter((a) => a.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <div className="min-h-screen p-4 md:p-6 lg:p-8">
@@ -168,7 +214,7 @@ export default function TambahSkenario() {
             />
           </div>
 
-          {/* === POSISI JABATAN SEARCH DROPDOWN === */}
+          {/* === POSISI JABATAN === */}
           <div className="relative" ref={dropdownRef}>
             <p className="text-sm font-semibold text-gray-800 mb-1">
               Posisi Jabatan
@@ -194,7 +240,6 @@ export default function TambahSkenario() {
 
             {openDropdown && (
               <div className="absolute z-20 w-full bg-white border border-gray-300 rounded-xl mt-1 shadow-lg max-h-64 overflow-auto">
-                {/* Search Box */}
                 <div className="flex items-center px-3 border-b border-gray-200 bg-gray-50">
                   <Search className="w-4 h-4 text-gray-500" />
                   <input
@@ -206,7 +251,6 @@ export default function TambahSkenario() {
                   />
                 </div>
 
-                {/* List Hasil */}
                 {filteredPositions.map((pos) => (
                   <div
                     key={pos.position_id}
@@ -235,20 +279,72 @@ export default function TambahSkenario() {
             <p className="text-sm font-semibold text-gray-800 mb-2">Asset</p>
 
             {form.assets.map((value, index) => (
-              <div key={index} className="flex items-center gap-3 mb-3">
-                <input
-                  type="text"
-                  value={value}
-                  onChange={(e) => handleAssetChange(index, e.target.value)}
-                  placeholder="Pilih aset yang berhubungan dengan skenario"
-                  className="flex-1 border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 outline-none"
-                />
+              <div
+                key={index}
+                className="mb-3 relative"
+                ref={(el) => (assetRefs.current[index] = el)}
+              >
+                <div
+                  onClick={() =>
+                    setOpenAssetDropdown(
+                      openAssetDropdown === index ? null : index
+                    )
+                  }
+                  className="w-full border flex justify-between items-center border-gray-300 rounded-xl px-3 py-2 text-sm bg-white cursor-pointer"
+                >
+                  <span>
+                    {value
+                      ? assets.find((a) => a.id === value)?.name
+                      : "Pilih asset..."}
+                  </span>
+
+                  {openAssetDropdown === index ? (
+                    <ChevronUp className="w-4 h-4" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4" />
+                  )}
+                </div>
+
+                {openAssetDropdown === index && (
+                  <div className="absolute z-20 w-full bg-white border border-gray-300 rounded-xl mt-1 shadow-lg max-h-64 overflow-auto">
+                    <div className="flex items-center px-3 border-b border-gray-200 bg-gray-50">
+                      <Search className="w-4 h-4 text-gray-500" />
+                      <input
+                        type="text"
+                        value={searchAsset}
+                        onChange={(e) => setSearchAsset(e.target.value)}
+                        className="w-full px-2 py-2 text-sm bg-gray-50 outline-none"
+                        placeholder="Cari asset..."
+                      />
+                    </div>
+
+                    {filteredAssets(searchAsset).map((a) => (
+                      <div
+                        key={a.id}
+                        onClick={() => {
+                          handleAssetChange(index, a.id);
+                          setOpenAssetDropdown(null);
+                          setSearchAsset("");
+                        }}
+                        className="px-3 py-2 text-sm hover:bg-blue-50 cursor-pointer"
+                      >
+                        {a.name}
+                      </div>
+                    ))}
+
+                    {filteredAssets(searchAsset).length === 0 && (
+                      <p className="px-3 py-2 text-gray-400 text-sm">
+                        Tidak ditemukan
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {form.assets.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeAssetField(index)}
-                    className="p-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-xl"
+                    className="absolute right-[-45px] top-2 p-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-xl"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -269,8 +365,7 @@ export default function TambahSkenario() {
         <div className="mt-10 flex justify-end">
           <button
             type="submit"
-            className="px-10 py-3 bg-[#0A84FF] hover:bg-[#006FE0] 
-            text-white font-semibold text-sm rounded-[18px] shadow-sm"
+            className="px-10 py-3 bg-[#0A84FF] hover:bg-[#006FE0] text-white font-semibold text-sm rounded-[18px] shadow-sm"
           >
             Simpan
           </button>
