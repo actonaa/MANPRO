@@ -30,6 +30,7 @@ export default function AsetAdmin() {
       const json = await res.json();
 
       // ✔ FIX: mapping lokasi -> item.lokasi
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const formatted = json.map((item: any) => ({
         id: item.id,
         kode_aset: item.serial_number,
@@ -58,6 +59,14 @@ export default function AsetAdmin() {
   useEffect(() => {
     fetchAset();
   }, []);
+
+  const filteredData = dataAset.filter((item) => {
+    const lower = search.toLowerCase();
+    return (
+      (item.nama_aset || "").toLowerCase().includes(lower) ||
+      (item.kode_aset || "").toLowerCase().includes(lower)
+    );
+  });
 
   return (
     <>
@@ -94,7 +103,11 @@ export default function AsetAdmin() {
             <p className="text-sm font-medium text-gray-600 mb-1">Dinas</p>
             <ButtonFilter
               label="Dinas"
-              options={["Dinas Pariwisata", "Dinas Pendidikan", "Dinas Komunikasi"]}
+              options={[
+                "Dinas Pariwisata",
+                "Dinas Pendidikan",
+                "Dinas Komunikasi",
+              ]}
               onSelect={(v) => console.log(v)}
             />
           </div>
@@ -125,7 +138,7 @@ export default function AsetAdmin() {
       </div>
 
       {/* TABLE */}
-      <TableAsetAdmin data={dataAset} loading={loading} />
+      <TableAsetAdmin data={filteredData} loading={loading} />
     </>
   );
 }

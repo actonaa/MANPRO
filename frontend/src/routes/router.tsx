@@ -92,6 +92,7 @@ import EditAset from "../views/dinas/Aset/EditAset";
 import DetailNotifikasi from "../components/Notifikasi/dinas/DetailNotif";
 import EditMitigasi from "../views/dinas/Risiko/EditMitigasi";
 import TambahSDM from "../views/admin/SDM/TambahSDM";
+import EditAsetAdmin from "../views/admin/Aset/EditAset";
 
 export default function AppRoutes() {
   return (
@@ -246,6 +247,7 @@ export default function AppRoutes() {
 
           <Route path="/aset-admin" element={<AsetAdmin />} />
           <Route path="/aset-admin/:id" element={<DetailAsetAdmin />} />
+          <Route path="/aset-admin/edit/:id" element={<EditAsetAdmin />} />
           <Route
             path="/Verikasi/aset-admin"
             element={<VerifikasiAsetAdminPage />}

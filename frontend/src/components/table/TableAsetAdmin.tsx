@@ -74,8 +74,58 @@ export default function TableAsetAdmin({
 
   if (loading) {
     return (
-      <div className="p-6 text-center">
-        <p>Memuat data aset...</p>
+      <div className="bg-white p-6 rounded-xl shadow-sm w-full">
+        {/* Header Skeleton */}
+        <div className="flex justify-between border-b border-gray-300 py-4 items-center mb-4">
+          <div className="h-6 w-32 bg-gray-200 rounded animate-pulse"></div>
+
+          <div className="flex items-center gap-2">
+            <div className="h-9 w-24 bg-gray-200 rounded-lg animate-pulse"></div>
+            <div className="h-9 w-24 bg-gray-200 rounded-lg animate-pulse"></div>
+            <div className="h-9 w-32 bg-gray-200 rounded-lg animate-pulse"></div>
+          </div>
+        </div>
+
+        {/* Table Skeleton */}
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[950px] text-sm text-center">
+            <thead className="bg-gray-50 text-gray-600">
+              <tr>
+                {Array.from({ length: 9 }).map((_, i) => (
+                  <th key={i} className="py-4">
+                    <div className="h-4 w-20 bg-gray-200 rounded animate-pulse mx-auto"></div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+
+            <tbody>
+              {Array.from({ length: 5 }).map((_, rowIndex) => (
+                <tr key={rowIndex} className="border-b border-gray-300">
+                  {Array.from({ length: 9 }).map((_, colIndex) => (
+                    <td key={colIndex} className="py-4">
+                      <div className="h-4 w-24 bg-gray-200 rounded animate-pulse mx-auto"></div>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination Skeleton */}
+        <div className="flex justify-between items-center mt-6">
+          <div className="h-4 w-48 bg-gray-200 rounded animate-pulse"></div>
+
+          <div className="flex items-center gap-2 mx-auto">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-8 w-8 bg-gray-200 rounded-lg animate-pulse"
+              ></div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
