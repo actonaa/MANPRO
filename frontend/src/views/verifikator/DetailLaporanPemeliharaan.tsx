@@ -1,18 +1,61 @@
-import { useNavigate } from "react-router-dom";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+
 import InformasiUtama from "../../components/kelola-asset/dinas/InformasiUtama";
-import SiklusHidupCard from "../../components/pemeliharaan/dinas/SiklusHidupCard";
 import LampiranCard from "../../components/pemeliharaan/dinas/LampiranCard";
-import RiwayatAktivitasCard from "../../components/pemeliharaan/dinas/RiwayatAktivitasCard";
+import RiwayatAktivitasCard from "../../components/pemeliharaan/verifikator/RiwayatAktivitas";
 import DeskripsiPemeliharaan from "../../components/pemeliharaan/verifikator/DeskripsiPemeliharaan";
 import InfoPemeliharaan from "../../components/pemeliharaan/verifikator/InfoPemeliharaan";
 
 export default function DetailPemeliharaanPage() {
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const [loading, setLoading] = useState(true);
+  const [maintenance, setMaintenance] = useState<any>(null);
+  const [asset, setAsset] = useState<any>(null);
+
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    const fetchMaintenanceAndAsset = async () => {
+      try {
+        // GET DETAIL MAINTENANCE
+        const resMaintenance = await fetch(
+          `https://asset-risk-management.vercel.app/api/maintenance/${id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const maintenanceData = await resMaintenance.json();
+        setMaintenance(maintenanceData);
+
+        // GET DETAIL ASSET
+        const resAsset = await fetch(
+          `https://asset-risk-management.vercel.app/api/assets/${maintenanceData.asset_id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const assetData = await resAsset.json();
+        setAsset(assetData);
+      } catch (error) {
+        console.error("Gagal mengambil data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMaintenanceAndAsset();
+  }, [id, token]);
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <>
-      {/* 🔹 Header Utama */}
+      {/* Header */}
       <div className="flex items-start gap-3 mb-4">
         <ArrowLeft
           className="w-5 h-5 text-gray-700 mt-1 cursor-pointer hover:text-gray-900 transition"
@@ -24,49 +67,52 @@ export default function DetailPemeliharaanPage() {
           </h1>
         </div>
       </div>
-      
+
       <div className="p-6 space-y-6">
-        {/* 📊 Dua kolom utama */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-          {/* 📍 Kolom Kiri */}
+          {/* Kolom Kiri */}
           <div className="flex flex-col gap-6 h-full">
-            {/* Informasi utama */}
             <InformasiUtama
-              merk="ASUS Zenbook 247"
-              penanggungJawab="Ahmad Syaifudin"
-              status="Aktif"
-              nomorSerial="091092010"
-              kategori="TI"
-              subKategori="Hardware"
-              nilaiAset="Rp 10.000.000"
-              kodeBMD="BMD12345"
-              lokasi="Ruang TU"
-              tanggalPerolehan="12-01-2025"
-              kondisi="Baik - Ringan"
-              os=""
-              version=""
-              hostname=""
-              ipAddress=""
+              merk={asset?.merk_type}
+              penanggungJawab={asset?.pic}
+              status={asset?.status?.name}
+              nomorSerial={asset?.serial_number}
+              kategori={asset?.category?.name}
+              subKategori={asset?.sub_category?.name}
+              masaPakai={asset?.useful_life}
+              vendor={asset?.vendor}
+              nilaiAset={asset?.acquisition_value?.toLocaleString("id-ID")}
+              kodeBMD={asset?.bmd_code}
+              lokasi={asset?.lokasi}
+              tanggalPerolehan={asset?.acquisition_date}
+              kondisi={asset?.condition?.name}
+              os={asset?.os}
+              version={asset?.version}
+              hostname={asset?.hostname}
+              ipAddress={asset?.ip_address}
             />
 
-            {/* 🧾 LampiranCard (diperkecil secara vertikal tanpa crop) */}
-            <div className="scale-y-90">
-              <LampiranCard />
-            </div>
+            {/* Lampiran */}
+            <LampiranCard
+              lampiranAset={asset?.attachments}
+              lampiranPemeliharaan={maintenance?.proof}
+            />
 
             {/* Info Pemeliharaan */}
             <InfoPemeliharaan
-              tipePemeliharaan="Terjadwal"
-              biaya="Rp. 112.000.000"
-              vendor="Princess Hami"
+              tipePemeliharaan={maintenance?.type}
+              biaya={`Rp. ${maintenance?.cost?.toLocaleString("id-ID")}`}
+              vendor={maintenance?.vendor}
             />
           </div>
 
-          {/* 📍 Kolom Kanan */}
+          {/* Kolom Kanan */}
           <div className="flex flex-col gap-5">
-            <SiklusHidupCard />
-            <RiwayatAktivitasCard />
-            <DeskripsiPemeliharaan deskripsi="Ini adalah catatan atau deskripsi dari detail jadwal pemeliharaan." />
+            <RiwayatAktivitasCard maintenance={maintenance} />
+
+            <DeskripsiPemeliharaan
+              deskripsi={maintenance?.notes || "Tidak ada catatan pemeliharaan."}
+            />
           </div>
         </div>
       </div>

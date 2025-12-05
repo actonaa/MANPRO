@@ -210,7 +210,7 @@ export default function VerifikasiPenghapusan({
                 <td className="py-5 px-4">{formatTanggal(item.tanggal)}</td>
                 <td className="py-5 px-4 flex items-center justify-center gap-3 text-gray-500">
                   <Link
-                    to={`/aset-verifikator/${item.id}`}
+                    to={`/laporan/aset-verifikator/${item.id}`}
                     className="hover:text-blue-600"
                     title="Lihat Detail"
                   >

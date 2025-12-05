@@ -3,6 +3,7 @@ import { Eye, CheckCircle, XCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import SetujuPemeliharaan from "../../components/form/verifikator/setujuPemeliharaan";
 import TolakPemeliharaan from "../../components/form/verifikator/tolakPemeliharaan";
+import axios from "axios";
 
 type TablePemeliharaanProps = {
   selectedLevel?: string;
@@ -11,6 +12,7 @@ type TablePemeliharaanProps = {
 };
 
 type PemeliharaanItem = {
+  id: string; // id dari API, digunakan untuk link
   idAset: string;
   idLaporan: string;
   jenis: string;
@@ -22,6 +24,7 @@ type PemeliharaanItem = {
 
 // 🔹 Fungsi format tanggal
 const formatTanggal = (tanggal: string) => {
+  if (!tanggal) return "-";
   const date = new Date(tanggal);
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -35,51 +38,50 @@ export default function TablePemeliharaanVerifikator({
   selectedDate = null,
 }: TablePemeliharaanProps) {
   const [data, setData] = useState<PemeliharaanItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [openSetuju, setOpenSetuju] = useState(false);
   const [openTolak, setOpenTolak] = useState(false);
   const [selectedItem, setSelectedItem] = useState<PemeliharaanItem | null>(
     null
   );
 
+  // 🔹 Fetch data dari API
   useEffect(() => {
-    setData([
-      {
-        idAset: "AST-001",
-        idLaporan: "LAP-090",
-        jenis: "Perawatan Hardware",
-        biaya: "Rp 2.500.000",
-        vendor: "TechnoFix",
-        realisasi: "2025-01-12",
-        status: "Selesai",
-      },
-      {
-        idAset: "AST-002",
-        idLaporan: "LAP-091",
-        jenis: "Penggantian Komponen",
-        biaya: "Rp 1.750.000",
-        vendor: "PT DigitalCare",
-        realisasi: "2025-01-14",
-        status: "Proses",
-      },
-      {
-        idAset: "AST-003",
-        idLaporan: "LAP-092",
-        jenis: "Update Software",
-        biaya: "Rp 500.000",
-        vendor: "NetTech",
-        realisasi: "2025-01-15",
-        status: "Menunggu",
-      },
-      {
-        idAset: "AST-004",
-        idLaporan: "LAP-093",
-        jenis: "Kalibrasi Sistem",
-        biaya: "Rp 3.000.000",
-        vendor: "SmartSolution",
-        realisasi: "2025-01-17",
-        status: "Selesai",
-      },
-    ]);
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Token tidak ditemukan di localStorage");
+
+        const response = await axios.get(
+          "https://asset-risk-management.vercel.app/api/maintenance",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // Map API response ke PemeliharaanItem
+        const mapped: PemeliharaanItem[] = response.data.map((item: any) => ({
+          id: item.id, // gunakan id dari API
+          idAset: item.asset_id || "-",
+          idLaporan: item.id, // tetap tampil di tabel
+          jenis: item.type || "-",
+          biaya: item.cost ? `Rp ${item.cost.toLocaleString()}` : "-",
+          vendor: item.vendor || "-",
+          realisasi: item.scheduled_date || "-",
+          status: item.status || "-",
+        }));
+
+        setData(mapped);
+      } catch (error) {
+        console.error("Gagal ambil data pemeliharaan:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   // ✅ Fungsi tombol aksi
@@ -108,6 +110,13 @@ export default function TablePemeliharaanVerifikator({
     return matchLevel && matchStatus && matchDate;
   });
 
+  if (loading)
+    return (
+      <p className="text-center py-10 text-gray-500">
+        Memuat data pemeliharaan...
+      </p>
+    );
+
   return (
     <div className="md:pb-10 xl:bg-white xl:shadow-xl xl:p-5 xl:rounded-2xl">
       {/* 🖥️ Tabel Desktop */}
@@ -124,7 +133,6 @@ export default function TablePemeliharaanVerifikator({
               <th className="px-6 py-3"></th>
             </tr>
           </thead>
-
           <tbody>
             {filteredData.map((item) => (
               <tr
@@ -142,7 +150,7 @@ export default function TablePemeliharaanVerifikator({
                 <td className="py-4 px-6">
                   <div className="flex justify-center gap-3 text-gray-500">
                     <Link
-                      to={`/pemeliharaan-verifikator/detail`}
+                      to={`/pemeliharaan-verifikator/${item.id}`} // gunakan id untuk route
                       className="hover:text-blue-600"
                       title="Lihat Detail"
                     >
@@ -181,7 +189,6 @@ export default function TablePemeliharaanVerifikator({
               {item.jenis}
             </h3>
             <p className="text-sm text-gray-500 mb-3">{item.vendor}</p>
-
             <div className="grid grid-cols-2 text-sm text-gray-600 gap-y-1">
               <p>
                 <span className="font-medium text-gray-700">ID Aset:</span>{" "}
@@ -200,11 +207,9 @@ export default function TablePemeliharaanVerifikator({
                 {formatTanggal(item.realisasi)}
               </p>
             </div>
-
-            {/* 🔹 Tombol Aksi (Mobile) */}
             <div className="flex justify-end gap-3 mt-4 text-gray-500">
               <Link
-                to={`/pemeliharaan-verifikator/detail`}
+                to={`/pemeliharaan-verifikator/${item.id}`} // gunakan id untuk route
                 className="hover:text-blue-600"
                 title="Lihat Detail"
               >

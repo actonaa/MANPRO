@@ -154,7 +154,7 @@ export default function TablePemeliharaan({
                   <td className="px-6 py-7">{row.realisasi}</td>
                   <td className="px-6 py-7 text-right">
                     <a
-                      href={`/laporan/pemeliharaan/${row.idAset}`}
+                      href={`/laporan/pemeliharaan/${row.idLaporan}`}
                       className="text-[#0095E8] font-medium hover:underline"
                     >
                       Detail

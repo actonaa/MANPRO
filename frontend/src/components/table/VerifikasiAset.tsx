@@ -254,7 +254,7 @@ export default function VerifikasiAset({
 
                 <td className="py-5 px-4 flex items-center justify-center gap-3 text-gray-500">
                   <Link
-                    to={`/aset-verifikator/${item.id}`}
+                    to={`/laporan/aset-verifikator/${item.id}`}
                     className="hover:text-blue-600"
                   >
                     <Eye size={18} />
