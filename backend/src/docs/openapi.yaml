@@ -1,0 +1,3189 @@
+openapi: 3.0.0
+info:
+  title: API Asset & Risk Management System
+  version: 1.0.0
+  description: Dokumentasi lengkap untuk manajemen aset, risiko, dan integrasi.
+
+servers:
+  - url: https://asset-risk-management.vercel.app/api
+    description: Production Development Server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      
+  schemas:
+    # -------------------------------------------------------
+    # HELPER SCHEMAS
+    # -------------------------------------------------------
+    RelatedName:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Nama dari relasi (Kategori, Dept, dll)
+
+    # -------------------------------------------------------
+    # ASSET RESPONSE (FULL)
+    # -------------------------------------------------------
+    AssetResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        barcode:
+          type: string
+        barcode_128_url:
+          type: string
+          nullable: true
+        barcode_qr_url:
+          type: string
+          nullable: true
+        serial_number:
+          type: string
+          nullable: true
+        lokasi:
+          type: string
+          nullable: true
+        pic:
+          type: string
+          nullable: true
+          description: Penanggung Jawab (Person In Charge)
+        merk_type:
+          type: string
+          nullable: true
+        vendor:
+          type: string
+          nullable: true
+        specification:
+          type: string
+          nullable: true
+        material:
+          type: string
+          nullable: true
+        bmd_code:
+          type: string
+          nullable: true
+        acquisition_date:
+          type: string
+          format: date
+          nullable: true
+        acquisition_value:
+          type: number
+          nullable: true
+        deploy_date:
+          type: string
+          format: date
+          nullable: true
+        hostname:
+          type: string
+          nullable: true
+        ip_address:
+          type: string
+          nullable: true
+        os:
+          type: string
+          nullable: true
+        version:
+          type: string
+          nullable: true
+        approval_status:
+          type: string
+          enum: [pending, approved, rejected, pending_delete, verified_delete, approved_delete]
+        revision_notes:
+          type: string
+          nullable: true
+        attachments:
+          type: string
+          nullable: true
+        linked_change_id:
+          type: string
+          nullable: true
+        linked_incident_id:
+          type: string
+          nullable: true
+        created_by:
+          type: string
+          format: uuid
+          nullable: true
+        updated_by:
+          type: string
+          format: uuid
+          nullable: true
+        approved_by:
+          type: string
+          format: uuid
+          nullable: true
+        approved_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+          
+        # IDs Foreign Keys
+        department_id:
+          type: string
+          format: uuid
+          nullable: true
+        category_id:
+          type: string
+          format: uuid
+          nullable: true
+        sub_category_id:
+          type: string
+          format: uuid
+          nullable: true
+        status_id:
+          type: string
+          format: uuid
+          nullable: true
+        condition_id:
+          type: string
+          format: uuid
+          nullable: true
+        parent_id:
+          type: string
+          format: uuid
+          nullable: true
+        division_id:
+          type: string
+          format: uuid
+          nullable: true
+        section_id:
+          type: string
+          format: uuid
+          nullable: true
+
+        # Relasi (Array of RelatedName sesuai interface Anda)
+        department:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedName'
+        status:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedName'
+        category:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedName'
+        condition:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedName'
+        parent:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedName'
+
+    # -------------------------------------------------------
+    # PUBLIC ASSET RESPONSE (Subset)
+    # -------------------------------------------------------
+    PublicAssetResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        barcode:
+          type: string
+        serial_number:
+          type: string
+          nullable: true
+        lokasi:
+          type: string
+          nullable: true
+        merk_type:
+          type: string
+          nullable: true
+        vendor:
+          type: string
+          nullable: true
+        specification:
+          type: string
+          nullable: true
+        # Join Properties (Hanya nama)
+        status:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedName'
+        department:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedName'
+        category:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedName'
+
+    # -------------------------------------------------------
+    # CREATE ASSET DTO (Input)
+    # -------------------------------------------------------
+    CreateAssetDto:
+      type: object
+      required:
+        - name
+        - department_id
+        - category_id
+      properties:
+        name:
+          type: string
+        serial_number:
+          type: string
+        lokasi:
+          type: string
+        pic:
+          type: string
+        merk_type:
+          type: string
+        vendor:
+          type: string
+        acquisition_date:
+          type: string
+          format: date
+        acquisition_value:
+          type: number
+        bmd_code:
+          type: string
+        material:
+          type: string
+        specification:
+          type: string
+        hostname:
+          type: string
+        ip_address:
+          type: string
+        os:
+          type: string
+        version:
+          type: string
+        # Foreign Keys Wajib/Opsional untuk Input
+        department_id:
+          type: string
+          format: uuid
+        category_id:
+          type: string
+          format: uuid
+        sub_category_id:
+          type: string
+          format: uuid
+        condition_id:
+          type: string
+          format: uuid
+        parent_id:
+          type: string
+          format: uuid
+        division_id:
+          type: string
+          format: uuid
+        section_id:
+          type: string
+          format: uuid
+        # File upload tidak didefinisikan di JSON body sini, 
+        # tapi di requestBody multipart/form-data pada path.
+
+    # -------------------------------------------------------
+    # INTEGRATION DTOs
+    # -------------------------------------------------------
+    LinkIncidentDto:
+      type: object
+      required:
+        - linked_incident_id
+        - status_id
+      properties:
+        linked_incident_id:
+          type: string
+          description: ID Tiket Insiden
+        status_id:
+          type: string
+          format: uuid
+        notes:
+          type: string
+
+    LinkChangeDto:
+      type: object
+      required:
+        - linked_change_id
+        - status_id
+      properties:
+        linked_change_id:
+          type: string
+          description: ID RFC
+        status_id:
+          type: string
+          format: uuid
+        notes:
+          type: string
+
+    BulkLinkChangeDto:
+      type: object
+      required:
+        - asset_ids
+        - linked_change_id
+      properties:
+        asset_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        linked_change_id:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+
+    # -------------------------------------------------------
+    # MAINTENANCE PLANNING DATA (Complex Nested)
+    # -------------------------------------------------------
+    MaintenancePlanningData:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        location:
+          type: string
+          nullable: true
+        department:
+          type: object
+          nullable: true
+          properties:
+            name:
+              type: string
+        risk:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              title:
+                type: string
+              entry_level:
+                type: number
+              priority:
+                type: string
+                nullable: true
+              status:
+                type: string
+              risk_treatment:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    action:
+                      type: string
+                    strategy:
+                      type: string
+                    target_date:
+                      type: string
+                      format: date
+                      nullable: true
+                    status:
+                      type: string
+
+    # -------------------------------------------------------
+    # APPROVAL DTOS
+    # -------------------------------------------------------
+    RequestDeleteDto:
+      type: object
+      required:
+        - reason
+      properties:
+        reason:
+          type: string
+
+    VerifyDeleteDto:
+      type: object
+      required:
+        - action
+        - notes
+      properties:
+        action:
+          type: string
+          enum: [accept, reject]
+        notes:
+          type: string
+
+    VerifyAssetDto:
+      type: object
+      required:
+        - approval_status
+      properties:
+        approval_status:
+          type: string
+          enum: [approved, rejected]
+        notes:
+          type: string
+
+    VerifyDeleteDto:
+      type: object
+      required:
+        - action
+        - notes
+      properties:
+        action:
+          type: string
+          enum: [accept, reject]
+        notes:
+          type: string
+          
+    RequestDeleteDto:
+      type: object
+      required:
+        - reason
+      properties:
+        reason:
+          type: string
+
+# -------------------------------------------------------
+    # SCENARIO SCHEMAS
+    # -------------------------------------------------------
+
+    # Objek kecil untuk Aset di dalam Skenario
+    ScenarioAsset:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+
+    # Objek kecil untuk Posisi Pemilik
+    ScenarioOwner:
+      type: object
+      properties:
+        name:
+          type: string
+
+    # Schema Utama Skenario (Response)
+    ScenarioResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        owner_position_id:
+          type: string
+          format: uuid
+          nullable: true
+        created_by:
+          type: string
+          format: uuid
+          nullable: true
+        updated_by:
+          type: string
+          format: uuid
+          nullable: true
+        
+        # Data Join
+        owner_position:
+          $ref: '#/components/schemas/ScenarioOwner'
+          nullable: true
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScenarioAsset'
+
+    # DTO Input: Create Skenario
+    CreateScenarioDto:
+      type: object
+      required:
+        - name
+        - asset_ids
+      properties:
+        name:
+          type: string
+          example: "Skenario Server Down"
+        description:
+          type: string
+          example: "Prosedur penanganan jika server utama mati total."
+        owner_position_id:
+          type: string
+          format: uuid
+          description: ID Jabatan/Posisi penanggung jawab skenario
+        asset_ids:
+          type: array
+          description: Daftar ID Aset yang terlibat dalam skenario ini
+          items:
+            type: string
+            format: uuid
+
+    # DTO Input: Update Skenario (Partial)
+    UpdateScenarioDto:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        owner_position_id:
+          type: string
+          format: uuid
+        asset_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    # -------------------------------------------------------
+    # RISK SCHEMAS (Modul Risk)
+    # -------------------------------------------------------
+    
+    # Sub-Schema untuk Relasi (Bisa reuse RelatedName jika sama)
+    RiskRelatedAsset:
+      type: object
+      properties:
+        name:
+          type: string
+        lokasi:
+          type: string
+
+    # Schema Utama Risk (Response)
+    RiskResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        asset_id:
+          type: string
+          format: uuid
+          nullable: true
+        scenario_id:
+          type: string
+          format: uuid
+          nullable: true
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        type:
+          type: string
+          description: "Aset atau Skenario"
+        cause:
+          type: string
+          nullable: true
+        impact:
+          type: string
+          nullable: true
+        probability:
+          type: number
+        impact_score:
+          type: number
+        entry_level:
+          type: number
+          description: Hasil kalkulasi (prob * impact)
+        type_of_risk:
+          type: string
+          enum: [positif, negatif]
+        criteria:
+          type: string
+          nullable: true
+        priority:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [new, planned, in_progress, completed, on_hold]
+        approval_status:
+          type: string
+          enum: [draft, pending, approved, rejected]
+        revision_notes:
+          type: string
+          nullable: true
+        risk_category_id:
+          type: string
+          format: uuid
+          nullable: true
+        impact_area_id:
+          type: string
+          format: uuid
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        
+        # Relasi (Read-Only)
+        asset:
+          $ref: '#/components/schemas/RiskRelatedAsset'
+        department:
+          $ref: '#/components/schemas/RelatedName'
+        risk_category:
+          $ref: '#/components/schemas/RelatedName'
+        impact_area:
+          $ref: '#/components/schemas/RelatedName'
+
+    # Schema Risk Treatment (Response)
+    RiskTreatmentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        risk_id:
+          type: string
+          format: uuid
+        strategy:
+          type: string
+        action:
+          type: string
+          nullable: true
+        action_owner:
+          type: string
+          nullable: true
+        target_date:
+          type: string
+          format: date
+          nullable: true
+        cost:
+          type: number
+          nullable: true
+        effectiveness:
+          type: string
+          nullable: true
+        new_probability:
+          type: number
+          nullable: true
+        new_impact_score:
+          type: number
+          nullable: true
+        residual_level:
+          type: number
+          nullable: true
+        status:
+          type: string
+          enum: [new, planned, in_progress, completed, on_hold]
+
+    # DTO Input: Create Risk (Tanpa Treatment)
+    CreateRiskDto:
+      type: object
+      required:
+        - title
+        - type
+        - probability
+        - impact_score
+        - type_of_risk
+      properties:
+        asset_id:
+          type: string
+          format: uuid
+        scenario_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+          example: "Aset"
+        cause:
+          type: string
+        impact:
+          type: string
+        probability:
+          type: integer
+          minimum: 1
+          maximum: 5
+        impact_score:
+          type: integer
+          minimum: 1
+          maximum: 5
+        type_of_risk:
+          type: string
+          enum: [positif, negatif]
+        criteria:
+          type: string
+        priority:
+          type: string
+        risk_category_id:
+          type: string
+          format: uuid
+        impact_area_id:
+          type: string
+          format: uuid
+
+    # DTO Input: Create Treatment
+    CreateTreatmentDto:
+      type: object
+      required:
+        - strategy
+      properties:
+        strategy:
+          type: string
+        action:
+          type: string
+        action_owner:
+          type: string
+        target_date:
+          type: string
+          format: date
+        cost:
+          type: number
+        effectiveness:
+          type: string
+        new_probability:
+          type: integer
+        new_impact_score:
+          type: integer
+
+    # DTO Input: Create Risk WITH Treatments (Nested)
+    CreateRiskWithTreatmentsDto:
+      type: object
+      required:
+        - risk
+        - treatments
+      properties:
+        risk:
+          $ref: '#/components/schemas/CreateRiskDto'
+        treatments:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateTreatmentDto'
+
+    # DTO Input: Update Risk WITH Treatments
+    UpdateRiskWithTreatmentsDto:
+      type: object
+      properties:
+        risk:
+          $ref: '#/components/schemas/CreateRiskDto'
+        treatments:
+          type: array
+          items:
+            # Bisa CreateTreatmentDto (baru) atau UpdateTreatmentDto (ada ID)
+            type: object 
+            properties:
+              id:
+                type: string
+                format: uuid
+              strategy:
+                type: string
+              action:
+                type: string
+              # ... properti lain mirip CreateTreatmentDto ...
+
+    # DTO Input: Verify Risk
+    VerifyRiskDto:
+      type: object
+      required:
+        - approval_status
+      properties:
+        approval_status:
+          type: string
+          enum: [approved, rejected]
+        notes:
+          type: string
+
+    # -------------------------------------------------------
+    # RISK TREATMENT SCHEMAS
+    # -------------------------------------------------------
+    RiskTreatmentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        risk_id:
+          type: string
+          format: uuid
+        strategy:
+          type: string
+          description: Strategi penanganan (Mitigasi, Transfer, Eskalasi, dll)
+        action:
+          type: string
+          description: Detail rencana aksi
+        action_owner:
+          type: string
+          nullable: true
+        target_date:
+          type: string
+          format: date
+          nullable: true
+        cost:
+          type: number
+          nullable: true
+        effectiveness:
+          type: string
+          nullable: true
+        new_probability:
+          type: integer
+          nullable: true
+        new_impact_score:
+          type: integer
+          nullable: true
+        residual_level:
+          type: integer
+          description: Level risiko setelah penanganan
+        status:
+          type: string
+          enum: [new, planned, in_progress, completed, on_hold]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+          format: uuid
+          nullable: true
+        updated_by:
+          type: string
+          format: uuid
+          nullable: true
+
+    CreateTreatmentDto:
+      type: object
+      required:
+        - risk_id
+        - strategy
+        - action
+      properties:
+        risk_id:
+          type: string
+          format: uuid
+        strategy:
+          type: string
+          example: "Mitigasi Risiko"
+        action:
+          type: string
+          example: "Melakukan patching OS server"
+        action_owner:
+          type: string
+          example: "Tim Infrastruktur"
+        target_date:
+          type: string
+          format: date
+          example: "2025-12-31"
+        cost:
+          type: number
+          example: 5000000
+        effectiveness:
+          type: string
+        new_probability:
+          type: integer
+        new_impact_score:
+          type: integer
+        # residual_level dihitung otomatis oleh backend
+
+    UpdateTreatmentDto:
+      type: object
+      properties:
+        strategy:
+          type: string
+        action:
+          type: string
+        action_owner:
+          type: string
+        target_date:
+          type: string
+          format: date
+        cost:
+          type: number
+        effectiveness:
+          type: string
+        new_probability:
+          type: integer
+        new_impact_score:
+          type: integer
+        status:
+          type: string
+          enum: [new, planned, in_progress, completed, on_hold]
+
+# -------------------------------------------------------
+    # MAINTENANCE SCHEMAS
+    # -------------------------------------------------------
+
+    # Schema untuk Data Risiko di dalam Maintenance (Nested)
+    MaintenanceRiskData:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        entry_level:
+          type: number
+        priority:
+          type: string
+        status:
+          type: string
+        risk_treatment:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              action:
+                type: string
+              strategy:
+                type: string
+              target_date:
+                type: string
+                format: date
+                nullable: true
+              status:
+                type: string
+
+    # Schema untuk Data Aset di dalam Maintenance (Nested)
+    MaintenanceAssetData:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        barcode:
+          type: string
+        serial_number:
+          type: string
+          nullable: true
+        lokasi:
+          type: string
+          nullable: true
+        department:
+          type: object
+          nullable: true
+          properties:
+            name:
+              type: string
+
+    # Response Utama Maintenance Log
+    MaintenanceLogResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        asset_id:
+          type: string
+          format: uuid
+        risk_id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [terjadwal, insidental]
+        scheduled_date:
+          type: string
+          format: date
+        completion_date:
+          type: string
+          format: date
+          nullable: true
+        vendor:
+          type: string
+          nullable: true
+        cost:
+          type: number
+          nullable: true
+        proof:
+          type: string
+          nullable: true
+          description: URL Bukti Foto/Dokumen
+        notes:
+          type: string
+          nullable: true
+        priority:
+          type: string
+          enum: [tinggi, sedang, rendah]
+        status:
+          type: string
+          enum: [dijadwalkan, selesai, pemeliharaan]
+        created_by:
+          type: string
+          format: uuid
+          nullable: true
+        updated_by:
+          type: string
+          format: uuid
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        
+        # Nested Objects
+        asset:
+          $ref: '#/components/schemas/MaintenanceAssetData'
+        risk:
+          $ref: '#/components/schemas/MaintenanceRiskData'
+
+    # DTO Input: Create Schedule
+    CreateMaintenanceDto:
+      type: object
+      required:
+        - scheduled_date
+        - risk_id
+        - priority
+      properties:
+        risk_id:
+          type: string
+          format: uuid
+          description: ID Risiko yang akan ditangani
+        scheduled_date:
+          type: string
+          format: date
+          example: "2025-12-01"
+        priority:
+          type: string
+          enum: [tinggi, sedang, rendah]
+        notes:
+          type: string
+
+    # DTO Input: Update Schedule
+    UpdateMaintenanceDto:
+      type: object
+      properties:
+        risk_id:
+          type: string
+          format: uuid
+        scheduled_date:
+          type: string
+          format: date
+        priority:
+          type: string
+          enum: [tinggi, sedang, rendah]
+        notes:
+          type: string
+
+# -------------------------------------------------------
+    # NOTIFICATION SCHEMAS
+    # -------------------------------------------------------
+    
+    # -------------------------------------------------------
+    # NOTIFICATION SCHEMAS (UPDATED)
+    # -------------------------------------------------------
+    
+    NotificationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+          description: ID Penerima
+        sender_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: ID Pengirim (Null jika System)
+        category:
+          type: string
+          enum: [Asset, Risk, Maintenance, Scenario, System]
+          description: Kategori modul asal notifikasi
+        title:
+          type: string
+          example: "Aset Ditolak"
+        message:
+          type: string
+          example: "Pengajuan aset Laptop Asus ditolak oleh verifikator."
+        notes:
+          type: string
+          nullable: true
+          description: Catatan tambahan (misal alasan penolakan)
+        type:
+          type: string
+          enum: [info, warning, success, error]
+          description: Jenis visual notifikasi (Warna/Icon)
+        link_target:
+          type: string
+          nullable: true
+          example: "/assets/uuid-aset"
+        is_read:
+          type: boolean
+        timestamp:
+          type: string
+          format: date-time
+        
+        # ⬇️ KOLOM BARU (DETAIL ENRICHMENT) ⬇️
+        sender_name:
+          type: string
+          nullable: true
+          example: "Budi Santoso"
+          description: Nama lengkap pengirim (Petugas)
+        sender_role:
+          type: string
+          nullable: true
+          example: "Verifikator Dinas"
+          description: Jabatan pengirim
+        related_entity:
+          type: object
+          nullable: true
+          description: Ringkasan data objek yang dinotifikasi (untuk ditampilkan di popup)
+          properties:
+            name:
+              type: string
+              example: "Laptop Lenovo Thinkpad"
+            code:
+              type: string
+              example: "AST-2025-001"
+            status:
+              type: string
+              example: "rejected"
+
+# -------------------------------------------------------
+    # AUDIT TRAIL SCHEMAS
+    # -------------------------------------------------------
+
+    # Schema untuk objek Pengguna di dalam log
+    AuditUser:
+      type: object
+      properties:
+        nama:
+          type: string
+          example: "Budi Santoso"
+        email:
+          type: string
+          format: email
+          example: "budi@dispora.go.id"
+
+    # Response Utama Audit Log (Formatted for UI)
+    AuditLogResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        tanggal:
+          type: string
+          format: date-time
+          description: Waktu aktivitas terjadi (ISO 8601)
+        pengguna:
+          $ref: '#/components/schemas/AuditUser'
+        modul:
+          type: string
+          description: Nama modul yang diterjemahkan (misal "Aset", "Risiko")
+          example: "Aset"
+        aksi:
+          type: string
+          description: Jenis aktivitas yang diterjemahkan (misal "Perbarui", "Buat")
+          example: "Perbarui"
+        detail:
+          type: string
+          description: Kalimat deskriptif yang digenerate oleh backend
+          example: "Mengubah status aset 'Server Utama' menjadi Maintenance"
+        ip_address:
+          type: string
+          example: "192.168.1.15"
+
+# -------------------------------------------------------
+    # MASTER DATA SCHEMAS (GENERIC)
+    # -------------------------------------------------------
+    
+    # Schema dasar untuk (Category, Condition, Status, Risk Cat, Impact Area)
+    MasterDataResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    
+    CreateMasterDataDto:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: "Baru / Rusak / High Risk"
+
+    UpdateMasterDataDto:
+      type: object
+      properties:
+        name:
+          type: string
+
+    # -------------------------------------------------------
+    # ASSET SUB-CATEGORY SCHEMAS (Sedikit berbeda)
+    # -------------------------------------------------------
+    
+    AssetSubCategoryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        category_id:
+          type: string
+          format: uuid
+        # Data enriched (join)
+        asset_categories:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+
+    CreateAssetSubCategoryDto:
+      type: object
+      required:
+        - name
+        - category_id
+      properties:
+        name:
+          type: string
+          example: "Laptop"
+        description:
+          type: string
+          example: "Komputer jinjing"
+        category_id:
+          type: string
+          format: uuid
+          description: ID Kategori Induk
+
+    UpdateAssetSubCategoryDto:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        category_id:
+          type: string
+          format: uuid
+
+# -------------------------------------------------------
+    # AUDIT FINDING & REPORT SCHEMAS
+    # -------------------------------------------------------
+
+    # --- LAPORAN AUDIT (Reports) ---
+    AuditReportResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          example: "Laporan Audit IT Q3 2025"
+        description:
+          type: string
+          nullable: true
+          example: "Audit kepatuhan keamanan informasi."
+        file_url:
+          type: string
+          description: URL Public file laporan
+        period_start:
+          type: string
+          format: date
+          nullable: true
+        period_end:
+          type: string
+          format: date
+          nullable: true
+        auditor_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        departemen_id:
+          type: string
+          format: uuid
+
+    # --- TEMUAN AUDIT (Findings) ---
+    AuditFindingResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        entity_type:
+          type: string
+          enum: [asset, risk, maintenance, scenario]
+          description: Tipe objek yang diaudit
+        entity_id:
+          type: string
+          format: uuid
+          description: ID dari objek yang diaudit
+        finding:
+          type: string
+          description: Detail temuan masalah
+        recommendation:
+          type: string
+          nullable: true
+          description: Saran perbaikan
+        severity:
+          type: string
+          enum: [low, medium, high, critical]
+        status:
+          type: string
+          enum: [open, resolved, closed]
+        auditor_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+
+    # DTO: Buat Temuan Baru
+    CreateFindingDto:
+      type: object
+      required:
+        - entity_type
+        - entity_id
+        - finding
+        - severity
+      properties:
+        entity_type:
+          type: string
+          enum: [asset, risk, maintenance, scenario]
+        entity_id:
+          type: string
+          format: uuid
+        finding:
+          type: string
+          example: "Aset belum memiliki label barcode fisik."
+        recommendation:
+          type: string
+          example: "Segera lakukan pelabelan ulang."
+        severity:
+          type: string
+          enum: [low, medium, high, critical]
+
+tags:
+  - name: Assets (Public)
+    description: Endpoint aset yang dapat diakses tanpa login
+  - name: Assets (Internal)
+    description: Manajemen aset utama (CRUD & Approval)
+  - name: Integrasi
+    description: Endpoint untuk integrasi Service Desk & Change Management
+  - name: Reports & Analytics
+    description: Endpoint untuk analitik dan ekspor data (Excel)
+
+paths:
+  # ==========================================
+  # RUTE PUBLIK
+  # ==========================================
+  /assets/public:
+    get:
+      summary: Ambil daftar semua aset publik
+      tags: [Assets (Public)]
+      security: []
+      responses:
+        '200':
+          description: Berhasil mengambil data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicAssetResponse'
+
+  /assets/public/{id}:
+    get:
+      summary: Ambil detail aset publik by ID
+      tags: [Assets (Public)]
+      security: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '200':
+          description: Detail aset ditemukan
+        '404':
+          description: Aset tidak ditemukan
+
+  /assets/public/barcode/{barcode}:
+    get:
+      summary: Scan aset publik by Barcode
+      tags: [Assets (Public)]
+      security: []
+      parameters:
+        - in: path
+          name: barcode
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Detail aset ditemukan
+
+  /assets/{id}/link-incident-public:
+    patch:
+      summary: Integrasi Service Desk (Publik)
+      description: Update status aset saat ada insiden dari sistem eksternal tanpa login.
+      tags: [Integrasi]
+      security: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkIncidentDto'
+      responses:
+        '200':
+          description: Status aset berhasil diupdate
+
+  # ==========================================
+  # RUTE INTERNAL (Butuh Auth)
+  # ==========================================
+  
+  /assets:
+    get:
+      summary: Ambil daftar aset internal
+      tags: [Assets (Internal)]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List aset sesuai hak akses user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AssetResponse'
+
+    post:
+      summary: Buat Aset Baru (dengan Upload)
+      tags: [Assets (Internal)]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - department_id
+              properties:
+                name:
+                  type: string
+                serial_number:
+                  type: string
+                acquisition_value:
+                  type: number
+                department_id:
+                  type: string
+                  format: uuid
+                # ... tambahkan field lain sesuai CreateAssetDto ...
+                file:
+                  type: string
+                  format: binary
+                  description: Upload gambar/lampiran aset
+      responses:
+        '201':
+          description: Aset berhasil dibuat
+
+  /assets/barcode/{barcode}:
+    get:
+      summary: Scan aset internal by Barcode
+      tags: [Assets (Internal)]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: barcode
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Data aset ditemukan
+
+  /assets/change-status/{statusKey}:
+    patch:
+      summary: Bulk Update Status (Integrasi Change Mgt)
+      tags: [Integrasi]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: statusKey
+          required: true
+          schema:
+            type: string
+            enum: [in_use, standby, retired, maintenance]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkLinkChangeDto'
+      responses:
+        '200':
+          description: Bulk update berhasil
+
+  /assets/{id}:
+    get:
+      summary: Ambil detail aset internal
+      tags: [Assets (Internal)]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Detail aset lengkap
+    
+    put:
+      summary: Update data aset (dengan Upload)
+      tags: [Assets (Internal)]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                # ... field lain ...
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Aset berhasil diupdate
+
+  /assets/{id}/request-delete:
+    patch:
+      summary: Pengajuan Penghapusan Aset
+      tags: [Assets (Internal)]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestDeleteDto'
+      responses:
+        '200':
+          description: Permintaan penghapusan dikirim ke Verifikator
+
+  /assets/{id}/verify-delete:
+    patch:
+      summary: Verifikasi Penghapusan (Verifikator)
+      tags: [Assets (Internal)]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyDeleteDto'
+      responses:
+        '200':
+          description: Verifikasi berhasil (Lanjut ke Admin atau Ditolak)
+
+  /assets/{id}/approve-delete:
+    patch:
+      summary: Persetujuan Akhir Penghapusan (Admin)
+      tags: [Assets (Internal)]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyDeleteDto'
+      responses:
+        '200':
+          description: Aset resmi dihapus (Decommissioned) atau Ditolak
+
+  /assets/{id}/verify:
+    patch:
+      summary: Verifikasi Aset Baru/Update (Verifikator)
+      tags: [Assets (Internal)]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyAssetDto'
+      responses:
+        '200':
+          description: Aset disetujui dan menjadi Aktif
+
+  /assets/{id}/link-change:
+    patch:
+      summary: Tautkan aset ke Change Request (Internal)
+      tags: [Integrasi]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkChangeDto'
+      responses:
+        '200':
+          description: Aset berhasil ditautkan ke RFC
+
+  /assets/{id}/link-incident:
+    patch:
+      summary: Tautkan aset ke Insiden (Internal)
+      tags: [Integrasi]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkIncidentDto'
+      responses:
+        '200':
+          description: Aset berhasil ditautkan ke Insiden
+
+  /assets/{id}/planning-data:
+    get:
+      summary: Ambil data untuk perencanaan maintenance
+      description: Mengembalikan data aset beserta risiko dan treatment terkait untuk membantu penjadwalan.
+      tags: [Assets (Internal)]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Data perencanaan lengkap
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  asset:
+                    type: object
+                  analysis:
+                    type: object
+
+# ==========================================
+  # PATHS MODUL SCENARIO
+  # ==========================================
+
+  /scenarios:
+    get:
+      summary: Ambil daftar semua skenario
+      description: Mengembalikan daftar skenario yang sesuai dengan hak akses departemen pengguna.
+      tags: [Scenarios]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Daftar skenario ditemukan
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScenarioResponse'
+        '401':
+          description: Unauthorized
+
+    post:
+      summary: Buat Skenario Baru
+      tags: [Scenarios]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateScenarioDto'
+      responses:
+        '201':
+          description: Skenario berhasil dibuat
+        '400':
+          description: Validasi gagal (misal: tidak ada aset yang ditautkan)
+        '403':
+          description: Akses ditolak (Aset dari departemen lain)
+
+  /scenarios/{id}:
+    get:
+      summary: Ambil detail skenario by ID
+      tags: [Scenarios]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Detail skenario ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScenarioResponse'
+        '404':
+          description: Skenario tidak ditemukan
+
+    put:
+      summary: Update Skenario
+      description: Mengupdate data skenario dan menautkan ulang aset (Full Replace untuk aset).
+      tags: [Scenarios]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateScenarioDto'
+      responses:
+        '200':
+          description: Skenario berhasil diperbarui
+        '403':
+          description: Akses ditolak (Beda departemen)
+
+    delete:
+      summary: Hapus Skenario
+      tags: [Scenarios]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Skenario berhasil dihapus
+
+  # ==========================================
+  # PATHS (ENDPOINTS) MODUL RISK
+  # ==========================================
+  /risks:
+    get:
+      summary: Ambil daftar semua risiko
+      tags: [Risks]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List risiko sesuai hak akses user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RiskResponse'
+
+    post:
+      summary: Buat Risiko Baru (Tanpa Treatment)
+      tags: [Risks]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRiskDto'
+      responses:
+        '201':
+          description: Risiko berhasil dibuat
+
+  /risks/{id}:
+    get:
+      summary: Ambil detail risiko by ID
+      tags: [Risks]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Detail risiko ditemukan
+    
+    put:
+      summary: Update data risiko (Tanpa Treatment)
+      tags: [Risks]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRiskDto' # Partial update
+      responses:
+        '200':
+          description: Risiko berhasil diupdate
+
+  /risks/with-treatments:
+    post:
+      summary: Buat Risiko Baru BESERTA Treatments
+      tags: [Risks]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRiskWithTreatmentsDto'
+      responses:
+        '201':
+          description: Risiko dan treatments berhasil dibuat
+
+  /risks/{id}/with-treatments:
+    put:
+      summary: Update Risiko BESERTA Treatments
+      tags: [Risks]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRiskWithTreatmentsDto'
+      responses:
+        '200':
+          description: Risiko dan treatments berhasil diupdate
+
+  /risks/{id}/verify:
+    patch:
+      summary: Verifikasi Risiko (Verifikator)
+      tags: [Risks]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyRiskDto'
+      responses:
+        '200':
+          description: Risiko disetujui (Planned) atau ditolak
+
+# ==========================================
+  # PATHS MODUL RISK TREATMENT
+  # ==========================================
+  
+  /risk-treatments:
+    get:
+      summary: Ambil semua treatment berdasarkan ID Risiko
+      description: Mengembalikan daftar treatment yang terkait dengan satu risiko spesifik.
+      tags: [Risk Treatments]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: risk_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: UUID dari Risiko induk
+      responses:
+        '200':
+          description: Daftar treatment ditemukan
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RiskTreatmentResponse'
+        '400':
+          description: Parameter risk_id wajib diisi
+        '404':
+          description: Risiko tidak ditemukan atau akses ditolak
+
+    post:
+      summary: Tambah Treatment Baru
+      tags: [Risk Treatments]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTreatmentDto'
+      responses:
+        '201':
+          description: Treatment berhasil ditambahkan
+        '403':
+          description: Akses ditolak (Beda departemen)
+
+  /risk-treatments/{id}:
+    put:
+      summary: Update Treatment
+      tags: [Risk Treatments]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID Treatment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTreatmentDto'
+      responses:
+        '200':
+          description: Treatment berhasil diperbarui
+        '404':
+          description: Treatment tidak ditemukan
+
+# ==========================================
+  # PATHS MODUL MAINTENANCE
+  # ==========================================
+
+  /maintenance:
+    get:
+      summary: Ambil semua jadwal pemeliharaan
+      description: Mengembalikan semua jadwal. Admin melihat semua, Verifikator/Teknisi difilter per departemen.
+      tags: [Maintenance]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [dijadwalkan, selesai, pemeliharaan]
+          description: Filter berdasarkan status
+      responses:
+        '200':
+          description: Daftar jadwal ditemukan
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MaintenanceLogResponse'
+
+  /maintenance/{assetId}:
+    post:
+      summary: Buat Jadwal Pemeliharaan Baru
+      tags: [Maintenance]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: assetId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID Aset yang akan dipelihara
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMaintenanceDto'
+      responses:
+        '201':
+          description: Jadwal berhasil dibuat
+
+  /maintenance/assets/{assetId}:
+    get:
+      summary: Ambil jadwal berdasarkan Aset
+      tags: [Maintenance]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: assetId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Daftar jadwal untuk aset tersebut
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MaintenanceLogResponse'
+
+  /maintenance/{id}:
+    get:
+      summary: Ambil detail jadwal by ID
+      tags: [Maintenance]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID Jadwal Maintenance
+      responses:
+        '200':
+          description: Detail jadwal ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaintenanceLogResponse'
+        '404':
+          description: Jadwal tidak ditemukan
+
+    put:
+      summary: Update Jadwal (Reschedule/Edit)
+      tags: [Maintenance]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMaintenanceDto'
+      responses:
+        '200':
+          description: Jadwal berhasil diperbarui
+
+    delete:
+      summary: Hapus Jadwal
+      tags: [Maintenance]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Jadwal berhasil dihapus
+
+  /maintenance/{id}/complete:
+    patch:
+      summary: Selesaikan Pemeliharaan (Realisasi)
+      description: Upload bukti foto dan isi detail penyelesaian (vendor, biaya, dll).
+      tags: [Maintenance]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - type
+                - completion_date
+              properties:
+                type:
+                  type: string
+                  enum: [terjadwal, insidental]
+                completion_date:
+                  type: string
+                  format: date
+                vendor:
+                  type: string
+                cost:
+                  type: number
+                notes:
+                  type: string
+                proof:
+                  type: string
+                  format: binary
+                  description: Upload file bukti (Gambar/PDF)
+      responses:
+        '200':
+          description: Pemeliharaan selesai, status Aset kembali Aktif.
+
+# ==========================================
+  # PATHS MODUL NOTIFICATION
+  # ==========================================
+
+  /notifications:
+    get:
+      summary: Ambil notifikasi saya
+      description: Mengembalikan daftar notifikasi milik user yang sedang login.
+      tags: [Notifications]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Daftar notifikasi
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationResponse'
+
+  /notifications/read-all:
+    patch:
+      summary: Tandai SEMUA sudah dibaca
+      tags: [Notifications]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Semua notifikasi berhasil ditandai sebagai sudah dibaca
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Semua notifikasi ditandai sudah dibaca"
+
+  /notifications/clear-all:
+    delete:
+      summary: Hapus SEMUA notifikasi
+      description: Menghapus seluruh riwayat notifikasi milik user yang sedang login.
+      tags: [Notifications]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Semua notifikasi berhasil dihapus
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Semua notifikasi berhasil dibersihkan."
+
+  /notifications/{id}:
+    get:
+      summary: Ambil detail notifikasi by ID
+      description: Mengembalikan detail lengkap notifikasi, termasuk nama pengirim dan ringkasan entitas terkait.
+      tags: [Notifications]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Detail notifikasi ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationResponse'
+        '404':
+          description: Notifikasi tidak ditemukan
+
+    delete:
+      summary: Hapus SATU notifikasi
+      tags: [Notifications]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Notifikasi berhasil dihapus
+        '404':
+          description: Notifikasi tidak ditemukan
+
+  /notifications/{id}/read:
+    patch:
+      summary: Tandai SATU sudah dibaca
+      tags: [Notifications]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Notifikasi ditandai sudah dibaca
+        '404':
+          description: Notifikasi tidak ditemukan
+
+# ==========================================
+  # PATHS MODUL AUDIT TRAIL
+  # ==========================================
+
+  /audit-logs:
+    get:
+      summary: Ambil daftar aktivitas (Audit Trail)
+      description: |
+        Mengambil 100 aktivitas sistem terakhir. 
+        Data dikembalikan dalam format yang sudah diproses (human-readable) 
+        sehingga Frontend bisa langsung menampilkannya di tabel tanpa logika tambahan.
+      tags: [Audit Trail]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Daftar aktivitas ditemukan
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditLogResponse'
+        '401':
+          description: Unauthorized (Token tidak valid atau tidak ada)
+
+# ==========================================
+  # MASTER DATA: ASSET CATEGORIES
+  # ==========================================
+  /asset-categories:
+    get:
+      summary: List Asset Categories
+      tags: [Master Data - Asset]
+      security: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MasterDataResponse'
+    post:
+      summary: Create Asset Category (Admin)
+      tags: [Master Data - Asset]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMasterDataDto'
+      responses:
+        '201':
+          description: Created
+
+  /asset-categories/{id}:
+    get:
+      summary: Get Asset Category by ID
+      tags: [Master Data - Asset]
+      security: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Found
+    put:
+      summary: Update Asset Category (Admin)
+      tags: [Master Data - Asset]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMasterDataDto'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      summary: Delete Asset Category (Admin)
+      tags: [Master Data - Asset]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Deleted
+
+# ==========================================
+  # MASTER DATA: ASSET SUB-CATEGORIES
+  # ==========================================
+  /asset-subcategories:
+    get:
+      summary: List Asset Sub-Categories
+      description: Bisa difilter menggunakan query param categoryId.
+      tags: [Master Data - Asset]
+      security: []
+      parameters:
+        - in: query
+          name: categoryId
+          schema:
+            type: string
+            format: uuid
+          description: Filter berdasarkan ID Kategori Induk
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AssetSubCategoryResponse'
+    post:
+      summary: Create Asset Sub-Category (Admin)
+      tags: [Master Data - Asset]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAssetSubCategoryDto'
+      responses:
+        '201':
+          description: Created
+
+  /asset-subcategories/{id}:
+    get:
+      summary: Get Sub-Category by ID
+      tags: [Master Data - Asset]
+      security: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Found
+    put:
+      summary: Update Sub-Category (Admin)
+      tags: [Master Data - Asset]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAssetSubCategoryDto'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      summary: Delete Sub-Category (Admin)
+      tags: [Master Data - Asset]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Deleted
+
+# ==========================================
+  # MASTER DATA: ASSET CONDITIONS
+  # ==========================================
+  /asset-conditions:
+    get:
+      summary: List Asset Conditions
+      tags: [Master Data - Asset]
+      security: []
+      responses:
+        '200':
+          description: Success (e.g., Baik, Rusak Ringan)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MasterDataResponse'
+    post:
+      summary: Create Asset Condition (Admin)
+      tags: [Master Data - Asset]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMasterDataDto'
+      responses:
+        '201':
+          description: Created
+
+  /asset-conditions/{id}:
+    get:
+      summary: Get Condition by ID
+      tags: [Master Data - Asset]
+      security: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Found
+    put:
+      summary: Update Condition (Admin)
+      tags: [Master Data - Asset]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMasterDataDto'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      summary: Delete Condition (Admin)
+      tags: [Master Data - Asset]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Deleted
+
+# ==========================================
+  # MASTER DATA: ASSET STATUSES
+  # ==========================================
+  /asset-statuses:
+    get:
+      summary: List Asset Statuses
+      tags: [Master Data - Asset]
+      security: []
+      responses:
+        '200':
+          description: Success (e.g., Aktif, Pemeliharaan)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MasterDataResponse'
+    post:
+      summary: Create Asset Status (Admin)
+      tags: [Master Data - Asset]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMasterDataDto'
+      responses:
+        '201':
+          description: Created
+
+  /asset-statuses/{id}:
+    get:
+      summary: Get Status by ID
+      tags: [Master Data - Asset]
+      security: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Found
+    put:
+      summary: Update Status (Admin)
+      tags: [Master Data - Asset]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMasterDataDto'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      summary: Delete Status (Admin)
+      tags: [Master Data - Asset]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Deleted
+
+# ==========================================
+  # MASTER DATA: RISK CATEGORIES
+  # ==========================================
+  /risk-categories:
+    get:
+      summary: List Risk Categories
+      tags: [Master Data - Risk]
+      security: []
+      responses:
+        '200':
+          description: Success (e.g., Infrastruktur, SDM)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MasterDataResponse'
+    post:
+      summary: Create Risk Category (Admin)
+      tags: [Master Data - Risk]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMasterDataDto'
+      responses:
+        '201':
+          description: Created
+
+  /risk-categories/{id}:
+    get:
+      summary: Get Risk Category by ID
+      tags: [Master Data - Risk]
+      security: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Found
+    put:
+      summary: Update Risk Category (Admin)
+      tags: [Master Data - Risk]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMasterDataDto'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      summary: Delete Risk Category (Admin)
+      tags: [Master Data - Risk]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Deleted
+
+# ==========================================
+  # MASTER DATA: IMPACT AREAS
+  # ==========================================
+  /impact-areas:
+    get:
+      summary: List Impact Areas
+      tags: [Master Data - Risk]
+      security: []
+      responses:
+        '200':
+          description: Success (e.g., Finansial, Reputasi)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MasterDataResponse'
+    post:
+      summary: Create Impact Area (Admin)
+      tags: [Master Data - Risk]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMasterDataDto'
+      responses:
+        '201':
+          description: Created
+
+  /impact-areas/{id}:
+    get:
+      summary: Get Impact Area by ID
+      tags: [Master Data - Risk]
+      security: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Found
+    put:
+      summary: Update Impact Area (Admin)
+      tags: [Master Data - Risk]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMasterDataDto'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      summary: Delete Impact Area (Admin)
+      tags: [Master Data - Risk]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Deleted
+
+# ==========================================
+  # PATHS MODUL AUDIT FINDING & REPORTS
+  # ==========================================
+
+  # --- LAPORAN AUDIT (FILES) ---
+  
+  /audit/reports:
+    get:
+      summary: Ambil daftar laporan audit
+      description: Menampilkan history laporan audit yang pernah diunggah.
+      tags: [Audit Governance]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Daftar laporan ditemukan
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditReportResponse'
+
+    post:
+      summary: Upload Laporan Audit Baru
+      description: Upload file PDF/Excel hasil audit (Hanya Auditor/Admin).
+      tags: [Audit Governance]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - title
+                - file
+              properties:
+                title:
+                  type: string
+                  example: "Laporan Audit Q3"
+                description:
+                  type: string
+                period_start:
+                  type: string
+                  format: date
+                period_end:
+                  type: string
+                  format: date
+                file:
+                  type: string
+                  format: binary
+                  description: File dokumen audit (PDF/XLSX)
+      responses:
+        '201':
+          description: Laporan berhasil diunggah
+
+  # --- TEMUAN AUDIT (FINDINGS) ---
+
+  /audit/findings:
+    post:
+      summary: Tambah Temuan Audit (Finding)
+      description: Memberikan catatan/temuan pada Aset atau Risiko tertentu.
+      tags: [Audit Governance]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFindingDto'
+      responses:
+        '201':
+          description: Temuan berhasil dicatat
+
+  /audit/findings/{type}/{entityId}:
+    get:
+      summary: Lihat Temuan per Entitas
+      description: |
+        Melihat semua catatan audit untuk satu objek spesifik (misal: Aset Server A).
+        Contoh: /audit/findings/asset/uuid-aset-123
+      tags: [Audit Governance]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema:
+            type: string
+            enum: [asset, risk, maintenance, scenario]
+          description: Tipe entitas (asset/risk)
+        - in: path
+          name: entityId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID dari entitas tersebut
+      responses:
+        '200':
+          description: Daftar temuan pada objek tersebut
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditFindingResponse'
+
+  /audit/findings/{id}/resolve:
+    patch:
+      summary: Tandai Temuan Selesai (Resolved)
+      description: Digunakan oleh User Dinas untuk menandakan bahwa temuan sudah diperbaiki.
+      tags: [Audit Governance]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID Temuan Audit
+      responses:
+        '200':
+          description: Status temuan berubah menjadi Resolved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Temuan ditandai telah diselesaikan."
+
+# ==========================================
+  # PATHS MODUL REPORTS
+  # ==========================================
+
+  /reports/export/comprehensive:
+    get:
+      summary: Download Laporan Komprehensif (Excel)
+      description: |
+        Menghasilkan dan mengunduh file Excel (.xlsx) yang berisi gabungan data 360 derajat:
+        - Data Aset (Status, Nilai, Lokasi)
+        - Risiko Terkait (Level, Strategi)
+        - Riwayat Maintenance (Biaya, Tanggal)
+        - Skenario Terkait
+      tags: [Reports & Analytics]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+            example: "2024-01-01"
+          description: Filter tanggal awal (berdasarkan tanggal perolehan aset)
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+            example: "2025-12-31"
+          description: Filter tanggal akhir
+        - in: query
+          name: department_id
+          schema:
+            type: string
+            format: uuid
+          description: Filter data khusus departemen tertentu (Opsional bagi Admin)
+      responses:
+        '200':
+          description: File Excel berhasil di-generate dan siap diunduh.
+          content:
+            # MIME Type khusus Excel
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary # 👈 Menandakan ini adalah file download
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden (Hanya Admin, Auditor, Verifikator, dan Teknisi)
+
+  /reports/export/risks:
+      get:
+        summary: Download Laporan Risiko (Excel)
+        tags: [Reports & Analytics]
+        security: [{ bearerAuth: [] }]
+        responses:
+          '200':
+            description: File Excel
+            content:
+              application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+                schema: { type: string, format: binary }
+
+  /reports/export/maintenance:
+    get:
+      summary: Download Laporan Maintenance (Excel)
+      tags: [Reports & Analytics]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: File Excel }
+
+  /reports/export/scenarios:
+    get:
+      summary: Download Laporan Skenario (Excel)
+      tags: [Reports & Analytics]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: File Excel }
+
+  /reports/export/audit-logs:
+    get:
+      summary: Download Laporan Audit Trail (Excel)
+      tags: [Reports & Analytics]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: File Excel }
+
+  /reports/export/assets:
+      get:
+        summary: Download Laporan Inventaris Aset
+        tags: [Reports & Analytics]
+        security: [{ bearerAuth: [] }]
+        responses:
+          '200': { description: File Excel }
+
+  /reports/export/deletions:
+    get:
+      summary: Download Laporan Penghapusan (Disposal)
+      tags: [Reports & Analytics]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: File Excel }
+
+  /reports/export/incidents:
+    get:
+      summary: Download Laporan Aset Terdampak Insiden
+      tags: [Reports & Analytics]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: File Excel }
+
+  /reports/export/rfc:
+    get:
+      summary: Download Laporan Aset Terdampak RFC
+      tags: [Reports & Analytics]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: File Excel }
+
+  /reports/export/sdm:
+    get:
+      summary: Download Laporan Data SDM & Keahlian
+      tags: [Reports & Analytics]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: File Excel }
