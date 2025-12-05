@@ -19,7 +19,7 @@ interface Step1Props {
   showErrors: boolean;
 }
 
-export default function Step1({
+export default function Step1Skenario({
   formData,
   handleChange,
   handleArrayChange,
@@ -90,7 +90,7 @@ export default function Step1({
         <input
           type="text"
           name="tipe"
-          value="Aset" // selalu Aset
+          value="Skenario"
           readOnly // user tidak bisa mengubah
           className="w-full border rounded-lg px-3 py-2 mt-1 bg-gray-100 text-gray-600 cursor-not-allowed border-gray-300"
         />

@@ -8,6 +8,7 @@ import {
 } from "react";
 import { ChevronDown, ChevronUp, Search, Plus, Trash2 } from "lucide-react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 interface SDMFormData {
   nama: string;
@@ -27,6 +28,8 @@ interface AssetItem {
 }
 
 export default function TambahSkenario() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState<SDMFormData>({
     nama: "",
     alamat: "",
@@ -36,6 +39,7 @@ export default function TambahSkenario() {
 
   const [positions, setPositions] = useState<PositionItem[]>([]);
   const [assets, setAssets] = useState<AssetItem[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const [openDropdown, setOpenDropdown] = useState(false);
   const [openAssetDropdown, setOpenAssetDropdown] = useState<number | null>(
@@ -106,8 +110,14 @@ export default function TambahSkenario() {
 
         console.log("Asset response:", response.data);
 
-        // karena response berupa array langsung, bukan { data: [] }
-        setAssets(response.data || []);
+        // Filter hanya status Aktif & Pemeliharaan
+        const filtered = response.data.filter(
+          (item: any) =>
+            item.status?.name === "Aktif" ||
+            item.status?.name === "Pemeliharaan"
+        );
+
+        setAssets(filtered);
       } catch (error) {
         console.error("Gagal mengambil aset:", error);
       }
@@ -141,6 +151,8 @@ export default function TambahSkenario() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
+    setLoading(true);
+
     const token = localStorage.getItem("token");
 
     const payload = {
@@ -160,10 +172,13 @@ export default function TambahSkenario() {
       );
 
       console.log("Berhasil:", response.data);
-      alert("Data skenario berhasil disimpan!");
+
+      navigate("/skenario");
     } catch (error: any) {
       console.error("Error:", error.response?.data || error);
       alert("Gagal menyimpan data!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -282,7 +297,9 @@ export default function TambahSkenario() {
               <div
                 key={index}
                 className="mb-3 relative"
-                ref={(el) => (assetRefs.current[index] = el)}
+                ref={(el) => {
+                  assetRefs.current[index] = el;
+                }}
               >
                 <div
                   onClick={() =>
@@ -365,9 +382,15 @@ export default function TambahSkenario() {
         <div className="mt-10 flex justify-end">
           <button
             type="submit"
-            className="px-10 py-3 bg-[#0A84FF] hover:bg-[#006FE0] text-white font-semibold text-sm rounded-[18px] shadow-sm"
+            disabled={loading}
+            className={`px-10 py-3 font-semibold text-sm rounded-[18px] shadow-sm 
+              ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#0A84FF] hover:bg-[#006FE0] text-white"
+              }`}
           >
-            Simpan
+            {loading ? "Memproses..." : "Simpan"}
           </button>
         </div>
       </form>

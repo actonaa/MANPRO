@@ -93,6 +93,8 @@ import DetailNotifikasi from "../components/Notifikasi/dinas/DetailNotif";
 import EditMitigasi from "../views/dinas/Risiko/EditMitigasi";
 import TambahSDM from "../views/admin/SDM/TambahSDM";
 import EditAsetAdmin from "../views/admin/Aset/EditAset";
+import SkenarioDetail from "../views/dinas/Aset/DetailSkenario";
+import RisikoWizardSkenario from "../views/dinas/Risiko/FormSkenario";
 
 export default function AppRoutes() {
   return (
@@ -112,12 +114,17 @@ export default function AppRoutes() {
           <Route path="/aset/tambah" element={<Tambah />} />
           <Route path="/aset/edit/:id" element={<EditAset />} />
           <Route path="/skenario" element={<Skenario />} />
+          <Route path="/skenario/:id" element={<SkenarioDetail />} />
           <Route path="/skenario/tambah" element={<TambahSkenario />} />
           <Route path="/laporan/aset" element={<LaporanAset />} />
           <Route path="/risiko" element={<DashboardRisiko />} />
           <Route path="/risiko/data" element={<DaftarRisiko />} />
           <Route path="/risiko/:id" element={<DetailRisiko />} />
           <Route path="/risiko/tambah/:asset_id" element={<RisikoTambah />} />
+          <Route
+            path="/risiko/tambahs/:scenario_id"
+            element={<RisikoWizardSkenario />}
+          />
           <Route path="/risiko/mitigasi/:riskId" element={<TambahMitigasi />} />
           <Route
             path="/risiko/mitigasi/edit/:riskId"
