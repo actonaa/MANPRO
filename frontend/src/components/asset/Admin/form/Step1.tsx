@@ -211,6 +211,49 @@ export default function Step1({
     fetchDepartments();
   }, []);
 
+  // AUTO SET DINAS, DIVISI, SEKSI SAAT EDIT MODE
+  useEffect(() => {
+    if (departments.length > 0 && formData.department_id) {
+      const dept = departments.find(
+        (d) => d.department_id === formData.department_id
+      );
+      if (dept) {
+        setFormData((prev) => ({
+          ...prev,
+          dinas: dept.department_name,
+        }));
+      }
+    }
+
+    if (divisions.length > 0 && formData.division_id) {
+      const div = divisions.find((d) => d.division_id === formData.division_id);
+      if (div) {
+        setFormData((prev) => ({
+          ...prev,
+          divisi: div.division_name,
+        }));
+      }
+    }
+
+    if (sections.length > 0 && formData.section_id) {
+      const sec = sections.find((s) => s.section_id === formData.section_id);
+      if (sec) {
+        setFormData((prev) => ({
+          ...prev,
+          seksi: sec.section_name,
+        }));
+      }
+    }
+  }, [
+    departments,
+    divisions,
+    sections,
+    formData.department_id,
+    formData.division_id,
+    formData.section_id,
+    setFormData,
+  ]);
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
