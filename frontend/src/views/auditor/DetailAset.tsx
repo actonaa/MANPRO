@@ -295,7 +295,7 @@ export default function DetailAset() {
             approvalStatus={asset.approval_status}
             assetId={asset.id}
           />
-          <RiwayatAktivitas aktivitas={[]} />
+          <RiwayatAktivitas act={[]} />
         </div>
       </div>
 

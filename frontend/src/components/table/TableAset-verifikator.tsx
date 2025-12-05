@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { Eye } from "lucide-react";
 import axios from "axios";
@@ -36,7 +37,7 @@ export default function TableAset({
           return;
         }
 
-        const response = await axios.get(
+        const response = await axios.get<any[]>(
           "https://asset-risk-management.vercel.app/api/assets",
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -150,7 +151,8 @@ export default function TableAset({
         {/* Pagination */}
         <div className="mt-6 text-sm text-gray-600 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="text-center lg:text-left">
-            Menampilkan {totalItems === 0 ? 0 : startIndex + 1} dari {totalItems} hasil
+            Menampilkan {totalItems === 0 ? 0 : startIndex + 1} dari{" "}
+            {totalItems} hasil
           </div>
 
           <div className="flex justify-center items-center gap-2 w-full lg:w-auto">
@@ -218,10 +220,14 @@ export default function TableAset({
             className="border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition bg-white"
           >
             <div className="flex justify-between items-center mb-2">
-              <p className="text-sm text-gray-500">{formatTanggal(item.tanggal)}</p>
+              <p className="text-sm text-gray-500">
+                {formatTanggal(item.tanggal)}
+              </p>
             </div>
 
-            <h3 className="text-base font-semibold text-gray-800 mb-1">{item.nama}</h3>
+            <h3 className="text-base font-semibold text-gray-800 mb-1">
+              {item.nama}
+            </h3>
             <p className="text-sm text-gray-500 mb-3">{item.kategori}</p>
 
             <div className="grid grid-cols-2 text-sm text-gray-600 gap-y-1">
@@ -230,15 +236,19 @@ export default function TableAset({
               </p>
               <p>
                 <span className="font-medium text-gray-700">Kondisi:</span>{" "}
-                <span className={`${getKondisiColor(item.kondisi)} font-semibold`}>
+                <span
+                  className={`${getKondisiColor(item.kondisi)} font-semibold`}
+                >
                   {item.kondisi}
                 </span>
               </p>
               <p>
-                <span className="font-medium text-gray-700">Lokasi:</span> {item.lokasi}
+                <span className="font-medium text-gray-700">Lokasi:</span>{" "}
+                {item.lokasi}
               </p>
               <p>
-                <span className="font-medium text-gray-700">Kategori:</span> {item.kategori}
+                <span className="font-medium text-gray-700">Kategori:</span>{" "}
+                {item.kategori}
               </p>
             </div>
 

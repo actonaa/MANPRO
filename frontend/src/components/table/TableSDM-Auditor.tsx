@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -34,6 +35,15 @@ type RisikoItem = {
   department: string | null;
 };
 
+type SDMResponse = {
+  message: string;
+  data: SDMItem[];
+};
+
+type ScenarioResponse = ScenarioItem[];
+
+type RisikoResponse = RisikoItem[];
+
 export default function TableSDM({ filters }: any) {
   const [data, setData] = useState<SDMItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,15 +63,26 @@ export default function TableSDM({ filters }: any) {
         setLoading(true);
 
         const [sdmRes, scenarioRes, riskRes] = await Promise.all([
-          axios.get("https://sso-user-management.vercel.app/api/hr", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get("https://asset-risk-management.vercel.app/api/scenarios", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get("https://asset-risk-management.vercel.app/api/risks", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+          axios.get<SDMResponse>(
+            "https://sso-user-management.vercel.app/api/hr",
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
+
+          axios.get<ScenarioResponse>(
+            "https://asset-risk-management.vercel.app/api/scenarios",
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
+
+          axios.get<RisikoResponse>(
+            "https://asset-risk-management.vercel.app/api/risks",
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
         ]);
 
         const sdmList = sdmRes.data.data || [];
@@ -157,7 +178,8 @@ export default function TableSDM({ filters }: any) {
   // Loading & Empty State
   // ==========================
   if (loading) return <p className="p-6">Loading...</p>;
-  if (!data.length) return <p className="text-red-500 p-6">Data SDM tidak ditemukan.</p>;
+  if (!data.length)
+    return <p className="text-red-500 p-6">Data SDM tidak ditemukan.</p>;
 
   // ==========================
   // Render Table
@@ -181,7 +203,10 @@ export default function TableSDM({ filters }: any) {
           </thead>
           <tbody>
             {currentData.map((item) => (
-              <tr key={item.id} className="border-b border-gray-200 hover:bg-gray-50">
+              <tr
+                key={item.id}
+                className="border-b border-gray-200 hover:bg-gray-50"
+              >
                 <td className="py-5">{item.dinas}</td>
                 <td className="py-5">{item.id}</td>
                 <td className="py-5">{item.asset}</td>
@@ -190,12 +215,18 @@ export default function TableSDM({ filters }: any) {
                 <td className="py-5">{item.tugas}</td>
                 <td className="py-5">{item.risiko}</td>
                 <td className="py-5">
-                  <Link to="/laporan/sdm-auditor/id" className="text-blue-600 hover:underline font-medium">
+                  <Link
+                    to="/laporan/sdm-auditor/id"
+                    className="text-blue-600 hover:underline font-medium"
+                  >
                     Detail
                   </Link>
                 </td>
                 <td className="py-5">
-                  <button onClick={() => openModal(item)} className="p-2 rounded-full hover:bg-gray-100">
+                  <button
+                    onClick={() => openModal(item)}
+                    className="p-2 rounded-full hover:bg-gray-100"
+                  >
                     <MessageCircleMore className="w-5 h-5 text-gray-700" />
                   </button>
                 </td>
@@ -210,11 +241,18 @@ export default function TableSDM({ filters }: any) {
             Menampilkan {startIndex}–{endIndex} dari {filtered.length} data
           </p>
           <div className="flex justify-center items-center gap-2">
-            <button onClick={prevPage} disabled={currentPage === 1} className="px-3 py-1 rounded-lg text-sm disabled:opacity-40 flex items-center">
+            <button
+              onClick={prevPage}
+              disabled={currentPage === 1}
+              className="px-3 py-1 rounded-lg text-sm disabled:opacity-40 flex items-center"
+            >
               <ChevronLeft size={16} />
             </button>
             {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter((n) => n === 1 || n === totalPages || Math.abs(n - currentPage) <= 1)
+              .filter(
+                (n) =>
+                  n === 1 || n === totalPages || Math.abs(n - currentPage) <= 1
+              )
               .map((n, i, arr) => {
                 const prev = arr[i - 1];
                 return (
@@ -222,14 +260,22 @@ export default function TableSDM({ filters }: any) {
                     {prev && n - prev > 1 && <span className="px-2">...</span>}
                     <button
                       onClick={() => setCurrentPage(n)}
-                      className={`px-3 py-1 rounded-lg text-sm ${currentPage === n ? "bg-blue-600 text-white" : "hover:bg-gray-100"}`}
+                      className={`px-3 py-1 rounded-lg text-sm ${
+                        currentPage === n
+                          ? "bg-blue-600 text-white"
+                          : "hover:bg-gray-100"
+                      }`}
                     >
                       {n}
                     </button>
                   </div>
                 );
               })}
-            <button onClick={nextPage} disabled={currentPage === totalPages} className="px-3 py-1 rounded-lg text-sm disabled:opacity-40 flex items-center">
+            <button
+              onClick={nextPage}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 rounded-lg text-sm disabled:opacity-40 flex items-center"
+            >
               <ChevronRight size={16} />
             </button>
           </div>

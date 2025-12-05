@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { MessageCircleMore, ChevronLeft, ChevronRight } from "lucide-react";
 import AuditorModal from "../auditor/AuditorModal";
+import type { ModalRisikoData } from "../auditor/AuditorModal";
 import type { RisikoItem as RisikoType } from "../auditor/AuditorModal";
 
 type Filters = {
@@ -28,7 +30,9 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
   const [loading, setLoading] = useState(true);
 
   const [openModal, setOpenModal] = useState(false);
-  const [selectedData, setSelectedData] = useState<RisikoItem | null>(null);
+  const [selectedData, setSelectedData] = useState<ModalRisikoData | null>(
+    null
+  );
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 7;
@@ -42,9 +46,12 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await fetch("https://asset-risk-management.vercel.app/api/risks", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await fetch(
+          "https://asset-risk-management.vercel.app/api/risks",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         const json = await res.json();
 
         const mapped: RisikoItem[] = json.map((item: any) => ({
@@ -74,7 +81,15 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
   // MODAL HANDLING
   // ============================
   const openCommentModal = (item: RisikoItem) => {
-    setSelectedData(item);
+    const mappedData: ModalRisikoData = {
+      id: item.id,
+      title: item.title,
+      asset_info: {
+        name: item.asset?.name || "-",
+      },
+    };
+
+    setSelectedData(mappedData);
     setOpenModal(true);
   };
 
@@ -199,7 +214,10 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
 
           <tbody>
             {currentData.map((item) => (
-              <tr key={item.id} className="border-b border-[#e5e5e5] hover:bg-gray-50">
+              <tr
+                key={item.id}
+                className="border-b border-[#e5e5e5] hover:bg-gray-50"
+              >
                 <td className="py-5">{item.department.name}</td>
                 <td className="py-5">{item.id}</td>
                 <td className="py-5">{item.asset.name}</td>
@@ -269,7 +287,10 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
             </button>
 
             {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter((n) => n === 1 || n === totalPages || Math.abs(n - currentPage) <= 1)
+              .filter(
+                (n) =>
+                  n === 1 || n === totalPages || Math.abs(n - currentPage) <= 1
+              )
               .map((n, i, arr) => {
                 const prev = arr[i - 1];
                 return (
@@ -278,7 +299,9 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
                     <button
                       onClick={() => setCurrentPage(n)}
                       className={`px-3 py-1 rounded-lg text-sm ${
-                        currentPage === n ? "bg-blue-600 text-white" : "hover:bg-gray-100"
+                        currentPage === n
+                          ? "bg-blue-600 text-white"
+                          : "hover:bg-gray-100"
                       }`}
                     >
                       {n}
@@ -316,7 +339,9 @@ export default function LaporanRiskVerif({ filters }: { filters: Filters }) {
             </button>
 
             <p className="text-sm text-gray-500 mb-1">{item.date}</p>
-            <h3 className="text-base font-semibold text-gray-900">{item.title}</h3>
+            <h3 className="text-base font-semibold text-gray-900">
+              {item.title}
+            </h3>
             <p className="text-sm text-gray-500 mb-3">{item.asset.name}</p>
 
             <div className="text-sm text-gray-700 space-y-1">

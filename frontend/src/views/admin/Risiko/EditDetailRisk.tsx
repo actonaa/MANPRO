@@ -19,6 +19,32 @@ import Step2 from "../../../components/asset/dinas/risiko/Step2";
 import Step3 from "../../../components/asset/dinas/risiko/Step3";
 import Step4 from "../../../components/asset/dinas/risiko/Step4";
 
+interface RiskDetailResponse {
+  asset_id: string;
+  type?: string;
+  title?: string;
+  description?: string;
+  cause?: string;
+  impact?: string;
+  risk_category?: { id: string; name: string };
+  impact_area?: { id: string; name: string };
+  probability?: number;
+  impact_score?: number;
+  criteria?: string;
+  type_of_risk?: string;
+  priority?: string;
+  entry_level?: number;
+  strategi?: string;
+  aksi_mitigasi?: string;
+  owner?: string;
+  target_time?: string;
+  perkiraan_biaya?: string;
+  efektivitas?: string;
+  level_residual?: string;
+  probabilitas_residual?: string;
+  dampak_residual?: string;
+}
+
 // ==========================
 // Interface
 // ==========================
@@ -137,8 +163,12 @@ export default function RisikoWizard() {
   const [assetId, setAssetId] = useState<string>("");
 
   const [step, setStep] = useState(1);
-  const [impactAreas, setImpactAreas] = useState<{ id: string; name: string }[]>([]);
-  const [riskCategories, setRiskCategories] = useState<{ id: string; name: string }[]>([]);
+  const [impactAreas, setImpactAreas] = useState<
+    { id: string; name: string }[]
+  >([]);
+  const [riskCategories, setRiskCategories] = useState<
+    { id: string; name: string }[]
+  >([]);
   const [showPopup, setShowPopup] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -185,7 +215,9 @@ export default function RisikoWizard() {
         ]);
 
         setImpactAreas(Array.isArray(impactRes.data) ? impactRes.data : []);
-        setRiskCategories(Array.isArray(categoryRes.data) ? categoryRes.data : []);
+        setRiskCategories(
+          Array.isArray(categoryRes.data) ? categoryRes.data : []
+        );
       } catch (err) {
         console.error("Gagal fetch dropdown:", err);
       }
@@ -204,7 +236,7 @@ export default function RisikoWizard() {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await axios.get(`/api/risks/${id}`, {
+        const res = await axios.get<RiskDetailResponse>(`/api/risks/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -289,7 +321,11 @@ export default function RisikoWizard() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleArrayChange = (type: "penyebab" | "dampak", index: number, value: string) => {
+  const handleArrayChange = (
+    type: "penyebab" | "dampak",
+    index: number,
+    value: string
+  ) => {
     const key = type === "penyebab" ? "penyebabRisiko" : "dampakRisiko";
     const updated = [...(formData as any)[key]];
     updated[index] = value;
@@ -308,8 +344,13 @@ export default function RisikoWizard() {
     updated.splice(index, 1);
     setFormData((prev: any) => ({ ...prev, [key]: updated }));
   };
+  const [showErrors, setShowErrors] = useState(false);
+  const [errors] = useState<Record<string, string>>({});
 
-  const nextStep = () => setStep((prev) => Math.min(prev + 1, 4));
+  const nextStep = () => {
+    setShowErrors(true); // tampilkan error di step 1
+    setStep((prev) => Math.min(prev + 1, 4));
+  };
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
   // ==========================
@@ -324,11 +365,14 @@ export default function RisikoWizard() {
       const token = localStorage.getItem("token");
 
       const foundCategory = riskCategories.find(
-        (k) => k.name?.toLowerCase() === (formData.kategoriRisiko || "").toLowerCase()
+        (k) =>
+          k.name?.toLowerCase() ===
+          (formData.kategoriRisiko || "").toLowerCase()
       );
 
       const foundImpact = impactAreas.find(
-        (a) => a.name?.toLowerCase() === (formData.areaDampak || "").toLowerCase()
+        (a) =>
+          a.name?.toLowerCase() === (formData.areaDampak || "").toLowerCase()
       );
 
       const payload = {
@@ -371,13 +415,15 @@ export default function RisikoWizard() {
   return (
     <div className="min-h-screen flex flex-col p-5 rounded-2xl">
       <div className="flex flex-col w-full mx-auto">
-        <h1 className="text-2xl font-semibold mb-8">
-          Edit Risiko
-        </h1>
+        <h1 className="text-2xl font-semibold mb-8">Edit Risiko</h1>
 
         <div className="flex items-center justify-center mb-6">
           <img
-            src={isMobile ? stepImages.mobile[step - 1] : stepImages.desktop[step - 1]}
+            src={
+              isMobile
+                ? stepImages.mobile[step - 1]
+                : stepImages.desktop[step - 1]
+            }
             className="w-full max-w-2xl object-contain"
           />
         </div>
@@ -390,11 +436,26 @@ export default function RisikoWizard() {
               handleArrayChange={handleArrayChange}
               handleAddField={handleAddField}
               handleRemoveField={handleRemoveField}
+              showErrors={showErrors} // ⬅️ WAJIB ADA
             />
           )}
 
-          {step === 2 && <Step2 formData={formData} handleChange={handleChange} />}
-          {step === 3 && <Step3 formData={formData} handleChange={handleChange} />}
+          {step === 2 && (
+            <Step2
+              formData={formData}
+              handleChange={handleChange}
+              showErrors={showErrors}
+              errors={errors}
+            />
+          )}
+          {step === 3 && (
+            <Step3
+              formData={formData}
+              handleChange={handleChange}
+              showErrors={showErrors}
+              errors={errors}
+            />
+          )}
           {step === 4 && <Step4 formData={formData} />}
 
           <div className="flex justify-between mt-6">

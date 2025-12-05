@@ -7,14 +7,26 @@ export type RisikoItem = {
   criteria?: string;
   entry_level?: number;
   status?: string;
+  asset?: { name: string; lokasi?: string }; // <-- ubah dari string
   asset_info?: { name: string | null };
+  category: string;
+  department?: { name: string }; // <-- ubah dari string
+  type: string;
+  priority: string;
+  date: string;
+};
+
+export type ModalRisikoData = {
+  id: string;
+  title: string;
+  asset_info: { name: string };
 };
 
 interface AuditorModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (comment: string) => void;
-  data: RisikoItem | null; // ⬅️ TAMBAHKAN
+  data: ModalRisikoData | null;
 }
 
 const AuditorModal: React.FC<AuditorModalProps> = ({
@@ -35,9 +47,15 @@ const AuditorModal: React.FC<AuditorModalProps> = ({
         {/* INFO RISIKO */}
         {data && (
           <div className="mb-4 text-sm text-gray-600 border p-3 rounded-md">
-            <p><b>ID Risiko:</b> {data.id}</p>
-            <p><b>Nama Risiko:</b> {data.title}</p>
-            <p><b>Aset:</b> {data.asset_info?.name || "-"}</p>
+            <p>
+              <b>ID Risiko:</b> {data.id}
+            </p>
+            <p>
+              <b>Nama Risiko:</b> {data.title}
+            </p>
+            <p>
+              <b>Aset:</b> {data.asset_info?.name || "-"}
+            </p>
           </div>
         )}
 

@@ -27,6 +27,25 @@ interface RisikoDetail {
   aktivitas?: any[];
 }
 
+interface ApiRisikoResponse {
+  id: string;
+  title: string;
+  criteria: string;
+  status: string;
+  asset_info?: { name: string };
+  owner?: string;
+  description: string;
+  impact: string;
+  cause: string;
+  impact_criteria?: string;
+  probability?: number;
+  impact_score?: number;
+  entry_level?: number;
+  mitigasi?: any[];
+  aktivitas?: any[];
+  asset_id?: string;
+}
+
 export default function RisikoPage() {
   const [data, setData] = useState<RisikoDetail | null>(null);
   const [completionDate, setCompletionDate] = useState<string | null>(null);
@@ -49,7 +68,7 @@ export default function RisikoPage() {
       try {
         if (!token) throw new Error("Token tidak ditemukan di localStorage");
 
-        const response = await axios.get(
+        const response = await axios.get<ApiRisikoResponse>(
           `https://asset-risk-management.vercel.app/api/risks/${id}`,
           {
             headers: {
@@ -80,7 +99,7 @@ export default function RisikoPage() {
         };
 
         // Fetch aktivitas maintenance berdasarkan asset_id
-        const resMaintenance = await axios.get(
+        const resMaintenance = await axios.get<any[]>(
           `https://asset-risk-management.vercel.app/api/maintenance`,
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -106,7 +125,7 @@ export default function RisikoPage() {
     };
 
     fetchData();
-  }, [id]);
+  }, [id, token]);
 
   // ============================
   // FETCH MAINTENANCE DATE (BERDASARKAN risk_id)
@@ -116,7 +135,7 @@ export default function RisikoPage() {
       try {
         if (!token) throw new Error("Token tidak ditemukan");
 
-        const response = await axios.get(
+        const response = await axios.get<any[]>(
           `https://asset-risk-management.vercel.app/api/maintenance`,
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -132,7 +151,7 @@ export default function RisikoPage() {
     };
 
     fetchMaintenance();
-  }, [id]);
+  }, [id, token]);
 
   // ============================
   // STATE UNTUK MAPPED TREATMENT
@@ -156,7 +175,7 @@ export default function RisikoPage() {
       try {
         if (!token) return;
 
-        const res = await axios.get(
+        const res = await axios.get<{ data: any[] }>(
           `https://asset-risk-management.vercel.app/api/risk-treatments?risk_id=${id}`,
           {
             headers: {
@@ -209,7 +228,7 @@ export default function RisikoPage() {
     };
 
     fetchTreatment();
-  }, [id]);
+  }, [id, token]);
 
   // ============================
   // LOADING & ERROR HANDLING

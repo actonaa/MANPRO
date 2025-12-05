@@ -6,7 +6,6 @@ import RisikoDetailCard from "../../../components/risiko/dinas/RisikoDetailCard"
 import RencanaMitigasiCard from "../../../components/no-button-card/RencanaMitigasi-Laporan";
 import RiwayatAktivitasCard from "../../../components/risiko/dinas/RiwayatAktivitasCard";
 
-
 export default function DetailRisiko() {
   const { id } = useParams(); // ambil id dari URL misalnya /risiko/detail/:id
   const [data, setData] = useState<any>(null);
@@ -63,7 +62,6 @@ export default function DetailRisiko() {
           criteria={data.criteria?.name}
           status={data.status}
         />
-        
       </div>
 
       {/* 🧩 Card utama */}
@@ -87,7 +85,7 @@ export default function DetailRisiko() {
           {/* 🔧 Layout 2 kolom untuk Mitigasi & Value */}
           <div className="grid grid-cols-1 gap-6 items-start">
             {/* 📁 Kiri: Rencana Mitigasi */}
-            <RiwayatAktivitasCard aktivitasList={data.aktivitas} />
+            <RiwayatAktivitasCard act={data.aktivitas} />
           </div>
           <RencanaMitigasiCard mitigasiList={data.mitigasi} />
         </div>

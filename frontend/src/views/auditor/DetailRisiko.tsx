@@ -41,9 +41,7 @@ export default function DetailRisikoAuditor() {
 
   if (loading) {
     return (
-      <p className="text-center py-10 text-gray-500">
-        Memuat data risiko...
-      </p>
+      <p className="text-center py-10 text-gray-500">Memuat data risiko...</p>
     );
   }
 
@@ -85,7 +83,7 @@ export default function DetailRisikoAuditor() {
           />
 
           {/* Riwayat Aktivitas */}
-          <RiwayatAktivitasCard aktivitasList={data.aktivitas || []} />
+          <RiwayatAktivitasCard act={data.aktivitas || []} />
 
           {/* Rencana Mitigasi */}
           <RencanaMitigasiCard mitigasiList={data.mitigasi || []} />

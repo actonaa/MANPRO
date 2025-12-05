@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -20,7 +21,7 @@ export default function RencanaMitigasi({ riskId }: RencanaMitigasiCardProps) {
     const fetchMitigasi = async () => {
       try {
         const token = localStorage.getItem("token"); // ambil token dari localStorage
-        const response = await axios.get(
+        const response = await axios.get<any[]>(
           `https://asset-risk-management.vercel.app/api/risk-treatments?risk_id=${riskId}`,
           {
             headers: {
@@ -55,7 +56,11 @@ export default function RencanaMitigasi({ riskId }: RencanaMitigasiCardProps) {
   }, [riskId]);
 
   if (loading)
-    return <p className="text-center py-10 text-gray-500">Memuat rencana mitigasi...</p>;
+    return (
+      <p className="text-center py-10 text-gray-500">
+        Memuat rencana mitigasi...
+      </p>
+    );
 
   // 🎨 Warna badge status
   const getStatusColor = (status: string) => {
@@ -73,7 +78,9 @@ export default function RencanaMitigasi({ riskId }: RencanaMitigasiCardProps) {
       <h2 className="text-lg font-bold text-gray-800 mb-6">Aksi Penanganan</h2>
 
       {mitigasiList.length === 0 ? (
-        <p className="text-gray-500 italic">Belum ada rencana mitigasi ditambahkan.</p>
+        <p className="text-gray-500 italic">
+          Belum ada rencana mitigasi ditambahkan.
+        </p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left border-collapse">
@@ -88,7 +95,9 @@ export default function RencanaMitigasi({ riskId }: RencanaMitigasiCardProps) {
             <tbody>
               {mitigasiList.map((item, idx) => (
                 <tr key={idx} className="border-b border-gray-200">
-                  <td className="py-3 text-gray-800 font-medium">{item.aksi}</td>
+                  <td className="py-3 text-gray-800 font-medium">
+                    {item.aksi}
+                  </td>
                   <td className="py-3">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
@@ -98,8 +107,12 @@ export default function RencanaMitigasi({ riskId }: RencanaMitigasiCardProps) {
                       {item.status}
                     </span>
                   </td>
-                  <td className="py-3 font-medium text-gray-800">{item.targetTanggal}</td>
-                  <td className="py-3 font-medium text-gray-800">{item.pemilik}</td>
+                  <td className="py-3 font-medium text-gray-800">
+                    {item.targetTanggal}
+                  </td>
+                  <td className="py-3 font-medium text-gray-800">
+                    {item.pemilik}
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -5,7 +5,7 @@ import { Download } from "lucide-react";
 import ButtonText from "../../../components/button/ButtonText";
 import InformasiUtama from "../../../components/kelola-asset/dinas/InformasiUtama";
 import JadwalPemeliharaan from "../../../components/kelola-asset/dinas/JadwalPemeliharaan";
-import KeterkaitanRisiko from "../../../components/no-button-card/KeterkaitanRisiko-Laporan";
+import KeterkaitanRisiko from "../../../components/kelola-asset/diskominfo/KeterkaitanRisiko";
 import Lampiran from "../../../components/kelola-asset/dinas/Lampiran";
 import RiwayatAktivitas from "../../../components/kelola-asset/dinas/RiwayatAktivitas";
 import ScanBarcode from "../../../components/kelola-asset/dinas/ScanBarcode";
@@ -148,8 +148,12 @@ export default function DetailAsetAdmin() {
 
           <div className="flex flex-col gap-5">
             <JadwalPemeliharaan jadwal={[]} />
-            <KeterkaitanRisiko risiko={[]} />
-            <RiwayatAktivitas aktivitas={[]} />
+            <KeterkaitanRisiko
+              risiko={asset.risiko || []}
+              approvalStatus={asset.approval_status || "done"}
+              assetId={asset.id}
+            />
+            <RiwayatAktivitas act={[]} />
           </div>
         </div>
 

@@ -1,5 +1,5 @@
 import RisikoResidual from "..//../../components/kelola-risiko/dinas/RisikoResidual";
-import Top10Risiko from "../../../components/kelola-risiko/dinas/Top10Resiko";
+// import Top10Risiko from "../../../components/kelola-risiko/dinas/Top10Resiko";
 import ButtonText from "../../../components/button/ButtonText";
 import CardList from "../../../components/card/CardList";
 
@@ -12,18 +12,18 @@ export default function DashboardRisikoAdmin() {
   };
 
   // ✅ Data risiko dummy
-  const risikoList = [
-    { id: 1, nama: "Data breach", nilai: 95, kategori: "tinggi" },
-    { id: 2, nama: "Financial Fraud", nilai: 90, kategori: "tinggi" },
-    { id: 3, nama: "Equipment Failure", nilai: 88, kategori: "tinggi" },
-    { id: 4, nama: "Unauthorized Access", nilai: 75, kategori: "sedang" },
-    { id: 5, nama: "Service Downtime", nilai: 70, kategori: "sedang-rendah" },
-    { id: 6, nama: "Configuration Error", nilai: 68, kategori: "menengah" },
-    { id: 7, nama: "Policy Violation", nilai: 65, kategori: "menengah" },
-    { id: 8, nama: "Network Latency", nilai: 60, kategori: "sedang-rendah" },
-    { id: 9, nama: "Data Corruption", nilai: 55, kategori: "menengah" },
-    { id: 10, nama: "Backup Failure", nilai: 45, kategori: "rendah" },
-  ];
+  // const risikoList = [
+  //   { id: 1, nama: "Data breach", nilai: 95, kategori: "tinggi" },
+  //   { id: 2, nama: "Financial Fraud", nilai: 90, kategori: "tinggi" },
+  //   { id: 3, nama: "Equipment Failure", nilai: 88, kategori: "tinggi" },
+  //   { id: 4, nama: "Unauthorized Access", nilai: 75, kategori: "sedang" },
+  //   { id: 5, nama: "Service Downtime", nilai: 70, kategori: "sedang-rendah" },
+  //   { id: 6, nama: "Configuration Error", nilai: 68, kategori: "menengah" },
+  //   { id: 7, nama: "Policy Violation", nilai: 65, kategori: "menengah" },
+  //   { id: 8, nama: "Network Latency", nilai: 60, kategori: "sedang-rendah" },
+  //   { id: 9, nama: "Data Corruption", nilai: 55, kategori: "menengah" },
+  //   { id: 10, nama: "Backup Failure", nilai: 45, kategori: "rendah" },
+  // ];
 
   // 📍 Fungsi klik tombol
   const handleLihatRisiko = () => {
@@ -84,7 +84,7 @@ export default function DashboardRisikoAdmin() {
       </div>
 
       {/* 📉 Risiko Progress Bar */}
-      <Top10Risiko data={risikoList} />
+      {/* <Top10Risiko data={risikoList} /> */}
     </>
   );
 }

@@ -5,7 +5,7 @@ import { Upload } from "lucide-react";
 import ButtonText from "../../../components/button/ButtonText";
 import InformasiUtama from "../../../components/kelola-asset/dinas/InformasiUtama";
 import JadwalPemeliharaan from "../../../components/kelola-asset/dinas/JadwalPemeliharaan";
-import KeterkaitanRisiko from "../../../components/kelola-asset/diskominfo/KeterkaitanRIsiko";
+import KeterkaitanRisiko from "../../../components/kelola-asset/diskominfo/KeterkaitanRisiko";
 import Lampiran from "../../../components/kelola-asset/dinas/Lampiran";
 import RiwayatAktivitas from "../../../components/kelola-asset/dinas/RiwayatAktivitas";
 import ScanBarcode from "../../../components/kelola-asset/dinas/ScanBarcode";
@@ -183,7 +183,7 @@ export default function DetailAsetAdmin() {
               approvalStatus={asset.approval_status}
               assetId={asset.id}
             />
-            <RiwayatAktivitas aktivitas={[]} />
+            <RiwayatAktivitas act={[]} />
           </div>
         </div>
 

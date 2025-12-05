@@ -11,13 +11,17 @@ interface AuditFile {
 }
 
 interface Props {
-  data: AuditFile;
+  isOpen: boolean;
+  onClose: () => void;
+  data: AuditFile | null;
 }
 
 export default function ButtonLihatAudit({ data }: Props) {
+  if (!data) return null;
+
   const handleOpenFile = () => {
     if (data.file_url) {
-      window.open(data.file_url, "_blank"); // buka file di tab baru
+      window.open(data.file_url, "_blank");
     } else {
       alert("File tidak tersedia");
     }

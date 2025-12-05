@@ -56,7 +56,7 @@ export default function TambahSkenario() {
       try {
         const token = localStorage.getItem("token");
 
-        const response = await axios.get(
+        const response = await axios.get<any>(
           "https://sso-user-management.vercel.app/api/master/positions",
           {
             headers: { Authorization: `Bearer ${token}` },

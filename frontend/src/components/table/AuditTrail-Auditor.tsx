@@ -15,7 +15,7 @@ export default function TableAudit({ filters }: any) {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(
+        const res = await axios.get<any[]>(
           "https://asset-risk-management.vercel.app/api/audit-logs",
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -45,20 +45,26 @@ export default function TableAudit({ filters }: any) {
   if (loading) {
     return (
       <div className="space-y-4 p-5">
-        <h2 className="text-gray-700 font-semibold mb-3">Aktivitas Sistem Terkini</h2>
+        <h2 className="text-gray-700 font-semibold mb-3">
+          Aktivitas Sistem Terkini
+        </h2>
 
         {/* Skeleton Desktop */}
         <div className="hidden xl:block bg-white rounded-xl shadow-sm border border-[#EDEDED] p-5 animate-pulse">
           <table className="w-full min-w-[1000px] text-left border-collapse">
             <thead className="text-[#666] border-b border-[#EDEDED]">
               <tr>
-                {["Tanggal & Waktu", "NAMA PENGGUNA", "MODUL", "AKSI", "DETAIL"].map(
-                  (idx) => (
-                    <th key={idx} className="py-4 px-2 font-semibold">
-                      <div className="h-4 bg-gray-200 rounded w-32"></div>
-                    </th>
-                  )
-                )}
+                {[
+                  "Tanggal & Waktu",
+                  "NAMA PENGGUNA",
+                  "MODUL",
+                  "AKSI",
+                  "DETAIL",
+                ].map((idx) => (
+                  <th key={idx} className="py-4 px-2 font-semibold">
+                    <div className="h-4 bg-gray-200 rounded w-32"></div>
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
@@ -145,10 +151,18 @@ export default function TableAudit({ filters }: any) {
                 <td className="py-5 px-2 font-medium text-gray-800 whitespace-nowrap">
                   {new Date(item.date).toLocaleString("id-ID")}
                 </td>
-                <td className="py-5 px-2 text-gray-700 whitespace-nowrap">{item.dinas}</td>
-                <td className="py-5 px-2 text-gray-700 whitespace-nowrap">{item.modul}</td>
-                <td className="py-5 px-2 text-gray-700 whitespace-nowrap">{item.aksi}</td>
-                <td className="py-5 px-2 text-gray-700 leading-relaxed">{item.detail}</td>
+                <td className="py-5 px-2 text-gray-700 whitespace-nowrap">
+                  {item.dinas}
+                </td>
+                <td className="py-5 px-2 text-gray-700 whitespace-nowrap">
+                  {item.modul}
+                </td>
+                <td className="py-5 px-2 text-gray-700 whitespace-nowrap">
+                  {item.aksi}
+                </td>
+                <td className="py-5 px-2 text-gray-700 leading-relaxed">
+                  {item.detail}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -171,7 +185,8 @@ export default function TableAudit({ filters }: any) {
 
             {Array.from({ length: totalPages }, (_, i) => i + 1)
               .filter(
-                (n) => n === 1 || n === totalPages || Math.abs(n - currentPage) <= 1
+                (n) =>
+                  n === 1 || n === totalPages || Math.abs(n - currentPage) <= 1
               )
               .map((n, i, arr) => {
                 const prev = arr[i - 1];
@@ -181,7 +196,9 @@ export default function TableAudit({ filters }: any) {
                     <button
                       onClick={() => setCurrentPage(n)}
                       className={`px-3 py-1 rounded-lg text-sm ${
-                        currentPage === n ? "bg-blue-600 text-white" : "hover:bg-gray-100"
+                        currentPage === n
+                          ? "bg-blue-600 text-white"
+                          : "hover:bg-gray-100"
                       }`}
                     >
                       {n}

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { MessageCircleMore } from "lucide-react";
 import AuditorModal from "../auditor/AuditorModal"; // ⬅ pastikan path benar
@@ -105,7 +104,10 @@ export default function TablePemeliharaanAuditor({ filters }: Props) {
 
           <tbody className="text-gray-800">
             {filtered.map((item) => (
-              <tr key={item.id} className="border-b border-b-gray-300 last:border-0">
+              <tr
+                key={item.id}
+                className="border-b border-b-gray-300 last:border-0"
+              >
                 <td className="p-3">{item.dinas}</td>
                 <td className="p-3">{item.aset_id}</td>
                 <td className="p-3">{item.jenis}</td>
@@ -174,20 +176,7 @@ export default function TablePemeliharaanAuditor({ filters }: Props) {
             ? {
                 id: selectedRow.id,
                 title: `Pemeliharaan ${selectedRow.aset_id}`,
-                status: "Selesai",
-                category: selectedRow.jenis,
-                asset: {
-                  name: selectedRow.aset_id,
-                  lokasi: "-",
-                },
-                department: {
-                  name: selectedRow.dinas,
-                },
-                type: "",
-                criteria: "",
-                priority: selectedRow.prioritas,
-                entry_level: 0,
-                date: selectedRow.jadwal,
+                asset_info: { name: selectedRow.aset_id },
               }
             : null
         }

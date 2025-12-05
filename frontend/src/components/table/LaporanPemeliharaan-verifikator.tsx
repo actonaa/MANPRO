@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { Eye, CheckCircle, XCircle } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -52,7 +53,7 @@ export default function TablePemeliharaanVerifikator({
         const token = localStorage.getItem("token");
         if (!token) throw new Error("Token tidak ditemukan di localStorage");
 
-        const response = await axios.get(
+        const response = await axios.get<any[]>(
           "https://asset-risk-management.vercel.app/api/maintenance",
           {
             headers: {

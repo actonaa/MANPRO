@@ -48,9 +48,7 @@ export default function RisikoPage() {
   // ============================
   if (loading)
     return (
-      <p className="text-center py-10 text-gray-500">
-        Memuat data risiko...
-      </p>
+      <p className="text-center py-10 text-gray-500">Memuat data risiko...</p>
     );
 
   if (!data)
@@ -118,7 +116,7 @@ export default function RisikoPage() {
           {/* ===============================
                 Aktivitas / Mitigasi
           ================================== */}
-          <RiwayatAktivitasCard aktivitasList={data.aktivitas ?? []} />
+          <RiwayatAktivitasCard act={data.aktivitas ?? []} />
           <RencanaMitigasiCard riskId={data.id} />
         </div>
       </div>
