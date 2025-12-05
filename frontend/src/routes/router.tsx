@@ -23,8 +23,6 @@ import DetailLaporanPemeliharaan from "../views/dinas/Pemeliharaan/DetailLaporan
 import DetailJadwalPemeliharaan from "../views/dinas/Pemeliharaan/DetailJadwalPemeliharaan";
 
 import Notifications from "../views/dinas/Notifications";
-import NotificationsVerifikator from "../views/dinas/Notifications";
-import NotificationsAuditor from "../views/auditor/NotifikasiAuditor";
 
 import DashboardVerifikator from "../views/verifikator/Dashboard";
 import RisikoVerifikator from "../views/verifikator/DaftarRisiko";
@@ -76,7 +74,6 @@ import VerifikasiAsetAdminPage from "../views/admin/Aset/VerifikasiAset";
 import DataSumberDayaManusia from "../views/admin/SDM/DataSumberDayaManusia";
 import LaporanSdmAdmin from "../views/admin/SDM/LaporanSDM";
 import LaporanAudit from "../views/admin/Audit/LaporanAudit";
-import NotifikasiAdmin from "../views/admin/NotifikasiAdmin";
 import EditSDM from "../views/admin/SDM/EditSDM";
 import DetailSDM from "../views/admin/SDM/DetailSDM";
 import DetailLaporanSDM from "../views/admin/SDM/DetailLaporanSDM";
@@ -91,7 +88,6 @@ import DetailRisikoAdmin from "../views/admin/Risiko/DetailRisiko";
 
 import Skenario from "../views/dinas/Aset/DataSkenario";
 import TambahSkenario from "../views/dinas/Aset/TambahSkenario";
-import DetailNotifikasiAdmin from "../views/admin/DetailNotifikasiAdmin";
 import EditAset from "../views/dinas/Aset/EditAset";
 import DetailNotifikasi from "../components/Notifikasi/dinas/DetailNotif";
 import EditMitigasi from "../views/dinas/Risiko/EditMitigasi";
@@ -167,24 +163,25 @@ export default function AppRoutes() {
             element={<LaporanPemeliharaanVerifikator />}
           />
           <Route
-            path="/aset-verifikator/:id"
+            path="/laporan/aset-verifikator/:id"
             element={<DetailAsetVerifikator />}
           />
           <Route
-            path="/risiko-verifikator/detail"
+            path="/laporan/risiko-verifikator/:id"
             element={<DetailRisikoVerifikator />}
           />
           <Route
-            path="/pemeliharaan-verifikator/detail"
+            path="/pemeliharaan-verifikator/:id"
             element={<DetailPemeliharaanVerifikator />}
           />
           <Route
             path="/jadwal-verifikator/detail"
             element={<DetailJadwalVerifikator />}
           />
+          <Route path="/notifikasi-verifikator" element={<Notifications />} />
           <Route
-            path="/notifikasi-verifikator"
-            element={<NotificationsVerifikator />}
+            path="/notifikasi-verifikator/:notifid"
+            element={<DetailNotifikasi />}
           />
         </Route>
 
@@ -231,9 +228,10 @@ export default function AppRoutes() {
           />
           <Route path="/laporan/riview-auditor" element={<LaporanReview />} />
 
+          <Route path="/notifikasi-auditor" element={<Notifications />} />
           <Route
-            path="/notifikasi-auditor"
-            element={<NotificationsAuditor />}
+            path="/notifikasi-auditor/:notifid"
+            element={<DetailNotifikasi />}
           />
         </Route>
 
@@ -290,11 +288,11 @@ export default function AppRoutes() {
 
           <Route
             path="/notifikasi/notifikasi-admin"
-            element={<NotifikasiAdmin />}
+            element={<Notifications />}
           />
           <Route
-            path="/notifikasi/detailnotifikasi-admin"
-            element={<DetailNotifikasiAdmin />}
+            path="/notifikasi-admin/:notifid"
+            element={<DetailNotifikasi />}
           />
         </Route>
       </Routes>

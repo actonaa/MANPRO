@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Trash2, MailCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../routes/ProtectedRouteBase";
 
 export default function NotifikasiItem({
   notif,
@@ -16,11 +17,19 @@ export default function NotifikasiItem({
   onDelete?: () => void;
 }) {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // 🔥 Ambil role dari localStorage (atau dari notif.role jika ada)
 
   // 🔥 Klik pada container → navigate ke detail
   const goToDetail = () => {
     onMarkRead?.(); // ⬅️ mark read otomatis
-    navigate(`/notifikasi/${notif.id}`);
+
+    if (user.role == "teknisi") {
+      navigate(`/notifikasi/${notif.id}`);
+    } else {
+      navigate(`/notifikasi-${user.role}/${notif.id}`);
+    }
   };
 
   return (
@@ -70,7 +79,7 @@ export default function NotifikasiItem({
       >
         <button
           onClick={(e) => {
-            e.stopPropagation(); // ⛔ hindari navigate
+            e.stopPropagation();
             onMarkRead?.();
           }}
           className="p-2 rounded-full hover:bg-green-100 transition"
@@ -84,7 +93,7 @@ export default function NotifikasiItem({
 
         <button
           onClick={(e) => {
-            e.stopPropagation(); // ⛔ hindari navigate
+            e.stopPropagation();
             onDelete?.();
           }}
           className="p-2 rounded-full hover:bg-red-100 transition"

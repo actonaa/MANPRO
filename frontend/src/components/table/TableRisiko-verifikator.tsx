@@ -212,7 +212,7 @@ export default function TableRisiko({
                 <td className="py-5 px-4">{item.entry_level}</td>
                 <td className="py-5 px-4 flex items-center justify-center gap-3 text-gray-500">
                   <a
-                    href="/risiko-verifikator/detail"
+                    href={`/laporan/risiko-verifikator/${item.id}`}
                     className="hover:text-blue-600"
                   >
                     <Eye size={18} />

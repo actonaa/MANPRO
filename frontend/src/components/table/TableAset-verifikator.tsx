@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Eye } from "lucide-react";
+import axios from "axios";
 
 type TableProps = {
   selectedkondisi?: string;
@@ -20,51 +21,44 @@ export default function TableAset({
   selectedDate = null,
 }: TableProps) {
   const [data, setData] = useState<AsetItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Dummy data
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   useEffect(() => {
-    setData([
-      {
-        id: "AST-001",
-        nama: "CCTV Lobby",
-        kategori: "TI",
-        lokasi: "Kantor Pusat",
-        kondisi: "BAIK",
-        tanggal: "2025-01-12",
-      },
-      {
-        id: "AST-002",
-        nama: "Mobil Operasional",
-        kategori: "NON-TI",
-        lokasi: "Garasi",
-        kondisi: "BAIK",
-        tanggal: "2025-01-12",
-      },
-      {
-        id: "AST-003",
-        nama: "Laptop Asus Zenbook",
-        kategori: "TI",
-        lokasi: "Ruang Server",
-        kondisi: "RUSAK - BERAT",
-        tanggal: "2025-01-12",
-      },
-      {
-        id: "AST-004",
-        nama: "Meja Kantor",
-        kategori: "NON-TI",
-        lokasi: "Ruang Rapat",
-        kondisi: "RUSAK - RINGAN",
-        tanggal: "2025-01-12",
-      },
-      {
-        id: "AST-005",
-        nama: "Projector",
-        kategori: "TI",
-        lokasi: "Ruang Meeting",
-        kondisi: "BAIK",
-        tanggal: "2025-01-12",
-      },
-    ]);
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("Token tidak ditemukan di localStorage");
+          return;
+        }
+
+        const response = await axios.get(
+          "https://asset-risk-management.vercel.app/api/assets",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        const assets: AsetItem[] = response.data.map((item: any) => ({
+          id: item.id,
+          nama: item.name,
+          kategori: item.category?.name || "-",
+          lokasi: item.lokasi || "-",
+          kondisi: item.condition?.name?.toUpperCase() || "-",
+          tanggal: item.acquisition_date || item.created_at.split("T")[0],
+        }));
+
+        setData(assets);
+      } catch (error) {
+        console.error("Gagal fetch data aset:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const parseDate = (dateStr: string) => new Date(dateStr);
@@ -88,12 +82,21 @@ export default function TableAset({
     return kondisiMatch && dateMatch;
   });
 
+  // Pagination calculations
+  const totalItems = filteredData.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentData = filteredData.slice(startIndex, endIndex);
+
   const getKondisiColor = (kondisi: string) => {
     if (kondisi === "BAIK") return "text-green-600";
     if (kondisi.includes("RINGAN")) return "text-orange-500";
     if (kondisi.includes("BERAT")) return "text-red-500";
     return "text-gray-600";
   };
+
+  if (loading) return <p className="text-center py-6">Loading data aset...</p>;
 
   return (
     <div className="md:pb-10 xl:bg-white xl:shadow-xl xl:p-5 xl:rounded-2xl">
@@ -113,7 +116,7 @@ export default function TableAset({
           </thead>
 
           <tbody>
-            {filteredData.map((item) => (
+            {currentData.map((item) => (
               <tr
                 key={item.id + item.kondisi}
                 className="border-b border-b-[#ddd] hover:bg-gray-50 transition"
@@ -122,13 +125,17 @@ export default function TableAset({
                 <td className="py-5 px-4">{item.nama}</td>
                 <td className="py-5 px-4">{item.kategori}</td>
                 <td className="py-5 px-4">{item.lokasi}</td>
-                <td className={`py-5 px-4 font-semibold ${getKondisiColor(item.kondisi)}`}>
+                <td
+                  className={`py-5 px-4 font-semibold ${getKondisiColor(
+                    item.kondisi
+                  )}`}
+                >
                   {item.kondisi}
                 </td>
                 <td className="py-5 px-4">{formatTanggal(item.tanggal)}</td>
                 <td className="py-5 px-4 text-gray-500 flex justify-center">
                   <a
-                    href={`/aset-verifikator/detail`}
+                    href={`/laporan/aset-verifikator/${item.id}`}
                     className="hover:text-blue-600"
                     title="Lihat Detail"
                   >
@@ -139,11 +146,73 @@ export default function TableAset({
             ))}
           </tbody>
         </table>
+
+        {/* Pagination */}
+        <div className="mt-6 text-sm text-gray-600 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="text-center lg:text-left">
+            Menampilkan {totalItems === 0 ? 0 : startIndex + 1} dari {totalItems} hasil
+          </div>
+
+          <div className="flex justify-center items-center gap-2 w-full lg:w-auto">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-2 py-1 disabled:text-gray-300"
+            >
+              &lt;
+            </button>
+
+            {(() => {
+              const pages: (number | string)[] = [];
+              if (totalPages <= 5) {
+                for (let i = 1; i <= totalPages; i++) pages.push(i);
+              } else {
+                pages.push(1);
+                if (currentPage > 3) pages.push("...");
+                const start = Math.max(2, currentPage - 1);
+                const end = Math.min(totalPages - 1, currentPage + 1);
+                for (let i = start; i <= end; i++) pages.push(i);
+                if (currentPage < totalPages - 2) pages.push("...");
+                pages.push(totalPages);
+              }
+
+              return pages.map((page, idx) =>
+                typeof page === "string" ? (
+                  <span key={idx} className="px-2">
+                    ...
+                  </span>
+                ) : (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-3 py-1 rounded-md ${
+                      currentPage === page
+                        ? "bg-gray-200 font-semibold"
+                        : "hover:bg-gray-100"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                )
+              );
+            })()}
+
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-2 py-1 disabled:text-gray-300"
+            >
+              &gt;
+            </button>
+          </div>
+
+          <div className="hidden lg:block w-24"></div>
+        </div>
       </div>
 
       {/* Mobile Card */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden">
-        {filteredData.map((item) => (
+        {currentData.map((item) => (
           <div
             key={item.id + item.kondisi}
             className="border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition bg-white"
@@ -175,7 +244,7 @@ export default function TableAset({
 
             <div className="flex justify-end mt-4 text-gray-500">
               <a
-                href={`/aset-verifikator/detail`}
+                href={`/aset-verifikator/:id`}
                 className="hover:text-blue-600"
                 title="Lihat Detail"
               >
@@ -187,7 +256,9 @@ export default function TableAset({
       </div>
 
       {filteredData.length === 0 && (
-        <p className="text-center text-gray-500 py-6">Tidak ada data yang cocok dengan filter.</p>
+        <p className="text-center text-gray-500 py-6">
+          Tidak ada data yang cocok dengan filter.
+        </p>
       )}
     </div>
   );
