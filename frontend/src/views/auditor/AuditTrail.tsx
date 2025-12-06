@@ -5,15 +5,29 @@ import ExportModal from "../../components/dropdown/Export";
 import { Download } from "lucide-react";
 import TableAuditTrail from "../../components/table/AuditTrail-Auditor";
 
+// ========================
+// 🟦 TYPE DEFINITIONS
+// ========================
+type DateRange = {
+  start: string;
+  end: string;
+};
+
+type Filters = {
+  search: string;
+  date: DateRange;
+};
+
 export default function AuditTrail() {
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Filters>({
     search: "",
     date: { start: "", end: "" },
   });
 
   const [isExportOpen, setIsExportOpen] = useState(false);
 
-  const handleDateChange = (range: any) => {
+  // Handler ketika tanggal berubah
+  const handleDateChange = (range: DateRange) => {
     setFilters((prev) => ({ ...prev, date: range }));
   };
 
@@ -34,7 +48,9 @@ export default function AuditTrail() {
           <div className="flex-1 min-w-[260px]">
             <SearchBar
               placeholder="Cari berdasarkan Dinas, Modul, dll..."
-              onChange={(v) => setFilters((prev) => ({ ...prev, search: v }))}
+              onChange={(v: string) =>
+                setFilters((prev) => ({ ...prev, search: v }))
+              }
             />
           </div>
 
@@ -61,7 +77,7 @@ export default function AuditTrail() {
         />
       </div>
 
-      {/* TABLE (Dipanggil dari file lain) */}
+      {/* TABLE */}
       <TableAuditTrail filters={filters} />
     </div>
   );

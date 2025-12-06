@@ -69,63 +69,62 @@ export default function DetailPemeliharaanPage() {
       </div>
 
       <div className="p-6 space-y-6">
-  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Kiri Atas — Informasi Utama */}
+          <div className="col-span-1 row-span-2">
+            <InformasiUtama
+              merk={asset?.merk_type}
+              penanggungJawab={asset?.pic}
+              status={asset?.status?.name}
+              nomorSerial={asset?.serial_number}
+              kategori={asset?.category?.name}
+              subKategori={asset?.sub_category?.name}
+              masaPakai={asset?.useful_life}
+              vendor={asset?.vendor}
+              nilaiAset={asset?.acquisition_value?.toLocaleString("id-ID")}
+              kodeBMD={asset?.bmd_code}
+              lokasi={asset?.lokasi}
+              tanggalPerolehan={asset?.acquisition_date}
+              kondisi={asset?.condition?.name}
+              os={asset?.os}
+              version={asset?.version}
+              hostname={asset?.hostname}
+              ipAddress={asset?.ip_address}
+            />
+          </div>
 
-    {/* Kiri Atas — Informasi Utama */}
-    <div className="col-span-1 row-span-2">
-      <InformasiUtama
-        merk={asset?.merk_type}
-        penanggungJawab={asset?.pic}
-        status={asset?.status?.name}
-        nomorSerial={asset?.serial_number}
-        kategori={asset?.category?.name}
-        subKategori={asset?.sub_category?.name}
-        masaPakai={asset?.useful_life}
-        vendor={asset?.vendor}
-        nilaiAset={asset?.acquisition_value?.toLocaleString("id-ID")}
-        kodeBMD={asset?.bmd_code}
-        lokasi={asset?.lokasi}
-        tanggalPerolehan={asset?.acquisition_date}
-        kondisi={asset?.condition?.name}
-        os={asset?.os}
-        version={asset?.version}
-        hostname={asset?.hostname}
-        ipAddress={asset?.ip_address}
-      />
-    </div>
+          {/* Kanan Atas — Riwayat Aktivitas */}
+          <div>
+            <RiwayatAktivitasCard maintenance={maintenance} />
+          </div>
 
-    {/* Kanan Atas — Riwayat Aktivitas */}
-    <div>
-      <RiwayatAktivitasCard maintenance={maintenance} />
-    </div>
+          {/* Kanan Tengah — Lampiran */}
+          <div>
+            <LampiranCard
+              lampiranAset={asset?.attachments}
+              lampiranPemeliharaan={maintenance?.proof}
+            />
+          </div>
 
-    {/* Kanan Tengah — Lampiran */}
-    <div>
-      <LampiranCard
-        lampiranAset={asset?.attachments}
-        lampiranPemeliharaan={maintenance?.proof}
-      />
-    </div>
+          {/* Kiri Bawah — Info Pemeliharaan */}
+          <div>
+            <InfoPemeliharaan
+              tipePemeliharaan={maintenance?.type}
+              biaya={`Rp. ${maintenance?.cost?.toLocaleString("id-ID")}`}
+              vendor={maintenance?.vendor}
+            />
+          </div>
 
-    {/* Kiri Bawah — Info Pemeliharaan */}
-    <div>
-      <InfoPemeliharaan
-        tipePemeliharaan={maintenance?.type}
-        biaya={`Rp. ${maintenance?.cost?.toLocaleString("id-ID")}`}
-        vendor={maintenance?.vendor}
-      />
-    </div>
-
-    {/* Kanan Bawah — Deskripsi */}
-    <div>
-      <DeskripsiPemeliharaan
-        deskripsi={maintenance?.notes || "Tidak ada catatan pemeliharaan."}
-      />
-    </div>
-
-  </div>
-</div>
-
+          {/* Kanan Bawah — Deskripsi */}
+          <div>
+            <DeskripsiPemeliharaan
+              deskripsi={
+                maintenance?.notes || "Tidak ada catatan pemeliharaan."
+              }
+            />
+          </div>
+        </div>
+      </div>
     </>
   );
 }
