@@ -11,6 +11,8 @@ export default function SkenarioDetail() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const API_URL = import.meta.env.VITE_LINK_API_SIRASA;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -22,12 +24,9 @@ export default function SkenarioDetail() {
           return;
         }
 
-        const response = await fetch(
-          `https://asset-risk-management.vercel.app/api/scenarios/${id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await fetch(`${API_URL}/api/scenarios/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         if (!response.ok) throw new Error("Gagal mengambil data");
 
@@ -44,7 +43,7 @@ export default function SkenarioDetail() {
     };
 
     if (id) fetchData();
-  }, [id]);
+  }, [API_URL, id]);
 
   if (loading) return <p>Mengambil data...</p>;
   if (error) return <p>Error: {error}</p>;
