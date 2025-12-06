@@ -18,6 +18,9 @@ export default function Dashboard() {
   const [asetPemeliharaan, setAsetPemeliharaan] = useState<number>(0);
   const [loadingPemeliharaan, setLoadingPemeliharaan] = useState<boolean>(true);
 
+  const [asetNonAktif, setAsetNonAktif] = useState<number>(0);
+  const [loadingNonAktif, setLoadingNonAktif] = useState<boolean>(true);
+
   const [asetPending, setAsetPending] = useState<number>(0);
   const [loadingPending, setLoadingPending] = useState<boolean>(true);
 
@@ -26,6 +29,7 @@ export default function Dashboard() {
       try {
         setLoadingAset(true);
         setLoadingPemeliharaan(true);
+        setLoadingNonAktif(true);
         setLoadingPending(true);
 
         const token = localStorage.getItem("token");
@@ -53,17 +57,22 @@ export default function Dashboard() {
         );
         setAsetPemeliharaan(pemeliharaan.length);
 
+        const nonaktif = data.filter(
+          (item: Asset) => item.status?.name === "Tidak Aktif"
+        );
+        setAsetNonAktif(nonaktif.length);
+
         // Filter approval_status "pending"
         const pending = data.filter(
           (item: Asset) => item.approval_status === "pending"
         );
         setAsetPending(pending.length);
-
       } catch (error) {
         console.error("Gagal mengambil data aset:", error);
       } finally {
         setLoadingAset(false);
         setLoadingPemeliharaan(false);
+        setLoadingNonAktif(false);
         setLoadingPending(false);
       }
     };
@@ -79,7 +88,6 @@ export default function Dashboard() {
 
       <div className="mb-5 overflow-x-auto pb-6 md:mb-0 xl:overflow-x-visible">
         <div className="flex gap-4 min-w-[1000px] md:grid md:grid-cols-2 md:min-w-0 xl:flex">
-
           {/* Aset Aktif (dinamis) */}
           <CardList
             title="Aset Aktif"
@@ -95,7 +103,11 @@ export default function Dashboard() {
           />
 
           {/* Aset Dalam Perawatan (static) */}
-          <CardList title="Aset Dalam Perawatan" value="200" />
+          <CardList
+            title="Aset Non Aktif"
+            value={asetNonAktif}
+            loading={loadingNonAktif}
+          />
 
           {/* Aset Belum Terverifikasi (dinamis dari approval_status: pending) */}
           <CardList
