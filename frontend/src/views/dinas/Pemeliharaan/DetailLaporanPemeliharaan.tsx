@@ -69,53 +69,63 @@ export default function DetailPemeliharaanPage() {
       </div>
 
       <div className="p-6 space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-          {/* Kolom Kiri */}
-          <div className="flex flex-col gap-6 h-full">
-            <InformasiUtama
-              merk={asset?.merk_type}
-              penanggungJawab={asset?.pic}
-              status={asset?.status?.name}
-              nomorSerial={asset?.serial_number}
-              kategori={asset?.category?.name}
-              subKategori={asset?.sub_category?.name}
-              masaPakai={asset?.useful_life}
-              vendor={asset?.vendor}
-              nilaiAset={asset?.acquisition_value?.toLocaleString("id-ID")}
-              kodeBMD={asset?.bmd_code}
-              lokasi={asset?.lokasi}
-              tanggalPerolehan={asset?.acquisition_date}
-              kondisi={asset?.condition?.name}
-              os={asset?.os}
-              version={asset?.version}
-              hostname={asset?.hostname}
-              ipAddress={asset?.ip_address}
-            />
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-            {/* Lampiran */}
-            <LampiranCard
-              lampiranAset={asset?.attachments}
-              lampiranPemeliharaan={maintenance?.proof}
-            />
+    {/* Kiri Atas — Informasi Utama */}
+    <div className="col-span-1 row-span-2">
+      <InformasiUtama
+        merk={asset?.merk_type}
+        penanggungJawab={asset?.pic}
+        status={asset?.status?.name}
+        nomorSerial={asset?.serial_number}
+        kategori={asset?.category?.name}
+        subKategori={asset?.sub_category?.name}
+        masaPakai={asset?.useful_life}
+        vendor={asset?.vendor}
+        nilaiAset={asset?.acquisition_value?.toLocaleString("id-ID")}
+        kodeBMD={asset?.bmd_code}
+        lokasi={asset?.lokasi}
+        tanggalPerolehan={asset?.acquisition_date}
+        kondisi={asset?.condition?.name}
+        os={asset?.os}
+        version={asset?.version}
+        hostname={asset?.hostname}
+        ipAddress={asset?.ip_address}
+      />
+    </div>
 
-            {/* Info Pemeliharaan */}
-            <InfoPemeliharaan
-              tipePemeliharaan={maintenance?.type}
-              biaya={`Rp. ${maintenance?.cost?.toLocaleString("id-ID")}`}
-              vendor={maintenance?.vendor}
-            />
-          </div>
+    {/* Kanan Atas — Riwayat Aktivitas */}
+    <div>
+      <RiwayatAktivitasCard maintenance={maintenance} />
+    </div>
 
-          {/* Kolom Kanan */}
-          <div className="flex flex-col gap-5">
-            <RiwayatAktivitasCard maintenance={maintenance} />
+    {/* Kanan Tengah — Lampiran */}
+    <div>
+      <LampiranCard
+        lampiranAset={asset?.attachments}
+        lampiranPemeliharaan={maintenance?.proof}
+      />
+    </div>
 
-            <DeskripsiPemeliharaan
-              deskripsi={maintenance?.notes || "Tidak ada catatan pemeliharaan."}
-            />
-          </div>
-        </div>
-      </div>
+    {/* Kiri Bawah — Info Pemeliharaan */}
+    <div>
+      <InfoPemeliharaan
+        tipePemeliharaan={maintenance?.type}
+        biaya={`Rp. ${maintenance?.cost?.toLocaleString("id-ID")}`}
+        vendor={maintenance?.vendor}
+      />
+    </div>
+
+    {/* Kanan Bawah — Deskripsi */}
+    <div>
+      <DeskripsiPemeliharaan
+        deskripsi={maintenance?.notes || "Tidak ada catatan pemeliharaan."}
+      />
+    </div>
+
+  </div>
+</div>
+
     </>
   );
 }

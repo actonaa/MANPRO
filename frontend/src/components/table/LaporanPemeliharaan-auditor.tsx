@@ -1,7 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MessageCircleMore } from "lucide-react";
-import AuditorModal from "../auditor/AuditorModal"; // ⬅ pastikan path benar
+import AuditorModal from "../auditor/AuditorModal";
 
+// ======================================================
+// 🔵 TYPE DATA API
+// ======================================================
+type ApiDepartment = { name: string };
+
+type ApiAsset = { barcode: string; department?: ApiDepartment };
+
+type ApiRiskTreatment = { action?: string; strategy?: string };
+
+type ApiRisk = { priority?: string; risk_treatment?: ApiRiskTreatment[] };
+
+type ApiMaintenance = {
+  id: string;
+  asset?: ApiAsset;
+  asset_id?: string;
+  type?: string;
+  cost?: number | null;
+  risk?: ApiRisk;
+  scheduled_date?: string | null;
+  completion_date?: string | null;
+  priority?: string | null;
+};
+
+// ======================================================
+// 🔵 TYPE DATA TABEL
+// ======================================================
 type PemeliharaanItem = {
   id: string;
   dinas: string;
@@ -11,159 +37,208 @@ type PemeliharaanItem = {
   mitigasi: string;
   jadwal: string;
   realisasi: string;
-  prioritas: "Tinggi" | "Sedang" | "Rendah";
+  prioritas: string;
 };
 
 type Props = {
-  filters: {
-    search: string;
-    date: { start: string; end: string };
-  };
+  filters: { search: string; date: { start: string; end: string } };
 };
 
-const dummyData: PemeliharaanItem[] = [
-  {
-    id: "1",
-    dinas: "DISKOMINFO",
-    aset_id: "AST - 001",
-    jenis: "Insidental",
-    biaya: "Rp21.500.000",
-    mitigasi: "Pendinginan darurat; pemasangan",
-    jadwal: "02-12-2024",
-    realisasi: "02-12-2024",
-    prioritas: "Tinggi",
-  },
-  {
-    id: "2",
-    dinas: "DISKOMINFO",
-    aset_id: "AST - 002",
-    jenis: "Terjadwal",
-    biaya: "Rp1.500.000",
-    mitigasi: "Pelumasan berkala",
-    jadwal: "02-12-2024",
-    realisasi: "02-12-2024",
-    prioritas: "Sedang",
-  },
-  {
-    id: "3",
-    dinas: "DISKOMINFO",
-    aset_id: "AST - 003",
-    jenis: "Terjadwal",
-    biaya: "Rp150.000",
-    mitigasi: "Kalibrasi alat ukur; validasi",
-    jadwal: "02-12-2024",
-    realisasi: "02-12-2024",
-    prioritas: "Rendah",
-  },
-  {
-    id: "4",
-    dinas: "DISKOMINFO",
-    aset_id: "AST - 004",
-    jenis: "Insidental",
-    biaya: "Rp21.500.000",
-    mitigasi: "Penggantian komponen kritis;",
-    jadwal: "02-12-2024",
-    realisasi: "02-12-2024",
-    prioritas: "Tinggi",
-  },
-];
-
 export default function TablePemeliharaanAuditor({ filters }: Props) {
+  const [data, setData] = useState<PemeliharaanItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedRow, setSelectedRow] = useState<PemeliharaanItem | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const filtered = dummyData.filter((item) =>
+  // ======================================================
+  // 🔥 FETCH DATA API
+  // ======================================================
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const res = await fetch(
+          "https://asset-risk-management.vercel.app/api/maintenance",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const json = await res.json();
+        console.log("DATA API:", json);
+
+        const mapped: PemeliharaanItem[] = (json as ApiMaintenance[]).map(
+          (m) => {
+            const biayaSafe = m.cost ?? 0;
+            return {
+              id: m.id,
+              dinas: m.asset?.department?.name || "-",
+              aset_id: m.asset_id || "-",
+              jenis: m.type || "-",
+              biaya: `Rp${biayaSafe.toLocaleString("id-ID")}`,
+              mitigasi:
+                m.risk?.risk_treatment
+                  ?.map((t) => t.action || t.strategy || "")
+                  .filter((x) => x !== "")
+                  .join("; ") || "-",
+              jadwal: m.scheduled_date
+                ? new Date(m.scheduled_date).toLocaleDateString("id-ID")
+                : "-",
+              realisasi: m.completion_date
+                ? new Date(m.completion_date).toLocaleDateString("id-ID")
+                : "-",
+              prioritas: m.risk?.priority || m.priority || "Tidak Ada",
+            };
+          }
+        );
+
+        setData(mapped);
+      } catch (err) {
+        console.error("Gagal fetch:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // ======================================================
+  // 🔍 FILTER DATA
+  // ======================================================
+  const filtered = data.filter((item) =>
     item.aset_id.toLowerCase().includes(filters.search.toLowerCase())
   );
 
+  // ======================================================
+  // 🔵 PAGINATION
+  // ======================================================
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+
+  const indexOfLast = currentPage * itemsPerPage;
+  const indexOfFirst = indexOfLast - itemsPerPage;
+  const currentItems = filtered.slice(indexOfFirst, indexOfLast);
+
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
+  };
+
+  // ======================================================
+  // 🎨 WARNA PRIORITAS
+  // ======================================================
   const priorityColor = (level: string) => {
-    if (level === "Tinggi") return "text-red-500 font-semibold";
-    if (level === "Sedang") return "text-yellow-600 font-semibold";
+    if (level.toLowerCase() === "tinggi") return "text-red-500 font-semibold";
+    if (level.toLowerCase() === "sedang")
+      return "text-yellow-600 font-semibold";
     return "text-blue-600 font-semibold";
   };
 
+  // ======================================================
+  // 🔵 RENDER
+  // ======================================================
   return (
     <>
-      {/* ===== TABLE ===== */}
       <div className="bg-white p-4 rounded-xl shadow-sm overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="text-gray-600 border-b border-b-gray-300">
-            <tr>
-              <th className="p-3 text-left">DINAS</th>
-              <th className="p-3 text-left">ID ASET</th>
-              <th className="p-3 text-left">JENIS</th>
-              <th className="p-3 text-left">BIAYA</th>
-              <th className="p-3 text-left">MITIGASI</th>
-              <th className="p-3 text-left">JADWAL PEMELIHARAAN</th>
-              <th className="p-3 text-left">REALISASI</th>
-              <th className="p-3 text-left">PRIORITAS RISIKO</th>
-              <th className="p-3 text-left">DETAIL</th>
-              <th className="p-3 text-center"></th>
-            </tr>
-          </thead>
+        {loading ? (
+          <p className="text-center py-5 text-gray-600">Memuat data...</p>
+        ) : (
+          <>
+            <table className="w-full text-sm">
+              <thead className="text-gray-600 border-b border-b-gray-300">
+                <tr>
+                  <th className="p-3 text-left">DINAS</th>
+                  <th className="p-3 text-left">ID ASET</th>
+                  <th className="p-3 text-left">JENIS</th>
+                  <th className="p-3 text-left">BIAYA</th>
+                  <th className="p-3 text-left">MITIGASI</th>
+                  <th className="p-3 text-left">JADWAL</th>
+                  <th className="p-3 text-left">REALISASI</th>
+                  <th className="p-3 text-left">PRIORITAS</th>
+                  <th className="p-3 text-left">DETAIL</th>
+                  <th className="p-3 text-center"></th>
+                </tr>
+              </thead>
 
-          <tbody className="text-gray-800">
-            {filtered.map((item) => (
-              <tr
-                key={item.id}
-                className="border-b border-b-gray-300 last:border-0"
-              >
-                <td className="p-3">{item.dinas}</td>
-                <td className="p-3">{item.aset_id}</td>
-                <td className="p-3">{item.jenis}</td>
-                <td className="p-3">{item.biaya}</td>
+              <tbody className="text-gray-800">
+                {currentItems.map((item) => (
+                  <tr key={item.id} className="border-b border-b-gray-300">
+                    <td className="p-3">{item.dinas}</td>
+                    <td className="p-3">{item.aset_id}</td>
+                    <td className="p-3">{item.jenis}</td>
+                    <td className="p-3">{item.biaya}</td>
+                    <td className="p-3 max-w-[220px] whitespace-pre-wrap">
+                      {item.mitigasi}
+                    </td>
+                    <td className="p-3">{item.jadwal}</td>
+                    <td className="p-3">{item.realisasi}</td>
+                    <td className={`p-3 ${priorityColor(item.prioritas)}`}>
+                      {item.prioritas}
+                    </td>
+                    <td className="p-3 text-blue-600 hover:underline cursor-pointer">
+                      <a href={`/laporan/Pemeliharaan-auditor/${item.id}`}>Detail</a>
+                    </td>
+                    <td className="p-3 text-center">
+                      <MessageCircleMore
+                        className="w-5 h-5 text-gray-600 cursor-pointer"
+                        onClick={() => {
+                          setSelectedRow(item);
+                          setModalOpen(true);
+                        }}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
-                <td className="p-3 max-w-[220px] whitespace-pre-wrap leading-snug">
-                  {item.mitigasi}
-                </td>
+            {/* FOOTER */}
+            <div className="flex flex-col mt-2 text-sm text-gray-700">
+              {/* Menampilkan data di kiri */}
+              <div className="mb-2">
+                Menampilkan {indexOfFirst + 1}-
+                {Math.min(indexOfLast, filtered.length)} dari {filtered.length}{" "}
+                hasil
+              </div>
 
-                <td className="p-3">{item.jadwal}</td>
-                <td className="p-3">{item.realisasi}</td>
+              {/* Pagination di tengah */}
+              <div className="flex justify-center space-x-1">
+                <button
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1 rounded disabled:opacity-40"
+                >
+                  &lt;
+                </button>
 
-                <td className={`p-3 ${priorityColor(item.prioritas)}`}>
-                  {item.prioritas}
-                </td>
+                {[...Array(totalPages)].map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => goToPage(i + 1)}
+                    className={`px-3 py-1 rounded ${
+                      currentPage === i + 1 ? "bg-blue-600 text-white" : ""
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
 
-                <td className="p-3 text-blue-600 hover:underline cursor-pointer">
-                  Detail
-                </td>
-
-                {/* === BUTTON OPEN MODAL === */}
-                <td className="p-3 text-center">
-                  <MessageCircleMore
-                    className="w-5 h-5 text-gray-600 cursor-pointer"
-                    onClick={() => {
-                      setSelectedRow(item);
-                      setModalOpen(true);
-                    }}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {/* Pagination */}
-        <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
-          <span>
-            Menampilkan {filtered.length} dari {dummyData.length} hasil
-          </span>
-
-          <div className="flex items-center gap-3">
-            <button className="px-2 hover:text-black">&lt;</button>
-            <button className="px-3 py-1 border rounded-lg bg-gray-100 font-medium">
-              1
-            </button>
-            <button className="px-3 py-1">2</button>
-            <button className="px-3 py-1">3</button>
-            <button className="px-3 py-1">4</button>
-            <button className="px-3 py-1">5</button>
-            <button className="px-2 hover:text-black">&gt;</button>
-          </div>
-        </div>
+                <button
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1 rounded disabled:opacity-40"
+                >
+                  &gt;
+                </button>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
-      {/* ===== AUDITOR MODAL ===== */}
+      {/* MODAL AUDITOR */}
       <AuditorModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}

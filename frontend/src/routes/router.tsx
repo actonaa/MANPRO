@@ -49,6 +49,7 @@ import LaporanReview from "../views/auditor/LaporanReview";
 import LaporanPemeliharaan from "../views/auditor/LaporanPemeliharaan";
 import DetailLaporanPenghapusan from "../views/auditor/DetailPenghapusan";
 import DetailSdmAuditor from "../views/auditor/detailSDM";
+import DetailLaporanPemeliharaanAuditor from "../views/auditor/DetailLaporanPemeliharaan"
 
 import Callback from "../sso/callback";
 import LogoutSSO from "../sso/logout";
@@ -220,6 +221,10 @@ export default function AppRoutes() {
           <Route
             path="/laporan/Pemeliharaan-auditor"
             element={<LaporanPemeliharaan />}
+          />
+          <Route
+            path="/laporan/Pemeliharaan-auditor/:id"
+            element={<DetailLaporanPemeliharaanAuditor />}
           />
           <Route path="/laporan/sdm-auditor" element={<LaporanSDM />} />
           <Route

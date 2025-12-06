@@ -6,7 +6,7 @@ interface LampiranItem {
 }
 
 interface LampiranProps {
-  lampiranAset?: string | string[] | null;        // bisa 1 atau banyak
+  lampiranAset?: string | string[] | null; // bisa 1 atau banyak
   lampiranPemeliharaan?: string | string[] | null; // bisa 1 atau banyak
 }
 
@@ -14,7 +14,6 @@ const LampiranCard: React.FC<LampiranProps> = ({
   lampiranAset,
   lampiranPemeliharaan,
 }) => {
-
   // -------------------------------
   // Normalisasi agar semuanya menjadi array
   // -------------------------------
@@ -57,7 +56,7 @@ const LampiranCard: React.FC<LampiranProps> = ({
   const allEmpty = assetFiles.length === 0 && invoiceFiles.length === 0;
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div className="bg-white p-6 rounded-lg shadow-md h-full">
       <h2 className="font-semibold text-lg mb-4">Lampiran</h2>
 
       {allEmpty ? (
@@ -66,7 +65,6 @@ const LampiranCard: React.FC<LampiranProps> = ({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
           {/* ---------------------- */}
           {/* Bukti Pembayaran */}
           {/* ---------------------- */}
@@ -102,7 +100,6 @@ const LampiranCard: React.FC<LampiranProps> = ({
               </span>
             </a>
           ))}
-
         </div>
       )}
     </div>

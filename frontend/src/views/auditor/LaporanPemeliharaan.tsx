@@ -19,7 +19,7 @@ export default function LaporanPemeliharaan() {
       {/* TITLE */}
       <div>
         <h1 className="text-2xl font-bold text-gray-800">
-          Laporan Penghapusan
+          Laporan Pemeliharaan
         </h1>
         <p className="text-sm text-gray-500">
           Telusuri hasil audit dan pembaruan data setiap dinas.
