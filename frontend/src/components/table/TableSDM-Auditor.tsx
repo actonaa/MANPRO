@@ -9,7 +9,6 @@ import AuditorModal from "../auditor/AuditorModal";
 type SDMItem = {
   dinas: string;
   id: string;
-  asset: string;
   nip: string;
   name: string;
   tugas: string;
@@ -23,16 +22,7 @@ type ScenarioItem = {
   name: string;
   description: string;
   assets: { id: string; name: string }[];
-};
-
-// 🔥 TYPE UNTUK RISIKO
-type RisikoItem = {
-  id: string;
-  title: string;
-  type: string;
-  scenario_id: string;
-  asset_info: { id: string | null; name: string | null };
-  department: string | null;
+  owner_position: { name: string };
 };
 
 type SDMResponse = {
@@ -41,8 +31,6 @@ type SDMResponse = {
 };
 
 type ScenarioResponse = ScenarioItem[];
-
-type RisikoResponse = RisikoItem[];
 
 export default function TableSDM({ filters }: any) {
   const [data, setData] = useState<SDMItem[]>([]);
@@ -55,66 +43,40 @@ export default function TableSDM({ filters }: any) {
   const itemsPerPage = 7;
 
   // ======================================================
-  // FETCH SDM + SCENARIOS + RISKS
+  // FETCH SDM + SCENARIOS
   // ======================================================
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
 
-        const [sdmRes, scenarioRes, riskRes] = await Promise.all([
+        const [sdmRes, scenarioRes] = await Promise.all([
           axios.get<SDMResponse>(
             "https://sso-user-management.vercel.app/api/hr",
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
+            { headers: { Authorization: `Bearer ${token}` } }
           ),
-
           axios.get<ScenarioResponse>(
             "https://asset-risk-management.vercel.app/api/scenarios",
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          ),
-
-          axios.get<RisikoResponse>(
-            "https://asset-risk-management.vercel.app/api/risks",
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
+            { headers: { Authorization: `Bearer ${token}` } }
           ),
         ]);
 
         const sdmList = sdmRes.data.data || [];
         const scenarioList: ScenarioItem[] = scenarioRes.data || [];
-        const risikoList: RisikoItem[] = (riskRes.data || []).filter(
-          (r: any) => r.type === "Skenario"
-        );
 
-        // 🔥 MERGE DATA SDM DENGAN SCENARIO & RISIKO
+        // 🔥 MERGE DATA SDM DENGAN SCENARIO BERDASARKAN POSITION
         const merged = sdmList.map((sdm: any) => {
-          // Cari scenario yang cocok berdasarkan department SDM
-          const scenarioCocok = scenarioList.find((s) =>
-            s.assets.some((a) =>
-              a.name.toLowerCase().includes(sdm.department?.toLowerCase() || "")
-            )
-          );
-
-          // Cari risiko yang terkait dengan scenario
-          const risikoCocok = risikoList.find(
-            (r) => r.scenario_id === scenarioCocok?.id
+          const scenarioCocok = scenarioList.find(
+            (s) => s.owner_position?.name === sdm.position
           );
 
           return {
             dinas: sdm.department || "-",
             id: sdm.hr_id || "-",
-            asset: scenarioCocok
-              ? scenarioCocok.assets.map((a) => a.name).join(", ")
-              : "-",
             nip: sdm.nip || "-",
             name: sdm.name || "-",
             tugas: scenarioCocok?.description || "-",
-            risiko: risikoCocok?.title || "-",
+            risiko: scenarioCocok?.name || "-",
             date: new Date().toISOString(),
           };
         });
@@ -192,11 +154,10 @@ export default function TableSDM({ filters }: any) {
             <tr>
               <th className="py-5 px-4">DINAS</th>
               <th className="py-5 px-4">ID SDM</th>
-              <th className="py-5 px-4">NAMA ASET</th>
               <th className="py-5 px-4">NIP</th>
               <th className="py-5 px-4">NAMA</th>
               <th className="py-5 px-4">TUGAS</th>
-              <th className="py-5 px-4">RISIKO / SKENARIO</th>
+              <th className="py-5 px-4">SKENARIO</th>
               <th className="py-5 px-4"></th>
               <th className="py-5 px-4"></th>
             </tr>
@@ -207,13 +168,24 @@ export default function TableSDM({ filters }: any) {
                 key={item.id}
                 className="border-b border-gray-200 hover:bg-gray-50"
               >
-                <td className="py-5">{item.dinas}</td>
-                <td className="py-5">{item.id}</td>
-                <td className="py-5">{item.asset}</td>
-                <td className="py-5">{item.nip}</td>
-                <td className="py-5">{item.name}</td>
-                <td className="py-5">{item.tugas}</td>
-                <td className="py-5">{item.risiko}</td>
+                <td className="py-5 max-w-[120px] truncate overflow-hidden whitespace-nowrap">
+                  {item.dinas}
+                </td>
+                <td className="py-5 max-w-[100px] truncate overflow-hidden whitespace-nowrap">
+                  {item.id}
+                </td>
+                <td className="py-5 max-w-[120px] truncate overflow-hidden whitespace-nowrap">
+                  {item.nip}
+                </td>
+                <td className="py-5 max-w-[150px] truncate overflow-hidden whitespace-nowrap">
+                  {item.name}
+                </td>
+                <td className="py-5 max-w-[250px] truncate overflow-hidden whitespace-nowrap">
+                  {item.tugas}
+                </td>
+                <td className="py-5 max-w-[150px] truncate overflow-hidden whitespace-nowrap">
+                  {item.risiko}
+                </td>
                 <td className="py-5">
                   <Link
                     to="/laporan/sdm-auditor/id"
@@ -292,7 +264,7 @@ export default function TableSDM({ filters }: any) {
             ? {
                 id: selectedItem.id,
                 title: selectedItem.risiko,
-                asset_info: { name: selectedItem.asset || "-" },
+                asset_info: { name: "-" }, // ✅ tambahkan ini
               }
             : null
         }
