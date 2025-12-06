@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useState, useEffect } from "react";
 import ExportModal from "../../components/dropdown/Export";
 import { Upload } from "lucide-react";
@@ -179,7 +179,7 @@ export default function RisikoTableSection({ search, dinas, period, level, statu
                     <td className="py-5 px-4">{item.dinas || "-"}</td>
 
                     <td className="py-5 px-4">
-                      <a href={`/risiko/${item.id}`} className="text-blue-500 hover:underline font-medium">
+                      <a href={`/laporan/risiko-admin/${item.id}`} className="text-blue-500 hover:underline font-medium">
                         Detail
                       </a>
                     </td>

@@ -230,7 +230,7 @@ export default function TableAsetAdmin({
 
                 <td>
                   <button
-                    onClick={() => navigate(`/aset-admin/${item.id}`)}
+                    onClick={() => navigate(`/laporan/aset-admin/${item.id}`)}
                     className="text-blue-600 hover:underline"
                   >
                     Detail

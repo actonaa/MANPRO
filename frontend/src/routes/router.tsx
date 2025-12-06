@@ -74,7 +74,6 @@ import DashboardRisikoAdmin from "../views/admin/Risiko/Dashboard";
 import VerifikasiAsetAdminPage from "../views/admin/Aset/VerifikasiAset";
 import DataSumberDayaManusia from "../views/admin/SDM/DataSumberDayaManusia";
 import LaporanSdmAdmin from "../views/admin/SDM/LaporanSDM";
-import LaporanAudit from "../views/admin/Audit/LaporanAudit";
 import EditSDM from "../views/admin/SDM/EditSDM";
 import DetailSDM from "../views/admin/SDM/DetailSDM";
 import DetailLaporanSDM from "../views/admin/SDM/DetailLaporanSDM";
@@ -86,6 +85,7 @@ import LaporanRisikoAdmin from "../views/admin/Risiko/LaporanRisiko";
 import TambahRisiko from "../views/admin/Risiko/Form";
 import EditDetailRisk from "../views/admin/Risiko/EditDetailRisk";
 import DetailRisikoAdmin from "../views/admin/Risiko/DetailRisiko";
+import DetailPemeliharaanAdmin from "../views/admin/Pemeliharaan/DetailLaporanPemeliharaan"
 
 import Skenario from "../views/dinas/Aset/DataSkenario";
 import TambahSkenario from "../views/dinas/Aset/TambahSkenario";
@@ -258,7 +258,7 @@ export default function AppRoutes() {
           <Route path="/audit-admin" element={<AuditTrail />} />
 
           <Route path="/aset-admin" element={<AsetAdmin />} />
-          <Route path="/aset-admin/:id" element={<DetailAsetAdmin />} />
+          <Route path="/laporan/aset-admin/:id" element={<DetailAsetAdmin />} />
           <Route path="/aset-admin/edit/:id" element={<EditAsetAdmin />} />
           <Route
             path="/Verikasi/aset-admin"
@@ -273,7 +273,7 @@ export default function AppRoutes() {
           <Route path="/risiko-admin" element={<DashboardRisikoAdmin />} />
           <Route path="/risiko-admin/daftar" element={<DaftarRisikoAdmin />} />
 
-          <Route path="/risiko-admin/:riskId" element={<DetailRisikoAdmin />} />
+          <Route path="/laporan/risiko-admin/:id" element={<DetailRisikoAdmin />} />
           <Route
             path="/risiko-admin/tambah-mitigasi/:riskId"
             element={<TambahMitigasi />}
@@ -294,10 +294,13 @@ export default function AppRoutes() {
           />
           <Route path="/laporan/sdm-admin" element={<LaporanSdmAdmin />} />
           <Route path="/laporan/sdm-admin/id" element={<DetailLaporanSDM />} />
-          <Route path="/laporan/audit-admin" element={<LaporanAudit />} />
           <Route
             path="/laporan/pemeliharaan-admin"
             element={<PemeliharaanAdmin />}
+          />
+          <Route
+            path="/laporan/pemeliharaan-admin/:id"
+            element={<DetailPemeliharaanAdmin />}
           />
 
           <Route
