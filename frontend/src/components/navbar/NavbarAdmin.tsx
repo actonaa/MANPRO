@@ -91,7 +91,6 @@ export default function NavbarDiskominfo() {
         { label: "Laporan SDM", to: "/laporan/sdm-admin" },
         { label: "Laporan Risiko", to: "/laporan/risiko-admin" },
         { label: "Laporan Pemeliharaan", to: "/laporan/pemeliharaan-admin" },
-        { label: "Laporan Audit", to: "/laporan/audit-admin" },
       ],
     },
     {

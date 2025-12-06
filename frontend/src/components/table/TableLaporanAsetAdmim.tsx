@@ -229,7 +229,7 @@ export default function AssetTableSection({
                   <td className="py-5 px-4">{item.dinas}</td>
                   <td className="py-5 px-4">
                     <a
-                      href={`/aset/${item.id}`}
+                      href={`/laporan/aset-admin/${item.id}`}
                       className="text-[#0095E8] font-medium hover:underline"
                     >
                       Detail

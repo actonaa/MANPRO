@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 
 type TableRisikoProps = {
@@ -178,7 +179,7 @@ export default function TableRisikoAdmin({
                   <td className="py-4 text-[#666]">{item.department?.name}</td>
 
                   <td>
-                    <a href={`/risiko-admin/${item.id}`} className="text-[#0095E8] hover:underline">
+                    <a href={`/laporan/risiko-admin/${item.id}`} className="text-[#0095E8] hover:underline">
                       Detail
                     </a>
                   </td>
